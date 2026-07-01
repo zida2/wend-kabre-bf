@@ -46,6 +46,7 @@ export default function Navbar() {
         <div className={`${styles.navLinks} hide-mobile`}>
           <Link href="/marches" className={styles.navLink}>Marchés Publics</Link>
           <Link href="/recrutements" className={styles.navLink}>Recrutements</Link>
+          <Link href="/assistant" className={styles.navLink}>Assistant IA 🤖</Link>
           {!isPremium && (
             <Link href="/tarifs" className={styles.navLink} style={{ color: 'var(--gold)', fontWeight: 600 }}>Tarifs 💎</Link>
           )}
@@ -101,6 +102,7 @@ export default function Navbar() {
         <div className={styles.mobileMenu}>
           <Link href="/marches" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Marchés Publics</Link>
           <Link href="/recrutements" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Recrutements</Link>
+          <Link href="/assistant" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Assistant IA 🤖</Link>
           {!isPremium && (
             <Link href="/tarifs" className={styles.mobileLink} onClick={() => setMenuOpen(false)} style={{ color: 'var(--gold)' }}>Tarifs 💎</Link>
           )}

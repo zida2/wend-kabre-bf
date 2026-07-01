@@ -6,7 +6,7 @@ import { db, auth } from '@/lib/firebase';
 import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 
-import { Document, Packer, Paragraph, TextRun, HeadingLevel } from "docx";
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, PageBreak, AlignmentType } from "docx";
 import { saveAs } from "file-saver";
 
 function DetailsContent() {
@@ -94,165 +94,268 @@ function DetailsContent() {
         {
           properties: {},
           children: [
+            // PAGE DE GARDE
             new Paragraph({
               children: [
-                new TextRun({
-                  text: `TRAME DE CANDIDATURE - ${marche.title}`,
-                  bold: true,
-                  size: 32,
-                })
+                new TextRun({ text: "DOSSIER DE CANDIDATURE - OFFRE TECHNIQUE", bold: true, size: 48, color: "064E3B" }),
+              ],
+              alignment: AlignmentType.CENTER,
+              spacing: { before: 1000, after: 400 }
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: `Appel d'offres : ${marche.title || '[Titre du marché]'}`, size: 28 }),
+              ],
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 200 }
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: `Numéro : [Numéro de l'appel d'offres]`, size: 24 }),
+              ],
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 800 }
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: "[INSÉREZ LE LOGO DE VOTRE ENTREPRISE ICI]", color: "FF0000", bold: true, size: 24 }),
+              ],
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 800 }
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: `Présenté par : [NOM DE VOTRE ENTREPRISE]`, size: 28, bold: true }),
+              ],
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 400 }
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: `Date : ${new Date().toLocaleDateString('fr-FR')}`, size: 24 }),
+              ],
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({ children: [new PageBreak()] }),
+
+            // TABLE DES MATIÈRES (Placeholder)
+            new Paragraph({
+              children: [
+                new TextRun({ text: "TABLE DES MATIÈRES", bold: true, size: 32, color: "064E3B" }),
+              ],
+              spacing: { after: 400 }
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: "[Générez automatiquement la table des matières ici une fois sous Word]", color: "FF0000", italics: true }),
+              ]
+            }),
+            new Paragraph({ children: [new PageBreak()] }),
+
+            // LETTRE DE SOUMISSION
+            new Paragraph({
+              children: [
+                new TextRun({ text: "LETTRE DE SOUMISSION", bold: true, size: 32, color: "064E3B" }),
+              ],
+              spacing: { after: 400 }
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: "À l'attention de : [Nom de l'autorité contractante]", bold: true }),
+              ]
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: "Objet : Soumission pour le marché relatif à " + (marche.title || '[Objet du marché]'), bold: true }),
+              ],
+              spacing: { before: 200, after: 400 }
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: "Monsieur/Madame le Directeur," }),
               ],
               spacing: { after: 200 }
             }),
             new Paragraph({
               children: [
-                new TextRun({ text: "Émetteur : ", bold: true }),
-                new TextRun({ text: marche.source || 'N/A' }),
+                new TextRun({ text: "Après avoir examiné le Dossier d'Appel d'Offres, nous, soussignés [Nom de votre entreprise], vous proposons de réaliser et d'achever les prestations conformément aux conditions du DAO." }),
               ],
+              spacing: { after: 200 }
             }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "Catégorie : ", bold: true }),
-                new TextRun({ text: marche.category || 'Général' }),
-              ],
-            }),
-            new Paragraph({ children: [] }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "[À COMPLÉTER : NOM DE VOTRE ENTREPRISE]", color: "FF0000", bold: true }),
-              ],
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "[À COMPLÉTER : VOTRE RCCM / IFU]", color: "FF0000", bold: true }),
-              ],
-            }),
-            new Paragraph({ children: [] }),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            // SECTION 1
+            // SECTION 1: PRÉSENTATION
             new Paragraph({
               children: [
-                new TextRun({ text: "1. RÉSUMÉ DES ENGAGEMENTS", bold: true, size: 24, color: "00529b" })
+                new TextRun({ text: "1. PRÉSENTATION DE L'ENTREPRISE", bold: true, size: 32, color: "064E3B" })
               ],
-              spacing: { before: 300, after: 100 }
+              spacing: { after: 400 }
             }),
             new Paragraph({
               children: [
-                new TextRun({ text: "Dans le cadre de cet appel d'offres, notre entreprise s'engage formellement à exécuter les prestations conformément aux spécifications du CCTP et dans les délais impartis. ", italics: true }),
-                new TextRun({ text: "[Détaillez en 3 lignes votre motivation et votre force principale]", color: "FF0000", italics: true }),
+                new TextRun({ text: "[Historique de l'entreprise, Statut juridique (SARL, SA...), Numéro RCCM, Numéro IFU, Adresse du siège social, Vision et mission, Domaines d'intervention. Minimum 1 à 2 pages.]", color: "FF0000", italics: true }),
               ],
             }),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            // SECTION 2
+            // SECTION 2: COMPRÉHENSION
             new Paragraph({
               children: [
-                new TextRun({ text: "2. COMPRÉHENSION DU BESOIN ET ENJEUX", bold: true, size: 24, color: "00529b" })
+                new TextRun({ text: "2. COMPRÉHENSION DU BESOIN ET ENJEUX (⭐⭐⭐⭐⭐)", bold: true, size: 32, color: "064E3B" })
               ],
-              spacing: { before: 300, after: 100 }
+              spacing: { after: 400 }
             }),
             new Paragraph({
               children: [
-                new TextRun({ text: "[Démontrez que vous avez lu le DAO. Reformulez les objectifs de l'acheteur avec vos propres mots pour prouver votre expertise.]", color: "FF0000", italics: true }),
+                new TextRun({ text: "[Reformulez les attentes de l'administration avec vos propres mots. Expliquez les enjeux du projet et les problèmes spécifiques que votre solution va résoudre. Démontrez que vous maîtrisez le contexte local.]", color: "FF0000", italics: true }),
               ],
             }),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            // SECTION 3
+            // SECTION 3: MÉTHODOLOGIE
             new Paragraph({
               children: [
-                new TextRun({ text: "3. PRÉSENTATION DE L'ENTREPRISE", bold: true, size: 24, color: "00529b" })
+                new TextRun({ text: "3. MÉTHODOLOGIE D'EXÉCUTION (⭐⭐⭐⭐⭐)", bold: true, size: 32, color: "064E3B" })
               ],
-              spacing: { before: 300, after: 100 }
+              spacing: { after: 400 }
             }),
             new Paragraph({
               children: [
-                new TextRun({ text: "[Insérez ici une présentation de votre société : Date de création, Chiffre d'affaires, Domaines d'expertise, Nombre d'employés fixes.]", color: "FF0000", italics: true }),
+                new TextRun({ text: "[C'est le cœur de l'offre technique ! Détaillez l'organisation du travail, les étapes de réalisation (Phase 1, Phase 2...), et les livrables pour chaque étape. Minimum 5 à 15 pages selon la taille du marché.]", color: "FF0000", italics: true }),
               ],
             }),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            // SECTION 4
+            // SECTION 4: MOYENS HUMAINS
             new Paragraph({
               children: [
-                new TextRun({ text: "4. MÉTHODOLOGIE D'EXÉCUTION ET CHRONOGRAMME", bold: true, size: 24, color: "00529b" })
+                new TextRun({ text: "4. MOYENS HUMAINS ET ORGANISATION (⭐⭐⭐⭐)", bold: true, size: 32, color: "064E3B" })
               ],
-              spacing: { before: 300, after: 100 }
+              spacing: { after: 400 }
             }),
             new Paragraph({
               children: [
-                new TextRun({ text: "[Étape la plus importante : Décrivez étape par étape COMMENT vous allez exécuter le marché. Ex: 1. Préparation, 2. Approvisionnement, 3. Exécution, 4. Contrôle et Livraison. Insérez également votre planning / chronogramme.]", color: "FF0000", italics: true }),
+                new TextRun({ text: "[Insérez un organigramme. Présentez le Chef de projet (CV très détaillé), et les membres de l'équipe technique clé. Mettez en valeur leurs diplômes et expériences.]", color: "FF0000", italics: true }),
               ],
             }),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            // SECTION 5
+            // SECTION 5: MOYENS MATÉRIELS
             new Paragraph({
               children: [
-                new TextRun({ text: "5. MOYENS HUMAINS ET MATÉRIELS", bold: true, size: 24, color: "00529b" })
+                new TextRun({ text: "5. MOYENS MATÉRIELS ET LOGISTIQUES (⭐⭐⭐⭐)", bold: true, size: 32, color: "064E3B" })
               ],
-              spacing: { before: 300, after: 100 }
+              spacing: { after: 400 }
             }),
             new Paragraph({
               children: [
-                new TextRun({ text: "- Chef de projet : ", bold: true }),
-                new TextRun({ text: "[Nom et résumé du CV]", color: "FF0000" })
-              ]
+                new TextRun({ text: "[Listez sous forme de tableau les équipements disponibles, les logiciels professionnels utilisés, les véhicules logistiques, et les matériels informatiques.]", color: "FF0000", italics: true }),
+              ],
             }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "- Équipe technique : ", bold: true }),
-                new TextRun({ text: "[Nombre de techniciens et qualifications]", color: "FF0000" })
-              ]
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "- Matériel mobilisé : ", bold: true }),
-                new TextRun({ text: "[Liste des véhicules, machines ou outils informatiques]", color: "FF0000" })
-              ]
-            }),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            // SECTION 6
+            // SECTION 6: EXPÉRIENCES
             new Paragraph({
               children: [
-                new TextRun({ text: "6. DÉMARCHE QUALITÉ, SÉCURITÉ ET ENVIRONNEMENT (QSE)", bold: true, size: 24, color: "00529b" })
+                new TextRun({ text: "6. EXPÉRIENCES SIMILAIRES ET RÉFÉRENCES (⭐⭐⭐⭐⭐)", bold: true, size: 32, color: "064E3B" })
               ],
-              spacing: { before: 300, after: 100 }
+              spacing: { after: 400 }
             }),
             new Paragraph({
               children: [
-                new TextRun({ text: "[Expliquez comment vous garantissez la sécurité sur le chantier/site, vos équipements de protection (EPI), et vos procédures de qualité et SAV.]", color: "FF0000", italics: true }),
+                new TextRun({ text: "[Listez vos marchés déjà réalisés de même nature. Précisez le client, l'année, et le montant. Indiquez que les Attestations de Bonne Exécution sont fournies en annexe.]", color: "FF0000", italics: true }),
               ],
             }),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            // SECTION 7
+            // SECTION 7: QUALITÉ
             new Paragraph({
               children: [
-                new TextRun({ text: "7. RÉFÉRENCES SIMILAIRES", bold: true, size: 24, color: "00529b" })
+                new TextRun({ text: "7. APPROCHE QUALITÉ ET GESTION DES RISQUES", bold: true, size: 32, color: "064E3B" })
               ],
-              spacing: { before: 300, after: 100 }
+              spacing: { after: 400 }
             }),
             new Paragraph({
               children: [
-                new TextRun({ text: "[Citez 3 marchés similaires que vous avez déjà réalisés, avec l'année, le client, et le montant. Joignez les attestations de bonne fin d'exécution en annexe.]", color: "FF0000", italics: true }),
+                new TextRun({ text: "[Expliquez vos procédures de contrôle qualité, comment vous gérez les imprévus (risques), comment vous garantissez le respect strict des délais, et votre plan de communication avec le client.]", color: "FF0000", italics: true }),
               ],
             }),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            new Paragraph({ children: [] }),
-            new Paragraph({ children: [] }),
+            // SECTION 8: INNOVATION
+            new Paragraph({
+              children: [
+                new TextRun({ text: "8. INNOVATION ET VALEUR AJOUTÉE (⭐⭐⭐)", bold: true, size: 32, color: "064E3B" })
+              ],
+              spacing: { after: 400 }
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: "[Ce qui distingue votre offre de la concurrence. Technologies spécifiques utilisées, éco-responsabilité, transfert de compétences, etc.]", color: "FF0000", italics: true }),
+              ],
+            }),
+            new Paragraph({ children: [new PageBreak()] }),
+
+            // SECTION 9: PLANNING
+            new Paragraph({
+              children: [
+                new TextRun({ text: "9. PLANNING D'EXÉCUTION (⭐⭐⭐⭐)", bold: true, size: 32, color: "064E3B" })
+              ],
+              spacing: { after: 400 }
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: "[Insérez ici un Diagramme de Gantt (image ou tableau) détaillant la durée de chaque phase du projet (en jours, semaines ou mois).]", color: "FF0000", italics: true }),
+              ],
+            }),
+            new Paragraph({ children: [new PageBreak()] }),
+
+            // SECTION 10: OFFRE FINANCIÈRE
+            new Paragraph({
+              children: [
+                new TextRun({ text: "10. OFFRE FINANCIÈRE ET ENGAGEMENTS (⭐⭐⭐⭐)", bold: true, size: 32, color: "064E3B" })
+              ],
+              spacing: { after: 400 }
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: "[Devis détaillé, Bordereau des prix unitaires, Quantités, Montant total HT et TTC. Précisez également vos garanties, la période de maintenance et le Service Après-Vente (SAV).]", color: "FF0000", italics: true }),
+              ],
+            }),
+            new Paragraph({ children: [new PageBreak()] }),
+
+            // SECTION 11: ANNEXES
+            new Paragraph({
+              children: [
+                new TextRun({ text: "11. PIÈCES ADMINISTRATIVES ET ANNEXES", bold: true, size: 32, color: "064E3B" })
+              ],
+              spacing: { after: 400 }
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: "Veuillez joindre à la suite de ce document les pièces suivantes :", bold: true }),
+              ],
+              spacing: { after: 200 }
+            }),
+            new Paragraph({ children: [new TextRun({ text: "☐ RCCM" })] }),
+            new Paragraph({ children: [new TextRun({ text: "☐ IFU" })] }),
+            new Paragraph({ children: [new TextRun({ text: "☐ Attestation de situation fiscale" })] }),
+            new Paragraph({ children: [new TextRun({ text: "☐ Attestation CNSS" })] }),
+            new Paragraph({ children: [new TextRun({ text: "☐ Agréments techniques (si applicables)" })] }),
+            new Paragraph({ children: [new TextRun({ text: "☐ CV et copies des diplômes du personnel" })] }),
+            new Paragraph({ children: [new TextRun({ text: "☐ Attestations de bonne fin d'exécution" })] }),
+            
+            new Paragraph({ children: [new PageBreak()] }),
             new Paragraph({
               children: [
                 new TextRun({ 
-                  text: "____________________________________________________________________",
-                  color: "888888"
-                }),
-              ],
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ 
-                  text: "* Généré de manière assistée avec Wend-Kabré AI. Ce canevas structurel professionnel doit être obligatoirement adapté et complété avec vos données propres pour être recevable.*",
+                  text: "* Généré avec l'assistance de Wend-Kabré AI. Ce canevas structurel professionnel doit être obligatoirement adapté, détaillé et complété avec vos données propres pour constituer une offre recevable et compétitive.*",
                   italics: true,
                   size: 16,
                   color: "888888"
                 }),
               ],
+              spacing: { before: 400 }
             }),
           ],
         },
@@ -260,7 +363,7 @@ function DetailsContent() {
     });
 
     Packer.toBlob(docFile).then((blob) => {
-      saveAs(blob, `Trame_Candidature_${marche.id || 'Wend_Kabre'}.docx`);
+      saveAs(blob, `Dossier_Technique_${marche.id || 'Wend_Kabre'}.docx`);
     });
   };
 
