@@ -2,36 +2,66 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ── Marchés publics : lecture libre, écriture par tous (scraper + admin)
+    // ── Helpers ──────────────────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Administrateur identifié par son adresse email vérifiée par Firebase Auth.
+    // NB : sans Firebase Admin SDK / custom claims, c'est le meilleur contrôle
+    //      applicable directement dans les règles. Pour changer d'admin,
+    //      modifiez l'email ci-dessous puis redéployez les règles.
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == 'zidadesire20@gmail.com';
+    }
+
+    // ── Marchés publics ──────────────────────────────────────────────
+    // Lecture publique (les titres/catégories sont gratuits).
+    // ⚠️ ÉCRITURE : laissée ouverte car le robot d'extraction (cron
+    //    /api/scrape) s'exécute côté serveur SANS contexte d'authentification
+    //    (il utilise le SDK client). Pour verrouiller l'écriture aux seuls
+    //    admin/scraper, il faut migrer /api/scrape vers le Firebase Admin SDK
+    //    (compte de service) — voir README/notes de sécurité.
     match /marches/{marchId} {
       allow read: if true;
       allow write: if true;
     }
 
-    // ── Profils utilisateurs : lecture libre, écriture libre (pour l'admin et les PME)
+    // ── Profils utilisateurs (PME) ───────────────────────────────────
+    // Lecture : le propriétaire ou l'admin uniquement (fin de la fuite PII).
     match /users/{userId} {
-      allow read, write: if true;
+      allow read: if isAdmin() || (isSignedIn() && request.auth.uid == userId);
+
+      // Création : uniquement son propre profil, non abonné par défaut.
+      allow create: if isSignedIn()
+                    && request.auth.uid == userId
+                    && request.resource.data.isSubscribed == false;
+
+      // Mise à jour : l'admin, ou le propriétaire sur son propre profil.
+      // NB : l'auto-activation Premium simulée étant conservée (choix produit),
+      //      le propriétaire peut écrire ses champs d'abonnement — donc
+      //      l'auto-attribution Premium reste possible (risque accepté).
+      allow update: if isAdmin()
+                    || (isSignedIn() && request.auth.uid == userId);
+
+      // Suppression : admin uniquement.
+      allow delete: if isAdmin();
     }
 
-    // ── Candidatures : accessibles uniquement par l'utilisateur propriétaire
+    // ── Candidatures : réservées au propriétaire ─────────────────────
     match /candidatures/{candidatureId} {
-      allow read:   if request.auth != null && request.auth.uid == resource.data.userId;
-      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow read:   if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
     }
 
-    // ── Propriétés (héritage ancien projet — conservé)
-    match /properties/{propertyId} {
-      allow read: if true;
-      allow create: if request.resource.data.title != null
-                    && request.resource.data.price != null
-                    && request.resource.data.ownerId != null;
-      allow update: if request.resource.data.ownerId == resource.data.ownerId;
-      allow delete: if true;
-    }
-    // ── Demandes de paiement : lecture et écriture libres pour la gestion
+    // ── Demandes de paiement (contiennent des reçus / PII) ───────────
+    // Le propriétaire crée et lit ses propres demandes ; seul l'admin peut
+    // les lister toutes et changer leur statut (validation manuelle).
     match /payment_requests/{requestId} {
-      allow read, write: if true;
+      allow read:   if isAdmin() || (isSignedIn() && request.auth.uid == resource.data.userId);
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
     }
   }
 }

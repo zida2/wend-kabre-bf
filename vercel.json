@@ -2,7 +2,7 @@
   "name": "wend-kabre-bf",
   "crons": [
     {
-      "path": "/api/scrape?secret=WEND_KABRE_2026",
+      "path": "/api/scrape",
       "schedule": "0 6 * * *"
     }
   ]

@@ -37,7 +37,7 @@ export default function InscriptionPage() {
         rccm: rccm || '',
         phone,
         email,
-        isSubscribed: email.includes('demo') ? true : false, // Auto-abonnement pour la démo
+        isSubscribed: false, // Toujours gratuit à l'inscription (l'abonnement s'active via /tarifs ou l'admin)
         createdAt: new Date().toISOString()
       });
 

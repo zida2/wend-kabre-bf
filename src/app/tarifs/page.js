@@ -87,7 +87,7 @@ const PLANS = [
 import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 
 export default function TarifsPage() {
   const [billingAnnual, setBillingAnnual] = useState(false);
@@ -173,6 +173,25 @@ export default function TarifsPage() {
     return plan.price;
   };
 
+  // Nombre de jours d'abonnement selon le plan et le cycle de facturation.
+  const subscriptionDays = (plan) => {
+    if (plan.id === 'starter') return 7;      // essai 1 semaine
+    return billingAnnual ? 365 : 30;          // annuel ou mensuel
+  };
+
+  // Auto-activation Premium (simulée) : le propriétaire authentifié écrit son
+  // propre document users/{uid} — autorisé par les règles Firestore.
+  // NB : cette activation reste contournable (choix produit assumé), une vraie
+  //      passerelle de paiement + validation serveur serait nécessaire en prod.
+  const activateOwnSubscription = async (uid, days) => {
+    const userRef = doc(db, 'users', uid);
+    await updateDoc(userRef, {
+      isSubscribed: true,
+      lastPaymentDate: new Date().toISOString(),
+      subscriptionExpiresAt: new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString(),
+    });
+  };
+
   const handleCTA = (plan) => {
     if (!user) {
       router.push(`/inscription?plan=${plan.id}`);
@@ -188,29 +207,22 @@ export default function TarifsPage() {
       showAlert("Veuillez entrer un numéro valide", "Erreur");
       return;
     }
+    if (!user) {
+      router.push('/connexion');
+      return;
+    }
     setPaying(true);
     try {
-      const res = await fetch('/api/pay', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          uid: user.uid,
-          amount: getPrice(selectedPlan),
-          phone: phone
-        })
+      // SIMULATION DE PAIEMENT (pas de vraie passerelle) — délai de 2 s.
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await activateOwnSubscription(user.uid, subscriptionDays(selectedPlan));
+      showAlert("🎉 Paiement validé avec succès ! Bienvenue dans l'espace Premium.", "Succès", () => {
+        setShowPayModal(false);
+        router.push('/dashboard');
       });
-      const data = await res.json();
-      if (data.success) {
-        showAlert("🎉 Paiement validé avec succès ! Bienvenue dans l'espace Premium.", "Succès", () => {
-          setShowPayModal(false);
-          router.push('/dashboard');
-        });
-      } else {
-        showAlert("Erreur: " + data.error, "Erreur");
-      }
     } catch (e) {
       console.error(e);
-      showAlert("Erreur de connexion.", "Erreur réseau");
+      showAlert("Erreur lors de l'activation de l'abonnement.", "Erreur");
     } finally {
       setPaying(false);
     }
@@ -477,25 +489,12 @@ export default function TarifsPage() {
 
                     // 4. Traitement selon la détection
                     if (amountMatch) {
-                      // Activation automatique immédiate !
-                      const res = await fetch('/api/pay', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          uid: user.uid,
-                          amount: getPrice(selectedPlan),
-                          phone: "Validation OCR Auto"
-                        })
+                      // Activation automatique immédiate (simulée, côté propriétaire).
+                      await activateOwnSubscription(user.uid, subscriptionDays(selectedPlan));
+                      showAlert("🎉 OCR RÉUSSI ! Paiement détecté avec succès. Bienvenue dans l'espace Premium.", "Validation Réussie", () => {
+                        setShowPayModal(false);
+                        router.push('/dashboard');
                       });
-                      const data = await res.json();
-                      if (data.success) {
-                        showAlert("🎉 OCR RÉUSSI ! Paiement détecté avec succès. Bienvenue dans l'espace Premium.", "Validation Réussie", () => {
-                          setShowPayModal(false);
-                          router.push('/dashboard');
-                        });
-                      } else {
-                        showAlert("Erreur lors de l'activation: " + data.error, "Erreur");
-                      }
                     } else {
                       showAlert("⚠️ Montant non reconnu par l'IA. Pas de panique, votre demande a été envoyée pour une validation manuelle. L'administrateur va l'activer d'ici quelques minutes.", "Validation en attente", () => {
                         setShowPayModal(false);

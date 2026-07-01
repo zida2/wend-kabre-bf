@@ -7,6 +7,8 @@ import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firesto
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+const ADMIN_EMAIL = 'zidadesire20@gmail.com';
+
 export default function AdminPage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,22 +34,16 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    // 1. Vérification du token local (Bypass Auth pour le patron)
-    const adminToken = localStorage.getItem('wendkabre_admin');
-    if (adminToken === '3002') {
-      setUser({ email: 'zidadesire20@gmail.com' });
-      fetchAdminData();
-      return;
-    }
-
-    // 2. Vérification Firebase classique
+    // Accès admin : uniquement via un compte Firebase authentifié dont l'email
+    // est celui de l'admin. Les écritures sont de toute façon re-vérifiées par
+    // les règles Firestore (isAdmin), donc pas de bypass exploitable côté client.
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
         router.push('/connexion');
         return;
       }
 
-      if (currentUser.email.toLowerCase() !== 'zidadesire20@gmail.com') {
+      if (currentUser.email?.toLowerCase() !== ADMIN_EMAIL) {
         router.push('/dashboard');
         return;
       }
@@ -112,7 +108,7 @@ export default function AdminPage() {
   const handleForceScrape = async () => {
     setScraping(true);
     try {
-      const res = await fetch('/api/scrape?secret=WEND_KABRE_2026');
+      const res = await fetch('/api/scrape?secret=' + (process.env.NEXT_PUBLIC_SCRAPER_SECRET || ''));
       const data = await res.json();
       showToast(`Scraping terminé ! ${data.added} nouveaux marchés trouvés sur ${data.total} analysés.`, 'success');
       // Refresh markets count
@@ -126,25 +122,38 @@ export default function AdminPage() {
     }
   };
 
+  // Mise à jour d'abonnement directement en Firestore (l'admin authentifié est
+  // autorisé par les règles isAdmin()). days === 0 => désactivation.
+  const applySubscription = async (userId, days) => {
+    const userRef = doc(db, 'users', userId);
+    if (days === 0) {
+      await updateDoc(userRef, { isSubscribed: false, subscriptionExpiresAt: null });
+      return;
+    }
+    // Prolonge à partir de l'expiration en cours si elle est encore valide.
+    const target = usersList.find(u => u.id === userId);
+    let expirationDate = new Date();
+    if (target?.isSubscribed && target?.subscriptionExpiresAt) {
+      const currentExp = new Date(target.subscriptionExpiresAt);
+      if (currentExp > new Date()) expirationDate = currentExp;
+    }
+    expirationDate.setDate(expirationDate.getDate() + days);
+    await updateDoc(userRef, {
+      isSubscribed: true,
+      lastPaymentDate: new Date().toISOString(),
+      subscriptionExpiresAt: expirationDate.toISOString(),
+    });
+  };
+
   const handleUpdateSubscription = async (userId, days) => {
     setProcessingUser(userId);
-
     try {
-      const res = await fetch('/api/admin/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, days })
-      });
-      
-      const data = await res.json();
-      if (data.success) {
-        showToast("✅ Abonnement mis à jour avec succès !", "success");
-        fetchAdminData(); // Rafraîchir la liste
-      } else {
-        showToast("❌ Erreur: " + data.error, "error");
-      }
+      await applySubscription(userId, days);
+      showToast("✅ Abonnement mis à jour avec succès !", "success");
+      fetchAdminData(); // Rafraîchir la liste
     } catch (err) {
-      showToast("❌ Erreur de connexion au serveur.", "error");
+      console.error(err);
+      showToast("❌ Erreur: " + err.message, "error");
     } finally {
       setProcessingUser(null);
     }
@@ -156,20 +165,11 @@ export default function AdminPage() {
       const requestRef = doc(db, 'payment_requests', requestId);
       await updateDoc(requestRef, { status: status });
 
-      // 2. Si approuvé, on active l'abonnement
+      // 2. Si approuvé, on active l'abonnement (écriture Firestore côté admin)
       if (status === 'approved') {
         const days = planId === 'starter' ? 7 : 30; // Starter = 7j, les autres = 30j
-        const res = await fetch('/api/admin/users', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, days })
-        });
-        const data = await res.json();
-        if (data.success) {
-          showToast("✅ Demande validée et abonnement activé !", "success");
-        } else {
-          showToast("❌ Erreur d'activation: " + data.error, "error");
-        }
+        await applySubscription(userId, days);
+        showToast("✅ Demande validée et abonnement activé !", "success");
       } else {
         showToast("🚫 Demande de reçu rejetée.", "info");
       }

@@ -632,7 +632,7 @@ function DetailsContent() {
                   className="btn btn-primary w-full text-center" 
                   style={{ opacity: agreedToTerms ? 1 : 0.5 }}
                 >
-                  📥 Télécharger le Brouillon (.TXT)
+                  📥 Télécharger le Brouillon (.DOCX)
                 </button>
                 <a href="https://wa.me/22600000000" target="_blank" rel="noopener noreferrer" className="btn btn-outline w-full text-center" style={{ borderColor: 'var(--gold)', color: 'var(--gold)' }}>
                   👨‍💼 Faire relire par un Expert

@@ -9,6 +9,12 @@ export async function GET(request) {
     return Response.json({ error: 'Non autorisé' }, { status: 401 });
   }
 
+  // ⚠️ NOTE SÉCURITÉ : cette route utilise le SDK client SANS authentification.
+  // Depuis le durcissement des règles Firestore, la lecture de `users` exige
+  // maintenant un contexte admin/propriétaire → cette route ne pourra plus lister
+  // les utilisateurs et renverra donc 0 alerte tant qu'elle n'est pas migrée vers
+  // le Firebase Admin SDK (compte de service). Fonctionnalité simulée pour l'instant.
+
   try {
     // 1. Récupérer tous les utilisateurs Premium
     const usersSnap = await getDocs(collection(db, 'users'));

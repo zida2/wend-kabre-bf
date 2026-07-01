@@ -64,10 +64,25 @@ function extractContact(text, link) {
 }
 
 export async function GET(request) {
-  // Vérification secrète : clé API requise pour protéger l'endpoint
+  // Autorisation. Trois voies acceptées :
+  //  1. Cron Vercel : en-tête `Authorization: Bearer <CRON_SECRET>` (envoyé
+  //     automatiquement par Vercel quand la variable CRON_SECRET est définie).
+  //  2. Appel serveur/curl du propriétaire : ?secret=<SCRAPER_SECRET>.
+  //  3. Déclencheur manuel depuis la console admin : ?secret=<NEXT_PUBLIC_SCRAPER_SECRET>
+  //     (jeton peu sensible : il ne fait que lancer un scrape de flux RSS publics).
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get('secret');
-  if (secret !== process.env.SCRAPER_SECRET && secret !== 'WEND_KABRE_2026') {
+  const authHeader = request.headers.get('authorization') || '';
+
+  const cronSecret = process.env.CRON_SECRET;
+  const scraperSecret = process.env.SCRAPER_SECRET;
+  const publicTrigger = process.env.NEXT_PUBLIC_SCRAPER_SECRET;
+
+  const isCron = !!cronSecret && authHeader === `Bearer ${cronSecret}`;
+  const isServerSecret = !!scraperSecret && secret === scraperSecret;
+  const isManualTrigger = !!publicTrigger && secret === publicTrigger;
+
+  if (!isCron && !isServerSecret && !isManualTrigger) {
     return Response.json({ error: 'Non autorisé' }, { status: 401 });
   }
 
