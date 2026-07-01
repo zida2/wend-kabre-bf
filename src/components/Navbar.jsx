@@ -71,14 +71,14 @@ export default function Navbar() {
                   window.location.href = '/';
                 }} 
                 className="btn btn-outline btn-sm"
-                style={{ background: 'none', border: '1px solid var(--color-border)', color: 'var(--text-secondary)' }}
+                style={{ background: 'none', border: '1px solid rgba(255,255,255,0.2)', color: '#E2E8F0' }}
               >
                 Déconnexion
               </button>
             </div>
           ) : (
             <>
-              <Link href="/connexion" className="btn btn-outline btn-sm">Connexion</Link>
+              <Link href="/connexion" className="btn btn-outline btn-sm" style={{ color: '#E2E8F0', borderColor: 'rgba(255,255,255,0.2)' }}>Connexion</Link>
               <Link href="/tarifs" className="btn btn-primary btn-sm" style={{ fontWeight: 700 }}>Premium 🔐</Link>
             </>
           )}
@@ -124,14 +124,14 @@ export default function Navbar() {
                     window.location.href = '/';
                   }} 
                   className="btn btn-outline btn-sm w-full"
-                  style={{ background: 'none', border: '1px solid var(--color-border)', color: 'var(--text-secondary)', justifyContent: 'center' }}
+                  style={{ background: 'none', border: '1px solid rgba(255,255,255,0.2)', color: '#E2E8F0', justifyContent: 'center' }}
                 >
                   Déconnexion
                 </button>
               </>
             ) : (
               <>
-                <Link href="/connexion" className="btn btn-outline btn-sm w-full" onClick={() => setMenuOpen(false)}>Connexion</Link>
+                <Link href="/connexion" className="btn btn-outline btn-sm w-full" onClick={() => setMenuOpen(false)} style={{ color: '#E2E8F0', borderColor: 'rgba(255,255,255,0.2)', justifyContent: 'center' }}>Connexion</Link>
                 <Link href="/tarifs" className="btn btn-primary btn-sm w-full" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center', fontWeight: 700 }}>Accès Premium 🔐</Link>
               </>
             )}
