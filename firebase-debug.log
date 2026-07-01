@@ -1,0 +1,79 @@
+[debug] [2026-06-30T15:47:07.488Z] ----------------------------------------------------------------------
+[debug] [2026-06-30T15:47:07.493Z] Command:       C:\nvm4w\nodejs\node.exe C:\Users\Dési InnovaTech\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only firestore:rules
+[debug] [2026-06-30T15:47:07.493Z] CLI Version:   15.1.0
+[debug] [2026-06-30T15:47:07.493Z] Platform:      win32
+[debug] [2026-06-30T15:47:07.494Z] Node Version:  v20.20.2
+[debug] [2026-06-30T15:47:07.494Z] Time:          Tue Jun 30 2026 15:47:07 GMT+0000 (heure moyenne de Greenwich)
+[debug] [2026-06-30T15:47:07.494Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-30T15:47:10.535Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-30T15:47:10.537Z] > authorizing via signed-in user (zidaassomption@gmail.com)
+[debug] [2026-06-30T15:47:10.538Z] [iam] checking project wend-kabre-bf-2026 for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]
+[debug] [2026-06-30T15:47:10.541Z] Checked if tokens are valid: false, expires at: 1782835293928
+[debug] [2026-06-30T15:47:10.542Z] Checked if tokens are valid: false, expires at: 1782835293928
+[debug] [2026-06-30T15:47:10.543Z] > refreshing access token with scopes: []
+[debug] [2026-06-30T15:47:10.550Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-30T15:47:10.550Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-30T15:47:11.461Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-06-30T15:47:11.462Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-30T15:47:11.512Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/wend-kabre-bf-2026:testIamPermissions [none]
+[debug] [2026-06-30T15:47:11.513Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/wend-kabre-bf-2026:testIamPermissions x-goog-quota-user=projects/wend-kabre-bf-2026
+[debug] [2026-06-30T15:47:11.513Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/wend-kabre-bf-2026:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[debug] [2026-06-30T15:47:14.151Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/wend-kabre-bf-2026:testIamPermissions 200
+[debug] [2026-06-30T15:47:14.151Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/wend-kabre-bf-2026:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[info] 
+[info] === Deploying to 'wend-kabre-bf-2026'...
+[info] 
+[info] i  deploying firestore 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2026-06-30T15:47:14.164Z] Checked if tokens are valid: true, expires at: 1782838030463
+[debug] [2026-06-30T15:47:14.164Z] Checked if tokens are valid: true, expires at: 1782838030463
+[debug] [2026-06-30T15:47:14.165Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/wend-kabre-bf-2026/databases/(default) [none]
+[debug] [2026-06-30T15:47:14.973Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/wend-kabre-bf-2026/databases/(default) 200
+[debug] [2026-06-30T15:47:14.974Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/wend-kabre-bf-2026/databases/(default) {"name":"projects/wend-kabre-bf-2026/databases/(default)","uid":"6c3bad35-496a-4af7-b9ce-1bc5d2b5aa67","createTime":"2026-06-29T18:35:35.252180Z","updateTime":"2026-06-29T18:35:35.252180Z","locationId":"europe-west3","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2026-06-30T14:47:15.311657Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"h","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"ILaK1+mnr5UDMNac/oWOrZUD"}
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2026-06-30T15:47:14.977Z] Checked if tokens are valid: true, expires at: 1782838030463
+[debug] [2026-06-30T15:47:14.977Z] Checked if tokens are valid: true, expires at: 1782838030463
+[debug] [2026-06-30T15:47:14.978Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026:test [none]
+[debug] [2026-06-30T15:47:14.978Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026:test [omitted]
+[debug] [2026-06-30T15:47:16.304Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026:test 200
+[debug] [2026-06-30T15:47:16.305Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026:test {}
+[info] +  cloud.firestore: rules file firestore.rules compiled successfully 
+[debug] [2026-06-30T15:47:16.309Z] Checked if tokens are valid: true, expires at: 1782838030463
+[debug] [2026-06-30T15:47:16.310Z] Checked if tokens are valid: true, expires at: 1782838030463
+[debug] [2026-06-30T15:47:16.313Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026/releases pageSize=10&pageToken=
+[debug] [2026-06-30T15:47:17.930Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026/releases 200
+[debug] [2026-06-30T15:47:17.931Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026/releases {"releases":[{"name":"projects/wend-kabre-bf-2026/releases/cloud.firestore","rulesetName":"projects/wend-kabre-bf-2026/rulesets/246d2b1e-7081-4158-9c04-d268785fa58a","createTime":"2026-06-29T18:35:39.628167Z","updateTime":"2026-06-30T15:01:42.281907Z"}]}
+[debug] [2026-06-30T15:47:17.932Z] Checked if tokens are valid: true, expires at: 1782838030463
+[debug] [2026-06-30T15:47:17.932Z] Checked if tokens are valid: true, expires at: 1782838030463
+[debug] [2026-06-30T15:47:17.932Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026/rulesets/246d2b1e-7081-4158-9c04-d268785fa58a [none]
+[debug] [2026-06-30T15:47:19.262Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026/rulesets/246d2b1e-7081-4158-9c04-d268785fa58a 200
+[debug] [2026-06-30T15:47:19.262Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026/rulesets/246d2b1e-7081-4158-9c04-d268785fa58a [omitted]
+[info] i  firestore: uploading rules firestore.rules... 
+[debug] [2026-06-30T15:47:19.266Z] Checked if tokens are valid: true, expires at: 1782838030463
+[debug] [2026-06-30T15:47:19.266Z] Checked if tokens are valid: true, expires at: 1782838030463
+[debug] [2026-06-30T15:47:19.267Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026/rulesets [none]
+[debug] [2026-06-30T15:47:19.267Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026/rulesets [omitted]
+[debug] [2026-06-30T15:47:19.827Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026/rulesets 200
+[debug] [2026-06-30T15:47:19.827Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026/rulesets {"name":"projects/wend-kabre-bf-2026/rulesets/0c5c565b-3f4c-433a-8ec5-f27f7f40c6c6","source":{"files":[{"content":"rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n\n    // ── Marchés publics : lecture libre, écriture par tous (scraper + admin)\n    match /marches/{marchId} {\n      allow read: if true;\n      allow write: if true;\n    }\n\n    // ── Profils utilisateurs : lecture libre, écriture libre (pour l'admin et les PME)\n    match /users/{userId} {\n      allow read, write: if true;\n    }\n\n    // ── Candidatures : accessibles uniquement par l'utilisateur propriétaire\n    match /candidatures/{candidatureId} {\n      allow read:   if request.auth != null && request.auth.uid == resource.data.userId;\n      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;\n      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;\n    }\n\n    // ── Propriétés (héritage ancien projet — conservé)\n    match /properties/{propertyId} {\n      allow read: if true;\n      allow create: if request.resource.data.title != null\n                    && request.resource.data.price != null\n                    && request.resource.data.ownerId != null;\n      allow update: if request.resource.data.ownerId == resource.data.ownerId;\n      allow delete: if true;\n    }\n    // ── Demandes de paiement : lecture et écriture libres pour la gestion\n    match /payment_requests/{requestId} {\n      allow read, write: if true;\n    }\n  }\n}\n","name":"firestore.rules"}]},"createTime":"2026-06-30T15:47:20.103567Z","metadata":{"services":["cloud.firestore"]}}
+[debug] [2026-06-30T15:47:19.827Z] [rules] created ruleset projects/wend-kabre-bf-2026/rulesets/0c5c565b-3f4c-433a-8ec5-f27f7f40c6c6
+[debug] [2026-06-30T15:47:19.828Z] [rules] releasing cloud.firestore/(default) with ruleset projects/wend-kabre-bf-2026/rulesets/0c5c565b-3f4c-433a-8ec5-f27f7f40c6c6
+[debug] [2026-06-30T15:47:19.828Z] Checked if tokens are valid: true, expires at: 1782838030463
+[debug] [2026-06-30T15:47:19.828Z] Checked if tokens are valid: true, expires at: 1782838030463
+[debug] [2026-06-30T15:47:19.828Z] >>> [apiv2][query] PATCH https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026/releases/cloud.firestore/(default) [none]
+[debug] [2026-06-30T15:47:19.828Z] >>> [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026/releases/cloud.firestore/(default) {"release":{"name":"projects/wend-kabre-bf-2026/releases/cloud.firestore/(default)","rulesetName":"projects/wend-kabre-bf-2026/rulesets/0c5c565b-3f4c-433a-8ec5-f27f7f40c6c6"}}
+[debug] [2026-06-30T15:47:20.490Z] <<< [apiv2][status] PATCH https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026/releases/cloud.firestore/(default) 200
+[debug] [2026-06-30T15:47:20.490Z] <<< [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/wend-kabre-bf-2026/releases/cloud.firestore/(default) {"name":"projects/wend-kabre-bf-2026/releases/cloud.firestore","rulesetName":"projects/wend-kabre-bf-2026/rulesets/0c5c565b-3f4c-433a-8ec5-f27f7f40c6c6","createTime":"2026-06-29T18:35:39.628167Z","updateTime":"2026-06-30T15:47:20.611787Z"}
+[debug] [2026-06-30T15:47:20.491Z] [rules] updated release projects/wend-kabre-bf-2026/releases/cloud.firestore
+[info] +  firestore: released rules firestore.rules to cloud.firestore 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/wend-kabre-bf-2026/overview
+[debug] [2026-06-30T15:47:26.733Z] Error: Timed out.
+    at Timeout.<anonymous> (C:\Users\Dési InnovaTech\AppData\Roaming\npm\node_modules\firebase-tools\lib\utils.js:275:49)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+[error] 
+[error] Error: An unexpected error has occurred.

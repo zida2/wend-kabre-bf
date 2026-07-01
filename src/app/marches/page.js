@@ -1,0 +1,397 @@
+'use client';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { db, auth } from '@/lib/firebase';
+import { collection, getDocs, orderBy, query, doc, getDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Composant Paywall : CTA Premium affiché sur les cartes verrouillées
+// ──────────────────────────────────────────────────────────────────────────────
+function PremiumLock({ label = "Débloquer" }) {
+  return (
+    <Link href="/tarifs" className="btn btn-sm" style={{
+      background: 'linear-gradient(135deg, #f5c842, #e8a800)',
+      color: '#000',
+      fontWeight: 700,
+      gap: '6px',
+      display: 'inline-flex',
+      alignItems: 'center',
+      borderRadius: '50px',
+      border: 'none',
+      boxShadow: '0 4px 15px rgba(245,200,66,0.35)',
+    }}>
+      🔐 {label}
+    </Link>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Offres d'exemple "Passé" pour les non-abonnés
+// ──────────────────────────────────────────────────────────────────────────────
+const DEMO_OFFERS = [
+  {
+    id: 'demo-1',
+    title: "Appel d'Offres pour l'acquisition de 500 kits solaires et matériels informatiques",
+    category: 'Informatique',
+    description: "Le Programme des Nations Unies pour le Développement (PNUD) lance un appel d'offres ouvert pour la fourniture et l'installation de matériels informatiques et de kits solaires au profit de 50 mairies rurales. Le DAO complet est retirable au bureau du PNUD à Ouagadougou. Date limite dépassée.",
+    source: 'PNUD Burkina Faso',
+    publishedAt: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString(),
+    isDemo: true
+  },
+  {
+    id: 'demo-2',
+    title: "Recrutement d'un cabinet pour l'évaluation finale du projet Eau et Assainissement",
+    category: 'Prestation',
+    description: "L'ONG WaterAid recherche un cabinet d'études pour réaliser l'évaluation finale de son programme triennal d'accès à l'eau potable dans le Nord. Les candidats doivent justifier d'au moins 5 ans d'expérience dans l'évaluation de projets WASH. Dépôt des offres techniques et financières sous plis fermés.",
+    source: 'WaterAid / ONG',
+    publishedAt: new Date(Date.now() - 55 * 24 * 60 * 60 * 1000).toISOString(),
+    isDemo: true
+  },
+  {
+    id: 'demo-3',
+    title: "Travaux de construction et d'aménagement de 3 Centres de Santé (CSPS)",
+    category: 'Construction',
+    description: "Le Ministère de la Santé lance un appel d'offres pour la construction de trois CSPS complets (dispensaire, maternité, logements, forages) dans la région de la Boucle du Mouhoun. Visite de site obligatoire. Caution de soumission de 2 millions FCFA exigée.",
+    source: 'Ministère de la Santé',
+    publishedAt: new Date(Date.now() - 65 * 24 * 60 * 60 * 1000).toISOString(),
+    isDemo: true
+  }
+];
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Composant texte flouté avec overlay premium
+// ──────────────────────────────────────────────────────────────────────────────
+function BlurredText({ text, lines = 2 }) {
+  const preview = text ? text.substring(0, 60) + '██████████ ████ ████████ ██ ████ █████████████.' : '██████ ████████████ ████ █████████ ███████████.';
+  return (
+    <div style={{ position: 'relative', marginBottom: '20px' }}>
+      <p className="text-secondary text-sm" style={{
+        filter: 'blur(4px)',
+        userSelect: 'none',
+        pointerEvents: 'none',
+        WebkitUserSelect: 'none',
+        lineHeight: 1.7,
+        opacity: 0.7,
+      }}>
+        {preview}
+      </p>
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Bannière d'accueil pour nouveaux visiteurs
+// ──────────────────────────────────────────────────────────────────────────────
+function WelcomeBanner({ marcheCount }) {
+  return (
+    <div style={{
+      background: 'linear-gradient(135deg, rgba(52,211,114,0.08) 0%, rgba(245,200,66,0.08) 100%)',
+      border: '1px solid rgba(52,211,114,0.2)',
+      borderRadius: 'var(--radius-lg)',
+      padding: '32px',
+      marginBottom: '40px',
+      textAlign: 'center',
+    }}>
+      <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>🎯</div>
+      <h2 className="heading-md" style={{ marginBottom: '12px', color: 'var(--text-primary)' }}>
+        {marcheCount > 0 ? `${marcheCount} marchés publics disponibles aujourd'hui` : 'Marchés publics en temps réel'}
+      </h2>
+      <p className="text-secondary text-sm" style={{ maxWidth: '520px', margin: '0 auto 24px' }}>
+        Vous voyez les <strong style={{ color: 'var(--green-primary)' }}>titres & catégories</strong> gratuitement.
+        Pour accéder aux détails complets, à la source officielle et au lien de dépôt — 
+        <strong style={{ color: 'var(--gold)' }}> passez Premium.</strong>
+      </p>
+      <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <Link href="/tarifs" className="btn btn-gold btn-sm">
+          Voir les offres Premium 🚀
+        </Link>
+        <Link href="/inscription" className="btn btn-outline btn-sm">
+          Créer un compte
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Page principale
+// ──────────────────────────────────────────────────────────────────────────────
+export default function MarchesPage() {
+  const [marches, setMarches] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [activeCategory, setActiveCategory] = useState('All');
+
+  const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  // Auth
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        try {
+          const snap = await getDoc(doc(db, 'users', currentUser.uid));
+          if (snap.exists()) setUserData(snap.data());
+        } catch (e) { console.error(e); }
+      } else {
+        setUserData(null);
+      }
+      setAuthLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Chargement des marchés
+  useEffect(() => {
+    const fetchMarches = async () => {
+      setLoading(true);
+      try {
+        const q = query(collection(db, 'marches'), orderBy('publishedAt', 'desc'));
+        const snap = await getDocs(q);
+        setMarches(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      } catch (e) {
+        console.error("Erreur chargement:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMarches();
+  }, []);
+
+  const isSubscribed = userData?.isSubscribed === true;
+
+  const categoriesList = [
+    { id: 'All', label: 'Toutes les offres', icon: '📋' },
+    { id: 'Informatique', label: 'Informatique & Telecom', icon: '💻' },
+    { id: 'Construction', label: 'BTP & Construction', icon: '🏗️' },
+    { id: 'Fourniture', label: 'Fournitures & Équipements', icon: '📦' },
+    { id: 'Prestation', label: 'Prestations de Services', icon: '⚙️' },
+  ];
+
+  const filteredMarches = marches.filter(m => {
+    if (m.category === 'Recrutement') return false; // Ne jamais afficher les recrutements ici
+    const matchSearch = (m.title || '').toLowerCase().includes(search.toLowerCase()) ||
+                        (m.category || '').toLowerCase().includes(search.toLowerCase());
+    const matchCat = activeCategory === 'All' || m.category === activeCategory;
+    return matchSearch && matchCat;
+  });
+
+  const getCategoryCount = (cat) =>
+    cat === 'All' 
+      ? marches.filter(m => m.category !== 'Recrutement').length 
+      : marches.filter(m => m.category === cat).length;
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Rendu
+  // ──────────────────────────────────────────────────────────────────────────
+  return (
+    <main className="container section animate-fadeIn">
+      {/* En-tête */}
+      <div style={{ marginBottom: '40px' }}>
+        <span className="badge badge-green" style={{ marginBottom: '10px' }}>Plateforme Souveraine 🇧🇫</span>
+        <h1 className="heading-lg">Burkina Faso — Marchés Publics</h1>
+        <p className="text-secondary text-sm">
+          Appels d'offres de l'administration burkinabè, mis à jour automatiquement.
+        </p>
+      </div>
+
+      {/* Bannière de bienvenue (visible pour les non-abonnés) */}
+      {!authLoading && !isSubscribed && (
+        <WelcomeBanner marcheCount={marches.filter(m => m.category !== 'Recrutement').length} />
+      )}
+
+      {/* Barre de recherche */}
+      <div className="card" style={{ marginBottom: '30px', background: 'var(--color-bg-2)', padding: '20px' }}>
+        <div className="form-group" style={{ margin: 0 }}>
+          <label className="form-label">🔍 Filtrer par mot-clé ou secteur</label>
+          <input
+            type="text"
+            placeholder="Ex: audit, matériel informatique, forage, construction..."
+            className="form-input"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {/* Onglets catégories */}
+      <div style={{
+        display: 'flex', gap: '10px', overflowX: 'auto',
+        paddingBottom: '16px', marginBottom: '40px',
+        borderBottom: '1px solid var(--color-border)',
+      }}>
+        {categoriesList.map(cat => (
+          <button
+            key={cat.id}
+            onClick={() => setActiveCategory(cat.id)}
+            className="btn btn-sm"
+            style={{
+              background: activeCategory === cat.id ? 'var(--grad-green)' : 'rgba(52,211,114,0.05)',
+              color: activeCategory === cat.id ? '#000' : 'var(--text-secondary)',
+              border: activeCategory === cat.id ? 'none' : '1px solid var(--color-border)',
+              display: 'flex', alignItems: 'center', gap: '6px',
+              borderRadius: '50px', whiteSpace: 'nowrap',
+            }}
+          >
+            <span>{cat.icon}</span>
+            <span>{cat.label}</span>
+            <span style={{
+              background: activeCategory === cat.id ? 'rgba(0,0,0,0.15)' : 'rgba(52,211,114,0.15)',
+              color: activeCategory === cat.id ? '#000' : 'var(--green-primary)',
+              padding: '2px 8px', borderRadius: '50px',
+              fontSize: '0.75rem', fontWeight: '700',
+            }}>
+              {getCategoryCount(cat.id)}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Grille des marchés */}
+      {loading || authLoading ? (
+        <div className="text-center" style={{ padding: '80px 0' }}>
+          <span className="loader" style={{ width: '40px', height: '40px' }}></span>
+          <p className="text-secondary" style={{ marginTop: '16px' }}>Chargement des opportunités...</p>
+        </div>
+      ) : filteredMarches.length === 0 ? (
+        <div className="card text-center" style={{ padding: '80px 40px' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>📭</div>
+          <h3 className="heading-md">Aucun marché trouvé</h3>
+          <p className="text-secondary text-sm" style={{ marginTop: '12px' }}>
+            Modifiez vos filtres ou revenez plus tard pour de nouvelles opportunités.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-2 gap-6">
+          {(isSubscribed ? filteredMarches : [...DEMO_OFFERS, ...filteredMarches]).map((m, index) => {
+            const isDemo = m.isDemo === true;
+            const isLocked = !isSubscribed && !isDemo;
+
+            return (
+              <div
+                key={m.id}
+                className="card flex flex-col justify-between"
+                style={{
+                  height: '100%',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  border: isLocked
+                    ? '1px solid rgba(245,200,66,0.2)'
+                    : '1px solid var(--color-border)',
+                }}
+              >
+                {/* Badge "PREMIUM" ou "PASSÉ" */}
+                {isLocked && (
+                  <div style={{
+                    position: 'absolute', top: '12px', right: '12px',
+                    background: 'linear-gradient(135deg, #f5c842, #e8a800)',
+                    color: '#000', fontSize: '0.65rem', fontWeight: 800,
+                    padding: '3px 10px', borderRadius: '50px', letterSpacing: '0.05em',
+                    zIndex: 2,
+                  }}>
+                    PREMIUM
+                  </div>
+                )}
+                {isDemo && (
+                  <div style={{
+                    position: 'absolute', top: '12px', right: '12px',
+                    background: 'rgba(248,113,113,0.12)',
+                    color: '#FCA5A5', border: '1px solid rgba(248,113,113,0.26)',
+                    fontSize: '0.65rem', fontWeight: 800,
+                    padding: '3px 10px', borderRadius: '50px', letterSpacing: '0.05em',
+                    zIndex: 2,
+                  }}>
+                    PASSÉ (Exemple)
+                  </div>
+                )}
+
+                <div>
+                  {/* Catégorie + Date */}
+                  <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
+                    <span className="badge badge-green">{m.category || 'Général'}</span>
+                    <span className="text-muted text-xs">
+                      {m.publishedAt ? new Date(m.publishedAt).toLocaleDateString('fr-FR') : 'Récent'}
+                    </span>
+                  </div>
+
+                  {/* Titre — flouté si verrouillé */}
+                  {!isLocked ? (
+                    <h3 className="heading-md text-primary" style={{ marginBottom: '12px', fontSize: '1.1rem', lineHeight: 1.5 }}>
+                      {m.title}
+                    </h3>
+                  ) : (
+                    <h3 className="heading-md text-primary" style={{ marginBottom: '12px', fontSize: '1.1rem', lineHeight: 1.5, filter: 'blur(4.5px)', userSelect: 'none', opacity: 0.75 }}>
+                      ██████████████ ██████ ███████████ ██████████
+                    </h3>
+                  )}
+
+                  {/* Description — floutée si verrouillé */}
+                  {!isLocked ? (
+                    <p className="text-secondary text-sm" style={{ marginBottom: '20px', lineHeight: 1.7 }}>
+                      {(m.description || '').substring(0, 160)}
+                      {(m.description || '').length > 160 ? '...' : ''}
+                    </p>
+                  ) : (
+                    <BlurredText text={m.description} />
+                  )}
+                </div>
+
+                <div className="divider" style={{ margin: '16px 0' }}></div>
+
+                {/* Bas de carte */}
+                <div className="flex justify-between items-center" style={{ gap: '12px' }}>
+                  <div>
+                    <p className="text-xs text-muted">ÉMETTEUR</p>
+                    <p className="text-xs text-secondary" style={{ fontWeight: 600 }}>
+                      {!isLocked ? (m.source || 'Source officielle') : '🔒 Visible avec Premium'}
+                    </p>
+                  </div>
+
+                  {isSubscribed ? (
+                    <Link href={`/marches/details?id=${m.id}`} className="btn btn-outline btn-sm">
+                      Voir les Détails 📄
+                    </Link>
+                  ) : isDemo ? (
+                    <div className="btn btn-outline btn-sm" style={{ opacity: 0.6, cursor: 'not-allowed', borderColor: 'var(--color-border)', color: 'var(--text-muted)' }}>
+                      Clôturé ❌
+                    </div>
+                  ) : (
+                    <PremiumLock label="Débloquer l'offre" />
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Bannière de conversion en bas de page pour les non-abonnés */}
+      {!authLoading && !isSubscribed && filteredMarches.length > 0 && (
+        <div style={{
+          marginTop: '60px',
+          background: 'linear-gradient(135deg, rgba(245,200,66,0.1) 0%, rgba(245,200,66,0.03) 100%)',
+          border: '1px solid rgba(245,200,66,0.3)',
+          borderRadius: 'var(--radius-lg)',
+          padding: '40px',
+          textAlign: 'center',
+        }}>
+          <div style={{ fontSize: '2rem', marginBottom: '12px' }}>🚀</div>
+          <h3 className="heading-md" style={{ marginBottom: '12px' }}>
+            Ne manquez plus aucune opportunité
+          </h3>
+          <p className="text-secondary text-sm" style={{ maxWidth: '480px', margin: '0 auto 24px' }}>
+            {filteredMarches.length - 3 > 0
+              ? `${filteredMarches.length - 3} offres supplémentaires sont disponibles en Premium. Accédez aux détails, à la source et au lien de dépôt instantanément.`
+              : 'Accédez aux détails complets, sources officielles et liens de dépôt de toutes les offres.'}
+          </p>
+          <Link href="/tarifs" className="btn btn-gold">
+            Découvrir les offres Premium →
+          </Link>
+        </div>
+      )}
+    </main>
+  );
+}

@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Marchés publics : lecture libre, écriture par tous (scraper + admin)
+    match /marches/{marchId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // ── Profils utilisateurs : lecture libre, écriture libre (pour l'admin et les PME)
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+
+    // ── Candidatures : accessibles uniquement par l'utilisateur propriétaire
+    match /candidatures/{candidatureId} {
+      allow read:   if request.auth != null && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+
+    // ── Propriétés (héritage ancien projet — conservé)
+    match /properties/{propertyId} {
+      allow read: if true;
+      allow create: if request.resource.data.title != null
+                    && request.resource.data.price != null
+                    && request.resource.data.ownerId != null;
+      allow update: if request.resource.data.ownerId == resource.data.ownerId;
+      allow delete: if true;
+    }
+    // ── Demandes de paiement : lecture et écriture libres pour la gestion
+    match /payment_requests/{requestId} {
+      allow read, write: if true;
+    }
+  }
+}

@@ -1,0 +1,151 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(13, 17, 23, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 1px 0 rgba(232, 184, 75, 0.06);
+}
+
+.inner {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Sora', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.logoIcon {
+  font-size: 1.5rem;
+}
+
+.logoAccent {
+  color: var(--gold);
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.navLink {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+.navLink:hover {
+  color: var(--text-primary);
+}
+
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: width 0.25s ease;
+}
+
+.navLink:hover::after {
+  width: 100%;
+}
+
+.navCta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.burger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.burgerLine {
+  width: 100%;
+  height: 2px;
+  background: var(--text-secondary);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.open:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+  background: var(--gold);
+}
+
+.open:nth-child(2) {
+  opacity: 0;
+}
+
+.open:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+  background: var(--gold);
+}
+
+.mobileMenu {
+  position: fixed;
+  top: 72px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 72px);
+  background: #0d1117; /* Fond opaque complet pour bloquer le texte arrière */
+  border-bottom: 1px solid var(--color-border);
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  overflow-y: auto;
+}
+
+.mobileLink {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+  transition: color 0.2s;
+}
+
+.mobileLink:hover {
+  color: var(--gold);
+}
+
+.mobileCta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .burger {
+    display: flex;
+  }
+}
