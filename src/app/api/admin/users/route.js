@@ -54,15 +54,15 @@ export async function POST(request) {
       
       const htmlBody = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-          <h2 style="color: #d4af37;">Bienvenue sur Wend-Kabré, ${userData.name || ''} !</h2>
+          <h2 style="color: #064E3B;">Bienvenue sur Wend-Kabré, ${userData.name || ''} !</h2>
           <p>Nous avons le plaisir de vous informer que votre accès Premium a été activé avec succès.</p>
           ${isTrial 
             ? `<p><strong>Vous bénéficiez d'un essai gratuit de ${days} jours</strong> pour découvrir notre plateforme et recevoir vos premières alertes d'appels d'offres.</p>` 
             : `<p>Votre abonnement a été prolongé de ${days} jours.</p>`
           }
           <p><strong>Expiration prévue le :</strong> ${expirationDate.toLocaleDateString('fr-FR')}</p>
-          <div style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #d4af37; margin: 20px 0;">
-            <h3 style="margin-top: 0;">Vos prochaines étapes :</h3>
+          <div style="background-color: #F0FDF4; padding: 15px; border-left: 4px solid #10B981; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #064E3B;">Vos prochaines étapes :</h3>
             <ol style="margin-bottom: 0;">
               <li>Connectez-vous à votre tableau de bord.</li>
               <li>Configurez vos <strong>mots-clés</strong> (ex: Informatique, Bâtiment).</li>
@@ -70,7 +70,7 @@ export async function POST(request) {
             </ol>
           </div>
           <p>
-            <a href="https://wend-kabre-bf.vercel.app/dashboard" style="background-color: #d4af37; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Accéder à mon Espace PME</a>
+            <a href="https://wend-kabre-bf.vercel.app/dashboard" style="background-color: #10B981; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Accéder à mon Espace PME</a>
           </p>
           <p style="font-size: 0.9em; color: #666; margin-top: 30px;">Si vous avez des questions, répondez simplement à cet email.</p>
         </div>
