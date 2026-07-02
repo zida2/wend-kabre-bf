@@ -5,11 +5,13 @@ import { useEffect, useRef, useState } from 'react';
 import styles from './assistant.module.css';
 
 export default function AssistantPage() {
-  const { messages, sendMessage, status, stop } = useChat();
+  const chat = useChat();
+  const messages = chat.messages || [];
+  const status = chat.status || (chat.isLoading ? 'streaming' : 'ready');
+  const isLoading = status === 'submitted' || status === 'streaming';
+  
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
-
-  const isLoading = status === 'submitted' || status === 'streaming';
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
@@ -18,7 +20,13 @@ export default function AssistantPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
-    sendMessage({ role: 'user', content: input });
+    
+    const sendFn = chat.sendMessage || chat.append;
+    if (sendFn) {
+      sendFn({ role: 'user', content: input });
+    } else {
+      console.error("No sendMessage or append function found in useChat", chat);
+    }
     setInput('');
   };
 
