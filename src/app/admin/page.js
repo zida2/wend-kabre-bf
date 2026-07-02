@@ -67,7 +67,7 @@ export default function AdminPage() {
       
       usersSnap.forEach(doc => {
         const data = doc.data();
-        if (data.isSubscribed) premiumCount++;
+        if (data.isSubscribed && !data.isTrial) premiumCount++;
         usersArray.push({ id: doc.id, ...data });
       });
 

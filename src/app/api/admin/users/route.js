@@ -42,7 +42,8 @@ export async function POST(request) {
 
     await updateDoc(userRef, {
       isSubscribed: true,
-      subscriptionExpiresAt: expirationDate.toISOString()
+      subscriptionExpiresAt: expirationDate.toISOString(),
+      isTrial: days <= 7
     });
 
     // Envoi de l'email automatique si on active un abonnement (notamment les 2 jours d'essai)
