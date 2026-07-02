@@ -1,5 +1,5 @@
 import { db } from '@/lib/firebase';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, where, updateDoc } from 'firebase/firestore';
 
 // Sources RSS burkinabè et internationales — complètement masquées côté serveur
 const SOURCES = [
@@ -129,6 +129,12 @@ export async function GET(request) {
       if (snap.empty) {
         await addDoc(tendersRef, tender);
         addedCount++;
+      } else {
+        const existingDoc = snap.docs[0];
+        const existingData = existingDoc.data();
+        if (tender.description && tender.description.length > (existingData.description || '').length) {
+          await updateDoc(existingDoc.ref, { description: tender.description });
+        }
       }
     } catch (e) {
       console.error('[Scrape] Firestore error:', e.message);

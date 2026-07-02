@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, where, updateDoc } from 'firebase/firestore';
 
 export async function runClientScrape() {
   const listTenders = [];
@@ -125,6 +125,12 @@ export async function runClientScrape() {
     if (querySnapshot.empty) {
       await addDoc(tendersRef, tender);
       addedCount++;
+    } else {
+      const existingDoc = querySnapshot.docs[0];
+      const existingData = existingDoc.data();
+      if (tender.description && tender.description.length > (existingData.description || '').length) {
+        await updateDoc(existingDoc.ref, { description: tender.description });
+      }
     }
   }
 
