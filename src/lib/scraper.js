@@ -98,7 +98,7 @@ export async function runClientScrape() {
 
             listTenders.push({
               title,
-              description: description.substring(0, 400) + (description.length > 400 ? '...' : ''),
+              description: description,
               source: source.name,
               link: link,
               publishedAt: item.pubDate || new Date().toISOString(),
