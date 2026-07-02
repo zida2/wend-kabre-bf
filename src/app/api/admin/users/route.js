@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { sendEmail } from '@/lib/mail';
 
 export async function POST(request) {
   try {
