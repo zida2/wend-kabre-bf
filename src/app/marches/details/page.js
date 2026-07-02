@@ -16,6 +16,41 @@ function DetailsContent() {
   const [marche, setMarche] = useState(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [step3Status, setStep3Status] = useState('idle'); // idle, checking, ok, warning
+  
+  // Fonction pour extraire intelligemment les documents requis selon la description
+  const extractSpecificDocuments = (m) => {
+    if (!m) return [];
+    
+    // Si la catégorie est recrutement et que le scraper a déjà mis des trucs pertinents
+    if (m.category === 'Recrutement' && m.requirements && m.requirements.length > 0 && m.requirements[0] !== "Voir les documents requis dans l'avis officiel") {
+       return m.requirements; 
+    }
+    
+    const text = (m.description || "").toLowerCase() + " " + (m.title || "").toLowerCase();
+    const reqs = [];
+    
+    if (m.category === 'Recrutement') {
+      if (text.includes('cv') || text.includes('curriculum vitae')) reqs.push('CV à jour');
+      if (text.includes('lettre de motivation')) reqs.push('Lettre de motivation');
+      if (text.includes('diplôme') || text.includes('diplome')) reqs.push('Copie des diplômes');
+      if (text.includes('certificat') || text.includes('attestation')) reqs.push('Certificats de travail / Attestations');
+      if (text.includes('cni') || text.includes("carte d'identité") || text.includes('passeport')) reqs.push("Pièce d'identité (CNI/Passeport)");
+    } else {
+      if (text.includes('agrément') || text.includes('agrement technique') || text.includes('certificat de qualification')) reqs.push('Agrément technique / Certificat de qualification');
+      if (text.includes('caution') || text.includes('garantie de soumission')) reqs.push('Caution de soumission / Garantie bancaire');
+      if (text.includes("chiffre d'affaire") || text.includes('chiffre d’affaire') || text.includes('bilan') || text.includes('états financiers')) reqs.push('États financiers / Preuve de chiffre d\'affaires');
+      if (text.includes('bonne fin') || text.includes('bonne exécution') || text.includes('marché similaire') || text.includes('expérience')) reqs.push('Attestations de bonne exécution (marchés similaires)');
+      if (text.includes('ligne de crédit') || text.includes('ligne de credit') || text.includes('capacité financière')) reqs.push('Attestation de ligne de crédit bancaire');
+      if (text.includes('cv') || text.includes('diplôme') || text.includes('personnel')) reqs.push('CV et diplômes du personnel clé (si requis)');
+      if (text.includes('matériel') || text.includes('logistique') || text.includes('équipement')) reqs.push('Preuves de disposition du matériel essentiel');
+      if (text.includes('méthodologie') || text.includes('planning') || text.includes('calendrier')) reqs.push('Note méthodologique et planning d\'exécution');
+    }
+    
+    return reqs;
+  };
+
+  const specificDocs = extractSpecificDocuments(marche);
   const [userData, setUserData] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
@@ -498,12 +533,12 @@ function DetailsContent() {
 
                 <p className="text-xs text-muted" style={{ marginBottom: '8px' }}>Documents spécifiques à cet avis :</p>
                 <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: 0 }} className="text-sm text-secondary">
-                  {marche.requirements ? (
-                    marche.requirements.map((req, i) => (
+                  {specificDocs.length > 0 ? (
+                    specificDocs.map((req, i) => (
                       <li key={i}>{req}</li>
                     ))
                   ) : (
-                    <li>Consultez la description de l'avis pour les exigences spécifiques (ex: CV, attestations de bonne fin, agréments).</li>
+                    <li>Veuillez lire attentivement la description de l'avis pour d'éventuelles exigences particulières.</li>
                   )}
                 </ul>
               </div>
