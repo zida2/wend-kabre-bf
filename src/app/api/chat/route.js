@@ -48,7 +48,7 @@ Conseils à donner systématiquement aux entreprises :
 Ton ton doit être expert, pédagogue, poli et orienté résultat. Réponds toujours en français.`;
 
     const result = await streamText({
-      model: google('gemini-1.5-flash'),
+      model: google('gemini-2.5-flash'),
       system: systemPrompt,
       messages,
     });
