@@ -41,6 +41,10 @@ const SOURCES = [
   { name: 'L\'Economiste du Faso', url: 'https://www.leconomistedufaso.bf/feed/' },
   { name: 'MinaJobs BF', url: 'https://minajobs.net/feed/' },
   { name: 'ReliefWeb (ONG/UN)', url: 'https://reliefweb.int/jobs/rss.xml?country=47' },
+  { name: 'L\'Express du Faso', url: 'https://lexpressdufaso-bf.com/feed' },
+  { name: 'Les Affaires BF', url: 'https://lesaffairesbf.com/feed/' },
+  { name: 'Oméga Médias', url: 'https://omegamedias.info/feed/' },
+  { name: 'FasoZine', url: 'https://fasozine.com/feed/' }
 ];
 
 const TENDER_KEYWORDS = [

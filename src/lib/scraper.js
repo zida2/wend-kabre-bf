@@ -36,11 +36,18 @@ export async function runClientScrape() {
   
   // Élargissement à l'ensemble des grands portails d'actualités et d'annonces légales du Burkina Faso
   const sources = [
-    { name: 'Lefaso.net (Annonces Officielles & Appels d\'offres)', url: 'https://lefaso.net/spip.php?page=backend' },
-    { name: 'AIB.media (Agence d\'Information du Burkina)', url: 'https://www.aib.media/feed/' },
-    { name: 'Burkina24 (Opportunités & Économie)', url: 'https://burkina24.com/feed/' },
-    { name: 'Sidwaya (Journal Officiel / Annonces)', url: 'https://www.sidwaya.info/feed/' },
-    { name: 'Wakat Séra (Annonces & Emplois)', url: 'https://www.wakatsera.com/feed/' }
+    { name: 'Lefaso.net', url: 'https://lefaso.net/spip.php?page=backend' },
+    { name: 'AIB.media', url: 'https://www.aib.media/feed/' },
+    { name: 'Burkina24', url: 'https://burkina24.com/feed/' },
+    { name: 'Sidwaya', url: 'https://www.sidwaya.info/feed/' },
+    { name: 'Wakat Séra', url: 'https://www.wakatsera.com/feed/' },
+    { name: 'L\'Economiste du Faso', url: 'https://www.leconomistedufaso.bf/feed/' },
+    { name: 'MinaJobs BF', url: 'https://minajobs.net/feed/' },
+    { name: 'ReliefWeb (ONG/UN)', url: 'https://reliefweb.int/jobs/rss.xml?country=47' },
+    { name: 'L\'Express du Faso', url: 'https://lexpressdufaso-bf.com/feed' },
+    { name: 'Les Affaires BF', url: 'https://lesaffairesbf.com/feed/' },
+    { name: 'Oméga Médias', url: 'https://omegamedias.info/feed/' },
+    { name: 'FasoZine', url: 'https://fasozine.com/feed/' }
   ];
 
   for (const source of sources) {
