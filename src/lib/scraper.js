@@ -1,5 +1,35 @@
 import { db } from './firebase';
 import { collection, addDoc, getDocs, query, where, updateDoc } from 'firebase/firestore';
+import * as cheerio from 'cheerio';
+
+async function fetchFullText(url, fallbackDesc) {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 4000);
+    const res = await fetch(url, { signal: controller.signal, headers: { 'User-Agent': 'Mozilla/5.0' } });
+    clearTimeout(timeout);
+    
+    if (!res.ok) return fallbackDesc;
+    
+    const html = await res.text();
+    const $ = cheerio.load(html);
+    
+    $('script, style, nav, header, footer, aside, .sidebar, .widget, .comments').remove();
+    let mainContent = $('article').text() || $('.entry-content').text() || $('.post-content').text() || $('.content').text();
+    
+    if (!mainContent || mainContent.trim().length < 50) {
+      mainContent = $('body').text();
+    }
+    
+    const cleanText = mainContent.replace(/\s+/g, ' ').trim();
+    if (cleanText.length > fallbackDesc.length) {
+      return cleanText.substring(0, 10000); // 10k chars max
+    }
+  } catch (e) {
+    console.error("Scraping approfondi échoué pour", url);
+  }
+  return fallbackDesc;
+}
 
 export async function runClientScrape() {
   const listTenders = [];
@@ -94,6 +124,10 @@ export async function runClientScrape() {
               lowerDesc.includes('fourniture de')
             ) {
               category = 'Fourniture';
+            }
+
+            if (link) {
+              description = await fetchFullText(link, description);
             }
 
             listTenders.push({
