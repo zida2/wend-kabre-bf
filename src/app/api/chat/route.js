@@ -53,7 +53,7 @@ Ton ton doit être expert, pédagogue, poli et orienté résultat. Réponds touj
       messages,
     });
 
-    return result.toTextStreamResponse();
+    return result.toDataStreamResponse();
   } catch (error) {
     console.error('Erreur API Chat:', error);
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
