@@ -14,12 +14,12 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 async function clearDB() {
-  const marchesSnap = await getDocs(collection(db, 'marches'));
+  const reqsSnap = await getDocs(collection(db, 'payment_requests'));
   const batch = [];
-  marchesSnap.forEach(d => {
-    batch.push(deleteDoc(doc(db, 'marches', d.id)));
+  reqsSnap.forEach(d => {
+    batch.push(deleteDoc(doc(db, 'payment_requests', d.id)));
   });
   await Promise.all(batch);
-  console.log('Cleared ' + batch.length + ' marches.');
+  console.log('Cleared ' + batch.length + ' payment_requests.');
 }
 clearDB();

@@ -50,7 +50,7 @@ export async function runClientScrape() {
     { name: 'Wakat Séra', url: 'https://www.wakatsera.com/feed/' },
     { name: 'L\'Economiste du Faso', url: 'https://www.leconomistedufaso.bf/feed/' },
     { name: 'MinaJobs BF', url: 'https://minajobs.net/feed/' },
-    { name: 'ReliefWeb (ONG/UN)', url: 'https://reliefweb.int/jobs/rss.xml?country=47' }
+    { name: 'ReliefWeb (ONG/UN)', url: 'https://reliefweb.int/jobs/rss.xml?country=46' }
   ];
 
   for (const source of sources) {
