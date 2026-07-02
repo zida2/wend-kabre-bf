@@ -132,7 +132,11 @@ function DetailsContent() {
     const companyInfo = extractedData.extractedCompanyInfo || {};
     const offer = extractedData.generatedOffer || {};
 
-    const createText = (text) => new Paragraph({ children: [new TextRun({ text })], spacing: { after: 200 } });
+    const createText = (text) => {
+      if (!text) return [new Paragraph({ children: [new TextRun({ text: "Non renseigné" })], spacing: { after: 200 } })];
+      const lines = text.split('\n').filter(l => l.trim() !== '');
+      return lines.map(line => new Paragraph({ children: [new TextRun({ text: line })], spacing: { after: 120 } }));
+    };
 
     const docFile = new Document({
       sections: [
@@ -158,37 +162,37 @@ function DetailsContent() {
 
             // SECTION 1: PRÉSENTATION
             new Paragraph({ children: [new TextRun({ text: "1. PRÉSENTATION DE L'ENTREPRISE", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
-            createText(offer.presentation || "Non renseigné"),
+            ...createText(offer.presentation || "Non renseigné"),
             new Paragraph({ children: [new PageBreak()] }),
 
             // SECTION 2: COMPRÉHENSION
             new Paragraph({ children: [new TextRun({ text: "2. COMPRÉHENSION DU BESOIN ET ENJEUX", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
-            createText(offer.comprehension || "Non renseigné"),
+            ...createText(offer.comprehension || "Non renseigné"),
             new Paragraph({ children: [new PageBreak()] }),
 
             // SECTION 3: MÉTHODOLOGIE
             new Paragraph({ children: [new TextRun({ text: "3. MÉTHODOLOGIE D'EXÉCUTION", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
-            createText(offer.methodology || "Non renseigné"),
+            ...createText(offer.methodology || "Non renseigné"),
             new Paragraph({ children: [new PageBreak()] }),
 
             // SECTION 4: MOYENS HUMAINS
             new Paragraph({ children: [new TextRun({ text: "4. MOYENS HUMAINS ET ORGANISATION", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
-            createText(offer.humanResources || "Non renseigné"),
+            ...createText(offer.humanResources || "Non renseigné"),
             new Paragraph({ children: [new PageBreak()] }),
 
             // SECTION 5: MOYENS MATÉRIELS
             new Paragraph({ children: [new TextRun({ text: "5. MOYENS MATÉRIELS ET LOGISTIQUES", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
-            createText(offer.materials || "Non renseigné"),
+            ...createText(offer.materials || "Non renseigné"),
             new Paragraph({ children: [new PageBreak()] }),
 
             // SECTION 6: QUALITÉ & RISQUES
             new Paragraph({ children: [new TextRun({ text: "6. APPROCHE QUALITÉ ET GESTION DES RISQUES", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
-            createText(offer.qualityAndRisks || "Non renseigné"),
+            ...createText(offer.qualityAndRisks || "Non renseigné"),
             new Paragraph({ children: [new PageBreak()] }),
 
             // SECTION 7: PLANNING
             new Paragraph({ children: [new TextRun({ text: "7. PLANNING D'EXÉCUTION", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
-            createText(offer.planning || "Non renseigné"),
+            ...createText(offer.planning || "Non renseigné"),
           ],
         },
       ],
