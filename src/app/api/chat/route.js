@@ -47,13 +47,13 @@ Conseils à donner systématiquement aux entreprises :
 
 Ton ton doit être expert, pédagogue, poli et orienté résultat. Réponds toujours en français.`;
 
-    const result = streamText({
+    const result = await streamText({
       model: google('gemini-1.5-flash'),
       system: systemPrompt,
       messages,
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error('Erreur API Chat:', error);
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
