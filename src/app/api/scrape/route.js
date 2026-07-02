@@ -27,7 +27,6 @@ async function fetchFullText(url, fallbackDesc) {
     });
     
     let mainContent = paragraphs.join('\n\n');
-    
     const cleanText = mainContent.replace(/\s+/g, ' ').trim();
     if (cleanText.length > fallbackDesc.length) {
       return cleanText.substring(0, 10000); // 10k chars max
@@ -38,29 +37,10 @@ async function fetchFullText(url, fallbackDesc) {
   return fallbackDesc;
 }
 
-// Sources RSS burkinabè et internationales — complètement masquées côté serveur
-const SOURCES = [
-  { name: 'Lefaso.net', url: 'https://lefaso.net/spip.php?page=backend' },
-  { name: 'AIB.media', url: 'https://www.aib.media/feed/' },
-  { name: 'Burkina24', url: 'https://burkina24.com/feed/' },
-  { name: 'Sidwaya', url: 'https://www.sidwaya.info/feed/' },
-  { name: 'Wakat Séra', url: 'https://www.wakatsera.com/feed/' },
-  { name: 'L\'Economiste du Faso', url: 'https://www.leconomistedufaso.bf/feed/' },
-  { name: 'MinaJobs BF', url: 'https://minajobs.net/feed/' },
-  { name: 'ReliefWeb (ONG/UN)', url: 'https://reliefweb.int/jobs/rss.xml?country=46' }
-];
-
-const TENDER_KEYWORDS = [
-  "appel d'offres", "appel a candidature", "appel à candidature",
-  "marché public", "marchés publics", "avis de recrutement",
-  "manifestation d'intérêt", "consultation restreinte", "prestataire",
-  "prestation de service", "fourniture de", "acquisition de", "recrute un"
-];
-
 function detectCategory(title, desc) {
   const t = title.toLowerCase();
   const d = desc.toLowerCase();
-  if (t.includes('informatique') || t.includes('numérique') || t.includes('logiciel') || t.includes('serveur') || t.includes('fibre') || d.includes('logiciel')) return 'Informatique';
+  if (t.includes('informatique') || t.includes('numérique') || t.includes('logiciel') || t.includes('serveur') || t.includes('fibre') || d.includes('logiciel') || t.includes('matériel')) return 'Informatique';
   if (t.includes('btp') || t.includes('construction') || t.includes('forage') || t.includes('travaux') || d.includes('bâtiment')) return 'Construction';
   if (t.includes('recrutement') || t.includes('recrute') || d.includes('recrute un')) return 'Recrutement';
   if (t.includes('fourniture') || t.includes('matériel') || t.includes('acquisition') || d.includes('fourniture de')) return 'Fourniture';
@@ -110,54 +90,127 @@ export async function GET(request) {
 
   const listTenders = [];
 
-  for (const source of SOURCES) {
-    try {
-      const rssUrl = encodeURIComponent(source.url);
-      const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`, {
-        next: { revalidate: 0 }
-      });
-      const feedData = await res.json();
+  // --- 1. Scrape ReliefWeb (Tightly filtered to Burkina Faso) ---
+  try {
+    const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Freliefweb.int%2Fjobs%2Frss.xml%3Fcountry%3D46', {
+      next: { revalidate: 0 }
+    });
+    const feedData = await response.json();
+    if (feedData && feedData.items) {
+      for (const item of feedData.items) {
+        const title = (item.title || '').trim();
+        let description = (item.description || '').trim().replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+        const link = (item.link || '').trim();
+        const lowerTitle = title.toLowerCase();
+        const lowerDesc = description.toLowerCase();
 
-      if (feedData && feedData.items) {
-        for (const item of feedData.items) {
-          const title = (item.title || '').trim();
-          let description = (item.description || '').trim().replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
-          const link = (item.link || '').trim();
-          const lowerTitle = title.toLowerCase();
-          const lowerDesc = description.toLowerCase();
+        // Location check
+        const isBurkina = lowerTitle.includes('burkina') || lowerTitle.includes('ouagadougou') || 
+                          lowerDesc.includes('burkina') || lowerDesc.includes('ouagadougou');
 
-          const isTender = TENDER_KEYWORDS.some(kw => lowerTitle.includes(kw) || lowerDesc.includes(kw));
+        if (isBurkina) {
+          if (link) {
+            description = await fetchFullText(link, description);
+          }
 
-          if (isTender && title.length > 5) {
-            // Scrape deeper to get full text
-            if (link) {
-              description = await fetchFullText(link, description);
-            }
+          const extDeadline = extractDeadline(description) || extractDeadline(title);
+          const extOpening = extractOpeningTime(description);
+          const cat = detectCategory(title, description);
 
-            const extDeadline = extractDeadline(description) || extractDeadline(title);
-            const extOpening = extractOpeningTime(description);
-            const cat = detectCategory(title, description);
+          listTenders.push({
+            title,
+            description,
+            source: 'ReliefWeb (Burkina)',
+            link,
+            publishedAt: item.pubDate || new Date().toISOString(),
+            category: cat,
+            status: 'Ouvert',
+            scrapedAt: new Date().toISOString(),
+            deadline: extDeadline ? extDeadline : null,
+            openingTime: extOpening ? extOpening : null,
+            requirements: cat === 'Recrutement' ? extractRequirements(description) : null,
+            contactInfo: cat === 'Recrutement' ? extractContact(description, link) : null
+          });
+        }
+      }
+    }
+  } catch (e) {
+    console.error(`[Scrape] Erreur sur ReliefWeb:`, e.message);
+  }
+
+  // --- 2. Scrape ARCOP ---
+  try {
+    const res = await fetch('https://www.arcop.bf/appels-doffres/', { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    const html = await res.text();
+    const $ = cheerio.load(html);
+
+    const table = $('table').first();
+    if (table.length > 0) {
+      table.find('tr').each((i, tr) => {
+        if (i === 0) return; // Skip header
+        const td = $(tr).find('td').first();
+        if (td.length > 0) {
+          const text = td.text().trim().replace(/\s+/g, ' ');
+          if (text.includes('Télécharger')) {
+            const titlePart = text.split('Télécharger')[0].trim();
+            const downloadLink = td.find('a').attr('href') || 'https://www.arcop.bf/appels-doffres/';
+            const cat = detectCategory(titlePart, '');
+            const extDeadline = extractDeadline(titlePart);
 
             listTenders.push({
-              title,
-              description: description,
-              source: source.name,
-              link,
-              publishedAt: item.pubDate || new Date().toISOString(),
+              title: titlePart,
+              description: `Avis d'appel d'offres officiel publié par l'ARCOP Burkina Faso. Téléchargez le document officiel pour consulter les détails et soumissionner.`,
+              source: 'ARCOP Burkina Faso',
+              link: downloadLink,
+              publishedAt: new Date().toISOString(),
               category: cat,
               status: 'Ouvert',
               scrapedAt: new Date().toISOString(),
               deadline: extDeadline ? extDeadline : null,
-              openingTime: extOpening ? extOpening : null,
-              requirements: cat === 'Recrutement' ? extractRequirements(description) : null,
-              contactInfo: cat === 'Recrutement' ? extractContact(description, link) : null
+              openingTime: null,
+              requirements: cat === 'Recrutement' ? ["Voir dossier complet"] : null,
+              contactInfo: `Voir documents officiels : ${downloadLink}`
             });
           }
         }
-      }
-    } catch (e) {
-      console.error(`[Scrape] Erreur sur ${source.name}:`, e.message);
+      });
     }
+  } catch (e) {
+    console.error(`[Scrape] Erreur sur ARCOP:`, e.message);
+  }
+
+  // --- 3. Scrape DGCMEF (Le Quotidien) ---
+  try {
+    const res = await fetch('https://www.dgcmef.gov.bf/fr/appels-d-offre', { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    const html = await res.text();
+    const $ = cheerio.load(html);
+
+    $('a').each((i, el) => {
+      const text = $(el).text().trim();
+      let href = $(el).attr('href');
+      if (text && text.includes('Quotidien n°') && href) {
+        if (href.startsWith('/')) {
+          href = `http://www.dgcmef.gov.bf${href}`;
+        }
+        
+        listTenders.push({
+          title: text,
+          description: `Le Quotidien des Marchés Publics officiel du Burkina Faso. Téléchargez le PDF officiel de la DGCMEF pour consulter l'ensemble des avis de recrutement, demandes de prix et appels d'offres de la journée.`,
+          source: 'DGCMEF Burkina Faso',
+          link: href,
+          publishedAt: new Date().toISOString(),
+          category: 'Prestation',
+          status: 'Ouvert',
+          scrapedAt: new Date().toISOString(),
+          deadline: null,
+          openingTime: null,
+          requirements: null,
+          contactInfo: `Télécharger le Quotidien : ${href}`
+        });
+      }
+    });
+  } catch (e) {
+    console.error(`[Scrape] Erreur sur DGCMEF:`, e.message);
   }
 
   // Déduplications et sauvegarde Firestore
