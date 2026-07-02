@@ -78,7 +78,7 @@ export default function AssistantPage() {
 
           {/* Zone de saisie */}
           <div className={styles.inputArea}>
-            <form onSubmit={handleSubmit} className={styles.form}>
+            <form onSubmit={(e) => { e.preventDefault(); handleSubmit(e); }} className={styles.form}>
               <input
                 className={styles.input}
                 value={input}
