@@ -15,20 +15,18 @@ async function fetchFullText(url, fallbackDesc) {
     const $ = cheerio.load(html);
     
     $('script, style, nav, header, footer, aside, .sidebar, .widget, .comments, .menu').remove();
-    let mainContent = $('article').text() || $('.entry-content').text() || $('.post-content').text() || $('.content').text();
     
-    if (!mainContent || mainContent.trim().length < 50) {
-      const paragraphs = [];
-      $('p').each((i, el) => {
-        const txt = $(el).text().trim();
-        if (txt.length > 30) paragraphs.push(txt);
-      });
-      mainContent = paragraphs.join('\n\n');
-      
-      if (mainContent.length < 50) {
-        mainContent = $('body').text();
+    const container = $('article, .entry-content, .post-content, .content, main, body').first();
+    const paragraphs = [];
+    
+    container.find('p, li').each((i, el) => {
+      const txt = $(el).text().trim();
+      if (txt.length > 40 && !txt.includes('Archives') && !txt.includes('Copyright') && !txt.includes('Article similaire')) {
+        paragraphs.push(txt);
       }
-    }
+    });
+    
+    let mainContent = paragraphs.join('\n\n');
     
     const cleanText = mainContent.replace(/\s+/g, ' ').trim();
     if (cleanText.length > fallbackDesc.length) {
