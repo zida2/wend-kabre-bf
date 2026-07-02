@@ -1,6 +1,6 @@
 'use client';
 
-import { useChat } from 'ai/react';
+import { useChat } from '@ai-sdk/react';
 import { useEffect, useRef } from 'react';
 
 export default function AssistantPage() {
@@ -93,7 +93,7 @@ export default function AssistantPage() {
               />
               <button 
                 type="submit" 
-                disabled={isLoading || !input.trim()}
+                disabled={isLoading || !(input && input.trim())}
                 className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-[#10B981] text-white rounded-full flex items-center justify-center hover:bg-[#059669] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
