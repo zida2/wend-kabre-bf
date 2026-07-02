@@ -18,6 +18,7 @@ export default function AdminPage() {
   });
 
   const [scraping, setScraping] = useState(false);
+  const [scrapeLogs, setScrapeLogs] = useState([]);
   const [usersList, setUsersList] = useState([]);
   const [paymentRequests, setPaymentRequests] = useState([]);
   const [marchesList, setMarchesList] = useState([]);
@@ -111,16 +112,35 @@ export default function AdminPage() {
 
   const handleForceScrape = async () => {
     setScraping(true);
+    setScrapeLogs(['> Initialisation des modules d\'extraction...', '> Détection de 12 sources de données configurées...']);
+    
+    const interval = setInterval(() => {
+      const logs = [
+         '> Connexion aux serveurs RSS (Lefaso, Sidwaya, AIB...)...',
+         '> Aspiration et normalisation des données en cours...',
+         '> Analyse sémantique par l\'Intelligence Artificielle...',
+         '> Filtrage des appels d\'offres et offres d\'emploi...'
+      ];
+      setScrapeLogs(prev => {
+        if(prev.length - 2 < logs.length) return [...prev, logs[prev.length - 2]];
+        return prev;
+      });
+    }, 1500);
+
     try {
       const res = await fetch('/api/scrape?secret=WEND_KABRE_2026');
       const data = await res.json();
-      showToast(`Scraping terminé ! ${data.added} nouveaux marchés trouvés sur ${data.total} analysés.`, 'success');
+      clearInterval(interval);
+      setScrapeLogs(prev => [...prev, `> TERMINÉ : ${data.added} nouveaux marchés enregistrés sur ${data.total} analysés.`]);
+      showToast(`Scraping terminé ! ${data.added} nouveaux marchés trouvés.`, 'success');
       // Refresh markets count
       const marchesSnap = await getDocs(collection(db, 'marches'));
       setStats(prev => ({ ...prev, marches: marchesSnap.size }));
       fetchAdminData();
     } catch (e) {
-      showToast("Erreur lors du scraping de la plateforme DGCMEF.", "error");
+      clearInterval(interval);
+      setScrapeLogs(prev => [...prev, '> ERREUR FATALE : Impossible de joindre le serveur.']);
+      showToast("Erreur lors du scraping.", "error");
     } finally {
       setScraping(false);
     }
@@ -230,19 +250,64 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div className="card" style={{ marginBottom: '40px' }}>
-        <h3 className="heading-md" style={{ marginBottom: '16px' }}>Extraction Manuelle</h3>
-        <p className="text-secondary text-sm" style={{ marginBottom: '24px' }}>
-          Vous pouvez forcer le robot d'extraction à parcourir le site de la DGCMEF instantanément au lieu d'attendre l'exécution de la nuit.
-        </p>
+      <div className="card" style={{ marginBottom: '40px', padding: 0, overflow: 'hidden', border: '1px solid var(--color-border)' }}>
+        <div style={{ padding: '24px', borderBottom: '1px solid var(--color-border)', background: 'rgba(255,255,255,0.02)' }}>
+          <h3 className="heading-md" style={{ marginBottom: '8px' }}>🚀 Moteur d'Extraction Global</h3>
+          <p className="text-secondary text-sm">
+            Pilotez le robot d'aspiration de données en temps réel. Le système surveille actuellement <strong>12 sources nationales et internationales</strong> (Presse, ONG, Agences d'État).
+          </p>
+        </div>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
+          <div style={{ padding: '24px', borderRight: '1px solid var(--color-border)' }}>
+            <h4 className="text-sm" style={{ marginBottom: '16px', color: 'var(--text-secondary)' }}>SOURCES CONNECTÉES</h4>
+            <div className="flex gap-2" style={{ flexWrap: 'wrap', marginBottom: '32px' }}>
+              {['Lefaso.net', 'Sidwaya', 'AIB', 'Burkina24', 'Wakat Séra', 'L\'Economiste', 'MinaJobs', 'ReliefWeb', 'L\'Express', 'Les Affaires', 'Oméga', 'FasoZine'].map(s => (
+                <span key={s} className="badge" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)' }}>
+                  <span style={{ color: 'var(--green)', marginRight: '6px' }}>●</span> {s}
+                </span>
+              ))}
+            </div>
 
-        <button 
-          onClick={handleForceScrape}
-          className="btn btn-primary"
-          disabled={scraping}
-        >
-          {scraping ? 'Analyse en cours...' : '🤖 Lancer le Robot Extracteur (Scraper)'}
-        </button>
+            <button 
+              onClick={handleForceScrape}
+              className="btn btn-primary"
+              disabled={scraping}
+              style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', width: '100%' }}
+            >
+              {scraping ? (
+                <><span className="loader" style={{ width: '16px', height: '16px', borderWidth: '2px' }}></span> Analyse en cours...</>
+              ) : (
+                <>🤖 Lancer l'Aspiration Manuelle</>
+              )}
+            </button>
+          </div>
+
+          <div style={{ background: '#0a0a0a', padding: '24px', fontFamily: 'monospace', fontSize: '0.85rem', color: '#00ff00', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ color: '#888', marginBottom: '16px', borderBottom: '1px solid #333', paddingBottom: '8px', display: 'flex', justifyContent: 'space-between' }}>
+              <span>Terminal Admin</span>
+              <span>/var/log/scraper.log</span>
+            </div>
+            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {scrapeLogs.length === 0 ? (
+                <span style={{ color: '#555' }}>&gt; Système prêt. En attente de commande...</span>
+              ) : (
+                scrapeLogs.map((log, i) => (
+                  <span key={i} style={{ opacity: i === scrapeLogs.length - 1 ? 1 : 0.7 }}>{log}</span>
+                ))
+              )}
+              {scraping && (
+                <span style={{ animation: 'blink 1s infinite' }}>_</span>
+              )}
+            </div>
+            <style jsx>{`
+              @keyframes blink {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0; }
+              }
+            `}</style>
+          </div>
+        </div>
       </div>
 
       {/* TABLEAU GESTION DEMANDES DE PAIEMENT */}
