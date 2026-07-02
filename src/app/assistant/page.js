@@ -1,12 +1,26 @@
 'use client';
 
 import { useChat } from '@ai-sdk/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './assistant.module.css';
 
 export default function AssistantPage() {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat();
+  const { messages, sendMessage, status, stop } = useChat();
+  const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
+
+  const isLoading = status === 'submitted' || status === 'streaming';
+
+  const handleInputChange = (e) => {
+    setInput(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+    sendMessage({ role: 'user', content: input });
+    setInput('');
+  };
 
   // Auto-scroll vers le bas quand un nouveau message arrive
   useEffect(() => {
@@ -78,7 +92,7 @@ export default function AssistantPage() {
 
           {/* Zone de saisie */}
           <div className={styles.inputArea}>
-            <form onSubmit={(e) => { e.preventDefault(); handleSubmit(e); }} className={styles.form}>
+            <form onSubmit={handleSubmit} className={styles.form}>
               <input
                 className={styles.input}
                 value={input}
