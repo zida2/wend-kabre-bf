@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, deleteDoc, query, orderBy, limit } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
+import { logAdminAction } from '@/lib/adminLog';
 
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import OverviewSection from '@/components/admin/sections/OverviewSection';
@@ -32,6 +33,8 @@ export default function AdminPage() {
   const [usersList, setUsersList] = useState([]);
   const [paymentRequests, setPaymentRequests] = useState([]);
   const [marchesList, setMarchesList] = useState([]);
+  const [scrapeRuns, setScrapeRuns] = useState([]);
+  const [adminLogs, setAdminLogs] = useState([]);
 
   const [scraping, setScraping] = useState(false);
   const [scrapeLogs, setScrapeLogs] = useState([]);
@@ -83,6 +86,17 @@ export default function AdminPage() {
     } finally {
       setLoading(false);
     }
+
+    // Suivi (runs scraping + journal d'audit) — indépendant : une erreur de
+    // permission (règles non déployées) ne doit pas casser le reste du dashboard.
+    try {
+      const runsSnap = await getDocs(query(collection(db, 'scrape_runs'), orderBy('createdAt', 'desc'), limit(10)));
+      setScrapeRuns(runsSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    } catch (e) { console.warn('scrape_runs indisponible:', e?.code || e?.message); }
+    try {
+      const logsSnap = await getDocs(query(collection(db, 'admin_logs'), orderBy('createdAt', 'desc'), limit(15)));
+      setAdminLogs(logsSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    } catch (e) { console.warn('admin_logs indisponible:', e?.code || e?.message); }
   };
 
   const handleForceScrape = async () => {
@@ -139,6 +153,11 @@ export default function AdminPage() {
     setProcessingUser(userId);
     try {
       await applySubscription(userId, days);
+      const u = usersList.find((x) => x.id === userId);
+      await logAdminAction('subscription_update', {
+        message: days === 0 ? `Abonnement désactivé — ${u?.email || userId}` : `Abonnement +${days} j — ${u?.email || userId}`,
+        targetUser: userId,
+      });
       showToast('✅ Abonnement mis à jour avec succès !', 'success');
       fetchAdminData();
     } catch (err) {
@@ -159,6 +178,11 @@ export default function AdminPage() {
       } else {
         showToast('🚫 Demande de reçu rejetée.', 'info');
       }
+      await logAdminAction(`payment_${status}`, {
+        message: status === 'approved' ? 'Paiement validé et abonnement activé' : 'Demande de paiement rejetée',
+        target: requestId,
+        targetUser: userId,
+      });
       fetchAdminData();
     } catch (err) {
       console.error(err);
@@ -169,7 +193,9 @@ export default function AdminPage() {
   const handleDeleteMarche = async (marcheId) => {
     if (!confirm('Voulez-vous vraiment supprimer ce marché ? Cette action est irréversible.')) return;
     try {
+      const m = marchesList.find((x) => x.id === marcheId);
       await deleteDoc(doc(db, 'marches', marcheId));
+      await logAdminAction('marche_delete', { message: `Marché supprimé — ${m?.title || marcheId}`, target: marcheId });
       showToast('🗑️ Marché supprimé avec succès.', 'success');
       fetchAdminData();
     } catch (e) {
@@ -182,7 +208,9 @@ export default function AdminPage() {
     if (!confirm('Voulez-vous vraiment supprimer cet utilisateur ?')) return;
     setProcessingUser(userId);
     try {
+      const u = usersList.find((x) => x.id === userId);
       await deleteDoc(doc(db, 'users', userId));
+      await logAdminAction('user_delete', { message: `Utilisateur supprimé — ${u?.email || userId}`, target: userId });
       showToast('🗑️ Utilisateur supprimé avec succès.', 'success');
       fetchAdminData();
     } catch (e) {
@@ -231,7 +259,7 @@ export default function AdminPage() {
             <p className={layout.pageSub}>{meta.sub}</p>
           </div>
 
-          {section === 'overview' && <OverviewSection users={usersList} marches={marchesList} requests={paymentRequests} />}
+          {section === 'overview' && <OverviewSection users={usersList} marches={marchesList} requests={paymentRequests} scrapeRuns={scrapeRuns} adminLogs={adminLogs} />}
           {section === 'users' && <UsersSection users={usersList} processingUser={processingUser} onUpdateSubscription={handleUpdateSubscription} onDeleteUser={handleDeleteUser} />}
           {section === 'payments' && <PaymentsSection requests={paymentRequests} onAction={handleRequestAction} onViewScreenshot={setSelectedScreenshot} />}
           {section === 'marches' && <MarchesSection marches={marchesList} onDelete={handleDeleteMarche} />}

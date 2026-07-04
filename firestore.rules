@@ -63,5 +63,22 @@ service cloud.firestore {
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
       allow update, delete: if isAdmin();
     }
+
+    // ── Journal d'audit des actions admin (§9) ───────────────────────
+    // Écrit et lu uniquement par l'admin. Jamais modifiable a posteriori.
+    match /admin_logs/{logId} {
+      allow read, create: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // ── Runs du robot de scraping (suivi de santé §1/§10) ────────────
+    // Création ouverte : le cron /api/scrape écrit sans contexte d'auth
+    //   (même limitation que /marches — à verrouiller via l'Admin SDK plus tard).
+    // Lecture réservée à l'admin.
+    match /scrape_runs/{runId} {
+      allow read:   if isAdmin();
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
   }
 }

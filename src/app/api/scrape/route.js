@@ -251,6 +251,18 @@ export async function GET(request) {
     }
   }
 
+  // Enregistre le run pour le suivi de santé du scraping (§1/§10 du cahier des charges)
+  try {
+    await addDoc(collection(db, 'scrape_runs'), {
+      added: addedCount,
+      total: listTenders.length,
+      status: 'success',
+      createdAt: new Date().toISOString(),
+    });
+  } catch (e) {
+    console.error('[Scrape] log run error:', e.message);
+  }
+
   return Response.json({
     success: true,
     added: addedCount,
