@@ -42,7 +42,8 @@ export default function DashboardPage() {
         if (userSnap.exists()) {
           const data = userSnap.data();
           setUserData(data);
-          setKeywords(data.keywords || []);
+          // Source de vérité unique : alertPrefs.keywords (migration douce depuis l'ancien champ racine data.keywords)
+          setKeywords(data.alertPrefs?.keywords || data.keywords || []);
           
           if (!data.hasSeenWelcome) {
             setShowWelcomeModal(true);
@@ -139,9 +140,16 @@ export default function DashboardPage() {
     setSaving(true);
     try {
       const userDocRef = doc(db, 'users', user.uid);
+      // Écriture dans la source de vérité canonique partagée avec la page /alertes et le moteur d'alertes
       await updateDoc(userDocRef, {
-        keywords: keywords
+        'alertPrefs.keywords': keywords,
+        'alertPrefs.active': true,
       });
+      // Refléter localement pour rester cohérent avec /alertes
+      setUserData(prev => ({
+        ...prev,
+        alertPrefs: { ...(prev?.alertPrefs || {}), keywords, active: true },
+      }));
       showToast('Vos préférences d\'alerte ont été sauvegardées avec succès !', 'success');
     } catch (err) {
       console.error(err);
@@ -454,9 +462,9 @@ export default function DashboardPage() {
       {/* SECTION 3 : HISTORIQUE D'ALERTES WHATSAPP */}
       {userData?.isSubscribed && (
         <div className="card" style={{ marginTop: '40px' }}>
-          <h3 className="heading-md" style={{ marginBottom: '8px' }}>💬 Alertes WhatsApp Transmises (Simulées)</h3>
+          <h3 className="heading-md" style={{ marginBottom: '8px' }}>💬 Aperçu (exemple) des alertes WhatsApp</h3>
           <p className="text-secondary text-xs" style={{ marginBottom: '24px' }}>
-            Flux d'envoi automatique de notre IA sur votre numéro de téléphone : <strong>{userData.phone || 'Non Configuré'}</strong>.
+            Ceci est une <strong>illustration</strong> du format des notifications que vous recevrez sur votre numéro <strong>{userData.alertPrefs?.phone || userData.phone || 'Non Configuré'}</strong>. Aucun message réel n'a encore été envoyé.
           </p>
 
           <div className="table-responsive">
@@ -479,7 +487,7 @@ export default function DashboardPage() {
                         "🚨 NOUVEL APPEL D'OFFRES détecté au Burkina pour le mot-clé <strong>{kw}</strong>. Consultez vos détails sur la plateforme..."
                       </td>
                       <td style={{ padding: '14px 8px' }}>
-                        <span className="badge badge-green" style={{ fontSize: '0.7rem' }}>WhatsApp Délivré ✓</span>
+                        <span className="badge badge-gray" style={{ fontSize: '0.7rem' }}>Exemple</span>
                       </td>
                     </tr>
                   ))

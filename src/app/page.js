@@ -33,7 +33,7 @@ const PROCEDURES = [
   {
     cat: 'Consultation restreinte',
     icon: '🔒',
-    color: '#0D9488', // teal
+    color: 'var(--teal)', // teal
     steps: [
       'Être inscrit sur la liste restreinte du maître d\'ouvrage',
       'Répondre à l\'invitation sur la base d\'une lettre de consultation',

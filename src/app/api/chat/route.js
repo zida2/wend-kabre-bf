@@ -1,9 +1,19 @@
 import { google } from '@ai-sdk/google';
 import { streamText } from 'ai';
+import { verifyFirebaseToken } from '@/lib/authGuard';
 
 export const maxDuration = 30;
 
 export async function POST(req) {
+  // Accès réservé aux utilisateurs connectés (évite l'abus de l'API IA).
+  const authResult = await verifyFirebaseToken(req);
+  if (!authResult.ok) {
+    return new Response(JSON.stringify({ error: 'Connexion requise' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   try {
     const { messages } = await req.json();
 

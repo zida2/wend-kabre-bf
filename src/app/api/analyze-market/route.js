@@ -5,6 +5,7 @@ import { generateObject } from 'ai';
 import { z } from 'zod';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { verifyFirebaseToken } from '@/lib/authGuard';
 
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
@@ -60,6 +61,12 @@ async function fetchPdfBytes(url) {
 export async function POST(req) {
   if (!apiKey) {
     return Response.json({ error: "Clé IA non configurée (GOOGLE_GENERATIVE_AI_API_KEY)." }, { status: 503 });
+  }
+
+  // Accès réservé aux utilisateurs connectés (analyse IA coûteuse).
+  const authResult = await verifyFirebaseToken(req);
+  if (!authResult.ok) {
+    return Response.json({ error: 'Connexion requise' }, { status: 401 });
   }
 
   let marketId, pdfUrl;

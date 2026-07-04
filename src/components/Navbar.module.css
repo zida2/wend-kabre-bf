@@ -198,7 +198,7 @@
   font-size: 0.95rem;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .navLinks, .navCta { display: none; }
   .burger { display: flex; }
 }

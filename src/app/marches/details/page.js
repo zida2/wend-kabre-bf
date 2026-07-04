@@ -189,12 +189,21 @@ function DetailsContent() {
 
   const handleAnalyzeMarket = async () => {
     if (!marche) return;
+    // L'analyse IA est réservée aux utilisateurs connectés : on joint le token.
+    if (!auth.currentUser) {
+      setAnalyzeError('Veuillez vous connecter pour lancer l\'analyse IA.');
+      return;
+    }
     setAnalyzing(true);
     setAnalyzeError(null);
     try {
+      const idToken = await auth.currentUser.getIdToken();
       const res = await fetch('/api/analyze-market', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`,
+        },
         body: JSON.stringify({ marketId: marche.id }),
       });
       const data = await res.json();
@@ -452,7 +461,7 @@ function DetailsContent() {
 
         <div className="flex justify-between items-start" style={{ gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
           <h1 className="heading-lg" style={{ color: 'var(--text-primary)', flex: 1 }}>{marche.title}</h1>
-          {isUserLoggedIn && (
+          {isUserLoggedIn && hasFullAccess && (
             <button 
               onClick={handleToggleFollow}
               disabled={followLoading}

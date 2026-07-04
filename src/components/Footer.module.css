@@ -39,7 +39,7 @@
   font-size: 0.9rem;
   line-height: 1.7;
   max-width: 320px;
-  color: rgba(230, 245, 238, 0.6);
+  color: rgba(230, 245, 238, 0.75);
 }
 
 .colTitle {
@@ -55,7 +55,7 @@
 .col ul { display: flex; flex-direction: column; gap: 11px; }
 .link {
   font-size: 0.9rem;
-  color: rgba(230, 245, 238, 0.72);
+  color: rgba(230, 245, 238, 0.8);
   transition: color 0.2s ease, padding-left 0.2s ease;
 }
 .link:hover { color: var(--primary-lighter); padding-left: 3px; }
@@ -69,7 +69,7 @@
   flex-wrap: wrap;
   gap: 12px;
   font-size: 0.82rem;
-  color: rgba(230, 245, 238, 0.55);
+  color: rgba(230, 245, 238, 0.75);
 }
 
 @media (max-width: 768px) {

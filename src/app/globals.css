@@ -35,6 +35,7 @@
   --accent:        #D97706; /* amber-600 */
   --accent-light:  #F59E0B; /* amber-500 */
   --accent-muted:  rgba(217, 119, 6, 0.10);
+  --teal:          #0D9488; /* teal-600 — 3e accent (procédures) */
 
   /* ── Statuts */
   --success:       #059669;

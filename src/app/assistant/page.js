@@ -1,11 +1,43 @@
 'use client';
 
 import { useChat } from '@ai-sdk/react';
-import { useEffect, useRef, useState } from 'react';
+import { DefaultChatTransport } from 'ai';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import styles from './assistant.module.css';
 
 export default function AssistantPage() {
-  const chat = useChat();
+  // Suivi de l'état d'authentification : le chat IA est réservé aux
+  // utilisateurs connectés (protection de la route /api/chat).
+  const [authUser, setAuthUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setAuthUser(currentUser);
+      setAuthReady(true);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Transport qui joint le token Firebase à chaque requête vers /api/chat.
+  // Le token est récupéré au moment de l'envoi (headers est une fonction async),
+  // ce qui garantit un token frais et valide.
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: '/api/chat',
+        headers: async () => {
+          const token = await auth.currentUser?.getIdToken();
+          return token ? { Authorization: `Bearer ${token}` } : {};
+        },
+      }),
+    []
+  );
+
+  const chat = useChat({ transport });
   const messages = chat.messages || [];
   const status = chat.status || (chat.isLoading ? 'streaming' : 'ready');
   const isLoading = status === 'submitted' || status === 'streaming';
@@ -49,9 +81,22 @@ export default function AssistantPage() {
           </p>
         </div>
 
-        {/* Fenêtre de Chat */}
+        {/* Accès réservé aux membres connectés */}
+        {authReady && !authUser ? (
+          <div className={styles.chatContainer} style={{ alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '48px 24px' }}>
+            <div className={styles.botIcon}>🔒</div>
+            <h3 className={styles.emptyTitle}>Connexion requise</h3>
+            <p className={styles.emptyDesc} style={{ marginBottom: '24px' }}>
+              L'Assistant IA est réservé aux membres. Connectez-vous pour discuter avec votre expert en marchés publics.
+            </p>
+            <Link href="/connexion" className="btn btn-primary">
+              Se connecter →
+            </Link>
+          </div>
+        ) : (
+        /* Fenêtre de Chat */
         <div className={styles.chatContainer}>
-          
+
           {/* Zone des Messages */}
           <div className={styles.messagesArea}>
             {messages.length === 0 ? (
@@ -128,6 +173,7 @@ export default function AssistantPage() {
             </form>
           </div>
         </div>
+        )}
 
       </div>
     </main>

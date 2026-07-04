@@ -22,8 +22,8 @@ const PLANS = [
       { text: 'Source officielle & émetteur', ok: true },
       { text: 'Lien direct de dépôt de dossier', ok: true },
       { text: 'Alertes WhatsApp & SMS', ok: true },
-      { text: 'Assistant IA Wend-Kabré', ok: true },
-      { text: 'Tableau de bord entreprise', ok: true },
+      { text: 'Assistant IA Wend-Kabré', ok: false },
+      { text: 'Tableau de bord entreprise', ok: false },
     ],
     cta: 'Tester pendant 7 jours',
     ctaLink: '/inscription?plan=starter',
@@ -48,8 +48,8 @@ const PLANS = [
       { text: 'Source officielle & émetteur', ok: true },
       { text: 'Lien direct de dépôt de dossier', ok: true },
       { text: 'Alertes WhatsApp & SMS', ok: true },
-      { text: 'Assistant IA Wend-Kabré', ok: false },
-      { text: 'Tableau de bord entreprise', ok: false },
+      { text: 'Assistant IA Wend-Kabré', ok: true },
+      { text: 'Tableau de bord entreprise', ok: true },
     ],
     cta: 'Passer en Pro 🚀',
     ctaLink: '/inscription?plan=pro',
@@ -125,7 +125,6 @@ export default function TarifsPage() {
   // Modal de paiement
   const [showPayModal, setShowPayModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [phone, setPhone] = useState('');
   const [paying, setPaying] = useState(false);
 
   // Custom Alert Modal State
@@ -200,32 +199,6 @@ export default function TarifsPage() {
     // Ouvre la modale de paiement pour tous les plans (Starter, Pro, Elite)
     setSelectedPlan(plan);
     setShowPayModal(true);
-  };
-
-  const handlePayment = async () => {
-    if (!phone || phone.length < 8) {
-      showAlert("Veuillez entrer un numéro valide", "Erreur");
-      return;
-    }
-    if (!user) {
-      router.push('/connexion');
-      return;
-    }
-    setPaying(true);
-    try {
-      // SIMULATION DE PAIEMENT (pas de vraie passerelle) — délai de 2 s.
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      await activateOwnSubscription(user.uid, subscriptionDays(selectedPlan));
-      showAlert("🎉 Paiement validé avec succès ! Bienvenue dans l'espace Premium.", "Succès", () => {
-        setShowPayModal(false);
-        router.push('/dashboard');
-      });
-    } catch (e) {
-      console.error(e);
-      showAlert("Erreur lors de l'activation de l'abonnement.", "Erreur");
-    } finally {
-      setPaying(false);
-    }
   };
 
   return (

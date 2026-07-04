@@ -17,12 +17,24 @@ export async function GET(request) {
 
   try {
     // 1. Récupérer tous les utilisateurs Premium
+    // NOTE : lister toute la collection `users` nécessitera le Firebase Admin SDK
+    // (compte de service côté serveur). Les règles Firestore durcies interdisent la
+    // lecture non authentifiée / non-propriétaire de cette collection depuis le SDK
+    // client utilisé ici → tant que la migration Admin SDK n'est pas faite, getDocs
+    // renverra 0 document et donc 0 alerte.
     const usersSnap = await getDocs(collection(db, 'users'));
     const premiumUsers = [];
     usersSnap.forEach(doc => {
       const data = doc.data();
-      if (data.isSubscribed && data.keywords && data.keywords.length > 0) {
-        premiumUsers.push({ id: doc.id, email: data.email, keywords: data.keywords.map(k => k.toLowerCase()) });
+      // Source de vérité canonique : alertPrefs.keywords (tableau). Fallback ancien champ data.keywords.
+      const rawKeywords = data.alertPrefs?.keywords ?? data.keywords;
+      const keywords = (Array.isArray(rawKeywords)
+        ? rawKeywords
+        : (typeof rawKeywords === 'string' ? rawKeywords.split(',') : [])
+      ).map(k => String(k).trim().toLowerCase()).filter(Boolean);
+
+      if (data.isSubscribed && keywords.length > 0) {
+        premiumUsers.push({ id: doc.id, email: data.email, keywords });
       }
     });
 

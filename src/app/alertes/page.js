@@ -42,10 +42,15 @@ export default function AlertesPage() {
             if (data.alertPrefs) {
               setPhone(data.alertPrefs.phone || data.phone || '');
               setChannel(data.alertPrefs.channel || 'whatsapp');
-              setKeywords(data.alertPrefs.keywords || '');
+              // alertPrefs.keywords est la source de vérité partagée avec le dashboard : stocké en tableau.
+              // On affiche ici sous forme de chaîne séparée par des virgules. Fallback ancien champ data.keywords.
+              const kw = data.alertPrefs.keywords ?? data.keywords ?? '';
+              setKeywords(Array.isArray(kw) ? kw.join(', ') : kw);
               setCategory(data.alertPrefs.category || 'Informatique');
             } else {
               setPhone(data.phone || '');
+              const kw = data.keywords ?? '';
+              setKeywords(Array.isArray(kw) ? kw.join(', ') : kw);
             }
           }
         } catch (e) { console.error(e); }
@@ -65,11 +70,17 @@ export default function AlertesPage() {
 
     try {
       const userRef = doc(db, 'users', user.uid);
+      // On normalise les mots-clés en tableau pour partager exactement le même format
+      // que le dashboard (alertPrefs.keywords[]) et le moteur d'alertes.
+      const keywordsArr = keywords
+        .split(',')
+        .map(k => k.trim())
+        .filter(Boolean);
       await updateDoc(userRef, {
         alertPrefs: {
           phone:     phone.trim(),
           channel,
-          keywords:  keywords.trim(),
+          keywords:  keywordsArr,
           category,
           updatedAt: new Date().toISOString(),
           active:    true,
