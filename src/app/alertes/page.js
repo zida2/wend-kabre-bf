@@ -137,8 +137,8 @@ export default function AlertesPage() {
 
       {/* En-tête */}
       <div className="text-center" style={{ marginBottom: '40px' }}>
-        <span className="badge badge-gold" style={{ marginBottom: '12px' }}>
-          <span className="dot dot-gold"></span> Notifications Temps Réel
+        <span className="badge badge-green" style={{ marginBottom: '12px' }}>
+          <span className="dot dot-green"></span> Notifications Temps Réel
         </span>
         <h1 className="heading-lg">Mes Alertes Marchés</h1>
         <p className="text-secondary text-sm" style={{ marginTop: '10px' }}>
@@ -168,7 +168,7 @@ export default function AlertesPage() {
           <button
             onClick={handleDisable}
             className="btn btn-outline btn-sm"
-            style={{ borderColor: 'rgba(248,113,113,0.4)', color: '#FCA5A5', flexShrink: 0 }}
+            style={{ borderColor: 'rgba(220,38,38,0.35)', color: 'var(--danger)', background: 'var(--danger-muted)', flexShrink: 0 }}
           >
             Désactiver
           </button>

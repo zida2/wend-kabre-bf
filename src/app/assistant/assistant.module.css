@@ -13,14 +13,19 @@
 }
 
 .title {
-  font-family: 'Sora', sans-serif;
-  font-size: 2.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
   color: var(--text-primary);
   margin-bottom: 15px;
 }
 
 .highlight {
-  color: var(--gold);
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
@@ -106,7 +111,7 @@
 }
 
 .userBubble {
-  background: var(--gold);
+  background: var(--grad-primary);
   color: white;
   border-bottom-right-radius: 4px;
 }
@@ -219,4 +224,13 @@
   width: 20px;
   height: 20px;
   fill: currentColor;
+}
+
+@media (max-width: 640px) {
+  .container { padding: 40px 14px 40px; }
+  .header { margin-bottom: 26px; }
+  .messagesArea { padding: 18px; gap: 16px; }
+  .messageBubble { max-width: 92%; padding: 13px 18px; }
+  .inputArea { padding: 14px; }
+  .input { padding: 15px 56px 15px 20px; }
 }

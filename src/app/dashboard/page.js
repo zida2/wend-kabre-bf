@@ -218,8 +218,8 @@ export default function DashboardPage() {
   return (
     <div className="container animate-fadeIn" style={{ padding: '60px 20px' }}>
       <div className="flex justify-between items-center" style={{ marginBottom: '40px' }}>
-        <h1 className="heading-lg text-gold">
-          {userData?.name ? `Espace PME - ${userData.name}` : 'Mon Espace PME'}
+        <h1 className="heading-lg">
+          {userData?.name ? `Espace PME — ${userData.name}` : 'Mon Espace PME'}
         </h1>
         <button onClick={handleLogout} className="btn btn-outline">Se déconnecter</button>
       </div>
@@ -240,19 +240,19 @@ export default function DashboardPage() {
               <>
                 <span className="badge badge-gold" style={{ marginLeft: '8px' }}>Premium Actif</span>
                 {userData.subscriptionExpiresAt && (
-                  <div style={{ marginTop: '12px', fontSize: '0.85rem', color: 'var(--green)', background: 'rgba(52, 211, 114, 0.1)', padding: '8px', borderRadius: '4px', border: '1px solid var(--green)' }}>
+                  <div style={{ marginTop: '12px', fontSize: '0.85rem', color: 'var(--green)', background: 'var(--success-muted)', padding: '8px', borderRadius: '4px', border: '1px solid var(--green)' }}>
                     ⏳ Expire le : <strong>{new Date(userData.subscriptionExpiresAt).toLocaleDateString('fr-FR')}</strong>
                     <br/>(Reste {Math.ceil((new Date(userData.subscriptionExpiresAt) - new Date()) / (1000 * 60 * 60 * 24))} jours)
                   </div>
                 )}
               </>
             ) : (
-              <span className="badge" style={{ background: '#333', color: '#fff', marginLeft: '8px' }}>Compte Gratuit</span>
+              <span className="badge badge-gray" style={{ marginLeft: '8px' }}>Compte Gratuit</span>
             )}
           </div>
 
           {!userData?.isSubscribed && pendingPayment && (
-            <div className="animate-pulse-green" style={{ background: 'rgba(245, 200, 66, 0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--gold)', marginTop: '20px' }}>
+            <div style={{ background: 'var(--accent-muted)', padding: '16px', borderRadius: '8px', border: '1px solid rgba(217,119,6,0.3)', marginTop: '20px' }}>
               <h4 className="text-gold text-sm" style={{ marginBottom: '8px', fontWeight: 'bold' }}>⏳ Approbation en attente</h4>
               <p className="text-xs text-secondary" style={{ marginBottom: '12px' }}>
                 Votre reçu est en cours d'analyse manuelle par notre équipe. Votre compte Premium sera activé d'ici quelques minutes.
@@ -261,12 +261,12 @@ export default function DashboardPage() {
           )}
 
           {!userData?.isSubscribed && !pendingPayment && (
-            <div style={{ background: 'rgba(52, 211, 114, 0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--green)', marginTop: '20px', textAlign: 'center' }}>
+            <div style={{ background: 'var(--success-muted)', padding: '16px', borderRadius: '8px', border: '1px solid var(--green)', marginTop: '20px', textAlign: 'center' }}>
               <h4 className="text-green text-sm" style={{ marginBottom: '8px', fontWeight: 'bold' }}>🚀 Passez à la vitesse supérieure</h4>
               <p className="text-xs text-secondary" style={{ marginBottom: '12px' }}>
                 Débloquez le Studio de Candidature IA et les alertes WhatsApp instantanées pour multiplier vos chances.
               </p>
-              <Link href="/tarifs" className="btn btn-green w-full text-center" style={{ padding: '8px', fontSize: '0.9rem', justifyContent: 'center', background: 'var(--grad-green)', color: '#000', fontWeight: 'bold' }}>
+              <Link href="/tarifs" className="btn btn-primary w-full text-center" style={{ padding: '10px', fontSize: '0.9rem' }}>
                 S'abonner maintenant
               </Link>
             </div>
@@ -291,7 +291,7 @@ export default function DashboardPage() {
                   key={sk} 
                   onClick={() => addKeyword(sk)}
                   className="badge" 
-                  style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer', color: '#fff' }}
+                  style={{ background: 'var(--primary-muted)', border: '1px solid var(--color-border-strong)', cursor: 'pointer', color: 'var(--primary-dark)' }}
                 >
                   + {sk}
                 </button>
@@ -306,7 +306,7 @@ export default function DashboardPage() {
               value={newKeyword}
               onChange={(e) => setNewKeyword(e.target.value)}
               className="form-input"
-              style={{ flex: 1, color: '#fff', backgroundColor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.2)' }}
+              style={{ flex: 1, color: 'var(--text-primary)', backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-border-strong)' }}
               onKeyDown={(e) => e.key === 'Enter' && addKeyword(newKeyword)}
             />
             <button onClick={() => addKeyword(newKeyword)} className="btn btn-outline" style={{ borderColor: 'var(--green)', color: 'var(--green)' }}>
@@ -314,15 +314,15 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          <div style={{ minHeight: '100px', background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '24px' }}>
+          <div style={{ minHeight: '100px', background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px', border: '1px solid var(--color-border)', marginBottom: '24px' }}>
             {keywords.length === 0 ? (
-              <p className="text-center text-sm" style={{ marginTop: '20px', color: '#cbd5e1' }}>Vous n'avez aucun mot-clé configuré.</p>
+              <p className="text-center text-sm" style={{ marginTop: '20px', color: 'var(--text-muted)' }}>Vous n'avez aucun mot-clé configuré.</p>
             ) : (
               <div className="flex gap-3" style={{ flexWrap: 'wrap' }}>
                 {keywords.map(kw => (
-                  <div key={kw} className="badge flex items-center gap-2" style={{ background: 'var(--green)', color: '#000', padding: '6px 12px' }}>
+                  <div key={kw} className="badge flex items-center gap-2" style={{ background: 'var(--green)', color: "#fff", padding: '6px 12px' }}>
                     {kw}
-                    <button onClick={() => removeKeyword(kw)} style={{ background: 'none', border: 'none', color: '#000', cursor: 'pointer', fontWeight: 'bold' }}>✕</button>
+                    <button onClick={() => removeKeyword(kw)} style={{ background: 'none', border: 'none', color: "#fff", cursor: 'pointer', fontWeight: 'bold' }}>✕</button>
                   </div>
                 ))}
               </div>
@@ -345,27 +345,27 @@ export default function DashboardPage() {
         <h3 className="heading-md" style={{ marginBottom: '24px' }}>📌 Mon Suivi de Candidatures</h3>
         
         {crmMarches.length === 0 ? (
-          <p className="text-secondary text-sm text-center" style={{ padding: '40px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
+          <p className="text-secondary text-sm text-center" style={{ padding: '40px', background: 'var(--color-surface-2)', borderRadius: '8px' }}>
             Vous ne suivez aucun marché pour le moment. Cliquez sur "🔖 Suivre ce marché" dans la page de détails d'un appel d'offres pour le retrouver ici.
           </p>
         ) : (
           <div className="grid grid-3 gap-6">
             
             {/* Colonne 1: Favoris */}
-            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '8px', borderTop: '4px solid var(--gold)' }}>
+            <div style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px', borderTop: '4px solid var(--gold)' }}>
               <h4 className="heading-sm" style={{ marginBottom: '16px', color: 'var(--gold)', display: 'flex', justifyContent: 'space-between' }}>
                 <span>⭐ Favoris</span>
-                <span className="badge" style={{ background: 'rgba(255,255,255,0.1)' }}>{crmMarches.filter(m => m.crmStatus === 'favoris').length}</span>
+                <span className="badge" style={{ background: 'var(--color-border)' }}>{crmMarches.filter(m => m.crmStatus === 'favoris').length}</span>
               </h4>
               <div className="flex flex-col gap-4">
                 {crmMarches.filter(m => m.crmStatus === 'favoris').map(m => (
-                  <div key={m.id} style={{ background: 'var(--color-bg)', padding: '12px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div key={m.id} style={{ background: 'var(--color-bg)', padding: '12px', borderRadius: '6px', border: '1px solid var(--color-border)' }}>
                     <h5 className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px' }}>{m.title}</h5>
                     <div className="flex justify-between items-center" style={{ marginTop: '12px' }}>
                       <Link href={`/marches/details?id=${m.id}`} className="text-xs" style={{ color: 'var(--gold)', textDecoration: 'underline' }}>Détails</Link>
                       <select 
                         className="form-input text-xs" 
-                        style={{ padding: '4px', width: 'auto', background: 'rgba(0,0,0,0.5)', color: '#fff', border: '1px solid var(--gold)' }}
+                        style={{ padding: '4px', width: 'auto', background: 'var(--color-surface)', color: 'var(--text-primary)', border: '1px solid var(--gold)' }}
                         value="favoris"
                         onChange={(e) => {
                           if (e.target.value === 'remove') removeCrm(m.id);
@@ -384,20 +384,20 @@ export default function DashboardPage() {
             </div>
 
             {/* Colonne 2: En préparation */}
-            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '8px', borderTop: '4px solid #60a5fa' }}>
-              <h4 className="heading-sm" style={{ marginBottom: '16px', color: '#60a5fa', display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px', borderTop: '4px solid #0D9488' }}>
+              <h4 className="heading-sm" style={{ marginBottom: '16px', color: '#0D9488', display: 'flex', justifyContent: 'space-between' }}>
                 <span>⏳ En préparation</span>
-                <span className="badge" style={{ background: 'rgba(255,255,255,0.1)' }}>{crmMarches.filter(m => m.crmStatus === 'preparation').length}</span>
+                <span className="badge" style={{ background: 'var(--color-border)' }}>{crmMarches.filter(m => m.crmStatus === 'preparation').length}</span>
               </h4>
               <div className="flex flex-col gap-4">
                 {crmMarches.filter(m => m.crmStatus === 'preparation').map(m => (
-                  <div key={m.id} style={{ background: 'var(--color-bg)', padding: '12px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div key={m.id} style={{ background: 'var(--color-bg)', padding: '12px', borderRadius: '6px', border: '1px solid var(--color-border)' }}>
                     <h5 className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px' }}>{m.title}</h5>
                     <div className="flex justify-between items-center" style={{ marginTop: '12px' }}>
-                      <Link href={`/marches/details?id=${m.id}`} className="text-xs" style={{ color: '#60a5fa', textDecoration: 'underline' }}>Détails</Link>
+                      <Link href={`/marches/details?id=${m.id}`} className="text-xs" style={{ color: '#0D9488', textDecoration: 'underline' }}>Détails</Link>
                       <select 
                         className="form-input text-xs" 
-                        style={{ padding: '4px', width: 'auto', background: 'rgba(0,0,0,0.5)', color: '#fff', border: '1px solid #60a5fa' }}
+                        style={{ padding: '4px', width: 'auto', background: 'var(--color-surface)', color: 'var(--text-primary)', border: '1px solid #0D9488' }}
                         value="preparation"
                         onChange={(e) => {
                           if (e.target.value === 'remove') removeCrm(m.id);
@@ -416,20 +416,20 @@ export default function DashboardPage() {
             </div>
 
             {/* Colonne 3: Soumis */}
-            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '8px', borderTop: '4px solid var(--green)' }}>
+            <div style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px', borderTop: '4px solid var(--green)' }}>
               <h4 className="heading-sm" style={{ marginBottom: '16px', color: 'var(--green)', display: 'flex', justifyContent: 'space-between' }}>
                 <span>✅ Soumis</span>
-                <span className="badge" style={{ background: 'rgba(255,255,255,0.1)' }}>{crmMarches.filter(m => m.crmStatus === 'soumis').length}</span>
+                <span className="badge" style={{ background: 'var(--color-border)' }}>{crmMarches.filter(m => m.crmStatus === 'soumis').length}</span>
               </h4>
               <div className="flex flex-col gap-4">
                 {crmMarches.filter(m => m.crmStatus === 'soumis').map(m => (
-                  <div key={m.id} style={{ background: 'var(--color-bg)', padding: '12px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div key={m.id} style={{ background: 'var(--color-bg)', padding: '12px', borderRadius: '6px', border: '1px solid var(--color-border)' }}>
                     <h5 className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px' }}>{m.title}</h5>
                     <div className="flex justify-between items-center" style={{ marginTop: '12px' }}>
                       <Link href={`/marches/details?id=${m.id}`} className="text-xs" style={{ color: 'var(--green)', textDecoration: 'underline' }}>Détails</Link>
                       <select 
                         className="form-input text-xs" 
-                        style={{ padding: '4px', width: 'auto', background: 'rgba(0,0,0,0.5)', color: '#fff', border: '1px solid var(--green)' }}
+                        style={{ padding: '4px', width: 'auto', background: 'var(--color-surface)', color: 'var(--text-primary)', border: '1px solid var(--green)' }}
                         value="soumis"
                         onChange={(e) => {
                           if (e.target.value === 'remove') removeCrm(m.id);
@@ -472,7 +472,7 @@ export default function DashboardPage() {
               <tbody>
                 {keywords.length > 0 ? (
                   keywords.slice(0, 3).map((kw, i) => (
-                    <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <tr key={i} style={{ borderBottom: '1px solid var(--color-border)' }}>
                       <td style={{ padding: '14px 8px', fontSize: '0.85rem' }}>Aujourd'hui à {17 - i}h05</td>
                       <td style={{ padding: '14px 8px', fontSize: '0.85rem', color: 'var(--green)' }}>{userData.phone || 'PME'}</td>
                       <td style={{ padding: '14px 8px', fontSize: '0.85rem', fontStyle: 'italic' }}>
@@ -506,13 +506,13 @@ export default function DashboardPage() {
           color: '#fff',
           padding: '14px 24px',
           borderRadius: '8px',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
+          boxShadow: '0 20px 40px rgba(6,78,59,0.25)',
           zIndex: 100000,
           fontWeight: '600',
           display: 'flex',
           alignItems: 'center',
           gap: '12px',
-          border: '1px solid rgba(255,255,255,0.1)',
+          border: '1px solid var(--color-border)',
         }} className="animate-fadeIn">
           <span>{toast.type === 'success' ? '✅' : '❌'}</span>
           <span style={{ fontSize: '0.9rem' }}>{toast.message}</span>
@@ -541,8 +541,8 @@ export default function DashboardPage() {
               Nous sommes ravis de vous compter parmi nous, <strong>{userData?.name || 'cher partenaire'}</strong>. 
               Notre système d'Intelligence Artificielle scrute en permanence les appels d'offres au Burkina Faso pour vous faire gagner du temps.
             </p>
-            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
-              <h4 style={{ marginBottom: '12px', color: '#fff' }}>Comment ça marche ?</h4>
+            <div style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
+              <h4 style={{ marginBottom: '12px', color: 'var(--text-primary)' }}>Comment ça marche ?</h4>
               <ul style={{ paddingLeft: '20px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
                 <li style={{ marginBottom: '8px' }}><strong>1. Configurez vos mots-clés</strong> (ex: BTP, Informatique...) sur ce tableau de bord.</li>
                 <li style={{ marginBottom: '8px' }}><strong>2. Recevez des alertes ciblées</strong> sur WhatsApp et par Email.</li>

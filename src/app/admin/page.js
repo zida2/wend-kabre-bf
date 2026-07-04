@@ -223,22 +223,22 @@ export default function AdminPage() {
   return (
     <div className="container animate-fadeIn" style={{ padding: '60px 20px' }}>
       <div className="flex justify-between items-center" style={{ marginBottom: '40px' }}>
-        <h1 className="heading-lg text-gold">👑 Salle de Contrôle Administrateur</h1>
+        <h1 className="heading-lg">👑 Salle de Contrôle Administrateur</h1>
       </div>
 
       <div className="grid grid-3 gap-6" style={{ marginBottom: '40px' }}>
         {/* STAT 1 */}
-        <div className="card text-center" style={{ borderTop: '4px solid var(--gold)' }}>
+        <div className="card text-center" style={{ borderTop: '4px solid var(--forest)' }}>
           <div style={{ fontSize: '2rem', marginBottom: '8px' }}>👥</div>
           <h4 className="text-secondary text-sm" style={{ marginBottom: '8px' }}>Utilisateurs Inscrits</h4>
           <h2 className="heading-lg">{stats.users}</h2>
         </div>
 
         {/* STAT 2 */}
-        <div className="card text-center" style={{ borderTop: '4px solid var(--green)' }}>
+        <div className="card text-center" style={{ borderTop: '4px solid var(--accent)' }}>
           <div style={{ fontSize: '2rem', marginBottom: '8px' }}>💎</div>
           <h4 className="text-secondary text-sm" style={{ marginBottom: '8px' }}>Abonnés Premium</h4>
-          <h2 className="heading-lg text-green">{stats.premium}</h2>
+          <h2 className="heading-lg text-accent">{stats.premium}</h2>
           <p className="text-xs text-muted" style={{ marginTop: '8px' }}>CA Estimé: {stats.premium * 15000} FCFA/mois</p>
         </div>
 
@@ -251,19 +251,19 @@ export default function AdminPage() {
       </div>
 
       <div className="card" style={{ marginBottom: '40px', padding: 0, overflow: 'hidden', border: '1px solid var(--color-border)' }}>
-        <div style={{ padding: '24px', borderBottom: '1px solid var(--color-border)', background: 'rgba(255,255,255,0.02)' }}>
+        <div style={{ padding: '24px', borderBottom: '1px solid var(--color-border)', background: 'var(--color-surface-2)' }}>
           <h3 className="heading-md" style={{ marginBottom: '8px' }}>🚀 Moteur d'Extraction Global</h3>
           <p className="text-secondary text-sm">
             Pilotez le robot d'aspiration de données en temps réel. Le système surveille actuellement <strong>12 sources nationales et internationales</strong> (Presse, ONG, Agences d'État).
           </p>
         </div>
         
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
+        <div className="grid grid-2" style={{ gap: 0 }}>
           <div style={{ padding: '24px', borderRight: '1px solid var(--color-border)' }}>
             <h4 className="text-sm" style={{ marginBottom: '16px', color: 'var(--text-secondary)' }}>SOURCES CONNECTÉES</h4>
             <div className="flex gap-2" style={{ flexWrap: 'wrap', marginBottom: '32px' }}>
               {['Lefaso.net', 'Sidwaya', 'AIB', 'Burkina24', 'Wakat Séra', 'L\'Economiste', 'MinaJobs', 'ReliefWeb', 'L\'Express', 'Les Affaires', 'Oméga', 'FasoZine'].map(s => (
-                <span key={s} className="badge" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)' }}>
+                <span key={s} className="badge" style={{ background: 'var(--color-border)', color: 'var(--text-secondary)' }}>
                   <span style={{ color: 'var(--green)', marginRight: '6px' }}>●</span> {s}
                 </span>
               ))}
@@ -328,7 +328,7 @@ export default function AdminPage() {
             </thead>
             <tbody>
               {paymentRequests.map(r => (
-                <tr key={r.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <tr key={r.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
                   <td style={{ padding: '16px 8px' }}>
                     <div style={{ fontWeight: 'bold' }}>{r.userName}</div>
                     <div className="text-xs text-muted">{r.userEmail}</div>
@@ -355,8 +355,8 @@ export default function AdminPage() {
                   </td>
                   <td style={{ padding: '16px 8px' }}>
                     {r.status === 'approved' && <span className="badge badge-green">Validé</span>}
-                    {r.status === 'pending' && <span className="badge badge-gold" style={{ background: 'rgba(245,200,66,0.1)', color: 'var(--gold)' }}>En attente</span>}
-                    {r.status === 'rejected' && <span className="badge badge-red" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444' }}>Rejeté</span>}
+                    {r.status === 'pending' && <span className="badge badge-accent">En attente</span>}
+                    {r.status === 'rejected' && <span className="badge badge-red" style={{ background: 'var(--danger-muted)', color: 'var(--danger)' }}>Rejeté</span>}
                   </td>
                   <td style={{ padding: '16px 8px' }}>
                     {r.status === 'pending' ? (
@@ -370,7 +370,7 @@ export default function AdminPage() {
                         </button>
                         <button 
                           onClick={() => handleRequestAction(r.id, r.userId, r.planId, 'rejected')}
-                          style={{ padding: '6px 12px', background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#ef4444', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                          style={{ padding: '6px 12px', background: 'var(--danger-muted)', border: '1px solid var(--danger)', color: 'var(--danger)', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
                         >
                           Rejeter
                         </button>
@@ -410,7 +410,7 @@ export default function AdminPage() {
             </thead>
             <tbody>
               {usersList.map(u => (
-                <tr key={u.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <tr key={u.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
                   <td style={{ padding: '16px 8px' }}>
                     <div style={{ fontWeight: 'bold' }}>{u.name || 'N/A'}</div>
                     <div className="text-xs text-muted">{u.email}</div>
@@ -423,7 +423,7 @@ export default function AdminPage() {
                     ) : (
                       <span className="text-muted" style={{ display: 'block', marginBottom: '4px' }}>Aucun Tel</span>
                     )}
-                    <a href={`mailto:${u.email}?subject=${encodeURIComponent("Votre essai gratuit sur Wend-Kabré")}&body=${encodeURIComponent("Bonjour " + (u.name || "") + ",\n\nMerci pour votre inscription sur Wend-Kabré !\nPour vous souhaiter la bienvenue, je viens de vous activer un accès Premium Gratuit de 2 jours afin que vous puissiez découvrir nos alertes et nos appels d'offres.\n\nSi vous avez des questions, n'hésitez pas.\n\nL'équipe Wend-Kabré")}`} style={{ color: '#60a5fa', fontSize: '0.8rem' }} title="Envoyer un Email">
+                    <a href={`mailto:${u.email}?subject=${encodeURIComponent("Votre essai gratuit sur Wend-Kabré")}&body=${encodeURIComponent("Bonjour " + (u.name || "") + ",\n\nMerci pour votre inscription sur Wend-Kabré !\nPour vous souhaiter la bienvenue, je viens de vous activer un accès Premium Gratuit de 2 jours afin que vous puissiez découvrir nos alertes et nos appels d'offres.\n\nSi vous avez des questions, n'hésitez pas.\n\nL'équipe Wend-Kabré")}`} style={{ color: 'var(--forest-light)', fontSize: '0.8rem' }} title="Envoyer un Email">
                       ✉️ {u.email}
                     </a>
                   </td>
@@ -431,7 +431,7 @@ export default function AdminPage() {
                     {u.isSubscribed ? (
                       <span className="badge badge-green">Premium</span>
                     ) : (
-                      <span className="badge badge-red" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444' }}>Gratuit</span>
+                      <span className="badge badge-red" style={{ background: 'var(--danger-muted)', color: 'var(--danger)' }}>Gratuit</span>
                     )}
                   </td>
                   <td style={{ padding: '16px 8px', fontSize: '0.85rem' }}>
@@ -443,7 +443,7 @@ export default function AdminPage() {
                     <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
                       <button 
                         onClick={() => handleUpdateSubscription(u.id, 2)}
-                        style={{ padding: '6px 12px', background: 'rgba(52, 211, 114, 0.1)', border: '1px solid var(--green)', color: 'var(--green)', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}
+                        style={{ padding: '6px 12px', background: 'var(--success-muted)', border: '1px solid var(--green)', color: 'var(--green)', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}
                         disabled={processingUser !== null}
                         title="Activer 2 jours d'essai"
                       >
@@ -458,7 +458,7 @@ export default function AdminPage() {
                       </button>
                       <button 
                         onClick={() => handleUpdateSubscription(u.id, 365)}
-                        style={{ padding: '6px 12px', background: 'var(--grad-gold)', border: 'none', color: '#000', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}
+                        style={{ padding: '6px 12px', background: 'var(--grad-gold)', border: 'none', color: '#fff', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}
                         disabled={processingUser !== null}
                       >
                         {processingUser === u.id ? '...' : '+1 An'}
@@ -466,7 +466,7 @@ export default function AdminPage() {
                       {u.isSubscribed && (
                         <button 
                           onClick={() => handleUpdateSubscription(u.id, 0)}
-                          style={{ padding: '6px 12px', background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#ef4444', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                          style={{ padding: '6px 12px', background: 'var(--danger-muted)', border: '1px solid var(--danger)', color: 'var(--danger)', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
                           disabled={processingUser !== null}
                         >
                           {processingUser === u.id ? '...' : 'Désactiver'}
@@ -487,7 +487,7 @@ export default function AdminPage() {
                             setProcessingUser(null);
                           }
                         }}
-                        style={{ padding: '6px 12px', background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                        style={{ padding: '6px 12px', background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
                         disabled={processingUser !== null}
                         title="Supprimer l'utilisateur"
                       >
@@ -529,7 +529,7 @@ export default function AdminPage() {
             </thead>
             <tbody>
               {marchesList.map(m => (
-                <tr key={m.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <tr key={m.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
                   <td style={{ padding: '16px 8px', maxWidth: '400px' }}>
                     <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
                       {m.title}
@@ -552,7 +552,7 @@ export default function AdminPage() {
                   <td style={{ padding: '16px 8px' }}>
                     <button 
                       onClick={() => handleDeleteMarche(m.id)}
-                      style={{ padding: '6px 10px', background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#ef4444', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                      style={{ padding: '6px 10px', background: 'var(--danger-muted)', border: '1px solid var(--danger)', color: 'var(--danger)', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
                       title="Supprimer ce marché"
                     >
                       🗑️ Supprimer
@@ -601,17 +601,17 @@ export default function AdminPage() {
           position: 'fixed',
           bottom: '30px',
           right: '30px',
-          background: toast.type === 'success' ? '#10b981' : toast.type === 'error' ? '#ef4444' : '#f5c842',
+          background: toast.type === 'success' ? '#10b981' : toast.type === 'error' ? 'var(--danger)' : 'var(--accent)',
           color: '#fff',
           padding: '14px 24px',
           borderRadius: '8px',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
+          boxShadow: '0 20px 40px rgba(6,78,59,0.25)',
           zIndex: 100000,
           fontWeight: '600',
           display: 'flex',
           alignItems: 'center',
           gap: '12px',
-          border: '1px solid rgba(255,255,255,0.1)',
+          border: '1px solid var(--color-border)',
         }} className="animate-fadeIn">
           <span>{toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : 'ℹ️'}</span>
           <span style={{ fontSize: '0.9rem' }}>{toast.message}</span>

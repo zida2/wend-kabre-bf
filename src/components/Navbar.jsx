@@ -33,22 +33,37 @@ export default function Navbar() {
     return () => unsubscribe();
   }, []);
 
+  // Empêche le défilement de l'arrière-plan quand le menu mobile est ouvert
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
+  const handleSignOut = async () => {
+    const { signOut } = await import('firebase/auth');
+    await signOut(auth);
+    setMenuOpen(false);
+    window.location.href = '/';
+  };
+
+  const closeMenu = () => setMenuOpen(false);
+
   return (
     <nav className={styles.navbar}>
       <div className={`container ${styles.inner}`}>
         {/* Logo */}
-        <Link href="/" className={styles.logo}>
+        <Link href="/" className={styles.logo} onClick={closeMenu}>
           <span className={styles.logoIcon}>⚡</span>
           <span>Wend-<span className={styles.logoAccent}>Kabré</span></span>
         </Link>
 
         {/* Desktop Nav */}
-        <div className={`${styles.navLinks} hide-mobile`}>
+        <div className={styles.navLinks}>
           <Link href="/marches" className={styles.navLink}>Marchés Publics</Link>
           <Link href="/recrutements" className={styles.navLink}>Recrutements</Link>
           <Link href="/assistant" className={styles.navLink}>Assistant IA 🤖</Link>
           {!isPremium && (
-            <Link href="/tarifs" className={styles.navLink} style={{ color: 'var(--gold)', fontWeight: 600 }}>Tarifs 💎</Link>
+            <Link href="/tarifs" className={`${styles.navLink} ${styles.navLinkAccent}`}>Tarifs 💎</Link>
           )}
           {user && (
             <>
@@ -58,29 +73,21 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* CTA */}
-        <div className={`${styles.navCta} hide-mobile`}>
+        {/* CTA desktop */}
+        <div className={styles.navCta}>
           {user ? (
-            <div className="flex gap-3">
+            <>
               {!isPremium && (
-                <Link href="/tarifs" className="btn btn-primary btn-sm" style={{ fontWeight: 700 }}>Premium 🔐</Link>
+                <Link href="/tarifs" className={styles.btnNavPrimary}>Premium 🔐</Link>
               )}
-              <button 
-                onClick={async () => {
-                  const { signOut } = await import('firebase/auth');
-                  await signOut(auth);
-                  window.location.href = '/';
-                }} 
-                className="btn btn-outline btn-sm"
-                style={{ background: 'none', border: '1px solid rgba(255,255,255,0.2)', color: '#E2E8F0' }}
-              >
+              <button onClick={handleSignOut} className={styles.btnNavGhost}>
                 Déconnexion
               </button>
-            </div>
+            </>
           ) : (
             <>
-              <Link href="/connexion" className="btn btn-outline btn-sm" style={{ color: '#E2E8F0', borderColor: 'rgba(255,255,255,0.2)' }}>Connexion</Link>
-              <Link href="/tarifs" className="btn btn-primary btn-sm" style={{ fontWeight: 700 }}>Premium 🔐</Link>
+              <Link href="/connexion" className={styles.btnNavGhost}>Connexion</Link>
+              <Link href="/tarifs" className={styles.btnNavPrimary}>Premium 🔐</Link>
             </>
           )}
         </div>
@@ -89,7 +96,8 @@ export default function Navbar() {
         <button
           className={styles.burger}
           onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Menu"
+          aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+          aria-expanded={menuOpen}
         >
           <span className={`${styles.burgerLine} ${menuOpen ? styles.open : ''}`}></span>
           <span className={`${styles.burgerLine} ${menuOpen ? styles.open : ''}`}></span>
@@ -100,41 +108,32 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className={styles.mobileMenu}>
-          <Link href="/marches" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Marchés Publics</Link>
-          <Link href="/recrutements" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Recrutements</Link>
-          <Link href="/assistant" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Assistant IA 🤖</Link>
+          <Link href="/marches" className={styles.mobileLink} onClick={closeMenu}>Marchés Publics</Link>
+          <Link href="/recrutements" className={styles.mobileLink} onClick={closeMenu}>Recrutements</Link>
+          <Link href="/assistant" className={styles.mobileLink} onClick={closeMenu}>Assistant IA 🤖</Link>
           {!isPremium && (
-            <Link href="/tarifs" className={styles.mobileLink} onClick={() => setMenuOpen(false)} style={{ color: 'var(--gold)' }}>Tarifs 💎</Link>
+            <Link href="/tarifs" className={`${styles.mobileLink} ${styles.mobileLinkAccent}`} onClick={closeMenu}>Tarifs 💎</Link>
           )}
           {user && (
             <>
-              <Link href="/alertes" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Mes Alertes</Link>
-              <Link href="/dashboard" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Dashboard</Link>
+              <Link href="/alertes" className={styles.mobileLink} onClick={closeMenu}>Mes Alertes</Link>
+              <Link href="/dashboard" className={styles.mobileLink} onClick={closeMenu}>Dashboard</Link>
             </>
           )}
           <div className={styles.mobileCta}>
             {user ? (
               <>
                 {!isPremium && (
-                  <Link href="/tarifs" className="btn btn-primary btn-sm w-full" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center', fontWeight: 700 }}>Accès Premium 🔐</Link>
+                  <Link href="/tarifs" className={styles.btnNavPrimary} onClick={closeMenu}>Accès Premium 🔐</Link>
                 )}
-                <button 
-                  onClick={async () => {
-                    const { signOut } = await import('firebase/auth');
-                    await signOut(auth);
-                    setMenuOpen(false);
-                    window.location.href = '/';
-                  }} 
-                  className="btn btn-outline btn-sm w-full"
-                  style={{ background: 'none', border: '1px solid rgba(255,255,255,0.2)', color: '#E2E8F0', justifyContent: 'center' }}
-                >
+                <button onClick={handleSignOut} className={styles.btnNavGhost}>
                   Déconnexion
                 </button>
               </>
             ) : (
               <>
-                <Link href="/connexion" className="btn btn-outline btn-sm w-full" onClick={() => setMenuOpen(false)} style={{ color: '#E2E8F0', borderColor: 'rgba(255,255,255,0.2)', justifyContent: 'center' }}>Connexion</Link>
-                <Link href="/tarifs" className="btn btn-primary btn-sm w-full" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center', fontWeight: 700 }}>Accès Premium 🔐</Link>
+                <Link href="/connexion" className={styles.btnNavGhost} onClick={closeMenu}>Connexion</Link>
+                <Link href="/tarifs" className={styles.btnNavPrimary} onClick={closeMenu}>Accès Premium 🔐</Link>
               </>
             )}
           </div>

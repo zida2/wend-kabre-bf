@@ -11,15 +11,15 @@ import { onAuthStateChanged } from 'firebase/auth';
 function PremiumLock({ label = "Débloquer" }) {
   return (
     <Link href="/tarifs" className="btn btn-sm" style={{
-      background: 'linear-gradient(135deg, #f5c842, #e8a800)',
-      color: '#000',
+      background: 'var(--grad-accent)',
+      color: '#fff',
       fontWeight: 700,
       gap: '6px',
       display: 'inline-flex',
       alignItems: 'center',
       borderRadius: '50px',
       border: 'none',
-      boxShadow: '0 4px 15px rgba(245,200,66,0.35)',
+      boxShadow: '0 4px 14px rgba(217,119,6,0.32)',
     }}>
       🔐 {label}
     </Link>
@@ -86,8 +86,8 @@ function BlurredText({ text, lines = 2 }) {
 function WelcomeBanner({ marcheCount }) {
   return (
     <div style={{
-      background: 'linear-gradient(135deg, rgba(52,211,114,0.08) 0%, rgba(245,200,66,0.08) 100%)',
-      border: '1px solid rgba(52,211,114,0.2)',
+      background: 'linear-gradient(135deg, rgba(5,150,105,0.07) 0%, rgba(6,78,59,0.04) 100%)',
+      border: '1px solid var(--color-border-hover)',
       borderRadius: 'var(--radius-lg)',
       padding: '32px',
       marginBottom: '40px',
@@ -98,12 +98,12 @@ function WelcomeBanner({ marcheCount }) {
         {marcheCount > 0 ? `${marcheCount} offres de recrutement disponibles aujourd'hui` : 'Recrutements et Formations'}
       </h2>
       <p className="text-secondary text-sm" style={{ maxWidth: '520px', margin: '0 auto 24px' }}>
-        Vous voyez les <strong style={{ color: 'var(--green-primary)' }}>titres & catégories</strong> gratuitement.
-        Pour accéder aux détails complets, à la source officielle et au lien de dépôt — 
-        <strong style={{ color: 'var(--gold)' }}> passez Premium.</strong>
+        Vous voyez les <strong style={{ color: 'var(--primary-dark)' }}>titres & catégories</strong> gratuitement.
+        Pour accéder aux détails complets, à la source officielle et au lien de dépôt —
+        <strong style={{ color: 'var(--accent)' }}> passez Premium.</strong>
       </p>
       <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-        <Link href="/tarifs" className="btn btn-gold btn-sm">
+        <Link href="/tarifs" className="btn btn-accent btn-sm">
           Voir les offres Premium 🚀
         </Link>
         <Link href="/inscription" className="btn btn-outline btn-sm">
@@ -231,7 +231,7 @@ export default function RecrutementsPage() {
                   position: 'relative',
                   overflow: 'hidden',
                   border: isLocked
-                    ? '1px solid rgba(245,200,66,0.2)'
+                    ? '1px solid rgba(217,119,6,0.28)'
                     : '1px solid var(--color-border)',
                 }}
               >
@@ -239,8 +239,8 @@ export default function RecrutementsPage() {
                 {isLocked && (
                   <div style={{
                     position: 'absolute', top: '12px', right: '12px',
-                    background: 'linear-gradient(135deg, #f5c842, #e8a800)',
-                    color: '#000', fontSize: '0.65rem', fontWeight: 800,
+                    background: 'var(--grad-accent)',
+                    color: '#fff', fontSize: '0.65rem', fontWeight: 800,
                     padding: '3px 10px', borderRadius: '50px', letterSpacing: '0.05em',
                     zIndex: 2,
                   }}>
@@ -250,8 +250,8 @@ export default function RecrutementsPage() {
                 {isDemo && (
                   <div style={{
                     position: 'absolute', top: '12px', right: '12px',
-                    background: 'rgba(248,113,113,0.12)',
-                    color: '#FCA5A5', border: '1px solid rgba(248,113,113,0.26)',
+                    background: 'var(--danger-muted)',
+                    color: '#B91C1C', border: '1px solid rgba(220,38,38,0.22)',
                     fontSize: '0.65rem', fontWeight: 800,
                     padding: '3px 10px', borderRadius: '50px', letterSpacing: '0.05em',
                     zIndex: 2,
@@ -324,8 +324,8 @@ export default function RecrutementsPage() {
       {!authLoading && !isSubscribed && filteredMarches.length > 0 && (
         <div style={{
           marginTop: '60px',
-          background: 'linear-gradient(135deg, rgba(245,200,66,0.1) 0%, rgba(245,200,66,0.03) 100%)',
-          border: '1px solid rgba(245,200,66,0.3)',
+          background: 'linear-gradient(135deg, rgba(217,119,6,0.09) 0%, rgba(217,119,6,0.03) 100%)',
+          border: '1px solid rgba(217,119,6,0.26)',
           borderRadius: 'var(--radius-lg)',
           padding: '40px',
           textAlign: 'center',
@@ -339,7 +339,7 @@ export default function RecrutementsPage() {
               ? `${filteredMarches.length - 3} offres supplémentaires sont disponibles en Premium. Accédez aux détails, à la source et au lien de dépôt instantanément.`
               : 'Accédez aux détails complets, sources officielles et liens de dépôt de toutes les offres.'}
           </p>
-          <Link href="/tarifs" className="btn btn-gold">
+          <Link href="/tarifs" className="btn btn-accent">
             Découvrir les offres Premium →
           </Link>
         </div>

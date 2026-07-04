@@ -42,10 +42,16 @@ export default function ConnexionPage() {
 
   return (
     <main className="container section flex justify-center items-center animate-fadeIn" style={{ minHeight: '80vh' }}>
-      <div className="card" style={{ width: '100%', maxWidth: '450px' }}>
-        <div className="text-center" style={{ marginBottom: '32px' }}>
+      <div className="card animate-fadeInUp" style={{ width: '100%', maxWidth: '440px' }}>
+        <div className="text-center" style={{ marginBottom: '30px' }}>
+          <div className="mx-auto" style={{
+            width: '54px', height: '54px', borderRadius: '16px',
+            background: 'var(--grad-primary)', boxShadow: 'var(--shadow-primary)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '1.5rem', marginBottom: '18px',
+          }}>⚡</div>
           <h2 className="heading-md" style={{ marginBottom: '8px' }}>Ravi de vous revoir !</h2>
-          <p className="text-secondary text-xs">Accédez à votre espace entreprise Wend-Kabré</p>
+          <p className="text-secondary text-sm">Accédez à votre espace entreprise Wend-Kabré</p>
         </div>
 
         {error && (
@@ -86,7 +92,7 @@ export default function ConnexionPage() {
         <div className="divider"></div>
 
         <p className="text-center text-xs text-secondary">
-          Vous n'avez pas de compte ? <Link href="/inscription" style={{ color: 'var(--gold)', fontWeight: 'bold' }}>Créer un compte</Link>
+          Vous n'avez pas de compte ? <Link href="/inscription" style={{ color: 'var(--primary-dark)', fontWeight: 700 }}>Créer un compte</Link>
         </p>
       </div>
     </main>

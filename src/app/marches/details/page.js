@@ -320,7 +320,7 @@ function DetailsContent() {
               onClick={handleToggleFollow}
               disabled={followLoading}
               className={`btn ${isFollowing ? 'btn-outline' : 'btn-primary'}`}
-              style={{ padding: '8px 16px', fontSize: '0.9rem', borderColor: isFollowing ? 'var(--gold)' : 'transparent', color: isFollowing ? 'var(--gold)' : '#000', backgroundColor: isFollowing ? 'transparent' : 'var(--gold)' }}
+              style={{ padding: '8px 16px', fontSize: '0.9rem' }}
             >
               {followLoading ? '...' : isFollowing ? 'Retirer du suivi' : '🔖 Suivre ce marché'}
             </button>
@@ -368,8 +368,8 @@ function DetailsContent() {
 
         {/* NOUVEAU : INFORMATIONS DE RECRUTEMENT */}
         {marche.category === 'Recrutement' && (
-          <div style={{ background: 'rgba(245, 200, 66, 0.05)', border: '1px solid rgba(245, 200, 66, 0.2)', padding: '16px', borderRadius: '8px', marginBottom: '20px' }}>
-            <h4 className="heading-sm" style={{ marginBottom: '12px', color: 'var(--gold)' }}>📋 Informations de Candidature</h4>
+          <div style={{ background: 'var(--accent-muted)', border: '1px solid rgba(217,119,6,0.22)', padding: '16px', borderRadius: 'var(--radius-md)', marginBottom: '20px' }}>
+            <h4 className="heading-sm" style={{ marginBottom: '12px', color: 'var(--accent)' }}>📋 Informations de Candidature</h4>
             <div style={{ marginBottom: '16px' }}>
               <p className="text-xs text-muted" style={{ marginBottom: '8px' }}>DOCUMENTS REQUIS</p>
               <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: 0 }} className="text-sm text-secondary">
@@ -387,12 +387,12 @@ function DetailsContent() {
 
         {/* NOUVEAU : CALENDRIER DU MARCHÉ */}
         {hasFullAccess && (
-          <div style={{ background: 'rgba(52, 211, 114, 0.05)', border: '1px solid rgba(52, 211, 114, 0.2)', padding: '16px', borderRadius: '8px' }}>
-            <h4 className="heading-sm" style={{ marginBottom: '12px', color: 'var(--green)' }}>📅 Calendrier du Marché</h4>
+          <div style={{ background: 'var(--success-muted)', border: '1px solid rgba(5,150,105,0.2)', padding: '16px', borderRadius: 'var(--radius-md)' }}>
+            <h4 className="heading-sm" style={{ marginBottom: '12px', color: 'var(--primary-dark)' }}>📅 Calendrier du Marché</h4>
             <div className="grid grid-2 gap-4">
               <div>
                 <p className="text-xs text-muted">DATE LIMITE DE DÉPÔT</p>
-                <p className="text-sm text-primary" style={{ fontWeight: 600, color: '#ef4444' }}>{deadlineDate}</p>
+                <p className="text-sm" style={{ fontWeight: 600, color: 'var(--danger)' }}>{deadlineDate}</p>
               </div>
               <div>
                 <p className="text-xs text-muted">OUVERTURE DES PLIS</p>
@@ -411,7 +411,7 @@ function DetailsContent() {
       <div className="flex flex-col gap-6" style={{ height: 'fit-content' }}>
 
         {marche.category === 'Recrutement' ? (
-          <div className="card text-center" style={{ border: '1px solid var(--green)', boxShadow: '0 8px 30px rgba(52,211,114,0.15)' }}>
+          <div className="card text-center" style={{ border: '1px solid var(--green)', boxShadow: '0 8px 30px rgba(5,150,105,0.15)' }}>
             <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>✅</div>
             <h3 className="heading-md" style={{ marginBottom: '12px', color: 'var(--green)' }}>Accès Gratuit</h3>
             <p className="text-secondary text-sm" style={{ marginBottom: '24px' }}>
@@ -428,9 +428,9 @@ function DetailsContent() {
         ) : (
           <>
             {!isUserLoggedIn && (
-              <div className="card text-center" style={{ border: '1px solid var(--gold)', boxShadow: 'var(--shadow-gold)' }}>
+              <div className="card text-center" style={{ border: '1px solid var(--primary)', boxShadow: 'var(--shadow-gold)' }}>
                 <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>🔒</div>
-                <h3 className="heading-md" style={{ marginBottom: '12px', color: 'var(--gold)' }}>Détails Verrouillés</h3>
+                <h3 className="heading-md" style={{ marginBottom: '12px', color: 'var(--primary)' }}>Détails Verrouillés</h3>
                 <p className="text-secondary text-sm" style={{ marginBottom: '24px' }}>
                   Pour consulter les pièces requises et utiliser le Studio de Candidature, veuillez créer un compte.
                 </p>
@@ -441,11 +441,11 @@ function DetailsContent() {
             )}
 
             {isUserLoggedIn && !isUserSubscribed && (
-              <div className="card" style={{ border: '1px solid var(--gold)', boxShadow: 'var(--shadow-gold)' }}>
+              <div className="card" style={{ border: '1px solid var(--primary)', boxShadow: 'var(--shadow-gold)' }}>
                 <div className="text-center" style={{ marginBottom: '24px' }}>
                   <div style={{ fontSize: '2rem', marginBottom: '12px' }}>🔐</div>
-                  <span className="tag" style={{ background: 'var(--grad-gold)', color: '#000', marginBottom: '12px', display: 'inline-block' }}>Premium requis</span>
-                  <h3 className="heading-md" style={{ color: 'var(--gold)', marginBottom: '8px', marginTop: '8px' }}>Débloquer ce marché</h3>
+                  <span className="tag" style={{ background: 'var(--grad-accent)', color: '#fff', marginBottom: '12px', display: 'inline-block' }}>Premium requis</span>
+                  <h3 className="heading-md" style={{ color: 'var(--accent)', marginBottom: '8px', marginTop: '8px' }}>Débloquer ce marché</h3>
                   <p className="text-muted text-xs" style={{ lineHeight: 1.7 }}>
                     Accédez au Studio de Candidature : L'IA rédige votre offre technique sur-mesure.
                   </p>
@@ -460,7 +460,7 @@ function DetailsContent() {
             )}
 
             {isUserLoggedIn && isUserSubscribed && (
-              <div className="card flex flex-col justify-between" style={{ border: '1px solid var(--gold)', gap: '16px' }}>
+              <div className="card flex flex-col justify-between" style={{ border: '1px solid var(--primary)', gap: '16px' }}>
                 <div>
                   <div className="flex items-center gap-2" style={{ marginBottom: '10px' }}>
                     <span className="badge badge-gold">Outil Premium</span>
@@ -493,24 +493,24 @@ function DetailsContent() {
       }}>
         <div className="card" style={{ 
           width: '100%', maxWidth: '800px', maxHeight: '90vh', overflowY: 'auto',
-          border: '1px solid var(--gold)', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' 
+          border: '1px solid var(--primary)', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' 
         }}>
           <div className="flex justify-between items-center" style={{ marginBottom: '24px' }}>
-            <h2 className="heading-lg" style={{ color: 'var(--gold)' }}>Studio de Candidature 🪄</h2>
+            <h2 className="heading-lg" style={{ color: 'var(--primary)' }}>Studio de Candidature 🪄</h2>
             <button onClick={() => setShowStudio(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
           </div>
 
           {/* Stepper */}
-          <div className="flex gap-4" style={{ marginBottom: '32px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px' }}>
-            <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 1 ? 'var(--gold)' : 'var(--text-muted)' }}>
+          <div className="flex gap-4" style={{ marginBottom: '32px', borderBottom: '1px solid var(--color-border)', paddingBottom: '16px' }}>
+            <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 1 ? 'var(--primary)' : 'var(--text-muted)' }}>
               <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>1</div>
               <div className="text-xs">Dossier Administratif</div>
             </div>
-            <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 2 ? 'var(--gold)' : 'var(--text-muted)' }}>
+            <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 2 ? 'var(--primary)' : 'var(--text-muted)' }}>
               <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>2</div>
               <div className="text-xs">Offre Technique (IA)</div>
             </div>
-            <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 3 ? 'var(--gold)' : 'var(--text-muted)' }}>
+            <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 3 ? 'var(--primary)' : 'var(--text-muted)' }}>
               <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>3</div>
               <div className="text-xs">Vérification & Dépôt</div>
             </div>
@@ -521,7 +521,7 @@ function DetailsContent() {
             <div className="animate-fadeIn">
               <h3 className="heading-md" style={{ marginBottom: '16px' }}>Étape 1 : Pièces à fournir</h3>
               
-              <div style={{ background: 'rgba(52, 211, 114, 0.05)', border: '1px solid rgba(52, 211, 114, 0.2)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
+              <div style={{ background: 'var(--success-muted)', border: '1px solid rgba(5,150,105,0.2)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
                 <h4 className="text-sm font-bold text-primary" style={{ marginBottom: '12px' }}>📌 Documents attendus pour ce marché :</h4>
                 
                 <p className="text-xs text-muted" style={{ marginBottom: '8px' }}>Socle administratif (obligatoire pour tout marché) :</p>
@@ -547,9 +547,9 @@ function DetailsContent() {
                 Veuillez sélectionner vos documents numérisés correspondants. L'IA les lira pour vérifier leur conformité et rédiger l'offre technique avec vos vraies données.
               </p>
               
-              <div style={{ border: '2px dashed var(--gold)', padding: '30px', textAlign: 'center', borderRadius: '8px', marginBottom: '24px', background: 'rgba(245, 200, 66, 0.05)' }}>
+              <div style={{ border: '2px dashed var(--primary)', padding: '30px', textAlign: 'center', borderRadius: '8px', marginBottom: '24px', background: 'var(--primary-muted)' }}>
                 <input type="file" multiple accept="image/*,application/pdf" onChange={handleFileChange} id="fileUpload" style={{ display: 'none' }} />
-                <label htmlFor="fileUpload" className="btn btn-outline" style={{ borderColor: 'var(--gold)', color: 'var(--gold)', cursor: 'pointer', display: 'inline-block', marginBottom: '16px' }}>
+                <label htmlFor="fileUpload" className="btn btn-outline" style={{ borderColor: 'var(--primary)', color: 'var(--primary)', cursor: 'pointer', display: 'inline-block', marginBottom: '16px' }}>
                   📁 Sélectionner vos fichiers
                 </label>
                 <p className="text-xs text-muted">Formats acceptés : PDF, JPG, PNG.</p>
@@ -559,7 +559,7 @@ function DetailsContent() {
                     <p className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px' }}>Fichiers sélectionnés ({selectedFiles.length}) :</p>
                     <ul style={{ listStyle: 'none', padding: 0, margin: 0, maxHeight: '100px', overflowY: 'auto' }}>
                       {selectedFiles.map((f, i) => (
-                        <li key={i} className="text-xs text-secondary" style={{ padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>📄 {f.name}</li>
+                        <li key={i} className="text-xs text-secondary" style={{ padding: '4px 0', borderBottom: '1px solid var(--color-border)' }}>📄 {f.name}</li>
                       ))}
                     </ul>
                   </div>
@@ -581,7 +581,7 @@ function DetailsContent() {
               </p>
 
               {generationError && (
-                <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', padding: '16px', borderRadius: '8px', marginBottom: '24px', fontSize: '0.9rem' }}>
+                <div style={{ background: 'var(--danger-muted)', color: 'var(--danger)', padding: '16px', borderRadius: '8px', marginBottom: '24px', fontSize: '0.9rem' }}>
                   ❌ {generationError}
                 </div>
               )}
@@ -595,10 +595,10 @@ function DetailsContent() {
               {generatingDoc && (
                 <div className="text-center" style={{ padding: '30px 0' }}>
                   <div style={{ 
-                    width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden', marginBottom: '24px' 
+                    width: '100%', height: '8px', background: 'var(--color-border)', borderRadius: '4px', overflow: 'hidden', marginBottom: '24px' 
                   }}>
                     <div style={{ 
-                      width: '50%', height: '100%', background: 'var(--gold)', borderRadius: '4px',
+                      width: '50%', height: '100%', background: 'var(--primary)', borderRadius: '4px',
                       animation: 'progressAnim 2s infinite linear' 
                     }}></div>
                   </div>
@@ -623,10 +623,10 @@ function DetailsContent() {
                 <h3 className="heading-md text-green">Offre Rédigée avec Succès !</h3>
               </div>
               
-              <div style={{ background: 'rgba(52, 211, 114, 0.05)', border: '1px solid rgba(52, 211, 114, 0.2)', padding: '16px', borderRadius: '8px', marginBottom: '20px' }}>
+              <div style={{ background: 'var(--success-muted)', border: '1px solid rgba(5,150,105,0.2)', padding: '16px', borderRadius: '8px', marginBottom: '20px' }}>
                 <div className="flex justify-between items-center" style={{ marginBottom: '12px' }}>
                   <h4 className="text-sm font-bold text-primary">Score de Concordance</h4>
-                  <span style={{ fontSize: '1.5rem', fontWeight: 900, color: extractedData.concordanceScore >= 80 ? 'var(--green)' : 'var(--gold)' }}>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 900, color: extractedData.concordanceScore >= 80 ? 'var(--green)' : 'var(--primary)' }}>
                     {extractedData.concordanceScore}%
                   </span>
                 </div>
@@ -642,8 +642,8 @@ function DetailsContent() {
                 )}
               </div>
 
-              <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
-                <h4 className="text-sm" style={{ color: '#ef4444', marginBottom: '8px', fontWeight: 'bold' }}>⚠️ Responsabilité de Relecture</h4>
+              <div style={{ background: 'var(--danger-muted)', border: '1px solid rgba(220,38,38,0.28)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
+                <h4 className="text-sm" style={{ color: 'var(--danger)', marginBottom: '8px', fontWeight: 'bold' }}>⚠️ Responsabilité de Relecture</h4>
                 <p className="text-xs text-secondary" style={{ marginBottom: '12px' }}>
                   Bien que l'IA ait rédigé l'offre de bout en bout pour vous (Méthodologie, Risques, Planning), il s'agit de <strong>contenu généré automatiquement</strong>. Vous êtes responsable de vérifier si les délais et approches inventés par l'IA correspondent aux capacités réelles de votre entreprise.
                 </p>

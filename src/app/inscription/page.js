@@ -53,10 +53,16 @@ export default function InscriptionPage() {
 
   return (
     <main className="container section flex justify-center items-center animate-fadeIn" style={{ minHeight: '80vh' }}>
-      <div className="card" style={{ width: '100%', maxWidth: '500px' }}>
-        <div className="text-center" style={{ marginBottom: '32px' }}>
+      <div className="card animate-fadeInUp" style={{ width: '100%', maxWidth: '500px' }}>
+        <div className="text-center" style={{ marginBottom: '30px' }}>
+          <div className="mx-auto" style={{
+            width: '54px', height: '54px', borderRadius: '16px',
+            background: 'var(--grad-primary)', boxShadow: 'var(--shadow-primary)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '1.5rem', marginBottom: '18px',
+          }}>🏢</div>
           <h2 className="heading-md" style={{ marginBottom: '8px' }}>Enregistrer mon Entreprise</h2>
-          <p className="text-secondary text-xs">Rejoignez la plateforme numérique souveraine du Burkina Faso</p>
+          <p className="text-secondary text-sm">Rejoignez la plateforme des marchés publics du Burkina Faso</p>
         </div>
 
         {error && (
@@ -142,7 +148,7 @@ export default function InscriptionPage() {
         <div className="divider"></div>
 
         <p className="text-center text-xs text-secondary">
-          Vous avez déjà un compte ? <Link href="/connexion" style={{ color: 'var(--gold)', fontWeight: 'bold' }}>Se connecter</Link>
+          Vous avez déjà un compte ? <Link href="/connexion" style={{ color: 'var(--primary-dark)', fontWeight: 700 }}>Se connecter</Link>
         </p>
       </div>
     </main>

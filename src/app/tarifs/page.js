@@ -11,9 +11,9 @@ const PLANS = [
     period: '/ semaine',
     icon: '🌱',
     color: 'var(--text-secondary)',
-    borderColor: 'var(--color-border)',
+    borderColor: 'var(--color-border-strong)',
     badge: 'Nouveau',
-    badgeColor: 'badge-gold',
+    badgeColor: 'badge-gray',
     features: [
       { text: 'Voir les titres des marchés', ok: true },
       { text: 'Filtres par catégorie', ok: true },
@@ -36,8 +36,8 @@ const PLANS = [
     currency: 'FCFA',
     period: '/ mois',
     icon: '⚡',
-    color: 'var(--green-primary)',
-    borderColor: 'rgba(52,211,114,0.5)',
+    color: 'var(--primary)',
+    borderColor: 'var(--primary)',
     badge: 'Le plus populaire',
     badgeColor: 'badge-green',
     features: [
@@ -53,7 +53,7 @@ const PLANS = [
     ],
     cta: 'Passer en Pro 🚀',
     ctaLink: '/inscription?plan=pro',
-    ctaStyle: { background: 'var(--grad-green)', color: '#000', border: 'none', fontWeight: 700, boxShadow: '0 8px 30px rgba(52,211,114,0.35)' },
+    ctaStyle: { background: 'var(--grad-primary)', color: '#fff', border: 'none', fontWeight: 700, boxShadow: 'var(--shadow-primary)' },
     popular: true,
   },
   {
@@ -63,10 +63,10 @@ const PLANS = [
     currency: 'FCFA',
     period: '/ mois',
     icon: '👑',
-    color: 'var(--gold)',
-    borderColor: 'rgba(245,200,66,0.5)',
+    color: 'var(--accent)',
+    borderColor: 'var(--accent)',
     badge: 'Tout inclus',
-    badgeColor: 'badge-gold',
+    badgeColor: 'badge-accent',
     features: [
       { text: 'Voir les titres des marchés', ok: true },
       { text: 'Filtres par catégorie', ok: true },
@@ -80,7 +80,7 @@ const PLANS = [
     ],
     cta: 'Devenir Élite 👑',
     ctaLink: '/inscription?plan=elite',
-    ctaStyle: { background: 'linear-gradient(135deg, #f5c842, #e8a800)', color: '#000', border: 'none', fontWeight: 700, boxShadow: '0 8px 30px rgba(245,200,66,0.35)' },
+    ctaStyle: { background: 'var(--grad-accent)', color: '#fff', border: 'none', fontWeight: 700, boxShadow: '0 8px 24px rgba(217,119,6,0.3)' },
   },
 ];
 
@@ -249,9 +249,10 @@ export default function TarifsPage() {
             <span className="text-secondary text-sm" style={{ opacity: billingAnnual ? 0.5 : 1 }}>Mensuel</span>
             <button
               onClick={() => setBillingAnnual(!billingAnnual)}
+              aria-label="Basculer facturation mensuelle / annuelle"
               style={{
                 width: '52px', height: '28px',
-                background: billingAnnual ? 'var(--grad-gold)' : 'var(--color-border)',
+                background: billingAnnual ? 'var(--grad-primary)' : 'var(--color-border-strong)',
                 borderRadius: '50px', border: 'none', cursor: 'pointer',
                 position: 'relative', transition: 'background 0.3s',
               }}
@@ -260,14 +261,14 @@ export default function TarifsPage() {
                 width: '22px', height: '22px', borderRadius: '50%',
                 background: '#fff', position: 'absolute', top: '3px',
                 left: billingAnnual ? '27px' : '3px', transition: 'left 0.3s',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                boxShadow: '0 2px 5px rgba(6,78,59,0.25)',
               }} />
             </button>
             <span className="text-secondary text-sm" style={{ opacity: billingAnnual ? 1 : 0.5 }}>
               Annuel&nbsp;
               <span style={{
-                background: 'linear-gradient(135deg, #f5c842, #e8a800)',
-                color: '#000', fontSize: '0.7rem', fontWeight: 800,
+                background: 'var(--grad-accent)',
+                color: '#fff', fontSize: '0.7rem', fontWeight: 800,
                 padding: '2px 8px', borderRadius: '50px',
               }}>-25%</span>
             </span>
@@ -287,7 +288,7 @@ export default function TarifsPage() {
                   border: `2px solid ${plan.borderColor}`,
                   position: 'relative',
                   transition: 'transform 0.2s, box-shadow 0.2s',
-                  ...(plan.popular ? { transform: 'scale(1.03)', boxShadow: '0 20px 60px rgba(52,211,114,0.2)' } : {}),
+                  ...(plan.popular ? { transform: 'scale(1.03)', boxShadow: '0 20px 50px rgba(5,150,105,0.18)' } : {}),
                 }}
               >
                 {plan.badge && (
@@ -321,15 +322,16 @@ export default function TarifsPage() {
                     <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <span style={{
                         width: '20px', height: '20px', borderRadius: '50%',
-                        background: f.ok ? 'rgba(52,211,114,0.15)' : 'rgba(255,255,255,0.04)',
+                        background: f.ok ? 'var(--success-muted)' : 'var(--color-surface-3)',
+                        color: f.ok ? 'var(--primary)' : 'var(--text-muted)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '0.75rem', flexShrink: 0,
+                        fontSize: '0.75rem', fontWeight: 700, flexShrink: 0,
                       }}>
                         {f.ok ? '✓' : '✕'}
                       </span>
                       <span
                         className="text-sm"
-                        style={{ color: f.ok ? 'var(--text-secondary)' : 'rgba(255, 255, 255, 0.45)', textDecoration: f.ok ? 'none' : 'none' }}
+                        style={{ color: f.ok ? 'var(--text-secondary)' : 'var(--text-muted)', textDecoration: f.ok ? 'none' : 'line-through' }}
                       >
                         {f.text}
                       </span>
@@ -346,7 +348,7 @@ export default function TarifsPage() {
                     justifyContent: 'center', 
                     textAlign: 'center', 
                     transition: 'all 0.3s ease',
-                    ...(pendingPayment ? { background: '#333', color: '#999', border: '1px solid #444', cursor: 'not-allowed', boxShadow: 'none' } : plan.ctaStyle) 
+                    ...(pendingPayment ? { background: 'var(--color-surface-3)', color: 'var(--text-muted)', border: '1px solid var(--color-border-strong)', cursor: 'not-allowed', boxShadow: 'none' } : plan.ctaStyle)
                   }}
                 >
                   {pendingPayment ? '⏳ Approbation en attente' : plan.cta}
@@ -386,11 +388,11 @@ export default function TarifsPage() {
           </div>
 
           {/* CTA final */}
-          <div style={{
+          <div className="responsive-card-padding" style={{
             marginTop: '80px', textAlign: 'center',
-            background: 'linear-gradient(135deg, rgba(52,211,114,0.08), rgba(245,200,66,0.06))',
-            border: '1px solid rgba(52,211,114,0.2)',
-            borderRadius: 'var(--radius-lg)', padding: '60px 40px',
+            background: 'linear-gradient(135deg, rgba(5,150,105,0.07), rgba(6,78,59,0.04))',
+            border: '1px solid var(--color-border-hover)',
+            borderRadius: 'var(--radius-lg)',
           }}>
             <div style={{ fontSize: '2rem', marginBottom: '16px' }}>🇧🇫</div>
             <h3 className="heading-lg" style={{ marginBottom: '16px' }}>Prêt à saisir votre prochain marché ?</h3>
@@ -428,10 +430,10 @@ export default function TarifsPage() {
               <button onClick={() => setShowPayModal(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
             </div>
 
-            <div style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '8px', marginBottom: '24px', textAlign: 'center' }}>
+            <div style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', padding: '16px', borderRadius: 'var(--radius-md)', marginBottom: '24px', textAlign: 'center' }}>
               <p className="text-xs text-muted" style={{ marginBottom: '4px' }}>Vous souscrivez au forfait</p>
               <h3 className="heading-md" style={{ color: selectedPlan.color }}>{selectedPlan.name}</h3>
-              <p className="text-xl" style={{ fontWeight: 'bold', color: 'var(--text-primary)', marginTop: '8px' }}>
+              <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-primary)', marginTop: '8px' }}>
                 {getPrice(selectedPlan)} FCFA {billingAnnual ? '/ an' : '/ mois'}
               </p>
             </div>
