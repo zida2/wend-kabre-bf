@@ -8,39 +8,65 @@ export const maxDuration = 60;      // secondes (max du plan Hobby)
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-async function fetchFullText(url, fallbackDesc) {
+const PDF_RE = /\.pdf($|\?)/i;
+function isPdfUrl(u) { try { return PDF_RE.test((u || '').split('#')[0]); } catch { return false; } }
+function absUrl(href, base) { try { return new URL(href, base).href; } catch { return null; } }
+
+// Récupère tous les liens PDF d'une page (résolus en URL absolues, dédupliqués).
+function extractPdfsFromHtml($, baseUrl) {
+  const docs = [];
+  const seen = new Set();
+  $('a[href]').each((i, el) => {
+    const raw = ($(el).attr('href') || '').split('#')[0];
+    if (!PDF_RE.test(raw)) return;
+    const abs = absUrl(raw, baseUrl);
+    if (!abs || seen.has(abs)) return;
+    seen.add(abs);
+    const name = ($(el).text().trim() || $(el).attr('title') || 'Document PDF').replace(/\s+/g, ' ').slice(0, 120);
+    docs.push({ name, url: abs });
+  });
+  return docs.slice(0, 12);
+}
+
+// Un seul fetch → texte enrichi + liste des PDF de la page (ou le PDF lui-même).
+async function fetchPageData(url, fallbackDesc) {
+  const result = { text: fallbackDesc, documents: [] };
+  if (isPdfUrl(url)) {
+    result.documents = [{ name: 'Document officiel (PDF)', url }];
+    return result;
+  }
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 4000);
+    const timeout = setTimeout(() => controller.abort(), 4500);
     const res = await fetch(url, { signal: controller.signal, headers: { 'User-Agent': 'Mozilla/5.0' } });
     clearTimeout(timeout);
-    
-    if (!res.ok) return fallbackDesc;
-    
+    const ct = (res.headers.get('content-type') || '').toLowerCase();
+    if (!res.ok) return result;
+    if (ct.includes('application/pdf')) {
+      result.documents = [{ name: 'Document officiel (PDF)', url }];
+      return result;
+    }
+    if (!ct.includes('html')) return result;
+
     const html = await res.text();
     const $ = cheerio.load(html);
-    
+    result.documents = extractPdfsFromHtml($, url);
+
     $('script, style, nav, header, footer, aside, .sidebar, .widget, .comments, .menu').remove();
-    
     const container = $('article, .entry-content, .post-content, .content, main, body').first();
     const paragraphs = [];
-    
     container.find('p, li').each((i, el) => {
       const txt = $(el).text().trim();
       if (txt.length > 40 && !txt.includes('Archives') && !txt.includes('Copyright') && !txt.includes('Article similaire')) {
         paragraphs.push(txt);
       }
     });
-    
-    let mainContent = paragraphs.join('\n\n');
-    const cleanText = mainContent.replace(/\s+/g, ' ').trim();
-    if (cleanText.length > fallbackDesc.length) {
-      return cleanText.substring(0, 10000); // 10k chars max
-    }
+    const cleanText = paragraphs.join('\n\n').replace(/\s+/g, ' ').trim();
+    if (cleanText.length > (fallbackDesc || '').length) result.text = cleanText.substring(0, 10000);
   } catch (e) {
-    console.error("Scraping approfondi échoué pour", url);
+    console.error('fetchPageData échoué pour', url);
   }
-  return fallbackDesc;
+  return result;
 }
 
 function detectCategory(title, desc) {
@@ -109,6 +135,11 @@ export async function GET(request) {
     return Response.json({ error: 'Non autorisé' }, { status: 401 });
   }
 
+  // Garde-fou temps : au-delà de ~45 s, on arrête les fetches profonds (PDF /
+  // texte enrichi) pour ne pas dépasser maxDuration=60 s sur Vercel.
+  const SCRAPE_START = Date.now();
+  const budgetOk = () => Date.now() - SCRAPE_START < 45000;
+
   const listTenders = [];
 
   // --- 1. Scrape ReliefWeb (Tightly filtered to Burkina Faso) ---
@@ -130,8 +161,13 @@ export async function GET(request) {
                           lowerDesc.includes('burkina') || lowerDesc.includes('ouagadougou');
 
         if (isBurkina) {
-          if (link) {
-            description = await fetchFullText(link, description);
+          let documents = [];
+          if (link && budgetOk()) {
+            const pd = await fetchPageData(link, description);
+            description = pd.text;
+            documents = pd.documents;
+          } else if (isPdfUrl(link)) {
+            documents = [{ name: 'Document officiel (PDF)', url: link }];
           }
 
           const extDeadline = extractDeadline(description) || extractDeadline(title);
@@ -143,6 +179,7 @@ export async function GET(request) {
             description,
             source: 'ReliefWeb (Burkina)',
             link,
+            documents,
             publishedAt: item.pubDate || new Date().toISOString(),
             category: cat,
             status: 'Ouvert',
@@ -175,14 +212,22 @@ export async function GET(request) {
           if (text.includes('Télécharger')) {
             const titlePart = text.split('Télécharger')[0].trim();
             const downloadLink = td.find('a').attr('href') || 'https://www.arcop.bf/appels-doffres/';
+            const absDownload = absUrl(downloadLink, 'https://www.arcop.bf/') || downloadLink;
             const cat = detectCategory(titlePart, '');
             const extDeadline = extractDeadline(titlePart);
+
+            // PDF direct détecté en synchrone ; sinon la passe d'enrichissement
+            // ci-dessous ira chercher les PDF sur la page de détail.
+            const documents = isPdfUrl(absDownload)
+              ? [{ name: "Avis d'appel d'offres (PDF)", url: absDownload }]
+              : [];
 
             listTenders.push({
               title: titlePart,
               description: `Avis d'appel d'offres officiel publié par l'ARCOP Burkina Faso. Téléchargez le document officiel pour consulter les détails et soumissionner.`,
               source: 'ARCOP Burkina Faso',
-              link: downloadLink,
+              link: absDownload,
+              documents,
               publishedAt: new Date().toISOString(),
               category: cat,
               status: 'Ouvert',
@@ -213,12 +258,17 @@ export async function GET(request) {
         if (href.startsWith('/')) {
           href = `http://www.dgcmef.gov.bf${href}`;
         }
-        
+
+        const documents = isPdfUrl(href)
+          ? [{ name: 'Le Quotidien (PDF)', url: href }]
+          : [];
+
         listTenders.push({
           title: text,
           description: `Le Quotidien des Marchés Publics officiel du Burkina Faso. Téléchargez le PDF officiel de la DGCMEF pour consulter l'ensemble des avis de recrutement, demandes de prix et appels d'offres de la journée.`,
           source: 'DGCMEF Burkina Faso',
           link: href,
+          documents,
           publishedAt: new Date().toISOString(),
           category: 'Prestation',
           status: 'Ouvert',
@@ -232,6 +282,19 @@ export async function GET(request) {
     });
   } catch (e) {
     console.error(`[Scrape] Erreur sur DGCMEF:`, e.message);
+  }
+
+  // Passe d'enrichissement : pour les marchés sans PDF direct (ARCOP/DGCMEF dont
+  // le lien pointe vers une page de détail), on va y chercher les PDF. Bornée par
+  // le budget temps pour ne pas dépasser maxDuration.
+  for (const t of listTenders) {
+    if (!budgetOk()) break;
+    const noDocs = !(t.documents && t.documents.length);
+    const isDetailPage = t.link && !isPdfUrl(t.link) && (t.source?.includes('ARCOP') || t.source?.includes('DGCMEF'));
+    if (noDocs && isDetailPage) {
+      const pd = await fetchPageData(t.link, '');
+      if (pd.documents.length) t.documents = pd.documents;
+    }
   }
 
   // Déduplications et sauvegarde Firestore
@@ -248,8 +311,15 @@ export async function GET(request) {
       } else {
         const existingDoc = snap.docs[0];
         const existingData = existingDoc.data();
+        const updates = {};
         if (tender.description && tender.description.length > (existingData.description || '').length) {
-          await updateDoc(existingDoc.ref, { description: tender.description });
+          updates.description = tender.description;
+        }
+        if (tender.documents && tender.documents.length && !(existingData.documents && existingData.documents.length)) {
+          updates.documents = tender.documents;
+        }
+        if (Object.keys(updates).length) {
+          await updateDoc(existingDoc.ref, updates);
         }
       }
     } catch (e) {

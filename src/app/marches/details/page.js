@@ -70,6 +70,10 @@ function DetailsContent() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
 
+  // Lecteur PDF intégré
+  const [pdfDoc, setPdfDoc] = useState(null); // { name, url }
+  const pdfProxy = (url) => `/api/pdf?url=${encodeURIComponent(url)}`;
+
   // 1. Listen to Auth State
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -405,6 +409,41 @@ function DetailsContent() {
           </div>
         )}
 
+        {/* DOCUMENTS OFFICIELS (PDF) */}
+        {Array.isArray(marche.documents) && marche.documents.length > 0 && (
+          hasFullAccess ? (
+            <div style={{ marginTop: '20px', background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', padding: '16px', borderRadius: 'var(--radius-md)' }}>
+              <h4 className="heading-sm" style={{ marginBottom: '12px', color: 'var(--primary-dark)' }}>
+                📎 Documents officiels ({marche.documents.length})
+              </h4>
+              <div className="flex flex-col gap-2">
+                {marche.documents.map((docItem, i) => (
+                  <div key={i} className="flex items-center justify-between gap-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', padding: '10px 12px', flexWrap: 'wrap' }}>
+                    <span className="text-sm" style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                      <span>📄</span>
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={docItem.name}>{docItem.name || `Document ${i + 1}`}</span>
+                    </span>
+                    <span className="flex gap-2" style={{ flexShrink: 0 }}>
+                      <button onClick={() => setPdfDoc(docItem)} className="btn btn-primary btn-sm" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+                        👁️ Lire ici
+                      </button>
+                      <a href={pdfProxy(docItem.url)} target="_blank" rel="noreferrer" className="btn btn-outline btn-sm" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+                        ⬇️ Ouvrir
+                      </a>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div style={{ marginTop: '20px', background: 'var(--accent-muted)', border: '1px solid rgba(217,119,6,0.28)', padding: '16px', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+              <p className="text-sm" style={{ color: 'var(--accent)', fontWeight: 600 }}>
+                🔒 {marche.documents.length} document(s) officiel(s) (DAO, avis…) disponible(s) avec un accès Premium.
+              </p>
+            </div>
+          )
+        )}
+
       </div>
 
       {/* Sidebar Paywall / Actions */}
@@ -667,6 +706,39 @@ function DetailsContent() {
           )}
 
         </div>
+      </div>
+    )}
+
+    {/* LECTEUR PDF INTÉGRÉ */}
+    {pdfDoc && (
+      <div
+        style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(2,44,34,0.82)', zIndex: 99999, display: 'flex', flexDirection: 'column', padding: '16px' }}
+        onClick={() => setPdfDoc(null)}
+      >
+        <div
+          className="flex items-center justify-between"
+          style={{ padding: '10px 6px', color: '#fff', gap: '12px' }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <span style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+            <span>📄</span>
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600 }}>{pdfDoc.name || 'Document'}</span>
+          </span>
+          <span className="flex gap-2" style={{ flexShrink: 0 }}>
+            <a href={pdfProxy(pdfDoc.url)} target="_blank" rel="noreferrer" className="btn btn-sm" style={{ background: 'rgba(255,255,255,0.14)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)', padding: '6px 12px', fontSize: '0.8rem' }}>
+              Ouvrir dans un onglet ↗
+            </a>
+            <button onClick={() => setPdfDoc(null)} aria-label="Fermer" className="btn btn-sm" style={{ background: 'rgba(255,255,255,0.14)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)', padding: '6px 12px', fontSize: '0.8rem' }}>
+              ✕ Fermer
+            </button>
+          </span>
+        </div>
+        <iframe
+          src={pdfProxy(pdfDoc.url)}
+          title={pdfDoc.name || 'Document PDF'}
+          onClick={(e) => e.stopPropagation()}
+          style={{ flex: 1, width: '100%', border: 'none', borderRadius: 'var(--radius-md)', background: '#fff' }}
+        />
       </div>
     )}
     </>
