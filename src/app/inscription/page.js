@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { auth, db, analytics } from '@/lib/firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { logEvent } from 'firebase/analytics';
 
@@ -28,6 +28,14 @@ export default function InscriptionPage() {
       // Log sign_up event
       if (analytics) {
         logEvent(analytics, 'sign_up', { method: 'email' });
+      }
+
+      // Envoi de l'email de vérification (souple, non bloquant :
+      // un échec d'envoi n'empêche pas la création du compte).
+      try {
+        await sendEmailVerification(user);
+      } catch (verifErr) {
+        console.error('Envoi email de vérification échoué:', verifErr);
       }
 
       // 2. Save additional PME info in Firestore user profile
