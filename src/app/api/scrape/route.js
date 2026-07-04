@@ -2,6 +2,12 @@ import { db } from '@/lib/firebase';
 import { collection, addDoc, getDocs, query, where, updateDoc } from 'firebase/firestore';
 import * as cheerio from 'cheerio';
 
+// Le scraping (fetch multi-sources + cheerio) dure plusieurs dizaines de secondes.
+// Sans ceci, Vercel tue la fonction à la durée par défaut → scrape KO en prod.
+export const maxDuration = 60;      // secondes (max du plan Hobby)
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 async function fetchFullText(url, fallbackDesc) {
   try {
     const controller = new AbortController();

@@ -2,7 +2,7 @@
   "name": "wend-kabre-bf",
   "crons": [
     {
-      "path": "/api/scrape",
+      "path": "/api/scrape?secret=wk_scrape_pub_2026",
       "schedule": "0 6 * * *"
     }
   ]
