@@ -9,6 +9,114 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, PageBreak, AlignmentType } from "docx";
 import { saveAs } from "file-saver";
 
+// ── Affichage structuré de l'analyse IA d'un marché ──
+function AnalysisField({ label, value }) {
+  if (!value || value === 'Non spécifié' || value === 'Non communiqué') return null;
+  return (
+    <div>
+      <p className="text-xs text-muted" style={{ marginBottom: '2px' }}>{label}</p>
+      <p className="text-sm text-primary" style={{ fontWeight: 600, lineHeight: 1.4 }}>{value}</p>
+    </div>
+  );
+}
+
+function PiecesList({ title, items, icon }) {
+  if (!items || items.length === 0) return null;
+  return (
+    <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', padding: '14px' }}>
+      <p className="text-sm font-bold" style={{ marginBottom: '8px', color: 'var(--text-primary)' }}>{icon} {title}</p>
+      <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        {items.map((it, i) => (
+          <li key={i} className="text-sm text-secondary" style={{ display: 'flex', gap: '8px', lineHeight: 1.4 }}>
+            <span style={{ color: 'var(--primary)', flexShrink: 0 }}>✓</span>
+            <span>{it}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function ListBlock({ title, items, color = 'var(--text-primary)', bullet = '•' }) {
+  if (!items || items.length === 0) return null;
+  return (
+    <div>
+      <p className="text-sm font-bold" style={{ marginBottom: '8px', color }}>{title}</p>
+      <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        {items.map((it, i) => (
+          <li key={i} className="text-sm text-secondary" style={{ display: 'flex', gap: '8px', lineHeight: 1.5 }}>
+            <span style={{ color, flexShrink: 0 }}>{bullet}</span>
+            <span>{it}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function AnalysisView({ analysis, onRerun, analyzing }) {
+  return (
+    <div style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border-hover)', borderRadius: 'var(--radius-md)', padding: '20px' }}>
+      <div className="flex justify-between items-center" style={{ marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+        <h4 className="heading-sm" style={{ color: 'var(--primary-dark)' }}>🧠 Analyse IA du marché</h4>
+        <button onClick={onRerun} disabled={analyzing} className="btn btn-outline btn-sm" style={{ padding: '5px 12px', fontSize: '0.78rem' }}>
+          {analyzing ? 'Analyse…' : '↻ Ré-analyser'}
+        </button>
+      </div>
+
+      {/* Résumé */}
+      {analysis.resume && (
+        <div style={{ background: 'var(--success-muted)', border: '1px solid rgba(5,150,105,0.18)', borderRadius: 'var(--radius-sm)', padding: '14px', marginBottom: '18px' }}>
+          <p className="text-sm" style={{ color: 'var(--primary-dark)', lineHeight: 1.6 }}>{analysis.resume}</p>
+        </div>
+      )}
+
+      {/* Champs clés */}
+      <div className="grid grid-3 gap-4" style={{ marginBottom: '18px' }}>
+        <AnalysisField label="N° du marché" value={analysis.numeroMarche} />
+        <AnalysisField label="Type de procédure" value={analysis.typeProcedure} />
+        <AnalysisField label="Autorité contractante" value={analysis.autoriteContractante} />
+        <AnalysisField label="Ministère" value={analysis.ministere} />
+        <AnalysisField label="Région" value={analysis.region} />
+        <AnalysisField label="Commune" value={analysis.commune} />
+        <AnalysisField label="Budget estimatif" value={analysis.budget} />
+        <AnalysisField label="Financement" value={analysis.financement} />
+        <AnalysisField label="Durée d'exécution" value={analysis.dureeExecution} />
+        <AnalysisField label="Date limite" value={analysis.dateLimite} />
+        <AnalysisField label="Heure limite" value={analysis.heureLimite} />
+        <AnalysisField label="Lieu d'exécution" value={analysis.lieuExecution} />
+        <AnalysisField label="Email" value={analysis.contactEmail} />
+        <AnalysisField label="Téléphone" value={analysis.contactTelephone} />
+      </div>
+
+      {/* Pièces à fournir */}
+      {(analysis.piecesAdministratives?.length || analysis.piecesTechniques?.length || analysis.piecesFinancieres?.length) ? (
+        <div style={{ marginBottom: '18px' }}>
+          <p className="text-xs text-muted" style={{ fontWeight: 700, letterSpacing: '0.04em', marginBottom: '10px', textTransform: 'uppercase' }}>Pièces à fournir</p>
+          <div className="grid grid-3 gap-3">
+            <PiecesList title="Administratives" icon="📋" items={analysis.piecesAdministratives} />
+            <PiecesList title="Techniques" icon="🛠️" items={analysis.piecesTechniques} />
+            <PiecesList title="Financières" icon="💰" items={analysis.piecesFinancieres} />
+          </div>
+        </div>
+      ) : null}
+
+      {/* Conditions / critères / risques */}
+      <div className="grid grid-2 gap-6">
+        <div className="flex flex-col gap-4">
+          <ListBlock title="Conditions de participation" items={analysis.conditionsParticipation} color="var(--forest)" />
+          <ListBlock title="Critères de sélection" items={analysis.criteresSelection} color="var(--primary-dark)" />
+        </div>
+        <ListBlock title="⚠️ Points de vigilance" items={analysis.risques} color="var(--danger)" bullet="!" />
+      </div>
+
+      <p className="text-xs text-muted" style={{ marginTop: '16px', fontStyle: 'italic' }}>
+        Analyse générée automatiquement par IA — à recouper avec le document officiel avant toute soumission.
+      </p>
+    </div>
+  );
+}
+
 function DetailsContent() {
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
@@ -73,6 +181,31 @@ function DetailsContent() {
   // Lecteur PDF intégré
   const [pdfDoc, setPdfDoc] = useState(null); // { name, url }
   const pdfProxy = (url) => `/api/pdf?url=${encodeURIComponent(url)}`;
+
+  // Analyse IA du marché
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analyzeError, setAnalyzeError] = useState(null);
+  const [freshAnalysis, setFreshAnalysis] = useState(null);
+
+  const handleAnalyzeMarket = async () => {
+    if (!marche) return;
+    setAnalyzing(true);
+    setAnalyzeError(null);
+    try {
+      const res = await fetch('/api/analyze-market', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ marketId: marche.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "L'analyse a échoué.");
+      setFreshAnalysis(data.analysis);
+    } catch (e) {
+      setAnalyzeError(e.message);
+    } finally {
+      setAnalyzing(false);
+    }
+  };
 
   // 1. Listen to Auth State
   useEffect(() => {
@@ -443,6 +576,39 @@ function DetailsContent() {
             </div>
           )
         )}
+
+        {/* ANALYSE IA DU MARCHÉ */}
+        {hasFullAccess && (() => {
+          const analysis = freshAnalysis || marche.aiAnalysis || null;
+          const hasPdf = Array.isArray(marche.documents) && marche.documents.length > 0;
+          return (
+            <div style={{ marginTop: '20px' }}>
+              {analysis ? (
+                <AnalysisView analysis={analysis} onRerun={handleAnalyzeMarket} analyzing={analyzing} />
+              ) : (
+                <div style={{ background: 'linear-gradient(135deg, rgba(5,150,105,0.06), rgba(6,78,59,0.03))', border: '1px solid var(--color-border-hover)', borderRadius: 'var(--radius-md)', padding: '20px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.6rem', marginBottom: '8px' }}>🧠</div>
+                  <h4 className="heading-sm" style={{ marginBottom: '6px' }}>Analyse IA du marché</h4>
+                  <p className="text-secondary text-sm" style={{ maxWidth: '460px', margin: '0 auto 16px' }}>
+                    {hasPdf
+                      ? "L'IA lit le document officiel et en extrait automatiquement les informations clés, les pièces à fournir et un résumé."
+                      : "Aucun document PDF n'est encore associé à ce marché — l'analyse sera disponible après le prochain scraping."}
+                  </p>
+                  {hasPdf && (
+                    <button onClick={handleAnalyzeMarket} className="btn btn-primary" disabled={analyzing}>
+                      {analyzing ? (
+                        <><span className="loader" style={{ width: '16px', height: '16px', borderWidth: '2px' }}></span> Analyse en cours…</>
+                      ) : (
+                        "🧠 Analyser ce marché avec l'IA"
+                      )}
+                    </button>
+                  )}
+                  {analyzeError && <p className="text-sm" style={{ color: 'var(--danger)', marginTop: '12px' }}>⚠️ {analyzeError}</p>}
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
       </div>
 
