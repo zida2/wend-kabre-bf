@@ -1,6 +1,7 @@
 import { db } from '@/lib/firebase';
 import { collection, addDoc, getDocs, query, where, updateDoc } from 'firebase/firestore';
 import * as cheerio from 'cheerio';
+import { classifyMarket, isRealTender } from '@/lib/marketClassifier';
 
 // Le scraping (fetch multi-sources + cheerio) dure plusieurs dizaines de secondes.
 // Sans ceci, Vercel tue la fonction à la durée par défaut → scrape KO en prod.
@@ -297,11 +298,24 @@ export async function GET(request) {
     }
   }
 
+  // ── Détection intelligente + classification automatique (§5) ──
+  // On rejette le bruit (nominations, décrets, communiqués…) et on enrichit
+  // chaque vrai marché avec des champs structurés (région, ministère, procédure,
+  // montant, urgence, secteur, relation additif/report, titre normalisé).
+  let rejected = 0;
+  const classifiedTenders = [];
+  for (const t of listTenders) {
+    if (!isRealTender(t.title, t.description, t.source)) { rejected++; continue; }
+    const c = classifyMarket({ title: t.title, description: t.description, category: t.category, deadline: t.deadline });
+    classifiedTenders.push({ ...t, ...c });
+  }
+
   // Déduplications et sauvegarde Firestore
   let addedCount = 0;
   const tendersRef = collection(db, 'marches');
+  const CLASSIF_KEYS = ['procedure', 'region', 'commune', 'ministere', 'montantEstime', 'urgence', 'secteur', 'relation', 'normalizedTitle'];
 
-  for (const tender of listTenders) {
+  for (const tender of classifiedTenders) {
     try {
       const q = query(tendersRef, where('title', '==', tender.title));
       const snap = await getDocs(q);
@@ -318,6 +332,10 @@ export async function GET(request) {
         if (tender.documents && tender.documents.length && !(existingData.documents && existingData.documents.length)) {
           updates.documents = tender.documents;
         }
+        // Rétro-remplit la classification sur les marchés déjà en base qui ne l'ont pas.
+        for (const k of CLASSIF_KEYS) {
+          if (existingData[k] === undefined && tender[k] !== undefined) updates[k] = tender[k];
+        }
         if (Object.keys(updates).length) {
           await updateDoc(existingDoc.ref, updates);
         }
@@ -332,6 +350,8 @@ export async function GET(request) {
     await addDoc(collection(db, 'scrape_runs'), {
       added: addedCount,
       total: listTenders.length,
+      kept: classifiedTenders.length,
+      rejected,
       status: 'success',
       createdAt: new Date().toISOString(),
     });
@@ -343,6 +363,8 @@ export async function GET(request) {
     success: true,
     added: addedCount,
     total: listTenders.length,
+    kept: classifiedTenders.length,
+    rejected,
     timestamp: new Date().toISOString()
   });
 }
