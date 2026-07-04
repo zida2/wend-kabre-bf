@@ -9,6 +9,7 @@ import { logAdminAction } from '@/lib/adminLog';
 
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import OverviewSection from '@/components/admin/sections/OverviewSection';
+import AnalyticsSection from '@/components/admin/sections/AnalyticsSection';
 import UsersSection from '@/components/admin/sections/UsersSection';
 import PaymentsSection from '@/components/admin/sections/PaymentsSection';
 import MarchesSection from '@/components/admin/sections/MarchesSection';
@@ -19,6 +20,7 @@ const ADMIN_EMAIL = 'zidadesire20@gmail.com';
 
 const SECTION_META = {
   overview: { title: 'Vue d\'ensemble', sub: 'Indicateurs clés et tendances de la plateforme' },
+  analytics: { title: 'Analytique visiteurs', sub: 'Trafic, provenance, comportement et conversion' },
   users: { title: 'Utilisateurs & Abonnements', sub: 'Gérez les PME inscrites et leurs abonnements' },
   payments: { title: 'Paiements', sub: 'Validez les demandes de paiement par reçu' },
   marches: { title: 'Marchés', sub: 'Consultez et gérez les marchés en base' },
@@ -35,6 +37,7 @@ export default function AdminPage() {
   const [marchesList, setMarchesList] = useState([]);
   const [scrapeRuns, setScrapeRuns] = useState([]);
   const [adminLogs, setAdminLogs] = useState([]);
+  const [events, setEvents] = useState([]);
 
   const [scraping, setScraping] = useState(false);
   const [scrapeLogs, setScrapeLogs] = useState([]);
@@ -97,6 +100,10 @@ export default function AdminPage() {
       const logsSnap = await getDocs(query(collection(db, 'admin_logs'), orderBy('createdAt', 'desc'), limit(15)));
       setAdminLogs(logsSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
     } catch (e) { console.warn('admin_logs indisponible:', e?.code || e?.message); }
+    try {
+      const eventsSnap = await getDocs(query(collection(db, 'events'), orderBy('createdAt', 'desc'), limit(5000)));
+      setEvents(eventsSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    } catch (e) { console.warn('events indisponible:', e?.code || e?.message); }
   };
 
   const handleForceScrape = async () => {
@@ -231,6 +238,7 @@ export default function AdminPage() {
 
   const sections = [
     { id: 'overview', icon: '📊', label: 'Vue d\'ensemble' },
+    { id: 'analytics', icon: '📈', label: 'Analytique' },
     { id: 'users', icon: '👥', label: 'Utilisateurs' },
     { id: 'payments', icon: '💳', label: 'Paiements', badge: pendingCount },
     { id: 'marches', icon: '📄', label: 'Marchés', badge: marchesList.length, badgeMuted: true },
@@ -260,6 +268,7 @@ export default function AdminPage() {
           </div>
 
           {section === 'overview' && <OverviewSection users={usersList} marches={marchesList} requests={paymentRequests} scrapeRuns={scrapeRuns} adminLogs={adminLogs} />}
+          {section === 'analytics' && <AnalyticsSection events={events} users={usersList} />}
           {section === 'users' && <UsersSection users={usersList} processingUser={processingUser} onUpdateSubscription={handleUpdateSubscription} onDeleteUser={handleDeleteUser} />}
           {section === 'payments' && <PaymentsSection requests={paymentRequests} onAction={handleRequestAction} onViewScreenshot={setSelectedScreenshot} />}
           {section === 'marches' && <MarchesSection marches={marchesList} onDelete={handleDeleteMarche} />}

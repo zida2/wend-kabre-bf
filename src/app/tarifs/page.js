@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { track } from '@/lib/track';
 
 const PLANS = [
   {
@@ -198,6 +199,7 @@ export default function TarifsPage() {
     }
     // Ouvre la modale de paiement pour tous les plans (Starter, Pro, Elite)
     setSelectedPlan(plan);
+    track('payment_start', { planId: plan?.id });
     setShowPayModal(true);
   };
 
@@ -400,7 +402,7 @@ export default function TarifsPage() {
           }}>
             <div className="flex justify-between items-center" style={{ marginBottom: '24px' }}>
               <h2 className="heading-md" style={{ color: selectedPlan.color }}>Paiement Sécurisé</h2>
-              <button onClick={() => setShowPayModal(false)} aria-label="Fermer" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+              <button onClick={() => { track('payment_abandon', { planId: selectedPlan?.id }); setShowPayModal(false); }} aria-label="Fermer" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
             </div>
 
             <div style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', padding: '16px', borderRadius: 'var(--radius-md)', marginBottom: '24px', textAlign: 'center' }}>
@@ -466,6 +468,7 @@ export default function TarifsPage() {
                     if (amountMatch) {
                       // Activation automatique immédiate (simulée, côté propriétaire).
                       await activateOwnSubscription(user.uid, subscriptionDays(selectedPlan));
+                      track('subscribe', { planId: selectedPlan?.id });
                       showAlert("🎉 OCR RÉUSSI ! Paiement détecté avec succès. Bienvenue dans l'espace Premium.", "Validation Réussie", () => {
                         setShowPayModal(false);
                         router.push('/dashboard');

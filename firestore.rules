@@ -80,5 +80,14 @@ service cloud.firestore {
       allow create: if true;
       allow update, delete: if isAdmin();
     }
+
+    // ── Événements analytics (§2/§10) ────────────────────────────────
+    // Création ouverte (collecte anonyme des visiteurs via /api/track, sans
+    //   contexte d'auth). Append-only. Lecture réservée à l'admin.
+    match /events/{eventId} {
+      allow read:   if isAdmin();
+      allow create: if true;
+      allow update, delete: if false;
+    }
   }
 }

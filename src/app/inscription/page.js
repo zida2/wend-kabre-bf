@@ -1,10 +1,11 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { auth, db, analytics } from '@/lib/firebase';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { logEvent } from 'firebase/analytics';
+import { track } from '@/lib/track';
 
 export default function InscriptionPage() {
   const [name, setName] = useState('');
@@ -14,6 +15,11 @@ export default function InscriptionPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Analytics : début du parcours d'inscription (au montage de la page)
+  useEffect(() => {
+    track('signup_start', {});
+  }, []);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -48,6 +54,9 @@ export default function InscriptionPage() {
         isSubscribed: false, // Toujours gratuit à l'inscription (l'abonnement s'active via /tarifs ou l'admin)
         createdAt: new Date().toISOString()
       });
+
+      // Analytics : création de compte réussie
+      track('signup_complete', {});
 
       // Redirect to tenders list
       window.location.href = '/marches';

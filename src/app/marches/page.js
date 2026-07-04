@@ -4,13 +4,14 @@ import Link from 'next/link';
 import { db, auth } from '@/lib/firebase';
 import { collection, getDocs, orderBy, query, doc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import { track } from '@/lib/track';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Composant Paywall : CTA Premium affiché sur les cartes verrouillées
 // ──────────────────────────────────────────────────────────────────────────────
 function PremiumLock({ label = "Débloquer" }) {
   return (
-    <Link href="/tarifs" className="btn btn-sm" style={{
+    <Link href="/tarifs" onClick={() => track('click', { id: 'premium_unlock', label: 'Débloquer' })} className="btn btn-sm" style={{
       background: 'var(--grad-accent)',
       color: '#fff',
       fontWeight: 700,
@@ -183,9 +184,29 @@ export default function MarchesPage() {
   });
 
   const getCategoryCount = (cat) =>
-    cat === 'All' 
-      ? marches.filter(m => m.category !== 'Recrutement').length 
+    cat === 'All'
+      ? marches.filter(m => m.category !== 'Recrutement').length
       : marches.filter(m => m.category === cat).length;
+
+  // Analytics : recherche (debounce ~600ms, uniquement si la requête est non vide)
+  useEffect(() => {
+    const q = search.trim();
+    if (!q) return;
+    const timer = setTimeout(() => {
+      track('search', { query: q, resultsCount: filteredMarches.length, context: 'marches' });
+      if (filteredMarches.length === 0) {
+        track('search_no_result', { query: q, context: 'marches' });
+      }
+    }, 600);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
+
+  // Analytics : changement de filtre catégorie (on ignore la valeur initiale 'All')
+  useEffect(() => {
+    if (activeCategory === 'All') return;
+    track('filter', { key: 'category', value: activeCategory, context: 'marches' });
+  }, [activeCategory]);
 
   // ──────────────────────────────────────────────────────────────────────────
   // Rendu

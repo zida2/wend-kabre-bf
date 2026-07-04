@@ -8,6 +8,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, PageBreak, AlignmentType } from "docx";
 import { saveAs } from "file-saver";
+import { track } from '@/lib/track';
 
 // ── Affichage structuré de l'analyse IA d'un marché ──
 function AnalysisField({ label, value }) {
@@ -189,6 +190,7 @@ function DetailsContent() {
 
   const handleAnalyzeMarket = async () => {
     if (!marche) return;
+    track('click', { id: 'analyze_market', label: 'Analyser IA' });
     // L'analyse IA est réservée aux utilisateurs connectés : on joint le token.
     if (!auth.currentUser) {
       setAnalyzeError('Veuillez vous connecter pour lancer l\'analyse IA.');
@@ -263,6 +265,14 @@ function DetailsContent() {
     };
     fetchDetail();
   }, [id]);
+
+  // Analytics : vue d'un marché (une fois, quand le marché est chargé)
+  useEffect(() => {
+    if (marche) {
+      track('market_view', { marketId: marche.id, title: marche.title, category: marche.category });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [marche?.id]);
 
   const handleFileChange = (e) => {
     setSelectedFiles(Array.from(e.target.files));
@@ -566,10 +576,10 @@ function DetailsContent() {
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={docItem.name}>{docItem.name || `Document ${i + 1}`}</span>
                     </span>
                     <span className="flex gap-2" style={{ flexShrink: 0 }}>
-                      <button onClick={() => setPdfDoc(docItem)} className="btn btn-primary btn-sm" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+                      <button onClick={() => { track('download', { marketId: marche.id, docName: docItem.name }); setPdfDoc(docItem); }} className="btn btn-primary btn-sm" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
                         👁️ Lire ici
                       </button>
-                      <a href={pdfProxy(docItem.url)} target="_blank" rel="noreferrer" className="btn btn-outline btn-sm" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+                      <a href={pdfProxy(docItem.url)} target="_blank" rel="noreferrer" onClick={() => track('download', { marketId: marche.id, docName: docItem.name })} className="btn btn-outline btn-sm" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
                         ⬇️ Ouvrir
                       </a>
                     </span>

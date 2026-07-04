@@ -2,6 +2,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import EmailVerificationBanner from '@/components/EmailVerificationBanner';
+import AnalyticsTracker from '@/components/AnalyticsTracker';
 
 // URL de base du site (configurable ; fallback sur le déploiement Vercel actuel)
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://wend-kabre-bf.vercel.app';
@@ -111,6 +112,7 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
+        <AnalyticsTracker />
         <Navbar />
         <EmailVerificationBanner />
         {children}
