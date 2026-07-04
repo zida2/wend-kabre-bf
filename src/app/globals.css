@@ -1,33 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@300;400;600;700;800&display=swap');
 
 /* =============================================
-   DESIGN TOKENS — WEND-KABRÉ  v2
-   Palette : Bleu nuit profond + Or chaud
-   Confortable, premium, reposant sur les yeux
+   DESIGN TOKENS — WEND-KABRÉ  v3 (Thème Vert Clair)
+   Palette : Menthe, Émeraude & Vert Forêt
+   Moderne, rassurant, croissance
    ============================================= */
 :root {
-  /* ── Fond (Gris très clair, corporate et pro) */
-  --color-bg:        #F8FAFC;
-  --color-bg-2:      #F1F5F9;
+  /* ── Fond (Vert très très clair, frais) */
+  --color-bg:        #F0FDF4; /* green-50 */
+  --color-bg-2:      #DCFCE7; /* green-100 */
   --color-surface:   #FFFFFF;
-  --color-surface-2: #F8FAFC;
-  --color-surface-3: #E2E8F0;
+  --color-surface-2: #F0FDF4;
+  --color-surface-3: #BBF7D0; /* green-200 */
 
   /* ── Bordures */
-  --color-border:       #E2E8F0;
-  --color-border-hover: #CBD5E1;
+  --color-border:       #BBF7D0;
+  --color-border-hover: #86EFAC;
 
-  /* ── Accent principal : Or (pour les boutons premium) */
-  --gold:          #B8892A;
-  --gold-light:    #E8B84B;
-  --gold-dark:     #9A7220;
-  --gold-muted:    rgba(184, 137, 42, 0.12);
+  /* ── Accent principal : Vert Clair / Menthe (pour boutons) */
+  --gold:          #10B981; /* green-500 */
+  --gold-light:    #34D399; /* green-400 */
+  --gold-dark:     #059669; /* green-600 */
+  --gold-muted:    rgba(16, 185, 129, 0.12);
 
-  /* ── Accent secondaire : Bleu Marine (Corporate) */
-  --blue:          #1E3A8A;
-  --blue-light:    #2563EB;
-  --blue-dark:     #172554;
-  --blue-muted:    rgba(37, 99, 235, 0.08);
+  /* ── Accent secondaire : Vert Forêt (Corporate) */
+  --blue:          #064E3B; /* green-900 */
+  --blue-light:    #065F46; /* green-800 */
+  --blue-dark:     #022C22; /* green-950 */
+  --blue-muted:    rgba(6, 78, 59, 0.08);
 
   /* ── Vert succès (Validation) */
   --green-primary: #10B981;
@@ -37,22 +37,22 @@
   --red-accent:    #EF4444;
 
   /* ── Texte (Lisible sur fond clair) */
-  --text-primary:   #0F172A;
-  --text-secondary: #334155;
-  --text-muted:     #64748B;
+  --text-primary:   #022C22; /* Very dark green */
+  --text-secondary: #064E3B;
+  --text-muted:     #065F46;
 
   /* ── Gradients */
-  --grad-gold:    linear-gradient(135deg, #E8B84B 0%, #B8892A 100%);
+  --grad-gold:    linear-gradient(135deg, #34D399 0%, #10B981 100%); /* Green gradient */
   --grad-green:   linear-gradient(135deg, #10B981 0%, #059669 100%);
-  --grad-blue:    linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%);
-  --grad-surface: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
-  --grad-hero:    radial-gradient(ellipse 90% 65% at 50% -5%, rgba(37, 99, 235, 0.05) 0%, transparent 65%);
+  --grad-blue:    linear-gradient(135deg, #065F46 0%, #064E3B 100%); /* Dark green gradient */
+  --grad-surface: linear-gradient(180deg, #FFFFFF 0%, #F0FDF4 100%);
+  --grad-hero:    radial-gradient(ellipse 90% 65% at 50% -5%, rgba(16, 185, 129, 0.08) 0%, transparent 65%);
 
   /* ── Ombres (Légères et douces) */
   --shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.05);
   --shadow-md:   0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-gold: 0 4px 14px rgba(184, 137, 42, 0.2);
-  --shadow-blue: 0 4px 14px rgba(37, 99, 235, 0.15);
+  --shadow-gold: 0 4px 14px rgba(16, 185, 129, 0.25);
+  --shadow-blue: 0 4px 14px rgba(6, 78, 59, 0.15);
 
   /* ── Rayons */
   --radius-sm: 6px;

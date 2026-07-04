@@ -6,7 +6,7 @@ import { db, auth } from '@/lib/firebase';
 import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 
-import { Document, Packer, Paragraph, TextRun, HeadingLevel } from "docx";
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, PageBreak, AlignmentType } from "docx";
 import { saveAs } from "file-saver";
 
 function DetailsContent() {
@@ -16,6 +16,41 @@ function DetailsContent() {
   const [marche, setMarche] = useState(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [step3Status, setStep3Status] = useState('idle'); // idle, checking, ok, warning
+  
+  // Fonction pour extraire intelligemment les documents requis selon la description
+  const extractSpecificDocuments = (m) => {
+    if (!m) return [];
+    
+    // Si la catégorie est recrutement et que le scraper a déjà mis des trucs pertinents
+    if (m.category === 'Recrutement' && m.requirements && m.requirements.length > 0 && m.requirements[0] !== "Voir les documents requis dans l'avis officiel") {
+       return m.requirements; 
+    }
+    
+    const text = (m.description || "").toLowerCase() + " " + (m.title || "").toLowerCase();
+    const reqs = [];
+    
+    if (m.category === 'Recrutement') {
+      if (text.includes('cv') || text.includes('curriculum vitae')) reqs.push('CV à jour');
+      if (text.includes('lettre de motivation')) reqs.push('Lettre de motivation');
+      if (text.includes('diplôme') || text.includes('diplome')) reqs.push('Copie des diplômes');
+      if (text.includes('certificat') || text.includes('attestation')) reqs.push('Certificats de travail / Attestations');
+      if (text.includes('cni') || text.includes("carte d'identité") || text.includes('passeport')) reqs.push("Pièce d'identité (CNI/Passeport)");
+    } else {
+      if (text.includes('agrément') || text.includes('agrement technique') || text.includes('certificat de qualification')) reqs.push('Agrément technique / Certificat de qualification');
+      if (text.includes('caution') || text.includes('garantie de soumission')) reqs.push('Caution de soumission / Garantie bancaire');
+      if (text.includes("chiffre d'affaire") || text.includes('chiffre d’affaire') || text.includes('bilan') || text.includes('états financiers')) reqs.push('États financiers / Preuve de chiffre d\'affaires');
+      if (text.includes('bonne fin') || text.includes('bonne exécution') || text.includes('marché similaire') || text.includes('expérience')) reqs.push('Attestations de bonne exécution (marchés similaires)');
+      if (text.includes('ligne de crédit') || text.includes('ligne de credit') || text.includes('capacité financière')) reqs.push('Attestation de ligne de crédit bancaire');
+      if (text.includes('cv') || text.includes('diplôme') || text.includes('personnel')) reqs.push('CV et diplômes du personnel clé (si requis)');
+      if (text.includes('matériel') || text.includes('logistique') || text.includes('équipement')) reqs.push('Preuves de disposition du matériel essentiel');
+      if (text.includes('méthodologie') || text.includes('planning') || text.includes('calendrier')) reqs.push('Note méthodologique et planning d\'exécution');
+    }
+    
+    return reqs;
+  };
+
+  const specificDocs = extractSpecificDocuments(marche);
   const [userData, setUserData] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
@@ -27,6 +62,9 @@ function DetailsContent() {
   const [studioStep, setStudioStep] = useState(1);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [generatingDoc, setGeneratingDoc] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [extractedData, setExtractedData] = useState(null);
+  const [generationError, setGenerationError] = useState(null);
 
   // CRM states
   const [isFollowing, setIsFollowing] = useState(false);
@@ -80,187 +118,123 @@ function DetailsContent() {
     fetchDetail();
   }, [id]);
 
-  const handleGenerate = () => {
+  const handleFileChange = (e) => {
+    setSelectedFiles(Array.from(e.target.files));
+  };
+
+  const convertFileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve({
+        name: file.name,
+        mimeType: file.type,
+        data: reader.result.split(',')[1] // remove data:image/png;base64,
+      });
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleGenerate = async () => {
+    if (selectedFiles.length === 0) {
+      alert("Veuillez sélectionner au moins un document.");
+      return;
+    }
     setGeneratingDoc(true);
-    setTimeout(() => {
+    setGenerationError(null);
+    try {
+      const base64Files = await Promise.all(selectedFiles.map(convertFileToBase64));
+      const response = await fetch('/api/analyze-documents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ market: marche, files: base64Files })
+      });
+      if (!response.ok) throw new Error("Erreur lors de l'analyse des documents");
+      const data = await response.json();
+      setExtractedData(data);
+      setStudioStep(3);
+    } catch (err) {
+      console.error(err);
+      setGenerationError("Une erreur est survenue lors de l'analyse de vos documents par l'IA. Vérifiez la taille des fichiers.");
+    } finally {
       setGeneratingDoc(false);
-      setStudioStep(3); // Go to final download step
-    }, 2500);
+    }
   };
 
   const handleDownload = async () => {
+    if (!extractedData) return;
+    
+    const companyInfo = extractedData.extractedCompanyInfo || {};
+    const offer = extractedData.generatedOffer || {};
+
+    const createText = (text) => {
+      if (!text) return [new Paragraph({ children: [new TextRun({ text: "Non renseigné" })], spacing: { after: 200 } })];
+      const lines = text.split('\n').filter(l => l.trim() !== '');
+      return lines.map(line => new Paragraph({ children: [new TextRun({ text: line })], spacing: { after: 120 } }));
+    };
+
     const docFile = new Document({
       sections: [
         {
           properties: {},
           children: [
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `TRAME DE CANDIDATURE - ${marche.title}`,
-                  bold: true,
-                  size: 32,
-                })
-              ],
-              spacing: { after: 200 }
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "Émetteur : ", bold: true }),
-                new TextRun({ text: marche.source || 'N/A' }),
-              ],
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "Catégorie : ", bold: true }),
-                new TextRun({ text: marche.category || 'Général' }),
-              ],
-            }),
-            new Paragraph({ children: [] }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "[À COMPLÉTER : NOM DE VOTRE ENTREPRISE]", color: "FF0000", bold: true }),
-              ],
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "[À COMPLÉTER : VOTRE RCCM / IFU]", color: "FF0000", bold: true }),
-              ],
-            }),
-            new Paragraph({ children: [] }),
+            // PAGE DE GARDE
+            new Paragraph({ children: [new TextRun({ text: "DOSSIER DE CANDIDATURE - OFFRE TECHNIQUE", bold: true, size: 48, color: "064E3B" })], alignment: AlignmentType.CENTER, spacing: { before: 1000, after: 400 } }),
+            new Paragraph({ children: [new TextRun({ text: `Appel d'offres : ${marche.title || '[Titre du marché]'}`, size: 28 })], alignment: AlignmentType.CENTER, spacing: { after: 200 } }),
+            new Paragraph({ children: [new TextRun({ text: `Présenté par : ${companyInfo.name || '[VOTRE ENTREPRISE]'}`, size: 32, bold: true, color: "000000" })], alignment: AlignmentType.CENTER, spacing: { after: 400 } }),
+            new Paragraph({ children: [new TextRun({ text: `RCCM : ${companyInfo.rccm || 'N/A'} | IFU : ${companyInfo.ifu || 'N/A'}`, size: 24 })], alignment: AlignmentType.CENTER, spacing: { after: 200 } }),
+            new Paragraph({ children: [new TextRun({ text: `Adresse : ${companyInfo.address || 'N/A'}`, size: 24 })], alignment: AlignmentType.CENTER, spacing: { after: 800 } }),
+            new Paragraph({ children: [new TextRun({ text: `Date : ${new Date().toLocaleDateString('fr-FR')}`, size: 24 })], alignment: AlignmentType.CENTER }),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            // SECTION 1
-            new Paragraph({
-              children: [
-                new TextRun({ text: "1. RÉSUMÉ DES ENGAGEMENTS", bold: true, size: 24, color: "00529b" })
-              ],
-              spacing: { before: 300, after: 100 }
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "Dans le cadre de cet appel d'offres, notre entreprise s'engage formellement à exécuter les prestations conformément aux spécifications du CCTP et dans les délais impartis. ", italics: true }),
-                new TextRun({ text: "[Détaillez en 3 lignes votre motivation et votre force principale]", color: "FF0000", italics: true }),
-              ],
-            }),
+            // LETTRE DE SOUMISSION
+            new Paragraph({ children: [new TextRun({ text: "LETTRE DE SOUMISSION", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            new Paragraph({ children: [new TextRun({ text: `À l'attention de : ${marche.source || "L'autorité contractante"}`, bold: true })] }),
+            new Paragraph({ children: [new TextRun({ text: "Objet : Soumission pour le marché relatif à " + (marche.title || '[Objet du marché]'), bold: true })], spacing: { before: 200, after: 400 } }),
+            new Paragraph({ children: [new TextRun({ text: "Monsieur/Madame le Directeur," })], spacing: { after: 200 } }),
+            new Paragraph({ children: [new TextRun({ text: `Après avoir examiné le Dossier d'Appel d'Offres, nous, soussignés ${companyInfo.name || '[Votre entreprise]'}, représentés par ${companyInfo.managerName || 'le Gérant'}, vous proposons de réaliser et d'achever les prestations conformément aux conditions du DAO.` })], spacing: { after: 200 } }),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            // SECTION 2
-            new Paragraph({
-              children: [
-                new TextRun({ text: "2. COMPRÉHENSION DU BESOIN ET ENJEUX", bold: true, size: 24, color: "00529b" })
-              ],
-              spacing: { before: 300, after: 100 }
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "[Démontrez que vous avez lu le DAO. Reformulez les objectifs de l'acheteur avec vos propres mots pour prouver votre expertise.]", color: "FF0000", italics: true }),
-              ],
-            }),
+            // SECTION 1: PRÉSENTATION
+            new Paragraph({ children: [new TextRun({ text: "1. PRÉSENTATION DE L'ENTREPRISE", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            ...createText(offer.presentation || "Non renseigné"),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            // SECTION 3
-            new Paragraph({
-              children: [
-                new TextRun({ text: "3. PRÉSENTATION DE L'ENTREPRISE", bold: true, size: 24, color: "00529b" })
-              ],
-              spacing: { before: 300, after: 100 }
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "[Insérez ici une présentation de votre société : Date de création, Chiffre d'affaires, Domaines d'expertise, Nombre d'employés fixes.]", color: "FF0000", italics: true }),
-              ],
-            }),
+            // SECTION 2: COMPRÉHENSION
+            new Paragraph({ children: [new TextRun({ text: "2. COMPRÉHENSION DU BESOIN ET ENJEUX", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            ...createText(offer.comprehension || "Non renseigné"),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            // SECTION 4
-            new Paragraph({
-              children: [
-                new TextRun({ text: "4. MÉTHODOLOGIE D'EXÉCUTION ET CHRONOGRAMME", bold: true, size: 24, color: "00529b" })
-              ],
-              spacing: { before: 300, after: 100 }
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "[Étape la plus importante : Décrivez étape par étape COMMENT vous allez exécuter le marché. Ex: 1. Préparation, 2. Approvisionnement, 3. Exécution, 4. Contrôle et Livraison. Insérez également votre planning / chronogramme.]", color: "FF0000", italics: true }),
-              ],
-            }),
+            // SECTION 3: MÉTHODOLOGIE
+            new Paragraph({ children: [new TextRun({ text: "3. MÉTHODOLOGIE D'EXÉCUTION", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            ...createText(offer.methodology || "Non renseigné"),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            // SECTION 5
-            new Paragraph({
-              children: [
-                new TextRun({ text: "5. MOYENS HUMAINS ET MATÉRIELS", bold: true, size: 24, color: "00529b" })
-              ],
-              spacing: { before: 300, after: 100 }
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "- Chef de projet : ", bold: true }),
-                new TextRun({ text: "[Nom et résumé du CV]", color: "FF0000" })
-              ]
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "- Équipe technique : ", bold: true }),
-                new TextRun({ text: "[Nombre de techniciens et qualifications]", color: "FF0000" })
-              ]
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "- Matériel mobilisé : ", bold: true }),
-                new TextRun({ text: "[Liste des véhicules, machines ou outils informatiques]", color: "FF0000" })
-              ]
-            }),
+            // SECTION 4: MOYENS HUMAINS
+            new Paragraph({ children: [new TextRun({ text: "4. MOYENS HUMAINS ET ORGANISATION", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            ...createText(offer.humanResources || "Non renseigné"),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            // SECTION 6
-            new Paragraph({
-              children: [
-                new TextRun({ text: "6. DÉMARCHE QUALITÉ, SÉCURITÉ ET ENVIRONNEMENT (QSE)", bold: true, size: 24, color: "00529b" })
-              ],
-              spacing: { before: 300, after: 100 }
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "[Expliquez comment vous garantissez la sécurité sur le chantier/site, vos équipements de protection (EPI), et vos procédures de qualité et SAV.]", color: "FF0000", italics: true }),
-              ],
-            }),
+            // SECTION 5: MOYENS MATÉRIELS
+            new Paragraph({ children: [new TextRun({ text: "5. MOYENS MATÉRIELS ET LOGISTIQUES", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            ...createText(offer.materials || "Non renseigné"),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            // SECTION 7
-            new Paragraph({
-              children: [
-                new TextRun({ text: "7. RÉFÉRENCES SIMILAIRES", bold: true, size: 24, color: "00529b" })
-              ],
-              spacing: { before: 300, after: 100 }
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "[Citez 3 marchés similaires que vous avez déjà réalisés, avec l'année, le client, et le montant. Joignez les attestations de bonne fin d'exécution en annexe.]", color: "FF0000", italics: true }),
-              ],
-            }),
+            // SECTION 6: QUALITÉ & RISQUES
+            new Paragraph({ children: [new TextRun({ text: "6. APPROCHE QUALITÉ ET GESTION DES RISQUES", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            ...createText(offer.qualityAndRisks || "Non renseigné"),
+            new Paragraph({ children: [new PageBreak()] }),
 
-            new Paragraph({ children: [] }),
-            new Paragraph({ children: [] }),
-            new Paragraph({
-              children: [
-                new TextRun({ 
-                  text: "____________________________________________________________________",
-                  color: "888888"
-                }),
-              ],
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ 
-                  text: "* Généré de manière assistée avec Wend-Kabré AI. Ce canevas structurel professionnel doit être obligatoirement adapté et complété avec vos données propres pour être recevable.*",
-                  italics: true,
-                  size: 16,
-                  color: "888888"
-                }),
-              ],
-            }),
+            // SECTION 7: PLANNING
+            new Paragraph({ children: [new TextRun({ text: "7. PLANNING D'EXÉCUTION", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            ...createText(offer.planning || "Non renseigné"),
           ],
         },
       ],
     });
 
     Packer.toBlob(docFile).then((blob) => {
-      saveAs(blob, `Trame_Candidature_${marche.id || 'Wend_Kabre'}.docx`);
+      saveAs(blob, `Dossier_Technique_${companyInfo.name ? companyInfo.name.replace(/\s+/g, '_') : 'Entreprise'}.docx`);
     });
   };
 
@@ -545,35 +519,55 @@ function DetailsContent() {
           {/* STEP 1 */}
           {studioStep === 1 && (
             <div className="animate-fadeIn">
-              <h3 className="heading-md" style={{ marginBottom: '16px' }}>Checklist Administrative Obligatoire</h3>
-              <p className="text-sm text-secondary" style={{ marginBottom: '24px' }}>
-                Avant de générer l'offre technique, assurez-vous de réunir ces pièces dans une enveloppe scellée.
+              <h3 className="heading-md" style={{ marginBottom: '16px' }}>Étape 1 : Pièces à fournir</h3>
+              
+              <div style={{ background: 'rgba(52, 211, 114, 0.05)', border: '1px solid rgba(52, 211, 114, 0.2)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
+                <h4 className="text-sm font-bold text-primary" style={{ marginBottom: '12px' }}>📌 Documents attendus pour ce marché :</h4>
+                
+                <p className="text-xs text-muted" style={{ marginBottom: '8px' }}>Socle administratif (obligatoire pour tout marché) :</p>
+                <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: '0 0 16px 0' }} className="text-sm text-secondary">
+                  <li>Registre de Commerce (RCCM)</li>
+                  <li>Attestation de Situation Fiscale (ASF) ou IFU</li>
+                  <li>Attestation de la CNSS</li>
+                </ul>
+
+                <p className="text-xs text-muted" style={{ marginBottom: '8px' }}>Documents spécifiques à cet avis :</p>
+                <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: 0 }} className="text-sm text-secondary">
+                  {specificDocs.length > 0 ? (
+                    specificDocs.map((req, i) => (
+                      <li key={i}>{req}</li>
+                    ))
+                  ) : (
+                    <li>Veuillez lire attentivement la description de l'avis pour d'éventuelles exigences particulières.</li>
+                  )}
+                </ul>
+              </div>
+
+              <p className="text-sm text-secondary" style={{ marginBottom: '16px' }}>
+                Veuillez sélectionner vos documents numérisés correspondants. L'IA les lira pour vérifier leur conformité et rédiger l'offre technique avec vos vraies données.
               </p>
-              <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
-                <li className="flex gap-3 text-sm items-start">
-                  <span>📄</span>
-                  <div>
-                    <strong className="text-primary">Registre de Commerce (RCCM)</strong><br/>
-                    <span className="text-muted text-xs">À récupérer au Centre de Formalités des Entreprises (CEFORE).</span>
+              
+              <div style={{ border: '2px dashed var(--gold)', padding: '30px', textAlign: 'center', borderRadius: '8px', marginBottom: '24px', background: 'rgba(245, 200, 66, 0.05)' }}>
+                <input type="file" multiple accept="image/*,application/pdf" onChange={handleFileChange} id="fileUpload" style={{ display: 'none' }} />
+                <label htmlFor="fileUpload" className="btn btn-outline" style={{ borderColor: 'var(--gold)', color: 'var(--gold)', cursor: 'pointer', display: 'inline-block', marginBottom: '16px' }}>
+                  📁 Sélectionner vos fichiers
+                </label>
+                <p className="text-xs text-muted">Formats acceptés : PDF, JPG, PNG.</p>
+                
+                {selectedFiles.length > 0 && (
+                  <div style={{ marginTop: '16px', textAlign: 'left' }}>
+                    <p className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px' }}>Fichiers sélectionnés ({selectedFiles.length}) :</p>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, maxHeight: '100px', overflowY: 'auto' }}>
+                      {selectedFiles.map((f, i) => (
+                        <li key={i} className="text-xs text-secondary" style={{ padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>📄 {f.name}</li>
+                      ))}
+                    </ul>
                   </div>
-                </li>
-                <li className="flex gap-3 text-sm items-start">
-                  <span>📄</span>
-                  <div>
-                    <strong className="text-primary">Attestation de Situation Fiscale (ASF)</strong><br/>
-                    <span className="text-muted text-xs">À demander à votre centre des impôts (DGI) - Valable 3 mois.</span>
-                  </div>
-                </li>
-                <li className="flex gap-3 text-sm items-start">
-                  <span>📄</span>
-                  <div>
-                    <strong className="text-primary">Attestation CNSS</strong><br/>
-                    <span className="text-muted text-xs">Prouve que vous êtes à jour de vos cotisations sociales.</span>
-                  </div>
-                </li>
-              </ul>
-              <button onClick={() => setStudioStep(2)} className="btn btn-primary w-full text-center">
-                Pièces réunies, passer à l'offre technique →
+                )}
+              </div>
+              
+              <button onClick={() => setStudioStep(2)} className="btn btn-primary w-full text-center" disabled={selectedFiles.length === 0} style={{ opacity: selectedFiles.length === 0 ? 0.5 : 1 }}>
+                Continuer avec ces documents →
               </button>
             </div>
           )}
@@ -581,47 +575,81 @@ function DetailsContent() {
           {/* STEP 2 */}
           {studioStep === 2 && (
             <div className="animate-fadeIn">
-              <h3 className="heading-md" style={{ marginBottom: '16px' }}>Génération de la Trame Technique</h3>
+              <h3 className="heading-md" style={{ marginBottom: '16px' }}>Génération Complète de l'Offre</h3>
               <p className="text-sm text-secondary" style={{ marginBottom: '24px' }}>
-                Notre IA a analysé ce marché ({marche.category || 'Général'}) et va rédiger la méthodologie de base. Vous devrez <strong style={{color: '#ef4444'}}>OBLIGATOIREMENT</strong> compléter les zones en rouge avec les données de votre entreprise.
+                Notre IA va analyser vos {selectedFiles.length} documents et rédiger l'<strong>intégralité de l'offre technique sur-mesure</strong> pour ce marché spécifique.
               </p>
 
-              <div style={{ background: 'rgba(0,0,0,0.3)', padding: '20px', borderRadius: '8px', marginBottom: '24px' }}>
-                <p className="text-xs text-gold" style={{ marginBottom: '8px' }}>💡 Astuce de l'IA pour gagner :</p>
-                <p className="text-sm text-secondary">
-                  "Pour ce type de marché émis par <strong>{marche.source}</strong>, les évaluateurs privilégient un chronogramme détaillé et des garanties sur le SAV. L'IA va structurer l'offre autour de ces points."
-                </p>
-              </div>
+              {generationError && (
+                <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', padding: '16px', borderRadius: '8px', marginBottom: '24px', fontSize: '0.9rem' }}>
+                  ❌ {generationError}
+                </div>
+              )}
 
-              {!generatingDoc ? (
+              {!generatingDoc && !generationError && !extractedData ? (
                 <button onClick={handleGenerate} className="btn btn-gold w-full text-center" style={{ fontSize: '1.1rem', padding: '16px' }}>
-                  🪄 Générer ma Trame Technique (Brouillon Assisté)
+                  🪄 Lancer l'Analyse IA et Rédiger l'Offre
                 </button>
-              ) : (
-                <div className="text-center" style={{ padding: '20px 0' }}>
-                  <span className="loader" style={{ width: '40px', height: '40px', margin: '0 auto 16px' }}></span>
-                  <p className="text-gold">Analyse du CPS et rédaction du canevas en cours...</p>
+              ) : null}
+
+              {generatingDoc && (
+                <div className="text-center" style={{ padding: '30px 0' }}>
+                  <div style={{ 
+                    width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden', marginBottom: '24px' 
+                  }}>
+                    <div style={{ 
+                      width: '50%', height: '100%', background: 'var(--gold)', borderRadius: '4px',
+                      animation: 'progressAnim 2s infinite linear' 
+                    }}></div>
+                  </div>
+                  <style>{`
+                    @keyframes progressAnim {
+                      0% { transform: translateX(-100%); }
+                      100% { transform: translateX(200%); }
+                    }
+                  `}</style>
+                  <p className="text-gold" style={{ fontWeight: 'bold', marginBottom: '8px' }}>Traitement en cours...</p>
+                  <p className="text-xs text-secondary">Lecture OCR, extraction des données, et rédaction sur-mesure de la méthodologie (Cela peut prendre jusqu'à 60 secondes).</p>
                 </div>
               )}
             </div>
           )}
 
           {/* STEP 3 */}
-          {studioStep === 3 && (
+          {studioStep === 3 && extractedData && (
             <div className="animate-fadeIn">
               <div className="flex items-center gap-3" style={{ marginBottom: '16px' }}>
                 <span style={{ fontSize: '2rem' }}>✅</span>
-                <h3 className="heading-md text-green">Trame de Candidature Prête !</h3>
+                <h3 className="heading-md text-green">Offre Rédigée avec Succès !</h3>
               </div>
               
+              <div style={{ background: 'rgba(52, 211, 114, 0.05)', border: '1px solid rgba(52, 211, 114, 0.2)', padding: '16px', borderRadius: '8px', marginBottom: '20px' }}>
+                <div className="flex justify-between items-center" style={{ marginBottom: '12px' }}>
+                  <h4 className="text-sm font-bold text-primary">Score de Concordance</h4>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 900, color: extractedData.concordanceScore >= 80 ? 'var(--green)' : 'var(--gold)' }}>
+                    {extractedData.concordanceScore}%
+                  </span>
+                </div>
+                {extractedData.missingDocuments && extractedData.missingDocuments.length > 0 ? (
+                  <div>
+                    <p className="text-xs text-muted" style={{ marginBottom: '8px' }}>Documents manquants ou non détectés :</p>
+                    <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: 0 }} className="text-xs text-secondary">
+                      {extractedData.missingDocuments.map((doc, i) => <li key={i}>{doc}</li>)}
+                    </ul>
+                  </div>
+                ) : (
+                  <p className="text-xs text-green">Tous les documents requis semblent présents !</p>
+                )}
+              </div>
+
               <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
-                <h4 className="text-sm" style={{ color: '#ef4444', marginBottom: '8px', fontWeight: 'bold' }}>⚠️ Responsabilité et Relecture</h4>
+                <h4 className="text-sm" style={{ color: '#ef4444', marginBottom: '8px', fontWeight: 'bold' }}>⚠️ Responsabilité de Relecture</h4>
                 <p className="text-xs text-secondary" style={{ marginBottom: '12px' }}>
-                  Ce document est un <strong>brouillon structuré</strong>. Si vous soumettez ce document sans remplir les <span style={{ color: '#ef4444', fontWeight: 'bold' }}>[ZONES ROUGES]</span> avec vos propres CV, méthodologies spécifiques et devis, votre offre sera rejetée.
+                  Bien que l'IA ait rédigé l'offre de bout en bout pour vous (Méthodologie, Risques, Planning), il s'agit de <strong>contenu généré automatiquement</strong>. Vous êtes responsable de vérifier si les délais et approches inventés par l'IA correspondent aux capacités réelles de votre entreprise.
                 </p>
                 <label className="flex items-start gap-2 cursor-pointer">
                   <input type="checkbox" checked={agreedToTerms} onChange={(e) => setAgreedToTerms(e.target.checked)} style={{ marginTop: '2px' }} />
-                  <span className="text-xs text-primary">J'ai compris que je dois adapter cette trame aux exigences exactes du DAO de l'émetteur.</span>
+                  <span className="text-xs text-primary">Je m'engage à relire et adapter le document final généré par l'IA avant toute soumission officielle.</span>
                 </label>
               </div>
 
@@ -632,27 +660,9 @@ function DetailsContent() {
                   className="btn btn-primary w-full text-center" 
                   style={{ opacity: agreedToTerms ? 1 : 0.5 }}
                 >
-                  📥 Télécharger le Brouillon (.DOCX)
+                  📥 Télécharger l'Offre Rédigée (.docx)
                 </button>
-                <a href="https://wa.me/22600000000" target="_blank" rel="noopener noreferrer" className="btn btn-outline w-full text-center" style={{ borderColor: 'var(--gold)', color: 'var(--gold)' }}>
-                  👨‍💼 Faire relire par un Expert
-                </a>
               </div>
-
-              <div className="divider" style={{ margin: '20px 0' }}></div>
-
-              <h4 className="heading-sm" style={{ marginBottom: '12px' }}>Où déposer l'enveloppe physique finale ?</h4>
-              <p className="text-sm text-secondary" style={{ marginBottom: '16px' }}>
-                Une fois votre dossier complété, imprimé et scellé, déposez-le à l'adresse suivante :<br/>
-                <strong className="text-primary" style={{ display: 'block', marginTop: '8px' }}>📍 Direction des Marchés de : {marche.source}</strong>
-                <span className="text-xs text-muted">Vérifiez l'heure limite de dépôt sur l'avis officiel.</span>
-              </p>
-
-              {marche.link && marche.link !== 'https://www.dgcmef.gov.bf' && (
-                <a href={marche.link} target="_blank" rel="noopener noreferrer" className="text-xs text-green" style={{ textDecoration: 'underline' }}>
-                  Voir l'avis officiel sur le portail de l'État ↗
-                </a>
-              )}
             </div>
           )}
 
