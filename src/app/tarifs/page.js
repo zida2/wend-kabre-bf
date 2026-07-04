@@ -427,7 +427,7 @@ export default function TarifsPage() {
           }}>
             <div className="flex justify-between items-center" style={{ marginBottom: '24px' }}>
               <h2 className="heading-md" style={{ color: selectedPlan.color }}>Paiement Sécurisé</h2>
-              <button onClick={() => setShowPayModal(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+              <button onClick={() => setShowPayModal(false)} aria-label="Fermer" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
             </div>
 
             <div style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', padding: '16px', borderRadius: 'var(--radius-md)', marginBottom: '24px', textAlign: 'center' }}>

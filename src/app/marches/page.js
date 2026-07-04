@@ -120,6 +120,7 @@ function WelcomeBanner({ marcheCount }) {
 export default function MarchesPage() {
   const [marches, setMarches] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
 
@@ -148,12 +149,14 @@ export default function MarchesPage() {
   useEffect(() => {
     const fetchMarches = async () => {
       setLoading(true);
+      setLoadError(false);
       try {
         const q = query(collection(db, 'marches'), orderBy('publishedAt', 'desc'));
         const snap = await getDocs(q);
         setMarches(snap.docs.map(d => ({ id: d.id, ...d.data() })));
       } catch (e) {
         console.error("Erreur chargement:", e);
+        setLoadError(true);
       } finally {
         setLoading(false);
       }
@@ -257,6 +260,15 @@ export default function MarchesPage() {
           <span className="loader" style={{ width: '40px', height: '40px' }}></span>
           <p className="text-secondary" style={{ marginTop: '16px' }}>Chargement des opportunités...</p>
         </div>
+      ) : loadError ? (
+        <div className="card text-center" style={{ padding: '80px 40px' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '20px' }}>⚠️</div>
+          <h3 className="heading-md">Erreur de chargement</h3>
+          <p className="text-secondary text-sm" style={{ marginTop: '12px', marginBottom: '20px' }}>
+            Impossible de récupérer les marchés. Vérifiez votre connexion.
+          </p>
+          <button onClick={() => window.location.reload()} className="btn btn-outline btn-sm">Réessayer</button>
+        </div>
       ) : filteredMarches.length === 0 ? (
         <div className="card text-center" style={{ padding: '80px 40px' }}>
           <div style={{ fontSize: '3rem', marginBottom: '20px' }}>📭</div>
@@ -267,9 +279,8 @@ export default function MarchesPage() {
         </div>
       ) : (
         <div className="grid grid-2 gap-6">
-          {(isSubscribed ? filteredMarches : [...DEMO_OFFERS, ...filteredMarches]).map((m, index) => {
-            const isDemo = m.isDemo === true;
-            const isLocked = !isSubscribed && !isDemo;
+          {filteredMarches.map((m) => {
+            const isLocked = !isSubscribed;
 
             return (
               <div
@@ -278,13 +289,9 @@ export default function MarchesPage() {
                 style={{
                   height: '100%',
                   position: 'relative',
-                  overflow: 'hidden',
-                  border: isLocked
-                    ? '1px solid rgba(217,119,6,0.28)'
-                    : '1px solid var(--color-border)',
+                  border: isLocked ? '1px solid rgba(217,119,6,0.28)' : '1px solid var(--color-border)',
                 }}
               >
-                {/* Badge "PREMIUM" ou "PASSÉ" */}
                 {isLocked && (
                   <div style={{
                     position: 'absolute', top: '12px', right: '12px',
@@ -296,21 +303,8 @@ export default function MarchesPage() {
                     PREMIUM
                   </div>
                 )}
-                {isDemo && (
-                  <div style={{
-                    position: 'absolute', top: '12px', right: '12px',
-                    background: 'var(--danger-muted)',
-                    color: '#B91C1C', border: '1px solid rgba(220,38,38,0.22)',
-                    fontSize: '0.65rem', fontWeight: 800,
-                    padding: '3px 10px', borderRadius: '50px', letterSpacing: '0.05em',
-                    zIndex: 2,
-                  }}>
-                    PASSÉ (Exemple)
-                  </div>
-                )}
 
                 <div>
-                  {/* Catégorie + Date */}
                   <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
                     <span className="badge badge-green">{m.category || 'Général'}</span>
                     <span className="text-muted text-xs">
@@ -318,31 +312,26 @@ export default function MarchesPage() {
                     </span>
                   </div>
 
-                  {/* Titre — flouté si verrouillé */}
-                  {!isLocked ? (
-                    <h3 className="heading-md text-primary" style={{ marginBottom: '12px', fontSize: '1.1rem', lineHeight: 1.5 }}>
-                      {m.title}
-                    </h3>
-                  ) : (
-                    <h3 className="heading-md text-primary" style={{ marginBottom: '12px', fontSize: '1.1rem', lineHeight: 1.5, filter: 'blur(4.5px)', userSelect: 'none', opacity: 0.75 }}>
-                      ██████████████ ██████ ███████████ ██████████
-                    </h3>
-                  )}
+                  {/* Titre : toujours en clair (teaser gratuit, cohérent avec la bannière) */}
+                  <h3 className="heading-md text-primary" style={{ marginBottom: '12px', fontSize: '1.1rem', lineHeight: 1.5, paddingRight: isLocked ? '70px' : 0 }}>
+                    {m.title}
+                  </h3>
 
-                  {/* Description — floutée si verrouillé */}
+                  {/* Description : réservée aux abonnés (aucun contenu réel envoyé si verrouillé) */}
                   {!isLocked ? (
                     <p className="text-secondary text-sm" style={{ marginBottom: '20px', lineHeight: 1.7 }}>
                       {(m.description || '').substring(0, 160)}
-                      {(m.description || '').length > 160 ? '...' : ''}
+                      {(m.description || '').length > 160 ? '…' : ''}
                     </p>
                   ) : (
-                    <BlurredText text={m.description} />
+                    <p className="text-muted text-sm" style={{ marginBottom: '20px', lineHeight: 1.7, fontStyle: 'italic' }}>
+                      🔒 Description complète, source officielle et lien de dépôt réservés aux abonnés Premium.
+                    </p>
                   )}
                 </div>
 
                 <div className="divider" style={{ margin: '16px 0' }}></div>
 
-                {/* Bas de carte */}
                 <div className="flex justify-between items-center" style={{ gap: '12px' }}>
                   <div>
                     <p className="text-xs text-muted">ÉMETTEUR</p>
@@ -352,15 +341,11 @@ export default function MarchesPage() {
                   </div>
 
                   {isSubscribed ? (
-                    <Link href={`/marches/details?id=${m.id}`} className="btn btn-outline btn-sm">
-                      Voir les Détails 📄
+                    <Link href={`/marches/details?id=${m.id}`} className="btn btn-primary btn-sm">
+                      Voir les détails 📄
                     </Link>
-                  ) : isDemo ? (
-                    <div className="btn btn-outline btn-sm" style={{ opacity: 0.6, cursor: 'not-allowed', borderColor: 'var(--color-border)', color: 'var(--text-muted)' }}>
-                      Clôturé ❌
-                    </div>
                   ) : (
-                    <PremiumLock label="Débloquer l'offre" />
+                    <PremiumLock label="Débloquer" />
                   )}
                 </div>
               </div>
@@ -384,8 +369,8 @@ export default function MarchesPage() {
             Ne manquez plus aucune opportunité
           </h3>
           <p className="text-secondary text-sm" style={{ maxWidth: '480px', margin: '0 auto 24px' }}>
-            {filteredMarches.length - 3 > 0
-              ? `${filteredMarches.length - 3} offres supplémentaires sont disponibles en Premium. Accédez aux détails, à la source et au lien de dépôt instantanément.`
+            {filteredMarches.length > 0
+              ? `${filteredMarches.length} marché${filteredMarches.length > 1 ? 's' : ''} en ligne. Débloquez les détails complets, la source officielle et le lien de dépôt de chacun.`
               : 'Accédez aux détails complets, sources officielles et liens de dépôt de toutes les offres.'}
           </p>
           <Link href="/tarifs" className="btn btn-accent">

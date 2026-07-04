@@ -183,10 +183,20 @@ export default function RecrutementsPage() {
         </p>
       </div>
 
-      {/* Bannière de bienvenue (visible pour les non-abonnés) */}
-      {!authLoading && !isSubscribed && (
-        <WelcomeBanner marcheCount={filteredMarches.length} />
-      )}
+      {/* Bandeau d'accès libre : les recrutements sont 100% gratuits */}
+      <div style={{
+        background: 'var(--success-muted)',
+        border: '1px solid rgba(5,150,105,0.2)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '16px 20px',
+        marginBottom: '30px',
+        display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap',
+      }}>
+        <span style={{ fontSize: '1.4rem' }}>✅</span>
+        <p className="text-sm" style={{ color: 'var(--primary-dark)', fontWeight: 600 }}>
+          Consultation <strong>100% gratuite</strong> : recrutements, stages et formations sont en accès libre, avec tous les détails.
+        </p>
+      </div>
 
       {/* Barre de recherche */}
       <div className="card" style={{ marginBottom: '30px', background: 'var(--color-bg-2)', padding: '20px' }}>
@@ -218,130 +228,39 @@ export default function RecrutementsPage() {
         </div>
       ) : (
         <div className="grid grid-2 gap-6">
-          {(isSubscribed ? filteredMarches : [...DEMO_OFFERS, ...filteredMarches]).map((m, index) => {
-            const isDemo = m.isDemo === true;
-            const isLocked = !isSubscribed && !isDemo;
-
-            return (
-              <div
-                key={m.id}
-                className="card flex flex-col justify-between"
-                style={{
-                  height: '100%',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  border: isLocked
-                    ? '1px solid rgba(217,119,6,0.28)'
-                    : '1px solid var(--color-border)',
-                }}
-              >
-                {/* Badge "PREMIUM" ou "PASSÉ" */}
-                {isLocked && (
-                  <div style={{
-                    position: 'absolute', top: '12px', right: '12px',
-                    background: 'var(--grad-accent)',
-                    color: '#fff', fontSize: '0.65rem', fontWeight: 800,
-                    padding: '3px 10px', borderRadius: '50px', letterSpacing: '0.05em',
-                    zIndex: 2,
-                  }}>
-                    PREMIUM
-                  </div>
-                )}
-                {isDemo && (
-                  <div style={{
-                    position: 'absolute', top: '12px', right: '12px',
-                    background: 'var(--danger-muted)',
-                    color: '#B91C1C', border: '1px solid rgba(220,38,38,0.22)',
-                    fontSize: '0.65rem', fontWeight: 800,
-                    padding: '3px 10px', borderRadius: '50px', letterSpacing: '0.05em',
-                    zIndex: 2,
-                  }}>
-                    PASSÉ (Exemple)
-                  </div>
-                )}
-
-                <div>
-                  {/* Catégorie + Date */}
-                  <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
-                    <span className="badge badge-green">{m.category || 'Général'}</span>
-                    <span className="text-muted text-xs">
-                      {m.publishedAt ? new Date(m.publishedAt).toLocaleDateString('fr-FR') : 'Récent'}
-                    </span>
-                  </div>
-
-                  {/* Titre — flouté si verrouillé */}
-                  {!isLocked ? (
-                    <h3 className="heading-md text-primary" style={{ marginBottom: '12px', fontSize: '1.1rem', lineHeight: 1.5 }}>
-                      {m.title}
-                    </h3>
-                  ) : (
-                    <h3 className="heading-md text-primary" style={{ marginBottom: '12px', fontSize: '1.1rem', lineHeight: 1.5, filter: 'blur(4.5px)', userSelect: 'none', opacity: 0.75 }}>
-                      ██████████████ ██████ ███████████ ██████████
-                    </h3>
-                  )}
-
-                  {/* Description — floutée si verrouillé */}
-                  {!isLocked ? (
-                    <p className="text-secondary text-sm" style={{ marginBottom: '20px', lineHeight: 1.7 }}>
-                      {(m.description || '').substring(0, 160)}
-                      {(m.description || '').length > 160 ? '...' : ''}
-                    </p>
-                  ) : (
-                    <BlurredText text={m.description} />
-                  )}
+          {filteredMarches.map((m) => (
+            <div key={m.id} className="card flex flex-col justify-between" style={{ height: '100%' }}>
+              <div>
+                <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
+                  <span className="badge badge-green">{m.category || 'Général'}</span>
+                  <span className="text-muted text-xs">
+                    {m.publishedAt ? new Date(m.publishedAt).toLocaleDateString('fr-FR') : 'Récent'}
+                  </span>
                 </div>
 
-                <div className="divider" style={{ margin: '16px 0' }}></div>
+                <h3 className="heading-md text-primary" style={{ marginBottom: '12px', fontSize: '1.1rem', lineHeight: 1.5 }}>
+                  {m.title}
+                </h3>
 
-                {/* Bas de carte */}
-                <div className="flex justify-between items-center" style={{ gap: '12px' }}>
-                  <div>
-                    <p className="text-xs text-muted">ÉMETTEUR</p>
-                    <p className="text-xs text-secondary" style={{ fontWeight: 600 }}>
-                      {!isLocked ? (m.source || 'Source officielle') : '🔒 Visible avec Premium'}
-                    </p>
-                  </div>
-
-                  {isSubscribed ? (
-                    <Link href={`/marches/details?id=${m.id}`} className="btn btn-outline btn-sm">
-                      Voir les Détails 📄
-                    </Link>
-                  ) : isDemo ? (
-                    <div className="btn btn-outline btn-sm" style={{ opacity: 0.6, cursor: 'not-allowed', borderColor: 'var(--color-border)', color: 'var(--text-muted)' }}>
-                      Clôturé ❌
-                    </div>
-                  ) : (
-                    <PremiumLock label="Débloquer l'offre" />
-                  )}
-                </div>
+                <p className="text-secondary text-sm" style={{ marginBottom: '20px', lineHeight: 1.7 }}>
+                  {(m.description || '').substring(0, 160)}
+                  {(m.description || '').length > 160 ? '…' : ''}
+                </p>
               </div>
-            );
-          })}
-        </div>
-      )}
 
-      {/* Bannière de conversion en bas de page pour les non-abonnés */}
-      {!authLoading && !isSubscribed && filteredMarches.length > 0 && (
-        <div style={{
-          marginTop: '60px',
-          background: 'linear-gradient(135deg, rgba(217,119,6,0.09) 0%, rgba(217,119,6,0.03) 100%)',
-          border: '1px solid rgba(217,119,6,0.26)',
-          borderRadius: 'var(--radius-lg)',
-          padding: '40px',
-          textAlign: 'center',
-        }}>
-          <div style={{ fontSize: '2rem', marginBottom: '12px' }}>🚀</div>
-          <h3 className="heading-md" style={{ marginBottom: '12px' }}>
-            Ne manquez plus aucune opportunité
-          </h3>
-          <p className="text-secondary text-sm" style={{ maxWidth: '480px', margin: '0 auto 24px' }}>
-            {filteredMarches.length - 3 > 0
-              ? `${filteredMarches.length - 3} offres supplémentaires sont disponibles en Premium. Accédez aux détails, à la source et au lien de dépôt instantanément.`
-              : 'Accédez aux détails complets, sources officielles et liens de dépôt de toutes les offres.'}
-          </p>
-          <Link href="/tarifs" className="btn btn-accent">
-            Découvrir les offres Premium →
-          </Link>
+              <div className="divider" style={{ margin: '16px 0' }}></div>
+
+              <div className="flex justify-between items-center" style={{ gap: '12px' }}>
+                <div>
+                  <p className="text-xs text-muted">ÉMETTEUR</p>
+                  <p className="text-xs text-secondary" style={{ fontWeight: 600 }}>{m.source || 'Source officielle'}</p>
+                </div>
+                <Link href={`/marches/details?id=${m.id}`} className="btn btn-primary btn-sm">
+                  Voir les détails 📄
+                </Link>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </main>

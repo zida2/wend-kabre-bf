@@ -322,7 +322,7 @@ export default function DashboardPage() {
                 {keywords.map(kw => (
                   <div key={kw} className="badge flex items-center gap-2" style={{ background: 'var(--green)', color: "#fff", padding: '6px 12px' }}>
                     {kw}
-                    <button onClick={() => removeKeyword(kw)} style={{ background: 'none', border: 'none', color: "#fff", cursor: 'pointer', fontWeight: 'bold' }}>✕</button>
+                    <button onClick={() => removeKeyword(kw)} aria-label={`Retirer ${kw}`} style={{ background: 'none', border: 'none', color: "#fff", cursor: 'pointer', fontWeight: 'bold' }}>✕</button>
                   </div>
                 ))}
               </div>
@@ -502,7 +502,7 @@ export default function DashboardPage() {
           position: 'fixed',
           bottom: '30px',
           right: '30px',
-          background: toast.type === 'success' ? '#10b981' : '#ef4444',
+          background: toast.type === 'success' ? 'var(--primary)' : 'var(--danger)',
           color: '#fff',
           padding: '14px 24px',
           borderRadius: '8px',

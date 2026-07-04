@@ -95,6 +95,13 @@ export default function AssistantPage() {
                 </div>
               </div>
             )}
+
+            {/* État d'erreur */}
+            {chat.error && !isLoading && (
+              <div role="alert" style={{ alignSelf: 'center', textAlign: 'center', background: 'var(--danger-muted)', border: '1px solid rgba(220,38,38,0.25)', color: 'var(--danger)', borderRadius: 'var(--radius-md)', padding: '12px 16px', fontSize: '0.88rem' }}>
+                ⚠️ Une erreur est survenue. Vérifiez votre connexion et réessayez.
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
@@ -108,9 +115,10 @@ export default function AssistantPage() {
                 onChange={handleInputChange}
                 disabled={isLoading}
               />
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={isLoading}
+                aria-label="Envoyer le message"
                 className={styles.sendButton}
               >
                 <svg className={styles.sendIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

@@ -436,7 +436,7 @@ function DetailsContent() {
 
   // Mocking dates if they don't exist in the DB for the demo
   const deadlineDate = marche.deadline ? new Date(marche.deadline).toLocaleDateString('fr-FR') : 'À vérifier sur le DAO';
-  const openingTime = marche.openingTime || '09h00 GMT';
+  const openingTime = marche.openingTime || 'Non communiqué — voir le DAO';
 
   return (
     <>
@@ -637,10 +637,10 @@ function DetailsContent() {
                 <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>🔒</div>
                 <h3 className="heading-md" style={{ marginBottom: '12px', color: 'var(--primary)' }}>Détails Verrouillés</h3>
                 <p className="text-secondary text-sm" style={{ marginBottom: '24px' }}>
-                  Pour consulter les pièces requises et utiliser le Studio de Candidature, veuillez créer un compte.
+                  Créez un compte gratuit, puis passez Premium pour consulter les pièces requises et utiliser le Studio de Candidature.
                 </p>
-                <Link href="/inscription" className="btn btn-gold w-full text-center" style={{ marginBottom: '12px' }}>
-                  Créer un Compte 🚀
+                <Link href="/inscription" className="btn btn-primary w-full text-center" style={{ marginBottom: '12px' }}>
+                  Créer un compte gratuit 🚀
                 </Link>
               </div>
             )}
@@ -658,7 +658,7 @@ function DetailsContent() {
                     15 000 FCFA
                   </h2>
                 </div>
-                <Link href="/tarifs" className="btn btn-gold w-full" style={{ justifyContent: 'center' }}>
+                <Link href="/tarifs" className="btn btn-accent w-full" style={{ justifyContent: 'center' }}>
                   Choisir mon abonnement 🚀
                 </Link>
               </div>
@@ -702,7 +702,7 @@ function DetailsContent() {
         }}>
           <div className="flex justify-between items-center" style={{ marginBottom: '24px' }}>
             <h2 className="heading-lg" style={{ color: 'var(--primary)' }}>Studio de Candidature 🪄</h2>
-            <button onClick={() => setShowStudio(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+            <button onClick={() => setShowStudio(false)} aria-label="Fermer" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
           </div>
 
           {/* Stepper */}
