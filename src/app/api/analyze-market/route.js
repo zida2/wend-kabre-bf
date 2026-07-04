@@ -105,7 +105,7 @@ export async function POST(req) {
           role: 'user',
           content: [
             { type: 'text', text: `Contexte connu (peut être incomplet) : ${JSON.stringify({ title: market.title, source: market.source, category: market.category })}\n\nAnalyse le document officiel ci-joint et remplis toutes les informations structurées demandées.` },
-            { type: 'file', data: pdfBytes, mimeType: 'application/pdf' },
+            { type: 'file', data: pdfBytes, mediaType: 'application/pdf' },
           ],
         },
       ],
