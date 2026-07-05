@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { recommendMarkets } from '@/lib/recommend';
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
@@ -215,6 +216,24 @@ export default function DashboardPage() {
     }
   };
 
+  // --- Recommandations (§7) ---
+  // Profil dérivé des mots-clés (source de vérité alertPrefs.keywords) + secteur/région éventuels.
+  const recommendedMarches = useMemo(() => {
+    const profile = {
+      keywords,
+      secteur: userData?.secteur || userData?.alertPrefs?.secteur || '',
+      region: userData?.region || userData?.alertPrefs?.region || '',
+    };
+    return recommendMarkets(allMarches, profile, 6);
+  }, [allMarches, keywords, userData]);
+
+  // Couleur du badge de compatibilité selon le score.
+  const scoreColor = (score) => {
+    if (score >= 70) return { bg: 'var(--success-muted)', color: 'var(--green)', border: 'var(--green)' };
+    if (score >= 40) return { bg: 'var(--accent-muted)', color: 'var(--gold)', border: 'rgba(217,119,6,0.4)' };
+    return { bg: 'var(--color-surface-2)', color: 'var(--text-muted)', border: 'var(--color-border)' };
+  };
+
   if (loading) {
     return (
       <div className="container" style={{ padding: '100px 20px', textAlign: 'center' }}>
@@ -346,6 +365,60 @@ export default function DashboardPage() {
           </button>
         </div>
 
+      </div>
+
+      {/* SECTION : MARCHÉS RECOMMANDÉS (§7) */}
+      <div className="card" style={{ marginTop: '40px' }}>
+        <div className="flex items-center gap-2" style={{ marginBottom: '8px' }}>
+          <span style={{ fontSize: '1.5rem' }}>✨</span>
+          <h3 className="heading-md">Marchés recommandés pour vous</h3>
+        </div>
+        <p className="text-secondary text-sm" style={{ marginBottom: '24px' }}>
+          Sélection personnalisée selon vos mots-clés, avec un score de compatibilité calculé automatiquement.
+        </p>
+
+        {keywords.length === 0 ? (
+          <p className="text-secondary text-sm text-center" style={{ padding: '40px', background: 'var(--color-surface-2)', borderRadius: '8px' }}>
+            Configurez vos mots-clés ci-dessus pour recevoir des recommandations de marchés adaptées à votre activité.
+          </p>
+        ) : recommendedMarches.length === 0 ? (
+          <p className="text-secondary text-sm text-center" style={{ padding: '40px', background: 'var(--color-surface-2)', borderRadius: '8px' }}>
+            Aucun marché correspondant pour l'instant. Nous vous préviendrons dès qu'une opportunité pertinente sera publiée.
+          </p>
+        ) : (
+          <div className="grid grid-3 gap-6">
+            {recommendedMarches.map((m) => {
+              const c = scoreColor(m.score);
+              return (
+                <div key={m.id} style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column' }}>
+                  <div className="flex justify-between items-center gap-2" style={{ marginBottom: '12px' }}>
+                    <span className="badge" style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}`, fontWeight: 'bold' }}>
+                      {m.score}% compatible
+                    </span>
+                    {m.urgence && m.urgence !== 'Non datée' && m.urgence !== 'Normal' && (
+                      <span className="badge" style={{ background: (m.urgence === 'Urgent' ? 'var(--danger)' : 'var(--gold)'), color: '#fff', fontSize: '0.7rem' }}>
+                        {m.urgence === 'Urgent' ? '🔴 Urgent' : '🟠 Bientôt'}
+                      </span>
+                    )}
+                  </div>
+                  <h5 className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px', lineHeight: '1.4' }}>{m.title}</h5>
+                  {(m.secteur || m.category) && (
+                    <p className="text-xs text-secondary" style={{ marginBottom: '12px' }}>
+                      {m.secteur || m.category}
+                    </p>
+                  )}
+                  <Link
+                    href={`/marches/details?id=${m.id}`}
+                    className="btn btn-outline text-center"
+                    style={{ marginTop: 'auto', padding: '8px', fontSize: '0.85rem' }}
+                  >
+                    Voir les détails
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* SECTION CRM : MON SUIVI DE CANDIDATURES (KANBAN) */}

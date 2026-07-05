@@ -5,6 +5,7 @@ import { db, auth } from '@/lib/firebase';
 import { collection, getDocs, orderBy, query, doc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { track } from '@/lib/track';
+import { expandQuery, normalize } from '@/lib/searchSynonyms';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Composant Paywall : CTA Premium affiché sur les cartes verrouillées
@@ -125,6 +126,11 @@ export default function MarchesPage() {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
 
+  // §5 — Filtres avancés (état local)
+  const [filterRegion, setFilterRegion] = useState('Toutes');
+  const [filterProcedure, setFilterProcedure] = useState('Toutes');
+  const [filterUrgence, setFilterUrgence] = useState('Toutes');
+
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -175,12 +181,41 @@ export default function MarchesPage() {
     { id: 'Prestation', label: 'Prestations de Services', icon: '⚙️' },
   ];
 
+  // §5 — Options distinctes présentes dans les données (hors recrutements)
+  const visibleMarches = marches.filter(m => m.category !== 'Recrutement');
+  const distinctOf = (key) =>
+    Array.from(new Set(
+      visibleMarches
+        .map(m => m[key])
+        .filter(v => v && v !== 'Non spécifié' && v !== 'Non datée')
+    )).sort((a, b) => a.localeCompare(b, 'fr'));
+
+  const regionOptions = distinctOf('region');
+  const procedureOptions = distinctOf('procedure');
+
+  // §6 — Termes de recherche étendus (sémantique par synonymes)
+  const searchTerms = expandQuery(search); // [] si search vide
+
   const filteredMarches = marches.filter(m => {
     if (m.category === 'Recrutement') return false; // Ne jamais afficher les recrutements ici
-    const matchSearch = (m.title || '').toLowerCase().includes(search.toLowerCase()) ||
-                        (m.category || '').toLowerCase().includes(search.toLowerCase());
+
+    // §6 — Recherche sémantique : au moins un terme étendu dans le texte du marché
+    let matchSearch = true;
+    if (searchTerms.length > 0) {
+      const haystack = normalize(
+        [m.title, m.description, m.category, m.secteur, m.region].filter(Boolean).join(' ')
+      );
+      matchSearch = searchTerms.some(term => haystack.includes(term));
+    }
+
     const matchCat = activeCategory === 'All' || m.category === activeCategory;
-    return matchSearch && matchCat;
+
+    // §5 — Filtres avancés
+    const matchRegion = filterRegion === 'Toutes' || m.region === filterRegion;
+    const matchProcedure = filterProcedure === 'Toutes' || m.procedure === filterProcedure;
+    const matchUrgence = filterUrgence === 'Toutes' || m.urgence === filterUrgence;
+
+    return matchSearch && matchCat && matchRegion && matchProcedure && matchUrgence;
   });
 
   const getCategoryCount = (cat) =>
@@ -274,6 +309,63 @@ export default function MarchesPage() {
           </button>
         ))}
       </div>
+
+      {/* §5 — Filtres avancés (région / procédure / urgence) */}
+      {!loading && !authLoading && !loadError && visibleMarches.length > 0 && (
+        <div style={{
+          display: 'flex', flexWrap: 'wrap', gap: '12px',
+          alignItems: 'flex-end', marginBottom: '32px',
+        }}>
+          <div className="form-group" style={{ margin: 0, flex: '1 1 180px', minWidth: '160px' }}>
+            <label className="form-label">📍 Région</label>
+            <select
+              className="form-select"
+              value={filterRegion}
+              onChange={e => { setFilterRegion(e.target.value); track('filter', { key: 'region', value: e.target.value, context: 'marches' }); }}
+            >
+              <option value="Toutes">Toutes les régions</option>
+              {regionOptions.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+          </div>
+
+          <div className="form-group" style={{ margin: 0, flex: '1 1 180px', minWidth: '160px' }}>
+            <label className="form-label">📑 Procédure</label>
+            <select
+              className="form-select"
+              value={filterProcedure}
+              onChange={e => { setFilterProcedure(e.target.value); track('filter', { key: 'procedure', value: e.target.value, context: 'marches' }); }}
+            >
+              <option value="Toutes">Toutes les procédures</option>
+              {procedureOptions.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+
+          <div className="form-group" style={{ margin: 0, flex: '1 1 180px', minWidth: '160px' }}>
+            <label className="form-label">⏱️ Urgence</label>
+            <select
+              className="form-select"
+              value={filterUrgence}
+              onChange={e => { setFilterUrgence(e.target.value); track('filter', { key: 'urgence', value: e.target.value, context: 'marches' }); }}
+            >
+              <option value="Toutes">Toutes</option>
+              <option value="Urgent">Urgent</option>
+              <option value="Bientôt">Bientôt</option>
+              <option value="Normal">Normal</option>
+            </select>
+          </div>
+
+          {(filterRegion !== 'Toutes' || filterProcedure !== 'Toutes' || filterUrgence !== 'Toutes') && (
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={() => { setFilterRegion('Toutes'); setFilterProcedure('Toutes'); setFilterUrgence('Toutes'); }}
+              style={{ flex: '0 0 auto' }}
+            >
+              ✕ Réinitialiser
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Grille des marchés */}
       {loading || authLoading ? (

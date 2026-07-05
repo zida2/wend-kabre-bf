@@ -5,10 +5,16 @@ import { useMemo } from 'react';
 import DataTable from '../DataTable';
 
 export default function MarchesSection({ marches, onDelete }) {
-  const categories = useMemo(() => {
-    const set = new Set(marches.map((m) => m.category).filter(Boolean));
-    return [...set].sort().map((c) => ({ value: c, label: c }));
-  }, [marches]);
+  // Options dérivées des valeurs distinctes présentes en base
+  const distinctOptions = (key) => {
+    const set = new Set(marches.map((m) => m[key]).filter(Boolean));
+    return [...set].sort().map((v) => ({ value: v, label: v }));
+  };
+
+  const categories = useMemo(() => distinctOptions('category'), [marches]);
+  const regions = useMemo(() => distinctOptions('region'), [marches]);
+  const procedures = useMemo(() => distinctOptions('procedure'), [marches]);
+  const urgences = useMemo(() => distinctOptions('urgence'), [marches]);
 
   const columns = [
     {
@@ -31,6 +37,22 @@ export default function MarchesSection({ marches, onDelete }) {
       label: 'Secteur',
       sortable: true,
       render: (m) => <span className="badge badge-blue" style={{ fontSize: '0.7rem' }}>{m.category || 'Général'}</span>,
+    },
+    {
+      key: 'classement',
+      label: 'Classement',
+      sortValue: (m) => `${m.procedure || ''} ${m.region || ''}`,
+      render: (m) => (
+        <div className="flex flex-col gap-2" style={{ maxWidth: '160px' }}>
+          {m.procedure ? (
+            <span className="badge badge-gray" style={{ fontSize: '0.68rem' }} title="Procédure">📄 {m.procedure}</span>
+          ) : null}
+          {m.region ? (
+            <span className="badge badge-green" style={{ fontSize: '0.68rem' }} title="Région">📍 {m.region}</span>
+          ) : null}
+          {!m.procedure && !m.region ? <span className="text-muted text-xs">—</span> : null}
+        </div>
+      ),
     },
     { key: 'source', label: 'Émetteur', sortable: true, render: (m) => <span className="text-secondary text-sm">{m.source || 'N/A'}</span> },
     {
@@ -57,14 +79,21 @@ export default function MarchesSection({ marches, onDelete }) {
     },
   ];
 
+  const filters = [
+    { key: 'category', label: 'Secteur', options: categories },
+    { key: 'region', label: 'Région', options: regions },
+    { key: 'procedure', label: 'Procédure', options: procedures },
+    { key: 'urgence', label: 'Urgence', options: urgences },
+  ].filter((f) => f.options.length > 0);
+
   return (
     <DataTable
       columns={columns}
       rows={marches}
       getRowKey={(m) => m.id}
-      searchKeys={['title', 'source', 'category']}
+      searchKeys={['title', 'source', 'category', 'region', 'procedure']}
       searchPlaceholder="Rechercher un marché (titre, émetteur)…"
-      filters={[{ key: 'category', label: 'Secteur', options: categories }]}
+      filters={filters}
       initialSort={{ key: 'publishedAt', dir: 'desc' }}
       pageSize={12}
       emptyMessage="Aucun marché en base. Lancez le robot extracteur pour en récupérer."

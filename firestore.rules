@@ -89,5 +89,13 @@ service cloud.firestore {
       allow create: if true;
       allow update, delete: if false;
     }
+
+    // ── Coupons promotionnels (§4) ───────────────────────────────────
+    // Lecture : utilisateur connecté (validation d'un code au paiement).
+    // Écriture : admin uniquement (création/activation/suppression).
+    match /coupons/{couponId} {
+      allow read:  if isSignedIn();
+      allow write: if isAdmin();
+    }
   }
 }

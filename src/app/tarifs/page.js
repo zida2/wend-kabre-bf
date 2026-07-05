@@ -128,6 +128,13 @@ export default function TarifsPage() {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [paying, setPaying] = useState(false);
 
+  // Code promo / coupon
+  const [promoCode, setPromoCode] = useState('');
+  const [discount, setDiscount] = useState(0); // pourcentage de réduction appliqué
+  const [appliedCoupon, setAppliedCoupon] = useState(null); // { id, code, uses }
+  const [promoError, setPromoError] = useState('');
+  const [promoLoading, setPromoLoading] = useState(false);
+
   // Custom Alert Modal State
   const [alertModal, setAlertModal] = useState({ show: false, title: '', message: '', onClose: null });
 
@@ -179,6 +186,67 @@ export default function TarifsPage() {
     return billingAnnual ? 365 : 30;          // annuel ou mensuel
   };
 
+  // --- Prix & code promo -------------------------------------------------
+  // Prix numérique (sans espaces ni devise) du plan pour le cycle courant.
+  const getNumericPrice = (plan) => parseInt(String(getPrice(plan)).replace(/\D/g, ''), 10) || 0;
+  // Prix final après application éventuelle du coupon.
+  const getFinalPrice = (plan) => {
+    const base = getNumericPrice(plan);
+    if (!discount) return base;
+    return Math.max(0, Math.round(base * (1 - discount / 100)));
+  };
+  const formatPrice = (n) => n.toLocaleString('fr-FR');
+
+  const resetPromo = () => {
+    setPromoCode('');
+    setDiscount(0);
+    setAppliedCoupon(null);
+    setPromoError('');
+    setPromoLoading(false);
+  };
+
+  const applyPromo = async () => {
+    const cleanCode = promoCode.trim().toUpperCase();
+    setPromoError('');
+    if (!cleanCode) {
+      setPromoError('Veuillez saisir un code.');
+      return;
+    }
+    setPromoLoading(true);
+    try {
+      const qCoupon = query(collection(db, 'coupons'), where('code', '==', cleanCode));
+      const snap = await getDocs(qCoupon);
+      if (snap.empty) {
+        setDiscount(0);
+        setAppliedCoupon(null);
+        setPromoError('Code promo introuvable.');
+        return;
+      }
+      const d = snap.docs[0];
+      const data = d.data();
+      if (data.active !== true) {
+        setDiscount(0);
+        setAppliedCoupon(null);
+        setPromoError("Ce code promo n'est plus actif.");
+        return;
+      }
+      if (typeof data.maxUses === 'number' && (data.uses ?? 0) >= data.maxUses) {
+        setDiscount(0);
+        setAppliedCoupon(null);
+        setPromoError("Ce code promo a atteint sa limite d'utilisation.");
+        return;
+      }
+      const percent = Number(data.discountPercent) || 0;
+      setDiscount(percent);
+      setAppliedCoupon({ id: d.id, code: data.code, uses: data.uses ?? 0 });
+    } catch (err) {
+      console.error('Erreur application coupon:', err);
+      setPromoError("Impossible de vérifier le code pour l'instant. Réessayez.");
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
   // Auto-activation Premium (simulée) : le propriétaire authentifié écrit son
   // propre document users/{uid} — autorisé par les règles Firestore.
   // NB : cette activation reste contournable (choix produit assumé), une vraie
@@ -199,6 +267,7 @@ export default function TarifsPage() {
     }
     // Ouvre la modale de paiement pour tous les plans (Starter, Pro, Elite)
     setSelectedPlan(plan);
+    resetPromo();
     track('payment_start', { planId: plan?.id });
     setShowPayModal(true);
   };
@@ -409,13 +478,57 @@ export default function TarifsPage() {
               <p className="text-xs text-muted" style={{ marginBottom: '4px' }}>Vous souscrivez au forfait</p>
               <h3 className="heading-md" style={{ color: selectedPlan.color }}>{selectedPlan.name}</h3>
               <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-primary)', marginTop: '8px' }}>
-                {getPrice(selectedPlan)} FCFA {billingAnnual ? '/ an' : '/ mois'}
+                {discount > 0 && (
+                  <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)', fontWeight: 500, marginRight: '8px', fontSize: '1rem' }}>
+                    {getPrice(selectedPlan)}
+                  </span>
+                )}
+                {discount > 0 ? formatPrice(getFinalPrice(selectedPlan)) : getPrice(selectedPlan)} FCFA {billingAnnual ? '/ an' : '/ mois'}
               </p>
+              {discount > 0 && (
+                <p className="text-xs" style={{ color: 'var(--primary)', marginTop: '4px', fontWeight: 600 }}>
+                  Code {appliedCoupon?.code} appliqué : -{discount}%
+                </p>
+              )}
+            </div>
+
+            {/* Code promo */}
+            <div className="form-group" style={{ marginBottom: '20px' }}>
+              <label className="form-label">🎟️ Code promo (optionnel)</label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="Entrez votre code"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); if (discount === 0) applyPromo(); } }}
+                  style={{ textTransform: 'uppercase', flex: 1 }}
+                  disabled={discount > 0 || paying}
+                />
+                {discount > 0 ? (
+                  <button type="button" onClick={resetPromo} className="btn btn-outline" style={{ whiteSpace: 'nowrap' }} disabled={paying}>
+                    Retirer
+                  </button>
+                ) : (
+                  <button type="button" onClick={applyPromo} className="btn btn-primary" style={{ whiteSpace: 'nowrap' }} disabled={promoLoading || paying}>
+                    {promoLoading ? '…' : 'Appliquer'}
+                  </button>
+                )}
+              </div>
+              {promoError && (
+                <p className="text-xs" style={{ color: 'var(--danger)', marginTop: '6px' }}>{promoError}</p>
+              )}
+              {discount > 0 && (
+                <p className="text-xs" style={{ color: 'var(--primary)', marginTop: '6px', fontWeight: 600 }}>
+                  ✓ Réduction de {discount}% appliquée.
+                </p>
+              )}
             </div>
 
             <div className="badge badge-gold text-center w-full" style={{ marginBottom: '20px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <strong>Étape 1 : Effectuez le dépôt</strong>
-              <p style={{ fontSize: '0.9rem' }}>Envoyez {getPrice(selectedPlan)} FCFA sur l'un de ces numéros :</p>
+              <p style={{ fontSize: '0.9rem' }}>Envoyez {discount > 0 ? formatPrice(getFinalPrice(selectedPlan)) : getPrice(selectedPlan)} FCFA sur l'un de ces numéros :</p>
               <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>🟠 Orange Money : 06 13 90 16</div>
               <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>🟡 Moov Money : 62 20 28 77</div>
             </div>
@@ -444,7 +557,10 @@ export default function TarifsPage() {
                     const Tesseract = (await import('tesseract.js')).default;
                     const result = await Tesseract.recognize(file, 'fra');
                     const text = result.data.text.toLowerCase();
-                    const amountStr = getPrice(selectedPlan).replace(/\s/g, ''); // ex: "14900"
+                    // Montant réellement dû (après application éventuelle du coupon).
+                    const finalPrice = discount > 0 ? getFinalPrice(selectedPlan) : getNumericPrice(selectedPlan);
+                    const finalPriceStr = formatPrice(finalPrice); // ex: "14 900"
+                    const amountStr = String(finalPrice); // ex: "14900"
                     
                     // Regex très tolérante pour trouver le montant dans l'image
                     const amountMatch = text.includes(amountStr) || text.replace(/\s|\./g, '').includes(amountStr);
@@ -457,7 +573,9 @@ export default function TarifsPage() {
                       userName: user.displayName || user.email.split('@')[0],
                       planId: selectedPlan.id,
                       planName: selectedPlan.name,
-                      amount: getPrice(selectedPlan),
+                      amount: finalPriceStr,
+                      couponCode: appliedCoupon?.code || null,
+                      discountPercent: discount || 0,
                       screenshot: base64Image,
                       ocrText: text,
                       status: status,
@@ -468,6 +586,16 @@ export default function TarifsPage() {
                     if (amountMatch) {
                       // Activation automatique immédiate (simulée, côté propriétaire).
                       await activateOwnSubscription(user.uid, subscriptionDays(selectedPlan));
+                      // Incrémente le compteur d'utilisations du coupon (best-effort).
+                      if (appliedCoupon && discount > 0) {
+                        try {
+                          await updateDoc(doc(db, 'coupons', appliedCoupon.id), {
+                            uses: (appliedCoupon.uses || 0) + 1,
+                          });
+                        } catch (e) {
+                          console.error('Incrément uses coupon échoué:', e);
+                        }
+                      }
                       track('subscribe', { planId: selectedPlan?.id });
                       showAlert("🎉 OCR RÉUSSI ! Paiement détecté avec succès. Bienvenue dans l'espace Premium.", "Validation Réussie", () => {
                         setShowPayModal(false);

@@ -10,10 +10,12 @@ import { logAdminAction } from '@/lib/adminLog';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import OverviewSection from '@/components/admin/sections/OverviewSection';
 import AnalyticsSection from '@/components/admin/sections/AnalyticsSection';
+import StatsSection from '@/components/admin/sections/StatsSection';
 import UsersSection from '@/components/admin/sections/UsersSection';
 import PaymentsSection from '@/components/admin/sections/PaymentsSection';
 import MarchesSection from '@/components/admin/sections/MarchesSection';
 import ScraperSection from '@/components/admin/sections/ScraperSection';
+import CouponsSection from '@/components/admin/sections/CouponsSection';
 import layout from '@/components/admin/adminLayout.module.css';
 
 const ADMIN_EMAIL = 'zidadesire20@gmail.com';
@@ -21,8 +23,10 @@ const ADMIN_EMAIL = 'zidadesire20@gmail.com';
 const SECTION_META = {
   overview: { title: 'Vue d\'ensemble', sub: 'Indicateurs clés et tendances de la plateforme' },
   analytics: { title: 'Analytique visiteurs', sub: 'Trafic, provenance, comportement et conversion' },
+  stats: { title: 'Statistiques avancées', sub: 'Marchés par ministère/région/secteur, valeur, qualité du scraping' },
   users: { title: 'Utilisateurs & Abonnements', sub: 'Gérez les PME inscrites et leurs abonnements' },
   payments: { title: 'Paiements', sub: 'Validez les demandes de paiement par reçu' },
+  coupons: { title: 'Coupons promotionnels', sub: 'Créez et gérez les codes de réduction' },
   marches: { title: 'Marchés', sub: 'Consultez et gérez les marchés en base' },
   scraper: { title: 'Extraction', sub: 'Pilotez le robot d\'aspiration des sources' },
 };
@@ -228,6 +232,25 @@ export default function AdminPage() {
     }
   };
 
+  const handleSuspend = async (userId, suspend) => {
+    setProcessingUser(userId);
+    try {
+      await updateDoc(doc(db, 'users', userId), { suspended: suspend });
+      const u = usersList.find((x) => x.id === userId);
+      await logAdminAction(suspend ? 'user_suspend' : 'user_reactivate', {
+        message: `${suspend ? 'Compte suspendu' : 'Compte réactivé'} — ${u?.email || userId}`,
+        targetUser: userId,
+      });
+      showToast(suspend ? '⏸️ Utilisateur suspendu.' : '▶️ Utilisateur réactivé.', 'success');
+      fetchAdminData();
+    } catch (e) {
+      console.error(e);
+      showToast('❌ Erreur lors de la mise à jour du compte.', 'error');
+    } finally {
+      setProcessingUser(null);
+    }
+  };
+
   const handleLogout = async () => {
     const { signOut } = await import('firebase/auth');
     await signOut(auth);
@@ -239,8 +262,10 @@ export default function AdminPage() {
   const sections = [
     { id: 'overview', icon: '📊', label: 'Vue d\'ensemble' },
     { id: 'analytics', icon: '📈', label: 'Analytique' },
+    { id: 'stats', icon: '📊', label: 'Statistiques' },
     { id: 'users', icon: '👥', label: 'Utilisateurs' },
     { id: 'payments', icon: '💳', label: 'Paiements', badge: pendingCount },
+    { id: 'coupons', icon: '🎟️', label: 'Coupons' },
     { id: 'marches', icon: '📄', label: 'Marchés', badge: marchesList.length, badgeMuted: true },
     { id: 'scraper', icon: '🤖', label: 'Extraction' },
   ];
@@ -269,8 +294,10 @@ export default function AdminPage() {
 
           {section === 'overview' && <OverviewSection users={usersList} marches={marchesList} requests={paymentRequests} scrapeRuns={scrapeRuns} adminLogs={adminLogs} />}
           {section === 'analytics' && <AnalyticsSection events={events} users={usersList} />}
-          {section === 'users' && <UsersSection users={usersList} processingUser={processingUser} onUpdateSubscription={handleUpdateSubscription} onDeleteUser={handleDeleteUser} />}
+          {section === 'stats' && <StatsSection marches={marchesList} events={events} scrapeRuns={scrapeRuns} users={usersList} />}
+          {section === 'users' && <UsersSection users={usersList} processingUser={processingUser} onUpdateSubscription={handleUpdateSubscription} onDeleteUser={handleDeleteUser} onSuspend={handleSuspend} events={events} />}
           {section === 'payments' && <PaymentsSection requests={paymentRequests} onAction={handleRequestAction} onViewScreenshot={setSelectedScreenshot} />}
+          {section === 'coupons' && <CouponsSection />}
           {section === 'marches' && <MarchesSection marches={marchesList} onDelete={handleDeleteMarche} />}
           {section === 'scraper' && <ScraperSection scraping={scraping} scrapeLogs={scrapeLogs} onScrape={handleForceScrape} />}
         </main>

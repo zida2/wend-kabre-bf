@@ -11,6 +11,78 @@ import { saveAs } from "file-saver";
 import { track } from '@/lib/track';
 
 // ── Affichage structuré de l'analyse IA d'un marché ──
+// ── Rangée de badges de classification (métadonnées non sensibles, visibles par tous) ──
+function ClassificationBadges({ marche }) {
+  if (!marche) return null;
+
+  const EMPTY = ['Non spécifié', 'Non communiqué', 'Non datée'];
+  const has = (v) => v && !EMPTY.includes(v);
+
+  const badges = [];
+
+  // Procédure → bleu
+  if (has(marche.procedure)) {
+    badges.push(<span key="procedure" className="badge badge-blue">{marche.procedure}</span>);
+  }
+
+  // Secteur → vert
+  if (has(marche.secteur)) {
+    badges.push(<span key="secteur" className="badge badge-green">{marche.secteur}</span>);
+  }
+
+  // Région → gris avec 📍
+  if (has(marche.region)) {
+    badges.push(<span key="region" className="badge badge-gray">📍 {marche.region}</span>);
+  }
+
+  // Urgence → couleur selon la valeur
+  if (has(marche.urgence)) {
+    const u = marche.urgence;
+    let urgStyle = null;
+    if (u === 'Urgent') {
+      urgStyle = { background: 'var(--danger-muted)', color: 'var(--danger)' };
+    } else if (u === 'Bientôt') {
+      urgStyle = { background: 'var(--accent-muted)', color: 'var(--accent)' };
+    } else if (u === 'Clôturé') {
+      urgStyle = { textDecoration: 'line-through' };
+    }
+    badges.push(
+      <span key="urgence" className="badge badge-gray" style={urgStyle || undefined}>{u}</span>
+    );
+  }
+
+  // Montant estimé → gris avec 💰
+  if (has(marche.montantEstime)) {
+    badges.push(<span key="montant" className="badge badge-gray">💰 {marche.montantEstime}</span>);
+  }
+
+  // Relation (additif / rectificatif / report / annulation) → alerte visible
+  if (marche.relation) {
+    const relLabels = {
+      additif: 'Additif',
+      rectificatif: 'Rectificatif',
+      report: 'Report de date',
+      annulation: 'Annulation',
+    };
+    const label = relLabels[marche.relation] || marche.relation;
+    const isDanger = marche.relation === 'annulation';
+    const relStyle = isDanger
+      ? { background: 'var(--danger-muted)', color: 'var(--danger)' }
+      : { background: 'var(--accent-muted)', color: 'var(--accent)' };
+    badges.push(
+      <span key="relation" className="badge" style={{ ...relStyle, fontWeight: 700 }}>⚠️ {label}</span>
+    );
+  }
+
+  if (badges.length === 0) return null;
+
+  return (
+    <div className="flex flex-wrap gap-2" style={{ marginBottom: '24px' }}>
+      {badges}
+    </div>
+  );
+}
+
 function AnalysisField({ label, value }) {
   if (!value || value === 'Non spécifié' || value === 'Non communiqué') return null;
   return (
@@ -482,7 +554,10 @@ function DetailsContent() {
             </button>
           )}
         </div>
-        
+
+        {/* Badges de classification (métadonnées non sensibles, visibles par tous) */}
+        <ClassificationBadges marche={marche} />
+
         <h3 className="heading-md" style={{ marginBottom: '12px' }}>Description du projet</h3>
         
         {hasFullAccess ? (
@@ -520,6 +595,18 @@ function DetailsContent() {
             <p className="text-xs text-muted">CATÉGORIE</p>
             <p className="text-sm text-gold" style={{ fontWeight: 600 }}>{marche.category || 'Non spécifié'}</p>
           </div>
+          {marche.ministere && marche.ministere !== 'Non spécifié' && (
+            <div>
+              <p className="text-xs text-muted">MINISTÈRE</p>
+              <p className="text-sm text-primary" style={{ fontWeight: 600 }}>{marche.ministere}</p>
+            </div>
+          )}
+          {marche.commune && marche.commune !== 'Non spécifié' && (
+            <div>
+              <p className="text-xs text-muted">COMMUNE</p>
+              <p className="text-sm text-primary" style={{ fontWeight: 600 }}>{marche.commune}</p>
+            </div>
+          )}
         </div>
 
         {/* NOUVEAU : INFORMATIONS DE RECRUTEMENT */}
