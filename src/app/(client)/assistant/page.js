@@ -144,7 +144,8 @@ export default function AssistantPage() {
             {/* État d'erreur */}
             {chat.error && !isLoading && (
               <div role="alert" style={{ alignSelf: 'center', textAlign: 'center', background: 'var(--danger-muted)', border: '1px solid rgba(220,38,38,0.25)', color: 'var(--danger)', borderRadius: 'var(--radius-md)', padding: '12px 16px', fontSize: '0.88rem' }}>
-                ⚠️ Une erreur est survenue. Vérifiez votre connexion et réessayez.
+                ⚠️ Une erreur est survenue. Vérifiez votre connexion et réessayez.<br/>
+                <span style={{ fontSize: '0.75rem', opacity: 0.8, marginTop: '8px', display: 'block', wordBreak: 'break-word' }}>Détail technique : {chat.error.message || chat.error.toString()}</span>
               </div>
             )}
             <div ref={messagesEndRef} />
