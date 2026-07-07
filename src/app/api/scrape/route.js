@@ -2,6 +2,7 @@ import { db } from '@/lib/firebase';
 import { collection, addDoc, getDocs, query, where, updateDoc } from 'firebase/firestore';
 import * as cheerio from 'cheerio';
 import { classifyMarket, isRealTender } from '@/lib/marketClassifier';
+import { processAlertsForTenders } from '@/lib/alertEngine';
 
 // Le scraping (fetch multi-sources + cheerio) dure plusieurs dizaines de secondes.
 // Sans ceci, Vercel tue la fonction à la durée par défaut → scrape KO en prod.
@@ -312,6 +313,7 @@ export async function GET(request) {
 
   // Déduplications et sauvegarde Firestore
   let addedCount = 0;
+  const newTenders = [];
   const tendersRef = collection(db, 'marches');
   const CLASSIF_KEYS = ['procedure', 'region', 'commune', 'ministere', 'montantEstime', 'urgence', 'secteur', 'relation', 'normalizedTitle'];
 
@@ -322,6 +324,7 @@ export async function GET(request) {
       if (snap.empty) {
         await addDoc(tendersRef, tender);
         addedCount++;
+        newTenders.push(tender);
       } else {
         const existingDoc = snap.docs[0];
         const existingData = existingDoc.data();
@@ -359,12 +362,19 @@ export async function GET(request) {
     console.error('[Scrape] log run error:', e.message);
   }
 
+  // ── Lancement des alertes WhatsApp / SMS pour les nouveaux marchés ──
+  let alertsReport = null;
+  if (newTenders.length > 0) {
+    alertsReport = await processAlertsForTenders(newTenders);
+  }
+
   return Response.json({
     success: true,
     added: addedCount,
     total: listTenders.length,
     kept: classifiedTenders.length,
     rejected,
+    alertsReport,
     timestamp: new Date().toISOString()
   });
 }

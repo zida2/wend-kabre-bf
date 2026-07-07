@@ -53,17 +53,24 @@ export async function runClientScrape() {
         const lowerTitle = title.toLowerCase();
         const lowerDesc = description.toLowerCase();
 
-        // Strict location filtering for Burkina Faso
         const isBurkina = lowerTitle.includes('burkina') || lowerTitle.includes('ouagadougou') || 
                           lowerDesc.includes('burkina') || lowerDesc.includes('ouagadougou');
 
         if (isBurkina) {
+          // Extraction rudimentaire de la date limite depuis la description
+          let deadline = null;
+          const dateMatch = description.match(/(?:closing date|date limite|deadline)[^\d]*([\d]{1,2}\s*[a-zA-Zûé]+\s*[\d]{4}|[\d]{1,2}[\/\-][\d]{1,2}[\/\-][\d]{2,4})/i);
+          if (dateMatch) {
+            deadline = dateMatch[1].trim(); // On garde la chaine brute trouvée (ex: "15 Jul 2026")
+          }
+
           listTenders.push({
             title,
             description,
             source: 'ReliefWeb (Burkina)',
             link: item.link || '',
             publishedAt: item.pubDate || new Date().toISOString(),
+            deadline: deadline, // <-- Ajout de la date limite extraite
             category: 'Recrutement',
             status: 'Ouvert',
             scrapedAt: new Date().toISOString(),

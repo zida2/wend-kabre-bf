@@ -59,6 +59,7 @@ const getEventDetail = (e) => {
 
 export default function UserJourneysSection({ events = [], users = [] }) {
   const [selectedUser, setSelectedUser] = useState(null);
+  const [filterMode, setFilterMode] = useState('all'); // 'all' | 'abandon_pay' | 'zero_result'
 
   // Group events by user/visitor
   const activeUsers = useMemo(() => {
@@ -113,6 +114,14 @@ export default function UserJourneysSection({ events = [], users = [] }) {
     return Array.from(userMap.values()).sort((a, b) => b.lastActive - a.lastActive);
   }, [events, users]);
 
+  const displayedUsers = useMemo(() => {
+    return activeUsers.filter(u => {
+      if (filterMode === 'abandon_pay') return u.events.some(e => e.type === 'payment_abandon');
+      if (filterMode === 'zero_result') return u.events.some(e => e.type === 'search_no_result');
+      return true;
+    });
+  }, [activeUsers, filterMode]);
+
   if (activeUsers.length === 0) {
     return (
       <div className="card flex flex-col items-center" style={{ padding: '60px 24px', textAlign: 'center' }}>
@@ -130,9 +139,34 @@ export default function UserJourneysSection({ events = [], users = [] }) {
       
       {/* Colonne Liste des Utilisateurs */}
       <div className="card" style={{ overflow: 'hidden' }}>
-        <div className="flex items-center justify-between" style={{ marginBottom: '16px' }}>
-          <h2 className="heading-sm">Parcours Individuels</h2>
-          <span className="badge badge-gray">{activeUsers.length} profils suivis</span>
+        <div className="flex flex-col gap-4" style={{ marginBottom: '16px' }}>
+          <div className="flex items-center justify-between">
+            <h2 className="heading-sm">Parcours Individuels</h2>
+            <span className="badge badge-gray">{displayedUsers.length} profils trouvés</span>
+          </div>
+          
+          <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
+            <button 
+              onClick={() => { setFilterMode('all'); setSelectedUser(null); }}
+              className={`btn btn-sm ${filterMode === 'all' ? 'btn-primary' : 'btn-outline'}`}
+            >
+              Tous
+            </button>
+            <button 
+              onClick={() => { setFilterMode('abandon_pay'); setSelectedUser(null); }}
+              className={`btn btn-sm ${filterMode === 'abandon_pay' ? 'btn-danger' : 'btn-outline'}`}
+              style={filterMode === 'abandon_pay' ? {} : { borderColor: 'var(--danger)', color: 'var(--danger)' }}
+            >
+              🛒 Abandons de paiement
+            </button>
+            <button 
+              onClick={() => { setFilterMode('zero_result'); setSelectedUser(null); }}
+              className={`btn btn-sm ${filterMode === 'zero_result' ? 'btn-accent' : 'btn-outline'}`}
+              style={filterMode === 'zero_result' ? {} : { borderColor: 'var(--accent)', color: 'var(--accent)' }}
+            >
+              ❌ Recherches sans résultat
+            </button>
+          </div>
         </div>
         
         <div className="table-responsive">
@@ -147,7 +181,7 @@ export default function UserJourneysSection({ events = [], users = [] }) {
               </tr>
             </thead>
             <tbody>
-              {activeUsers.map(u => (
+              {displayedUsers.map(u => (
                 <tr 
                   key={u.id} 
                   style={{ 

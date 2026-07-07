@@ -247,6 +247,17 @@ export default function StatsSection({ marches = [], events = [], scrapeRuns = [
         </div>
       </div>
 
+      {/* ── Intelligence Artificielle (Coûts & Usage) ── */}
+      <div>
+        <h2 className="heading-sm" style={{ marginBottom: '12px' }}>🧠 Intelligence Artificielle (Coûts & Usage)</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px', background: 'var(--color-surface-2)', padding: '16px', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)' }}>
+          <StatTile icon="🤖" label="Analyses PDF" value={stats.pdfAnalyses.toLocaleString('fr-FR')} sub="Extractions Gemini" accent="var(--forest)" />
+          <StatTile icon="💸" label="Coût API Estimé" value={`${Math.ceil(stats.pdfAnalyses * 0.60).toLocaleString('fr-FR')} FCFA`} sub="~0.60 FCFA / document" accent="var(--danger)" />
+          <StatTile icon="📈" label="Taux d'analyse" value={`${stats.marchesAvecPdf > 0 ? Math.round((stats.pdfAnalyses / stats.marchesAvecPdf) * 100) : 0}%`} sub="des marchés (avec PDF)" accent="var(--accent)" />
+          <StatTile icon="💬" label="Chatbot & Assistant" value="~0.2 FCFA" sub="Coût moyen par message" accent="var(--primary)" />
+        </div>
+      </div>
+
       {/* ── Comportement produit ── */}
       <div>
         <h2 className="heading-sm" style={{ marginBottom: '12px' }}>🧭 Comportement produit</h2>
