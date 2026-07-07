@@ -244,12 +244,24 @@ export default function DashboardPage() {
 
   return (
     <div className="container animate-fadeIn" style={{ padding: '60px 20px' }}>
-      <div className="flex justify-between items-center" style={{ marginBottom: '40px' }}>
+      <div className="flex justify-between items-center" style={{ marginBottom: '24px' }}>
         <h1 className="heading-lg">
           {userData?.name ? `Espace PME — ${userData.name}` : 'Mon Espace PME'}
         </h1>
         <button onClick={handleLogout} className="btn btn-outline">Se déconnecter</button>
       </div>
+
+      {(!userData?.rccm || !userData?.ifu) && (
+        <div style={{ background: 'var(--danger-muted)', borderLeft: '4px solid var(--danger)', padding: '16px 24px', borderRadius: 'var(--radius-sm)', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h4 style={{ color: 'var(--danger)', fontWeight: 700, marginBottom: '4px' }}>🚨 Urgence : Profil incomplet</h4>
+            <p className="text-sm text-secondary">Renseignez votre N° RCCM et votre IFU pour pouvoir utiliser le Générateur de Devis Universel.</p>
+          </div>
+          <Link href="/dashboard" className="btn btn-sm" style={{ background: 'var(--danger)', color: '#fff', border: 'none' }}>
+            Compléter mon profil
+          </Link>
+        </div>
+      )}
 
       <div className="grid grid-3 gap-8">
         

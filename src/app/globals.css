@@ -371,6 +371,37 @@ input, select, textarea { font-family: inherit; outline: none; border: none; }
 }
 
 /* =============================================
+   PREMIUM EFFECTS (Glassmorphism & Blur)
+   ============================================= */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px rgba(6, 78, 59, 0.08);
+}
+
+.blur-overlay {
+  position: relative;
+  overflow: hidden;
+}
+.blur-overlay .blur-content {
+  filter: blur(6px);
+  user-select: none;
+  pointer-events: none;
+  opacity: 0.7;
+}
+.blur-overlay .blur-cta {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  text-align: center;
+  width: 100%;
+}
+
+/* =============================================
    BADGES
    ============================================= */
 .badge {
