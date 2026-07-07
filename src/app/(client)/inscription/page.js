@@ -62,7 +62,9 @@ export default function InscriptionPage() {
         rccm: rccm || '',
         phone,
         email,
-        isSubscribed: false, // Toujours gratuit à l'inscription (l'abonnement s'active via /tarifs ou l'admin)
+        isSubscribed: true, // Le mode gratuit débloque désormais l'application
+        plan: 'gratuit',
+        hasSeenUpdateModal: true, // Les nouveaux n'ont pas besoin de voir le message de mise à jour
         createdAt: new Date().toISOString()
       });
 

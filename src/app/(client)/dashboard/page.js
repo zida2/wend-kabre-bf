@@ -22,6 +22,7 @@ export default function DashboardPage() {
   const [allMarches, setAllMarches] = useState([]);
   const [matchingMarches, setMatchingMarches] = useState([]);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const SUGGESTED_KEYWORDS = ['Informatique', 'BTP', 'Fournitures', 'Recrutement', 'Consultant', 'Sécurité', 'Nettoyage'];
 
@@ -48,6 +49,9 @@ export default function DashboardPage() {
           
           if (!data.hasSeenWelcome) {
             setShowWelcomeModal(true);
+          }
+          if (!data.hasSeenUpdateModal) {
+            setShowUpdateModal(true);
           }
         }
 
@@ -552,51 +556,6 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* SECTION 3 : HISTORIQUE D'ALERTES WHATSAPP */}
-      {userData?.isSubscribed && (
-        <div className="card" style={{ marginTop: '40px' }}>
-          <h3 className="heading-md" style={{ marginBottom: '8px' }}>💬 Aperçu (exemple) des alertes WhatsApp</h3>
-          <p className="text-secondary text-xs" style={{ marginBottom: '24px' }}>
-            Ceci est une <strong>illustration</strong> du format des notifications que vous recevrez sur votre numéro <strong>{userData.alertPrefs?.phone || userData.phone || 'Non Configuré'}</strong>. Aucun message réel n'a encore été envoyé.
-          </p>
-
-          <div className="table-responsive">
-            <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid var(--color-border)' }}>
-                  <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Horodatage</th>
-                  <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Destinataire</th>
-                  <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Message d'Alerte</th>
-                  <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Canal</th>
-                </tr>
-              </thead>
-              <tbody>
-                {keywords.length > 0 ? (
-                  keywords.slice(0, 3).map((kw, i) => (
-                    <tr key={i} style={{ borderBottom: '1px solid var(--color-border)' }}>
-                      <td style={{ padding: '14px 8px', fontSize: '0.85rem' }}>Aujourd'hui à {17 - i}h05</td>
-                      <td style={{ padding: '14px 8px', fontSize: '0.85rem', color: 'var(--green)' }}>{userData.phone || 'PME'}</td>
-                      <td style={{ padding: '14px 8px', fontSize: '0.85rem', fontStyle: 'italic' }}>
-                        "🚨 NOUVEL APPEL D'OFFRES détecté au Burkina pour le mot-clé <strong>{kw}</strong>. Consultez vos détails sur la plateforme..."
-                      </td>
-                      <td style={{ padding: '14px 8px' }}>
-                        <span className="badge badge-gray" style={{ fontSize: '0.7rem' }}>Exemple</span>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="4" style={{ padding: '25px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                      En attente de mots-clés pour démarrer l'envoi de vos alertes instantanées.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
       {/* TOAST FLOTTANT */}
       {toast && (
         <div style={{
@@ -659,6 +618,41 @@ export default function DashboardPage() {
               style={{ width: '100%', padding: '12px', fontSize: '1rem' }}
             >
               J'ai compris, configurer mes mots-clés
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* MODALE DE MISE À JOUR */}
+      {showUpdateModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(5px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 99999
+        }}>
+          <div className="card animate-fadeInUp" style={{ maxWidth: '450px', textAlign: 'center', position: 'relative' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎉</div>
+            <h2 className="heading-md" style={{ color: 'var(--green)', marginBottom: '16px' }}>Wend-Kabré est 100% Fonctionnel !</h2>
+            <p className="text-secondary" style={{ marginBottom: '24px', lineHeight: '1.6' }}>
+              Bonne nouvelle ! L'application est maintenant à jour et totalement opérationnelle. Tous les comptes inscrits bénéficient automatiquement du <strong>Mode Gratuit</strong> pour découvrir l'intégralité de nos fonctionnalités.
+            </p>
+            <button 
+              className="btn btn-primary" 
+              onClick={async () => {
+                setShowUpdateModal(false);
+                if (user) {
+                  await updateDoc(doc(db, 'users', user.uid), { 
+                    hasSeenUpdateModal: true,
+                    plan: 'gratuit',
+                    isSubscribed: true // Optionnel si isSubscribed débloque les fonctionnalités gratuites
+                  });
+                  setUserData(prev => ({ ...prev, plan: 'gratuit', isSubscribed: true }));
+                }
+              }}
+              style={{ width: '100%', padding: '14px' }}
+            >
+              C'est parti !
             </button>
           </div>
         </div>
