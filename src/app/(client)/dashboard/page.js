@@ -633,9 +633,9 @@ export default function DashboardPage() {
         }}>
           <div className="card animate-fadeInUp" style={{ maxWidth: '450px', textAlign: 'center', position: 'relative' }}>
             <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎉</div>
-            <h2 className="heading-md" style={{ color: 'var(--green)', marginBottom: '16px' }}>Wend-Kabré est 100% Fonctionnel !</h2>
+            <h2 className="heading-md" style={{ color: 'var(--green)', marginBottom: '16px' }}>Mise à jour terminée !</h2>
             <p className="text-secondary" style={{ marginBottom: '24px', lineHeight: '1.6' }}>
-              Bonne nouvelle ! L'application est maintenant à jour et totalement opérationnelle. Tous les comptes inscrits bénéficient automatiquement du <strong>Mode Gratuit</strong> pour découvrir l'intégralité de nos fonctionnalités.
+              Bonne nouvelle ! L'application est maintenant à jour et totalement fonctionnelle. Votre compte est actuellement en <strong>Mode Gratuit</strong>. Vous pouvez naviguer sur la plateforme et mettre à niveau votre forfait à tout moment pour accéder aux appels d'offres.
             </p>
             <button 
               className="btn btn-primary" 
@@ -643,11 +643,9 @@ export default function DashboardPage() {
                 setShowUpdateModal(false);
                 if (user) {
                   await updateDoc(doc(db, 'users', user.uid), { 
-                    hasSeenUpdateModal: true,
-                    plan: 'gratuit',
-                    isSubscribed: true // Optionnel si isSubscribed débloque les fonctionnalités gratuites
+                    hasSeenUpdateModal: true
                   });
-                  setUserData(prev => ({ ...prev, plan: 'gratuit', isSubscribed: true }));
+                  setUserData(prev => ({ ...prev, hasSeenUpdateModal: true }));
                 }
               }}
               style={{ width: '100%', padding: '14px' }}
