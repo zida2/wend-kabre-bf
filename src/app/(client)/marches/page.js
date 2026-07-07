@@ -249,7 +249,7 @@ export default function MarchesPage() {
   return (
     <main className="container section animate-fadeIn">
       {/* En-tête */}
-      <div style={{ marginBottom: '40px' }}>
+      <div style={{ marginBottom: '40px', textAlign: 'center' }} className="animate-fadeInUp">
         <span className="badge badge-green" style={{ marginBottom: '10px' }}>Plateforme Souveraine 🇧🇫</span>
         <h1 className="heading-lg">Burkina Faso — Marchés Publics</h1>
         <p className="text-secondary text-sm">
