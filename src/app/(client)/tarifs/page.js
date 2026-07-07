@@ -250,7 +250,8 @@ export default function TarifsPage() {
   };
 
   return (
-    <main className="animate-fadeIn relative">
+    <>
+      <main className="animate-fadeIn relative">
       {/* Hero */}
       <section className="section" style={{ background: 'var(--grad-hero)', textAlign: 'center' }}>
         <div className="container">
@@ -436,6 +437,7 @@ export default function TarifsPage() {
           </div>
         </div>
       </section>
+      </main>
 
       {/* MODAL DE PAIEMENT OCR */}
       {showPayModal && selectedPlan && (
@@ -692,6 +694,6 @@ export default function TarifsPage() {
           </div>
         </div>
       )}
-    </main>
+    </>
   );
 }
