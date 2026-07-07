@@ -7,7 +7,7 @@ const PLANS = [
   {
     id: 'starter',
     name: 'Essai (1 Semaine)',
-    price: '1 500',
+    price: '2 500',
     currency: 'FCFA',
     period: '/ semaine',
     icon: '🌱',
@@ -33,7 +33,7 @@ const PLANS = [
   {
     id: 'pro',
     name: 'PME Pro',
-    price: '14 900',
+    price: '12 500',
     currency: 'FCFA',
     period: '/ mois',
     icon: '⚡',
@@ -56,33 +56,7 @@ const PLANS = [
     ctaLink: '/inscription?plan=pro',
     ctaStyle: { background: 'var(--grad-primary)', color: '#fff', border: 'none', fontWeight: 700, boxShadow: 'var(--shadow-primary)' },
     popular: true,
-  },
-  {
-    id: 'elite',
-    name: 'Élite',
-    price: '29 900',
-    currency: 'FCFA',
-    period: '/ mois',
-    icon: '👑',
-    color: 'var(--accent)',
-    borderColor: 'var(--accent)',
-    badge: 'Tout inclus',
-    badgeColor: 'badge-accent',
-    features: [
-      { text: 'Voir les titres des marchés', ok: true },
-      { text: 'Filtres par catégorie', ok: true },
-      { text: 'Barre de recherche', ok: true },
-      { text: 'Détails & descriptions complètes', ok: true },
-      { text: 'Source officielle & émetteur', ok: true },
-      { text: 'Lien direct de dépôt de dossier', ok: true },
-      { text: 'Alertes WhatsApp & SMS — Prioritaires', ok: true },
-      { text: 'Assistant IA Wend-Kabré (illimité)', ok: true },
-      { text: 'Tableau de bord entreprise complet', ok: true },
-    ],
-    cta: 'Devenir Élite 👑',
-    ctaLink: '/inscription?plan=elite',
-    ctaStyle: { background: 'var(--grad-accent)', color: '#fff', border: 'none', fontWeight: 700, boxShadow: '0 8px 24px rgba(217,119,6,0.3)' },
-  },
+  }
 ];
 
 import { auth, db } from '@/lib/firebase';
@@ -93,6 +67,7 @@ import { collection, addDoc, query, where, getDocs, doc, updateDoc } from 'fireb
 export default function TarifsPage() {
   const [billingAnnual, setBillingAnnual] = useState(false);
   const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [pendingPayment, setPendingPayment] = useState(false);
   const router = useRouter();
   const compressImage = (file) => new Promise((resolve) => {
@@ -160,11 +135,17 @@ export default function TarifsPage() {
           );
           const pSnap = await getDocs(q);
           setPendingPayment(!pSnap.empty);
+
+          const userDoc = await getDocs(query(collection(db, 'users'), where('email', '==', currentUser.email)));
+          if (!userDoc.empty) {
+            setUserData(userDoc.docs[0].data());
+          }
         } catch (err) {
           console.error("Erreur check pending payment:", err);
         }
       } else {
         setPendingPayment(false);
+        setUserData(null);
       }
     });
     return () => unsubscribe();
@@ -175,7 +156,7 @@ export default function TarifsPage() {
     if (plan.id === 'starter') return plan.price;
     const base = parseInt(plan.price.replace(' ', ''), 10);
     if (billingAnnual) {
-      return Math.round(base * 12 * 0.75).toLocaleString('fr-FR');
+      return Math.round(base * 12 * 0.80).toLocaleString('fr-FR');
     }
     return plan.price;
   };
@@ -314,7 +295,7 @@ export default function TarifsPage() {
                 background: 'var(--grad-accent)',
                 color: '#fff', fontSize: '0.7rem', fontWeight: 800,
                 padding: '2px 8px', borderRadius: '50px',
-              }}>-25%</span>
+              }}>-20%</span>
             </span>
           </div>
         </div>
@@ -355,7 +336,7 @@ export default function TarifsPage() {
                   </div>
                   {billingAnnual && plan.id !== 'starter' && (
                     <p className="text-muted text-xs" style={{ marginTop: '6px' }}>
-                      Facturé annuellement (économisez 25%)
+                      Facturé annuellement (économisez 20%)
                     </p>
                   )}
                 </div>
@@ -384,18 +365,21 @@ export default function TarifsPage() {
                 </ul>
 
                 <button 
-                  onClick={() => !pendingPayment && handleCTA(plan)} 
+                  onClick={() => {
+                    const isTrialUsed = plan.id === 'starter' && userData?.hasUsedTrial;
+                    if (!pendingPayment && !isTrialUsed) handleCTA(plan);
+                  }} 
                   className="btn" 
-                  disabled={pendingPayment}
+                  disabled={pendingPayment || (plan.id === 'starter' && userData?.hasUsedTrial)}
                   style={{ 
                     width: '100%', 
                     justifyContent: 'center', 
                     textAlign: 'center', 
                     transition: 'all 0.3s ease',
-                    ...(pendingPayment ? { background: 'var(--color-surface-3)', color: 'var(--text-muted)', border: '1px solid var(--color-border-strong)', cursor: 'not-allowed', boxShadow: 'none' } : plan.ctaStyle)
+                    ...(pendingPayment || (plan.id === 'starter' && userData?.hasUsedTrial) ? { background: 'var(--color-surface-3)', color: 'var(--text-muted)', border: '1px solid var(--color-border-strong)', cursor: 'not-allowed', boxShadow: 'none' } : plan.ctaStyle)
                   }}
                 >
-                  {pendingPayment ? '⏳ Approbation en attente' : plan.cta}
+                  {pendingPayment ? '⏳ Approbation en attente' : (plan.id === 'starter' && userData?.hasUsedTrial ? 'Essai déjà utilisé' : plan.cta)}
                 </button>
               </div>
             ))}

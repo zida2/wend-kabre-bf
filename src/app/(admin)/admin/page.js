@@ -57,8 +57,8 @@ export default function AdminPage() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (!currentUser) { router.push('/connexion'); return; }
-      if (currentUser.email?.toLowerCase() !== ADMIN_EMAIL) { router.push('/dashboard'); return; }
+      if (!currentUser) { router.push('/admin/login'); return; }
+      if (currentUser.email?.toLowerCase() !== ADMIN_EMAIL) { router.push('/'); return; }
       setUser(currentUser);
       fetchAdminData();
     });
@@ -153,11 +153,18 @@ export default function AdminPage() {
       if (currentExp > new Date()) expirationDate = currentExp;
     }
     expirationDate.setDate(expirationDate.getDate() + days);
-    await updateDoc(userRef, {
+    
+    const updateData = {
       isSubscribed: true,
       lastPaymentDate: new Date().toISOString(),
       subscriptionExpiresAt: expirationDate.toISOString(),
-    });
+    };
+    
+    if (days === 7) {
+      updateData.hasUsedTrial = true;
+    }
+    
+    await updateDoc(userRef, updateData);
   };
 
   const handleUpdateSubscription = async (userId, days) => {

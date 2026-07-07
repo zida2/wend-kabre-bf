@@ -113,7 +113,7 @@ export default function UsersSection({ users, processingUser, onUpdateSubscripti
           ) : (
             <>
               {actionBtn('👁️', () => setDetailUser(u), 'neutral', 'Voir le détail et l’activité')}
-              {actionBtn('+2 j', () => onUpdateSubscription(u.id, 2), 'trial')}
+              {actionBtn('+7 j', () => onUpdateSubscription(u.id, 7), 'trial')}
               {actionBtn('+1 mois', () => onUpdateSubscription(u.id, 30), 'month')}
               {actionBtn('+1 an', () => onUpdateSubscription(u.id, 365), 'year')}
               {u.isSubscribed && actionBtn('Désactiver', () => onUpdateSubscription(u.id, 0), 'danger')}

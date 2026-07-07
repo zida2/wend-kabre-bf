@@ -1,7 +1,4 @@
 import './globals.css';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import EmailVerificationBanner from '@/components/EmailVerificationBanner';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
 
 // URL de base du site (configurable ; fallback sur le déploiement Vercel actuel)
@@ -113,10 +110,7 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
         <AnalyticsTracker />
-        <Navbar />
-        <EmailVerificationBanner />
         {children}
-        <Footer />
       </body>
     </html>
   );
