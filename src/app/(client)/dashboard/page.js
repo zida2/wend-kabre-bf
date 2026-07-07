@@ -298,6 +298,14 @@ export default function DashboardPage() {
               </Link>
             </div>
           )}
+
+          <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--color-border)' }}>
+            <h4 className="heading-sm" style={{ marginBottom: '12px' }}>🛠️ Outils Pratiques</h4>
+            <Link href="/devis" className="btn btn-outline w-full text-center" style={{ padding: '12px', justifyContent: 'center', display: 'flex', gap: '8px' }}>
+              📄 Créer un Devis Rapide
+            </Link>
+          </div>
+
         </div>
 
         {/* COL 2 & 3: Alertes et Mots clés */}

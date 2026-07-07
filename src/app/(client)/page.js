@@ -81,7 +81,7 @@ const PAIN_POINTS = [
     icon: '🚨',
     title: 'Vous apprenez l\'offre après la date limite',
     desc: 'Le délai moyen de soumission est de 21 à 45 jours. Mais si vous l\'apprenez 3 jours avant la clôture, c\'est trop tard pour constituer un dossier complet et conforme.',
-    solution: 'Nos alertes WhatsApp et SMS vous notifient dès la publication — jamais trop tard.',
+    solution: 'Nos alertes personnalisées vous informent immédiatement dès la publication — jamais trop tard.',
   },
 ];
 
@@ -94,7 +94,7 @@ const STATS = [
 
 const STEPS_PLATFORM = [
   { num: '01', title: 'Je m\'inscris', desc: 'Créez votre compte PME en 2 minutes. Indiquez votre secteur d\'activité.', icon: '✍️' },
-  { num: '02', title: 'Je reçois les alertes', desc: 'Dès qu\'un marché dans votre domaine est publié, vous êtes notifié sur WhatsApp et SMS.', icon: '📱' },
+  { num: '02', title: 'Je suis notifié', desc: 'Dès qu\'un marché dans votre domaine est publié, vous recevez une alerte sur votre espace.', icon: '🔔' },
   { num: '03', title: 'Je consulte la procédure', desc: 'La fiche complète : procédure, pièces requises, délai, contact de l\'émetteur.', icon: '📋' },
   { num: '04', title: 'Je prépare mon dossier avec l\'IA', desc: 'L\'assistant IA vérifie la conformité de vos documents avant que vous déposiez.', icon: '🤖' },
   { num: '05', title: 'Je dépose et je gagne', desc: 'Vous vous présentez au guichet avec un dossier complet et conforme. Votre concurrence, non.', icon: '🏆' },
