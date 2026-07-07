@@ -14,9 +14,11 @@ export default function DevisPage() {
     name: '',
     address: '',
     phone: '',
+    phone: '',
     email: '',
     rccm: '',
-    ifu: ''
+    ifu: '',
+    regime: 'RSI' // Régime Simplifié d'Imposition, très courant au BF
   });
 
   // Données du client (Destinataire)
@@ -54,7 +56,8 @@ export default function DevisPage() {
               phone: data.phone || '',
               email: data.email || user.email,
               rccm: data.rccm || '',
-              ifu: data.ifu || ''
+              ifu: data.ifu || '',
+              regime: data.regime || 'RSI'
             });
           }
         } catch(e) {}
@@ -68,6 +71,54 @@ export default function DevisPage() {
   const subTotal = items.reduce((acc, curr) => acc + (curr.qty * curr.price), 0);
   const tvaAmount = applyTva ? subTotal * 0.18 : 0;
   const totalTtc = subTotal + tvaAmount;
+
+  // Simple convertisseur (jusqu'à 999 millions)
+  const numberToFrench = (num) => {
+    if (num === 0) return 'zéro';
+    const units = ['','un','deux','trois','quatre','cinq','six','sept','huit','neuf','dix','onze','douze','treize','quatorze','quinze','seize','dix-sept','dix-huit','dix-neuf'];
+    const tens = ['','dix','vingt','trente','quarante','cinquante','soixante','soixante-dix','quatre-vingt','quatre-vingt-dix'];
+    
+    const translateUnder100 = (n) => {
+      if (n < 20) return units[n];
+      let ten = Math.floor(n/10);
+      let unit = n % 10;
+      if (ten === 7 || ten === 9) { ten--; unit += 10; }
+      let res = tens[ten];
+      if (unit > 0) { res += (unit === 1 || unit === 11) && ten !== 8 ? ' et ' + units[unit] : '-' + units[unit]; }
+      return res;
+    };
+    const translateUnder1000 = (n) => {
+      let h = Math.floor(n/100);
+      let rest = n % 100;
+      let res = '';
+      if (h === 1) res = 'cent ';
+      else if (h > 1) res = units[h] + ' cent' + (rest === 0 ? 's ' : ' ');
+      if (rest > 0) res += translateUnder100(rest);
+      return res.trim();
+    };
+    
+    if (num < 1000) return translateUnder1000(num);
+    if (num < 1000000) {
+      let m = Math.floor(num/1000);
+      let rest = num % 1000;
+      let res = '';
+      if (m === 1) res = 'mille ';
+      else res = translateUnder1000(m) + ' mille ';
+      if (rest > 0) res += translateUnder1000(rest);
+      return res.trim();
+    }
+    let mil = Math.floor(num/1000000);
+    let rest = num % 1000000;
+    let res = translateUnder1000(mil) + ' million' + (mil > 1 ? 's ' : ' ');
+    if (rest > 0) {
+      let m = Math.floor(rest/1000);
+      let r2 = rest % 1000;
+      if (m === 1) res += 'mille ';
+      else if (m > 1) res += translateUnder1000(m) + ' mille ';
+      if (r2 > 0) res += translateUnder1000(r2);
+    }
+    return res.trim();
+  };
 
   const handleAddItem = () => {
     setItems([...items, { id: Date.now(), desc: '', qty: 1, price: 0 }]);
@@ -135,6 +186,10 @@ export default function DevisPage() {
                 <div className={styles.formGroup}>
                   <label>N° IFU</label>
                   <input className={styles.input} type="text" value={company.ifu} onChange={e => setCompany({...company, ifu: e.target.value})} placeholder="00012345Z" />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Régime Fiscal</label>
+                  <input className={styles.input} type="text" value={company.regime} onChange={e => setCompany({...company, regime: e.target.value})} placeholder="RSI / RNI" />
                 </div>
               </div>
             </div>
@@ -237,8 +292,9 @@ export default function DevisPage() {
                 {company.phone && <div className={styles.qText}>{company.phone}</div>}
                 {company.email && <div className={styles.qText}>{company.email}</div>}
                 <div style={{ marginTop: '12px' }}></div>
-                {company.rccm && <div className={styles.qText}>RCCM : {company.rccm}</div>}
-                {company.ifu && <div className={styles.qText}>IFU : {company.ifu}</div>}
+                <div className={styles.qText}><strong>RCCM :</strong> {company.rccm || '________________'}</div>
+                <div className={styles.qText}><strong>IFU :</strong> {company.ifu || '________________'}</div>
+                <div className={styles.qText}><strong>Régime :</strong> {company.regime || '________________'}</div>
               </div>
 
               <div className={styles.qClient}>
@@ -288,9 +344,21 @@ export default function DevisPage() {
             </div>
 
             <div className={styles.qFooter}>
+              <div style={{ background: '#f8f9fa', padding: '12px', borderLeft: '4px solid #059669', marginBottom: '24px', fontSize: '0.95rem' }}>
+                Arrêté le présent devis à la somme de :<br/>
+                <strong style={{ textTransform: 'uppercase', color: '#000' }}>
+                  {totalTtc > 0 ? numberToFrench(totalTtc) : 'zéro'} Francs CFA
+                </strong>
+              </div>
               <p style={{ fontWeight: 700, marginBottom: '6px' }}>Conditions de paiement</p>
               <p>Le paiement s'effectuera par virement bancaire ou chèque à l'ordre de {company.name || 'l\'entreprise'}.</p>
-              <p style={{ marginTop: '20px', fontStyle: 'italic', color: '#999' }}>Merci de votre confiance.</p>
+              
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '40px' }}>
+                <div style={{ textAlign: 'center', width: '200px' }}>
+                  <p style={{ fontWeight: 700, marginBottom: '60px' }}>Le Directeur Général</p>
+                  <p style={{ fontSize: '0.8rem', color: '#888' }}>(Cachet et Signature)</p>
+                </div>
+              </div>
             </div>
 
           </div>

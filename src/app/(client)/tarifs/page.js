@@ -6,27 +6,25 @@ import { track } from '@/lib/track';
 const PLANS = [
   {
     id: 'starter',
-    name: 'Essai (1 Semaine)',
+    name: 'Pass Essai (7 Jours)',
     price: '2 500',
     currency: 'FCFA',
-    period: '',
+    period: ' / unique',
     icon: '🌱',
     color: 'var(--text-secondary)',
     borderColor: 'var(--color-border-strong)',
-    badge: 'Nouveau',
+    badge: 'Découverte',
     badgeColor: 'badge-gray',
     features: [
-      { text: 'Voir les titres des marchés', ok: true },
-      { text: 'Filtres par catégorie', ok: true },
-      { text: 'Barre de recherche', ok: true },
-      { text: 'Détails & descriptions complètes', ok: true },
-      { text: 'Source officielle & émetteur', ok: true },
-      { text: 'Lien direct de dépôt de dossier', ok: true },
-      { text: 'Alertes WhatsApp & SMS', ok: true },
-      { text: 'Assistant IA Wend-Kabré', ok: false },
-      { text: 'Tableau de bord entreprise', ok: false },
+      { text: 'Voir tous les marchés en cours', ok: true },
+      { text: 'Générateur de Devis Pro', ok: true },
+      { text: 'Filtres par catégorie & recherche', ok: true },
+      { text: 'Détails & source officielle', ok: true },
+      { text: 'Alertes WhatsApp & SMS en temps réel', ok: false },
+      { text: 'Assistant IA d\'analyse de dossiers', ok: false },
+      { text: 'Tableau de bord de suivi CRM', ok: false },
     ],
-    cta: 'Tester pendant 7 jours',
+    cta: 'Commencer l\'Essai',
     ctaLink: '/inscription?plan=starter',
     ctaStyle: { background: 'var(--color-bg-2)', color: 'var(--text-primary)', border: '1px solid var(--color-border)' },
   },
@@ -42,15 +40,13 @@ const PLANS = [
     badge: 'Le plus populaire',
     badgeColor: 'badge-green',
     features: [
-      { text: 'Voir les titres des marchés', ok: true },
-      { text: 'Filtres par catégorie', ok: true },
-      { text: 'Barre de recherche', ok: true },
-      { text: 'Détails & descriptions complètes', ok: true },
-      { text: 'Source officielle & émetteur', ok: true },
-      { text: 'Lien direct de dépôt de dossier', ok: true },
-      { text: 'Alertes WhatsApp & SMS', ok: true },
-      { text: 'Assistant IA Wend-Kabré', ok: true },
-      { text: 'Tableau de bord entreprise', ok: true },
+      { text: 'Voir tous les marchés en cours', ok: true },
+      { text: 'Générateur de Devis Pro', ok: true },
+      { text: 'Filtres par catégorie & recherche', ok: true },
+      { text: 'Détails & source officielle', ok: true },
+      { text: 'Alertes WhatsApp & SMS en temps réel', ok: true },
+      { text: 'Assistant IA d\'analyse de dossiers', ok: true },
+      { text: 'Tableau de bord de suivi CRM', ok: true },
     ],
     cta: 'Passer en Pro 🚀',
     ctaLink: '/inscription?plan=pro',
@@ -510,98 +506,144 @@ export default function TarifsPage() {
               )}
             </div>
 
-            <div className="badge badge-gold text-center w-full" style={{ marginBottom: '20px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <strong>Étape 1 : Effectuez le dépôt</strong>
-              <p style={{ fontSize: '0.9rem' }}>Envoyez {discount > 0 ? formatPrice(getFinalPrice(selectedPlan)) : getPrice(selectedPlan)} FCFA sur l'un de ces numéros :</p>
-              <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>🟠 Orange Money : 06 13 90 16</div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>🟡 Moov Money : 62 20 28 77</div>
+            <div className="badge w-full" style={{ marginBottom: '24px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', background: 'var(--color-surface-3)', border: '1px solid var(--color-border-strong)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '1.2rem' }}>🔒</span>
+                <strong style={{ color: 'var(--text-primary)', fontSize: '1.05rem' }}>Transaction Sécurisée Mobile Money</strong>
+              </div>
+              
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                Pour activer automatiquement votre accès, veuillez transférer <strong>{discount > 0 ? formatPrice(getFinalPrice(selectedPlan)) : getPrice(selectedPlan)} FCFA</strong> sur l'un de nos comptes marchands officiels :
+              </p>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#fff', padding: '12px 16px', borderRadius: 'var(--radius-sm)', border: '1px solid #FF7900' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#FF7900' }}></div>
+                    <span style={{ fontWeight: 600 }}>Orange Money</span>
+                  </div>
+                  <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000' }}>06 13 90 16</span>
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#fff', padding: '12px 16px', borderRadius: 'var(--radius-sm)', border: '1px solid #005A9E' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#005A9E' }}></div>
+                    <span style={{ fontWeight: 600 }}>Moov Money</span>
+                  </div>
+                  <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000' }}>62 20 28 77</span>
+                </div>
+              </div>
             </div>
 
             <div className="form-group" style={{ marginBottom: '24px' }}>
-              <label className="form-label">
-                <strong>Étape 2 : Uploadez la capture du SMS de paiement</strong>
+              <label className="form-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <strong>Confirmation de la transaction</strong>
+                <span style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 600 }}>Validation Automatique ⚡</span>
               </label>
-              <p className="text-xs text-secondary" style={{ marginBottom: '12px' }}>
-                Notre Intelligence Artificielle lira le reçu et activera votre compte en 10 secondes.
-              </p>
               
-              <input 
-                type="file" 
-                accept="image/*"
-                onChange={async (e) => {
-                  const file = e.target.files[0];
-                  if (!file) return;
+              <div style={{
+                position: 'relative',
+                border: '2px dashed var(--primary-muted)',
+                borderRadius: 'var(--radius-md)',
+                padding: '32px 20px',
+                textAlign: 'center',
+                background: 'var(--color-bg)',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                marginTop: '8px'
+              }} className="hover-lift">
+                
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  style={{
+                    position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                    opacity: 0, cursor: 'pointer', zIndex: 10
+                  }}
+                  disabled={paying}
+                  onChange={async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
 
-                  setPaying(true);
-                  try {
-                    // 1. Conversion de la capture en base64 compressée pour affichage à l'admin
-                    const base64Image = await compressImage(file);
+                    setPaying(true);
+                    try {
+                      const base64Image = await compressImage(file);
+                      const Tesseract = (await import('tesseract.js')).default;
+                      const result = await Tesseract.recognize(file, 'fra');
+                      const text = result.data.text.toLowerCase();
+                      
+                      const finalPrice = discount > 0 ? getFinalPrice(selectedPlan) : getNumericPrice(selectedPlan);
+                      const finalPriceStr = formatPrice(finalPrice);
+                      const amountStr = String(finalPrice);
+                      
+                      const amountMatch = text.includes(amountStr) || text.replace(/\s|\./g, '').includes(amountStr);
+                      const status = amountMatch ? 'approved' : 'pending';
 
-                    // 2. Import dynamique et exécution de l'IA (Tesseract)
-                    const Tesseract = (await import('tesseract.js')).default;
-                    const result = await Tesseract.recognize(file, 'fra');
-                    const text = result.data.text.toLowerCase();
-                    // Montant réellement dû (après application éventuelle du coupon).
-                    const finalPrice = discount > 0 ? getFinalPrice(selectedPlan) : getNumericPrice(selectedPlan);
-                    const finalPriceStr = formatPrice(finalPrice); // ex: "14 900"
-                    const amountStr = String(finalPrice); // ex: "14900"
-                    
-                    // Regex très tolérante pour trouver le montant dans l'image
-                    const amountMatch = text.includes(amountStr) || text.replace(/\s|\./g, '').includes(amountStr);
-                    const status = amountMatch ? 'approved' : 'pending';
+                      await addDoc(collection(db, 'payment_requests'), {
+                        userId: user.uid,
+                        userEmail: user.email,
+                        userName: user.displayName || user.email.split('@')[0],
+                        planId: selectedPlan.id,
+                        planName: selectedPlan.name,
+                        amount: finalPriceStr,
+                        couponCode: appliedCoupon?.code || null,
+                        discountPercent: discount || 0,
+                        screenshot: base64Image,
+                        ocrText: text,
+                        status: status,
+                        createdAt: new Date().toISOString()
+                      });
 
-                    // 3. Enregistrement de la demande en BDD (Firestore)
-                    await addDoc(collection(db, 'payment_requests'), {
-                      userId: user.uid,
-                      userEmail: user.email,
-                      userName: user.displayName || user.email.split('@')[0],
-                      planId: selectedPlan.id,
-                      planName: selectedPlan.name,
-                      amount: finalPriceStr,
-                      couponCode: appliedCoupon?.code || null,
-                      discountPercent: discount || 0,
-                      screenshot: base64Image,
-                      ocrText: text,
-                      status: status,
-                      createdAt: new Date().toISOString()
-                    });
-
-                    // 4. Traitement selon la détection
-                    if (amountMatch) {
-                      // Activation automatique immédiate (simulée, côté propriétaire).
-                      await activateOwnSubscription(user.uid, subscriptionDays(selectedPlan));
-                      // Incrémente le compteur d'utilisations du coupon (best-effort).
-                      if (appliedCoupon && discount > 0) {
-                        try {
-                          await updateDoc(doc(db, 'coupons', appliedCoupon.id), {
-                            uses: (appliedCoupon.uses || 0) + 1,
-                          });
-                        } catch (e) {
-                          console.error('Incrément uses coupon échoué:', e);
+                      if (amountMatch) {
+                        await activateOwnSubscription(user.uid, subscriptionDays(selectedPlan));
+                        if (appliedCoupon && discount > 0) {
+                          try {
+                            await updateDoc(doc(db, 'coupons', appliedCoupon.id), {
+                              uses: (appliedCoupon.uses || 0) + 1,
+                            });
+                          } catch (e) {
+                            console.error('Incrément uses coupon échoué:', e);
+                          }
                         }
+                        track('subscribe', { planId: selectedPlan?.id });
+                        showAlert("✅ Transaction validée ! Votre accès premium est désormais actif.", "Paiement Confirmé", () => {
+                          setShowPayModal(false);
+                          router.push('/dashboard');
+                        });
+                      } else {
+                        showAlert("⏳ Nous vérifions manuellement votre transaction. Votre compte sera activé d'ici quelques minutes.", "Validation en cours", () => {
+                          setShowPayModal(false);
+                          router.push('/dashboard');
+                        });
                       }
-                      track('subscribe', { planId: selectedPlan?.id });
-                      showAlert("🎉 OCR RÉUSSI ! Paiement détecté avec succès. Bienvenue dans l'espace Premium.", "Validation Réussie", () => {
-                        setShowPayModal(false);
-                        router.push('/dashboard');
-                      });
-                    } else {
-                      showAlert("⚠️ Montant non reconnu par l'IA. Pas de panique, votre demande a été envoyée pour une validation manuelle. L'administrateur va l'activer d'ici quelques minutes.", "Validation en attente", () => {
-                        setShowPayModal(false);
-                        router.push('/dashboard');
-                      });
+                    } catch (err) {
+                      console.error(err);
+                      showAlert("Impossible de lire l'image. Un agent va valider manuellement.", "Vérification manuelle");
+                    } finally {
+                      setPaying(false);
                     }
-                  } catch (err) {
-                    console.error(err);
-                    showAlert("Erreur lors de l'analyse de l'image. Validation manuelle requise.", "Erreur Technique");
-                  } finally {
-                    setPaying(false);
-                  }
-                }}
-                className="form-input" 
-                style={{ padding: '8px' }}
-                disabled={paying}
-              />
+                  }}
+                />
+                
+                <div style={{ pointerEvents: 'none' }}>
+                  {paying ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                      <span className="loader"></span>
+                      <span style={{ color: 'var(--primary)', fontWeight: 600 }}>Vérification sécurisée en cours...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📄</div>
+                      <p style={{ color: 'var(--text-primary)', fontWeight: 600, marginBottom: '4px' }}>
+                        Sélectionnez le reçu SMS (Capture d'écran)
+                      </p>
+                      <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                        Notre système identifiera la transaction et activera votre compte en 10s.
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
 
             {paying && (
