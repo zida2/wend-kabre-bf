@@ -300,12 +300,14 @@ export default function TarifsPage() {
       {/* Plans */}
       <section className="section" style={{ marginTop: '-40px' }}>
         <div className="container">
-          <div className="grid grid-3 gap-6" style={{ alignItems: 'start' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '32px', alignItems: 'stretch', maxWidth: '900px', margin: '0 auto' }}>
             {PLANS.map(plan => (
               <div
                 key={plan.id}
                 className="card flex flex-col"
                 style={{
+                  flex: '1 1 350px',
+                  maxWidth: '420px',
                   border: `2px solid ${plan.borderColor}`,
                   position: 'relative',
                   transition: 'transform 0.2s, box-shadow 0.2s',
