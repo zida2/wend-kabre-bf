@@ -27,6 +27,7 @@ export default function AlertesPage() {
   const [saving,  setSaving]  = useState(false);
   const [message, setMessage] = useState('');
   const [error,   setError]   = useState('');
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   // ─── Auth ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -64,6 +65,13 @@ export default function AlertesPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) return;
+
+    // Blocage pour les utilisateurs gratuits
+    if (!userData?.isPremium) {
+      setShowPremiumModal(true);
+      return;
+    }
+
     setSaving(true);
     setMessage('');
     setError('');
@@ -278,6 +286,36 @@ export default function AlertesPage() {
           <strong style={{ color: 'var(--text-primary)' }}>moins de 5 minutes.</strong>
         </p>
       </div>
+
+      {/* Modal Premium */}
+      {showPremiumModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999
+        }}>
+          <div className="card text-center animate-fadeIn" style={{ maxWidth: '420px', margin: '20px', padding: '40px 32px' }}>
+            <div style={{ fontSize: '3.5rem', marginBottom: '16px' }}>⭐</div>
+            <h3 className="heading-md" style={{ marginBottom: '12px' }}>Fonctionnalité Premium</h3>
+            <p className="text-secondary text-sm" style={{ marginBottom: '28px', lineHeight: 1.6 }}>
+              Les alertes instantanées sur WhatsApp et SMS sont réservées aux abonnés <strong>Premium</strong>. Passez à la vitesse supérieure pour recevoir les marchés de votre secteur directement sur votre téléphone, avant tout le monde.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <Link href="/tarifs" className="btn btn-primary w-full">
+                Découvrir les offres Premium
+              </Link>
+              <button 
+                type="button" 
+                onClick={() => setShowPremiumModal(false)} 
+                className="btn btn-outline w-full"
+                style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}
+              >
+                Plus tard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
