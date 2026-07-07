@@ -2,10 +2,6 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { streamText } from 'ai';
 import { verifyFirebaseToken } from '@/lib/authGuard';
 
-const google = createGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY,
-});
-
 export const maxDuration = 30;
 
 export async function POST(req) {
@@ -21,9 +17,15 @@ export async function POST(req) {
   try {
     const { messages } = await req.json();
 
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY && !process.env.GEMINI_API_KEY) {
+    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
       return new Response(JSON.stringify({ error: "L'assistant IA est temporairement indisponible (Clé API non configurée)." }), { status: 503 });
     }
+
+    const google = createGoogleGenerativeAI({
+      apiKey: apiKey,
+    });
 
     const systemPrompt = `Tu es l'Assistant IA officiel de Wend-Kabré, une plateforme d'appels d'offres au Burkina Faso.
 Ton rôle est d'accompagner les entreprises et PME pour remporter des marchés publics de l'État.
