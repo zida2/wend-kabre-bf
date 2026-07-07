@@ -1,8 +1,9 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { auth } from '@/lib/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 
 export default function ConnexionPage() {
   const [email, setEmail] = useState('');
@@ -11,6 +12,20 @@ export default function ConnexionPage() {
   const [error, setError] = useState('');
 
   const ADMIN_EMAIL = 'zidadesire20@gmail.com';
+  const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        if (currentUser.email?.toLowerCase() === ADMIN_EMAIL) {
+          router.push('/admin');
+        } else {
+          router.push('/dashboard');
+        }
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
 
   const handleLogin = async (e) => {
     e.preventDefault();

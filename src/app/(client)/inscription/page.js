@@ -1,8 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { auth, db, analytics } from '@/lib/firebase';
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { logEvent } from 'firebase/analytics';
 import { track } from '@/lib/track';
@@ -16,10 +17,20 @@ export default function InscriptionPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const router = useRouter();
+
   // Analytics : début du parcours d'inscription (au montage de la page)
   useEffect(() => {
     track('signup_start', {});
-  }, []);
+    
+    // Redirige si déjà connecté
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        router.push('/dashboard');
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
