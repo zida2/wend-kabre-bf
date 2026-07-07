@@ -6,9 +6,11 @@ export default function ClientLayout({ children }) {
   return (
     <>
       <Navbar />
-      <EmailVerificationBanner />
-      {children}
-      <Footer />
+      <div style={{ paddingTop: '70px' }}>
+        <EmailVerificationBanner />
+        {children}
+        <Footer />
+      </div>
     </>
   );
 }
