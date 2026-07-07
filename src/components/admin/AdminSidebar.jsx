@@ -1,12 +1,13 @@
 'use client';
 
+import Logo from '../Logo';
 import styles from './adminLayout.module.css';
 
 export default function AdminSidebar({ sections, active, onSelect, onLogout }) {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.brand}>
-        <span className={styles.brandIcon}>👑</span>
+        <Logo size={32} className={styles.brandIcon} />
         <span className={styles.brandText}>
           <span className={styles.brandTitle}>Admin</span>
           <span className={styles.brandSub}>Wend-Kabré</span>

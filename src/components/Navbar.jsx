@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
+import Logo from './Logo';
 import styles from './Navbar.module.css';
 
 export default function Navbar() {
@@ -53,7 +54,7 @@ export default function Navbar() {
       <div className={`container ${styles.inner}`}>
         {/* Logo */}
         <Link href="/" className={styles.logo} onClick={closeMenu}>
-          <span className={styles.logoIcon}>⚡</span>
+          <Logo size={28} className={styles.logoIcon} />
           <span>Wend-<span className={styles.logoAccent}>Kabré</span></span>
         </Link>
 

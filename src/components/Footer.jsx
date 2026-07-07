@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Logo from './Logo';
 import styles from './Footer.module.css';
 
 export default function Footer() {
@@ -8,7 +9,7 @@ export default function Footer() {
         <div className={styles.top}>
           <div className={styles.brandBlock}>
             <Link href="/" className={styles.brand}>
-              <span className={styles.brandIcon}>⚡</span>
+              <Logo size={28} className={styles.brandIcon} />
               <span>Wend-<span className={styles.brandAccent}>Kabré</span></span>
             </Link>
             <p className={styles.tagline}>

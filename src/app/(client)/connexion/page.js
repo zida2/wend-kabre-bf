@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { auth } from '@/lib/firebase';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import Logo from '@/components/Logo';
 
 export default function ConnexionPage() {
   const [email, setEmail] = useState('');
@@ -61,10 +62,12 @@ export default function ConnexionPage() {
         <div className="text-center" style={{ marginBottom: '30px' }}>
           <div className="mx-auto" style={{
             width: '54px', height: '54px', borderRadius: '16px',
-            background: 'var(--grad-primary)', boxShadow: 'var(--shadow-primary)',
+            background: 'var(--color-surface)', boxShadow: 'var(--shadow-primary)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '1.5rem', marginBottom: '18px',
-          }}>⚡</div>
+            marginBottom: '18px',
+          }}>
+            <Logo size={40} />
+          </div>
           <h2 className="heading-md" style={{ marginBottom: '8px' }}>Ravi de vous revoir !</h2>
           <p className="text-secondary text-sm">Accédez à votre espace entreprise Wend-Kabré</p>
         </div>
