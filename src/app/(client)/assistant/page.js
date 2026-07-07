@@ -4,19 +4,30 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import styles from './assistant.module.css';
 
 export default function AssistantPage() {
   // Suivi de l'état d'authentification : le chat IA est réservé aux
   // utilisateurs connectés (protection de la route /api/chat).
   const [authUser, setAuthUser] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [authReady, setAuthReady] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setAuthUser(currentUser);
+      if (currentUser) {
+        try {
+          const snap = await getDoc(doc(db, 'users', currentUser.uid));
+          if (snap.exists()) {
+            setUserData(snap.data());
+          }
+        } catch (e) { console.error(e); }
+      }
       setAuthReady(true);
     });
     return () => unsubscribe();
@@ -52,6 +63,12 @@ export default function AssistantPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
+    
+    // Blocage pour les utilisateurs gratuits
+    if (!userData?.isPremium) {
+      setShowPremiumModal(true);
+      return;
+    }
     
     const sendFn = chat.sendMessage || chat.append;
     if (sendFn) {
@@ -177,6 +194,36 @@ export default function AssistantPage() {
         )}
 
       </div>
+
+      {/* Modal Premium */}
+      {showPremiumModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999
+        }}>
+          <div className="card text-center animate-fadeIn" style={{ maxWidth: '420px', margin: '20px', padding: '40px 32px', background: 'var(--color-bg)', border: '1px solid var(--border-color)', borderRadius: '16px' }}>
+            <div style={{ fontSize: '3.5rem', marginBottom: '16px' }}>🤖⭐</div>
+            <h3 className="heading-md" style={{ marginBottom: '12px' }}>Fonctionnalité Premium</h3>
+            <p className="text-secondary text-sm" style={{ marginBottom: '28px', lineHeight: 1.6 }}>
+              L'Assistant IA est votre expert dédié, capable de vous aider à rédiger vos offres techniques et administratives à la vitesse de la lumière. Il est réservé aux abonnés <strong>Premium</strong>.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <Link href="/tarifs" className="btn btn-primary w-full">
+                Découvrir les offres Premium
+              </Link>
+              <button 
+                type="button" 
+                onClick={() => setShowPremiumModal(false)} 
+                className="btn btn-outline w-full"
+                style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}
+              >
+                Plus tard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
