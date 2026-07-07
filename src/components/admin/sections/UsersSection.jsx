@@ -52,7 +52,7 @@ export default function UsersSection({ users, processingUser, onUpdateSubscripti
         onClick={onClick}
         disabled={busy}
         className="btn btn-sm"
-        style={{ padding: '5px 10px', fontSize: '0.72rem', fontWeight: 700, ...styleMap[variant] }}
+        style={{ padding: '6px 12px', fontSize: '0.78rem', fontWeight: 700, ...styleMap[variant] }}
         title={title}
       >
         {label}
@@ -107,24 +107,17 @@ export default function UsersSection({ users, processingUser, onUpdateSubscripti
       key: 'actions',
       label: 'Actions',
       render: (u) => (
-        <div className="flex flex-wrap gap-2" style={{ minWidth: '260px' }}>
+        <div className="flex gap-2">
           {processingUser === u.id ? (
-            <span className="text-xs text-muted">Traitement…</span>
+            <span className="text-xs text-muted" style={{ padding: '6px 0' }}>Traitement…</span>
           ) : (
-            <>
-              {actionBtn('👁️', () => setDetailUser(u), 'neutral', 'Voir le détail et l’activité')}
-              {actionBtn('+7 j', () => onUpdateSubscription(u.id, 7), 'trial')}
-              {actionBtn('+1 mois', () => onUpdateSubscription(u.id, 30), 'month')}
-              {actionBtn('+1 an', () => onUpdateSubscription(u.id, 365), 'year')}
-              {u.isSubscribed && actionBtn('Désactiver', () => onUpdateSubscription(u.id, 0), 'danger')}
-              {onSuspend && actionBtn(
-                u.suspended ? 'Réactiver' : 'Suspendre',
-                () => onSuspend(u.id, !u.suspended),
-                u.suspended ? 'trial' : 'warn',
-                u.suspended ? 'Réactiver ce compte' : 'Suspendre ce compte'
-              )}
-              {actionBtn('🗑️', () => onDeleteUser(u.id), 'danger', 'Supprimer')}
-            </>
+            <button
+              onClick={() => setDetailUser(u)}
+              className="btn btn-sm"
+              style={{ padding: '6px 14px', fontSize: '0.8rem', fontWeight: 600, background: 'var(--color-surface-2)', border: '1px solid var(--color-border-strong)', color: 'var(--text-primary)', boxShadow: 'var(--shadow-sm)' }}
+            >
+              ⚙️ Gérer le compte
+            </button>
           )}
         </div>
       ),
@@ -158,13 +151,23 @@ export default function UsersSection({ users, processingUser, onUpdateSubscripti
         emptyMessage="Aucun utilisateur trouvé."
       />
       {detailUser && (
-        <UserDetailModal user={detailUser} events={events} onClose={() => setDetailUser(null)} />
+        <UserDetailModal 
+          user={detailUser} 
+          events={events} 
+          onClose={() => setDetailUser(null)}
+          processingUser={processingUser}
+          onUpdateSubscription={onUpdateSubscription}
+          onDeleteUser={(id) => { onDeleteUser(id); setDetailUser(null); }}
+          onSuspend={onSuspend}
+        />
       )}
     </>
   );
 }
 
-function UserDetailModal({ user, events, onClose }) {
+function UserDetailModal({ user, events, onClose, processingUser, onUpdateSubscription, onDeleteUser, onSuspend }) {
+  const busy = processingUser === user.id;
+
   const activity = useMemo(() => {
     const list = (events || []).filter((e) => e && e.userId === user.id);
     const byType = (t) => list.filter((e) => e.type === t);
@@ -248,6 +251,52 @@ function UserDetailModal({ user, events, onClose }) {
             </>
           )}
         </div>
+
+        {/* ── Actions Administrateur ── */}
+        <div style={{ marginTop: '24px', background: 'var(--color-surface-2)', padding: '16px', borderRadius: '12px', border: '1px solid var(--color-border-strong)' }}>
+          <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)', marginBottom: '12px' }}>🛠️ Actions Administrateur</div>
+          
+          {busy ? (
+            <div className="text-sm text-muted" style={{ padding: '12px 0' }}>Traitement en cours... veuillez patienter.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              
+              {/* Abonnement */}
+              <div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Gérer l'abonnement</div>
+                <div className="flex flex-wrap gap-2">
+                  <button onClick={() => onUpdateSubscription(user.id, 7)} className="btn btn-sm" style={{ background: 'var(--success-muted)', color: 'var(--primary-dark)', border: '1px solid var(--primary)', fontWeight: 600 }}>+7 jours (Essai)</button>
+                  <button onClick={() => onUpdateSubscription(user.id, 30)} className="btn btn-sm" style={{ background: '#fff', color: 'var(--text-secondary)', border: '1px solid var(--color-border-strong)', fontWeight: 600 }}>+1 mois</button>
+                  <button onClick={() => onUpdateSubscription(user.id, 365)} className="btn btn-sm" style={{ background: 'var(--grad-accent)', color: '#fff', border: 'none', fontWeight: 600 }}>+1 an</button>
+                  {user.isSubscribed && (
+                    <button onClick={() => onUpdateSubscription(user.id, 0)} className="btn btn-sm" style={{ background: 'var(--danger-muted)', color: 'var(--danger)', border: '1px solid rgba(220,38,38,0.3)', fontWeight: 600 }}>Désactiver</button>
+                  )}
+                </div>
+              </div>
+
+              {/* Sécurité */}
+              <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '12px' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Sécurité & Accès</div>
+                <div className="flex flex-wrap gap-2">
+                  {onSuspend && (
+                    <button 
+                      onClick={() => onSuspend(user.id, !user.suspended)} 
+                      className="btn btn-sm" 
+                      style={{ background: user.suspended ? 'var(--success-muted)' : 'var(--warning-muted, #fef3c7)', color: user.suspended ? 'var(--primary-dark)' : '#b45309', border: `1px solid ${user.suspended ? 'var(--primary)' : '#fcd34d'}`, fontWeight: 600 }}
+                    >
+                      {user.suspended ? '▶️ Réactiver le compte' : '⏸️ Suspendre le compte'}
+                    </button>
+                  )}
+                  <button onClick={() => onDeleteUser(user.id)} className="btn btn-sm" style={{ background: 'var(--danger-muted)', color: 'var(--danger)', border: '1px solid rgba(220,38,38,0.3)', fontWeight: 600 }}>
+                    🗑️ Supprimer l'utilisateur
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          )}
+        </div>
+
       </div>
     </div>
   );

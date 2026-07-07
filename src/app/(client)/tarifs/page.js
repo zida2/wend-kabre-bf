@@ -9,7 +9,7 @@ const PLANS = [
     name: 'Essai (1 Semaine)',
     price: '2 500',
     currency: 'FCFA',
-    period: '/ semaine',
+    period: '',
     icon: '🌱',
     color: 'var(--text-secondary)',
     borderColor: 'var(--color-border-strong)',
