@@ -1,8 +1,7 @@
 'use client';
 
-import { useMemo } from 'react';
-
-// ── Helpers robustes ──────────────────────────────────────────────
+import { useState, useMemo } from 'react';
+import UserJourneysSection from './UserJourneysSection';
 const isStr = (v) => typeof v === 'string' && v.trim().length > 0;
 const clean = (v, fallback = 'Inconnu') => (isStr(v) ? v.trim() : fallback);
 const ts = (iso) => {
@@ -104,6 +103,8 @@ function FunnelStep({ label, value, share, rate, accent }) {
 
 // ── Composant principal ───────────────────────────────────────────
 export default function AnalyticsSection({ events = [], users = [] }) {
+  const [viewMode, setViewMode] = useState('global');
+
   const a = useMemo(() => {
     const evts = Array.isArray(events) ? events : [];
     const by = (type) => evts.filter((e) => e && e.type === type);
@@ -307,8 +308,30 @@ export default function AnalyticsSection({ events = [], users = [] }) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* ── KPIs Trafic ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '14px' }}>
+      {/* ── Onglets ── */}
+      <div className="flex gap-2" style={{ borderBottom: '1px solid var(--color-border)', paddingBottom: '12px' }}>
+        <button 
+          className={`btn ${viewMode === 'global' ? 'btn-primary' : 'btn-secondary'}`}
+          onClick={() => setViewMode('global')}
+          style={{ padding: '8px 16px' }}
+        >
+          🌍 Vue Globale
+        </button>
+        <button 
+          className={`btn ${viewMode === 'journeys' ? 'btn-primary' : 'btn-secondary'}`}
+          onClick={() => setViewMode('journeys')}
+          style={{ padding: '8px 16px' }}
+        >
+          🕵️‍♂️ Parcours Individuels (Deep Dive)
+        </button>
+      </div>
+
+      {viewMode === 'journeys' ? (
+        <UserJourneysSection events={events} users={users} />
+      ) : (
+        <>
+          {/* ── KPIs Trafic ── */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '14px' }}>
         <StatTile icon="👁️" label="Pages vues" value={a.pageViews.toLocaleString('fr-FR')} sub={`${a.total.toLocaleString('fr-FR')} événements`} accent="var(--forest)" />
         <StatTile icon="🧑" label="Visiteurs uniques" value={a.uniqueVisitors.toLocaleString('fr-FR')} accent="var(--primary)" />
         <StatTile icon="🔁" label="Visiteurs récurrents" value={a.returningVisitors.toLocaleString('fr-FR')} sub={`${pct(a.returningVisitors, a.uniqueVisitors)}% des uniques`} accent="var(--forest)" />
@@ -400,6 +423,8 @@ export default function AnalyticsSection({ events = [], users = [] }) {
             })}
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );
