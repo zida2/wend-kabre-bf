@@ -1,5 +1,6 @@
 import { getAdminDb } from '@/lib/firebaseAdmin';
 export const dynamic = 'force-dynamic';
 export async function GET() {
-  return Response.json({ ping: 'admin', configured: !!getAdminDb() });
+  const adminDb = await getAdminDb();
+  return Response.json({ ping: 'admin', configured: !!adminDb });
 }

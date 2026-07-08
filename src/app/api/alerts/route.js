@@ -11,7 +11,7 @@ export async function GET(request) {
   // Cette route est désormais un outil de diagnostic. 
   // L'envoi réel des alertes est automatisé dans /api/scrape/route.js
   
-  const adminDb = getAdminDb();
+  const adminDb = await getAdminDb();
   if (!adminDb) {
     return Response.json({
       success: false, 

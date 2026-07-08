@@ -13,7 +13,7 @@ export async function processAlertsForTenders(newTenders) {
     return { success: true, alertsSent: 0, details: [] };
   }
 
-  const adminDb = getAdminDb();
+  const adminDb = await getAdminDb();
   if (!adminDb) {
     console.warn("[AlertEngine] Impossible d'initialiser Firebase Admin. Les alertes sont annulées.");
     return { success: false, error: "Firebase Admin non configuré." };

@@ -7,10 +7,6 @@
 //   1) FIREBASE_SERVICE_ACCOUNT = le JSON complet de la clé (string)
 //   2) FIREBASE_ADMIN_PROJECT_ID + FIREBASE_ADMIN_CLIENT_EMAIL +
 //      FIREBASE_ADMIN_PRIVATE_KEY (avec \n littéraux dans la clé)
-import { getApps, initializeApp, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-import { getAuth } from 'firebase-admin/auth';
-
 let cachedApp = null;
 let triedInit = false;
 
@@ -36,13 +32,17 @@ function loadServiceAccount() {
   return null;
 }
 
-function initAdmin() {
+async function initAdmin() {
   if (cachedApp || triedInit) return cachedApp;
   triedInit = true;
-  if (getApps().length) { cachedApp = getApps()[0]; return cachedApp; }
-  const sa = loadServiceAccount();
-  if (!sa) return null;
+  
   try {
+    const { getApps, initializeApp, cert } = await import('firebase-admin/app');
+    
+    if (getApps().length) { cachedApp = getApps()[0]; return cachedApp; }
+    const sa = loadServiceAccount();
+    if (!sa) return null;
+    
     cachedApp = initializeApp({
       credential: cert({
         projectId: sa.project_id || sa.projectId,
@@ -52,21 +52,26 @@ function initAdmin() {
     });
     return cachedApp;
   } catch (e) {
-    console.error('[firebaseAdmin] init échouée:', e?.message);
+    console.error('[firebaseAdmin] init ou import échouée:', e?.message);
     return null;
   }
 }
 
-export function adminConfigured() {
-  return !!initAdmin();
+export async function adminConfigured() {
+  const app = await initAdmin();
+  return !!app;
 }
 
-export function getAdminDb() {
-  const app = initAdmin();
-  return app ? getFirestore(app) : null;
+export async function getAdminDb() {
+  const app = await initAdmin();
+  if (!app) return null;
+  const { getFirestore } = await import('firebase-admin/firestore');
+  return getFirestore(app);
 }
 
-export function getAdminAuth() {
-  const app = initAdmin();
-  return app ? getAuth(app) : null;
+export async function getAdminAuth() {
+  const app = await initAdmin();
+  if (!app) return null;
+  const { getAuth } = await import('firebase-admin/auth');
+  return getAuth(app);
 }
