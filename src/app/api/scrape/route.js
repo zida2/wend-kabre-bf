@@ -144,59 +144,78 @@ export async function GET(request) {
 
   const listTenders = [];
 
-  // --- 1. Scrape ReliefWeb (Tightly filtered to Burkina Faso) ---
-  try {
-    const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Freliefweb.int%2Fjobs%2Frss.xml%3Fcountry%3D46', {
-      next: { revalidate: 0 }
-    });
-    const feedData = await response.json();
-    if (feedData && feedData.items) {
-      for (const item of feedData.items) {
-        const title = (item.title || '').trim();
-        let description = (item.description || '').trim().replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
-        const link = (item.link || '').trim();
-        const lowerTitle = title.toLowerCase();
-        const lowerDesc = description.toLowerCase();
+  // --- 1. Scrape RSS Sources ---
+  const rssSources = [
+    { name: 'Lefaso.net', url: 'https://lefaso.net/spip.php?page=backend' },
+    { name: 'AIB', url: 'https://www.aib.media/feed/' },
+    { name: 'Burkina24', url: 'https://burkina24.com/feed/' },
+    { name: 'Sidwaya', url: 'https://www.sidwaya.info/feed/' },
+    { name: 'Wakat Séra', url: 'https://www.wakatsera.com/feed/' },
+    { name: 'L\'Economiste', url: 'https://www.leconomistedufaso.bf/feed/' },
+    { name: 'MinaJobs', url: 'https://minajobs.net/feed/' },
+    { name: 'ReliefWeb', url: 'https://reliefweb.int/jobs/rss.xml?country=46' }
+  ];
 
-        // Location check
-        const isBurkina = lowerTitle.includes('burkina') || lowerTitle.includes('ouagadougou') || 
-                          lowerDesc.includes('burkina') || lowerDesc.includes('ouagadougou');
+  await Promise.allSettled(rssSources.map(async (source) => {
+    try {
+      const encodedUrl = encodeURIComponent(source.url);
+      const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodedUrl}`, { next: { revalidate: 0 } });
+      const feedData = await res.json();
+      
+      if (feedData && feedData.items) {
+        for (const item of feedData.items) {
+          const title = (item.title || '').trim();
+          let description = (item.description || '').trim().replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+          const link = (item.link || '').trim();
+          
+          const tNorm = (title + ' ' + description).toLowerCase();
+          const isTender = tNorm.includes('appel d\'offres') || tNorm.includes('recrutement') || 
+                           tNorm.includes('marché public') || tNorm.includes('marchés publics') || 
+                           tNorm.includes('manifestation d\'intérêt') || tNorm.includes('prestataire') ||
+                           tNorm.includes('consultation restreinte') || tNorm.includes('fourniture de') ||
+                           tNorm.includes('acquisition de') || tNorm.includes('recrute un');
 
-        if (isBurkina) {
-          let documents = [];
-          if (link && budgetOk()) {
-            const pd = await fetchPageData(link, description);
-            description = pd.text;
-            documents = pd.documents;
-          } else if (isPdfUrl(link)) {
-            documents = [{ name: 'Document officiel (PDF)', url: link }];
+          const isReliefWeb = source.name === 'ReliefWeb';
+          const isBurkina = tNorm.includes('burkina') || tNorm.includes('ouagadougou');
+          
+          if (isReliefWeb && !isBurkina) continue;
+
+          if (isTender || (isReliefWeb && isBurkina)) {
+            let documents = [];
+            if (link && budgetOk()) {
+              const pd = await fetchPageData(link, description);
+              description = pd.text;
+              documents = pd.documents;
+            } else if (isPdfUrl(link)) {
+              documents = [{ name: 'Document officiel (PDF)', url: link }];
+            }
+
+            const extDeadline = extractDeadline(description) || extractDeadline(title);
+            const extOpening = extractOpeningTime(description);
+            const cat = detectCategory(title, description);
+
+            listTenders.push({
+              title,
+              description,
+              source: source.name,
+              link,
+              documents,
+              publishedAt: item.pubDate || new Date().toISOString(),
+              category: cat,
+              status: 'Ouvert',
+              scrapedAt: new Date().toISOString(),
+              deadline: extDeadline ? extDeadline : null,
+              openingTime: extOpening ? extOpening : null,
+              requirements: cat === 'Recrutement' ? extractRequirements(description) : null,
+              contactInfo: cat === 'Recrutement' ? extractContact(description, link) : null
+            });
           }
-
-          const extDeadline = extractDeadline(description) || extractDeadline(title);
-          const extOpening = extractOpeningTime(description);
-          const cat = detectCategory(title, description);
-
-          listTenders.push({
-            title,
-            description,
-            source: 'ReliefWeb (Burkina)',
-            link,
-            documents,
-            publishedAt: item.pubDate || new Date().toISOString(),
-            category: cat,
-            status: 'Ouvert',
-            scrapedAt: new Date().toISOString(),
-            deadline: extDeadline ? extDeadline : null,
-            openingTime: extOpening ? extOpening : null,
-            requirements: cat === 'Recrutement' ? extractRequirements(description) : null,
-            contactInfo: cat === 'Recrutement' ? extractContact(description, link) : null
-          });
         }
       }
+    } catch (e) {
+      console.error(`[Scrape] Erreur sur ${source.name}:`, e.message);
     }
-  } catch (e) {
-    console.error(`[Scrape] Erreur sur ReliefWeb:`, e.message);
-  }
+  }));
 
   // --- 2. Scrape ARCOP ---
   try {
@@ -258,7 +277,9 @@ export async function GET(request) {
       let href = $(el).attr('href');
       if (text && text.includes('Quotidien n°') && href) {
         if (href.startsWith('/')) {
-          href = `http://www.dgcmef.gov.bf${href}`;
+          href = `https://www.dgcmef.gov.bf${href}`;
+        } else if (href.startsWith('http://www.dgcmef.gov.bf')) {
+          href = href.replace('http://', 'https://');
         }
 
         const documents = isPdfUrl(href)
