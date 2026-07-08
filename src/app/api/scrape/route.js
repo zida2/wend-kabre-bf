@@ -367,7 +367,7 @@ export async function GET(request) {
     } catch (e) {
       console.error('[Scrape] Firestore error:', e.message);
     }
-  }
+  }));
 
   // Enregistre le run pour le suivi de santé du scraping (§1/§10 du cahier des charges)
   try {
