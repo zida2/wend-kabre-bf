@@ -115,6 +115,7 @@ function extractContact(text, link) {
 }
 
 export async function GET(request) {
+  try {
   // Autorisation. Trois voies acceptées :
   //  1. Cron Vercel : en-tête `Authorization: Bearer <CRON_SECRET>` (envoyé
   //     automatiquement par Vercel quand la variable CRON_SECRET est définie).
@@ -398,4 +399,13 @@ export async function GET(request) {
     alertsReport,
     timestamp: new Date().toISOString()
   });
+  } catch (globalError) {
+    console.error('[Scrape] GLOBAL ERROR:', globalError);
+    return Response.json({ 
+      success: false, 
+      error: 'Erreur interne du serveur (Vercel)', 
+      message: globalError.message, 
+      stack: globalError.stack 
+    }, { status: 200 }); // Returning 200 so the frontend can read the JSON error without the browser hiding it
+  }
 }
