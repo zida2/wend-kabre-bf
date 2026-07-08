@@ -137,10 +137,10 @@ export async function GET(request) {
     return Response.json({ error: 'Non autorisé' }, { status: 401 });
   }
 
-  // Garde-fou temps : au-delà de ~45 s, on arrête les fetches profonds (PDF /
+  // Garde-fou temps : au-delà de ~25 s, on arrête les fetches profonds (PDF /
   // texte enrichi) pour ne pas dépasser maxDuration=60 s sur Vercel.
   const SCRAPE_START = Date.now();
-  const budgetOk = () => Date.now() - SCRAPE_START < 45000;
+  const budgetOk = () => Date.now() - SCRAPE_START < 25000;
 
   const listTenders = [];
 
@@ -332,13 +332,13 @@ export async function GET(request) {
     classifiedTenders.push({ ...t, ...c });
   }
 
-  // Déduplications et sauvegarde Firestore
+  // Déduplications et sauvegarde Firestore en parallèle pour gagner du temps
   let addedCount = 0;
   const newTenders = [];
   const tendersRef = collection(db, 'marches');
   const CLASSIF_KEYS = ['procedure', 'region', 'commune', 'ministere', 'montantEstime', 'urgence', 'secteur', 'relation', 'normalizedTitle'];
 
-  for (const tender of classifiedTenders) {
+  await Promise.allSettled(classifiedTenders.map(async (tender) => {
     try {
       const q = query(tendersRef, where('title', '==', tender.title));
       const snap = await getDocs(q);
