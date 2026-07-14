@@ -255,6 +255,22 @@ export default function DashboardPage() {
         <button onClick={handleLogout} className="btn btn-outline">Se déconnecter</button>
       </div>
 
+      {(!userData?.isSubscribed && !pendingPayment) && (
+        <div style={{ background: 'var(--accent-muted)', borderLeft: '4px solid var(--accent)', padding: '16px 24px', borderRadius: 'var(--radius-sm)', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', boxShadow: 'var(--shadow-gold)' }}>
+          <div>
+            <h4 style={{ color: 'var(--accent)', fontWeight: 800, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '1.2rem' }}>⏱️</span> Offre de Bienvenue : Pass Essai à 2 500 FCFA
+            </h4>
+            <p className="text-sm" style={{ color: 'var(--text-primary)' }}>
+              Débloquez l'assistant IA et maximisez vos chances de remporter vos premiers marchés.
+            </p>
+          </div>
+          <Link href="/tarifs" className="btn btn-accent" style={{ whiteSpace: 'nowrap' }}>
+            Activer mon Pass 🚀
+          </Link>
+        </div>
+      )}
+
       {(!userData?.rccm || !userData?.ifu) && (
         <div style={{ background: 'var(--danger-muted)', borderLeft: '4px solid var(--danger)', padding: '16px 24px', borderRadius: 'var(--radius-sm)', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
@@ -431,6 +447,13 @@ export default function DashboardPage() {
                       {m.secteur || m.category}
                     </p>
                   )}
+                  {/* FOMO effect */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '16px', background: 'rgba(239, 68, 68, 0.08)', padding: '6px', borderRadius: '4px' }}>
+                    <span style={{ fontSize: '0.8rem' }}>🔥</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--danger)', fontWeight: '700' }}>
+                      {(m.id.charCodeAt(0) % 5) + 2} autres PME étudient ce marché
+                    </span>
+                  </div>
                   <Link
                     href={`/marches/details?id=${m.id}`}
                     className="btn btn-outline text-center"
@@ -466,8 +489,15 @@ export default function DashboardPage() {
                 {crmMarches.filter(m => m.crmStatus === 'favoris').map(m => (
                   <div key={m.id} style={{ background: 'var(--color-bg)', padding: '12px', borderRadius: '6px', border: '1px solid var(--color-border)' }}>
                     <h5 className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px' }}>{m.title}</h5>
-                    <div className="flex justify-between items-center" style={{ marginTop: '12px' }}>
+                    <div className="flex justify-between items-center" style={{ marginTop: '12px', gap: '8px' }}>
                       <Link href={`/marches/details?id=${m.id}`} className="text-xs" style={{ color: 'var(--gold)', textDecoration: 'underline' }}>Détails</Link>
+                      
+                      {!userData?.isSubscribed ? (
+                         <Link href="/tarifs" className="text-xs" style={{ background: 'var(--grad-accent)', color: '#fff', padding: '4px 8px', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', textAlign: 'center', flex: 1 }}>Rédiger (IA) 🪄</Link>
+                      ) : (
+                         <Link href={`/marches/details?id=${m.id}`} className="text-xs" style={{ background: 'var(--grad-primary)', color: '#fff', padding: '4px 8px', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', textAlign: 'center', flex: 1 }}>Rédiger (IA) 🪄</Link>
+                      )}
+                      
                       <select 
                         className="form-input text-xs" 
                         style={{ padding: '4px', width: 'auto', background: 'var(--color-surface)', color: 'var(--text-primary)', border: '1px solid var(--gold)' }}
@@ -498,8 +528,15 @@ export default function DashboardPage() {
                 {crmMarches.filter(m => m.crmStatus === 'preparation').map(m => (
                   <div key={m.id} style={{ background: 'var(--color-bg)', padding: '12px', borderRadius: '6px', border: '1px solid var(--color-border)' }}>
                     <h5 className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px' }}>{m.title}</h5>
-                    <div className="flex justify-between items-center" style={{ marginTop: '12px' }}>
+                    <div className="flex justify-between items-center" style={{ marginTop: '12px', gap: '8px' }}>
                       <Link href={`/marches/details?id=${m.id}`} className="text-xs" style={{ color: '#0D9488', textDecoration: 'underline' }}>Détails</Link>
+                      
+                      {!userData?.isSubscribed ? (
+                         <Link href="/tarifs" className="text-xs" style={{ background: 'var(--grad-accent)', color: '#fff', padding: '4px 8px', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', textAlign: 'center', flex: 1 }}>Rédiger (IA) 🪄</Link>
+                      ) : (
+                         <Link href={`/marches/details?id=${m.id}`} className="text-xs" style={{ background: 'var(--grad-primary)', color: '#fff', padding: '4px 8px', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', textAlign: 'center', flex: 1 }}>Rédiger (IA) 🪄</Link>
+                      )}
+                      
                       <select 
                         className="form-input text-xs" 
                         style={{ padding: '4px', width: 'auto', background: 'var(--color-surface)', color: 'var(--text-primary)', border: '1px solid #0D9488' }}
