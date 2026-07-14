@@ -68,7 +68,32 @@ export default function BroadcastSection({ users }) {
       </div>
 
       <div className={layout.card}>
-        <h3 className="heading-sm" style={{ marginBottom: '16px' }}>Liste d'envoi ({targetUsers.length})</h3>
+        <div className="flex justify-between items-center" style={{ marginBottom: '16px', flexWrap: 'wrap', gap: '16px' }}>
+          <h3 className="heading-sm">Liste d'envoi ({targetUsers.length})</h3>
+          
+          {targetUsers.length > 0 && (
+            <div className="flex gap-2">
+              <button 
+                onClick={() => {
+                  const phones = targetUsers.map(u => u.phone).filter(Boolean).join(', ');
+                  navigator.clipboard.writeText(phones);
+                  alert('Numéros copiés !\\nCréez une Liste de Diffusion sur l\\'application WhatsApp de votre téléphone et collez ces numéros pour envoyer le message à tout le monde en une seule fois sans payer d\\'API.');
+                }}
+                className="btn btn-sm hover-lift" 
+                style={{ background: '#25D366', color: '#fff', border: 'none' }}
+              >
+                📋 Copier Numéros (Envoi Groupé WA)
+              </button>
+              
+              <a 
+                href={`mailto:?bcc=${targetUsers.map(u => u.email).filter(Boolean).join(',')}&subject=Opportunités sur Wend-Kabré&body=${encodeURIComponent(message)}`}
+                className="btn btn-sm btn-outline hover-lift"
+              >
+                📧 Email Groupé (Tous)
+              </a>
+            </div>
+          )}
+        </div>
         
         {targetUsers.length === 0 ? (
           <p className="text-muted text-sm">Aucun utilisateur ne correspond à ce filtre.</p>
