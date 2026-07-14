@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 
-const REVENUE_PER_PREMIUM = 15000; // FCFA / mois (estimation)
+const REVENUE_PER_PREMIUM = 12500; // FCFA / mois (estimation)
 const DAY = 24 * 60 * 60 * 1000;
 
 function StatTile({ icon, label, value, sub, accent = 'var(--primary)' }) {

@@ -754,18 +754,21 @@ function DetailsContent() {
             {isUserLoggedIn && !isUserSubscribed && (
               <div className="card" style={{ border: '1px solid var(--primary)', boxShadow: 'var(--shadow-gold)' }}>
                 <div className="text-center" style={{ marginBottom: '24px' }}>
-                  <div style={{ fontSize: '2rem', marginBottom: '12px' }}>🔐</div>
-                  <span className="tag" style={{ background: 'var(--grad-accent)', color: '#fff', marginBottom: '12px', display: 'inline-block' }}>Premium requis</span>
-                  <h3 className="heading-md" style={{ color: 'var(--accent)', marginBottom: '8px', marginTop: '8px' }}>Débloquer ce marché</h3>
+                  <div style={{ fontSize: '2rem', marginBottom: '12px' }}>✨</div>
+                  <span className="tag" style={{ background: 'var(--grad-accent)', color: '#fff', marginBottom: '12px', display: 'inline-block' }}>Exclusivité Premium</span>
+                  <h3 className="heading-md" style={{ color: 'var(--accent)', marginBottom: '8px', marginTop: '8px' }}>Débloquez tout le potentiel</h3>
                   <p className="text-muted text-xs" style={{ lineHeight: 1.7 }}>
-                    Accédez au Studio de Candidature : L'IA rédige votre offre technique sur-mesure.
+                    Accédez aux détails complets et laissez l'IA générer votre offre technique sur-mesure dans notre Studio de Candidature.
                   </p>
-                  <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', margin: '16px 0 4px' }}>
-                    15 000 FCFA
-                  </h2>
+                  <div style={{ background: 'var(--color-bg-2)', padding: '12px', borderRadius: 'var(--radius-sm)', marginTop: '16px' }}>
+                    <p className="text-sm font-bold text-primary">Testez l'outil complet</p>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', margin: '4px 0' }}>
+                      2 500 FCFA <span style={{ fontSize: '0.8rem', fontWeight: 400, color: 'var(--text-muted)' }}>/ 7 Jours</span>
+                    </h2>
+                  </div>
                 </div>
                 <Link href="/tarifs" className="btn btn-accent w-full" style={{ justifyContent: 'center' }}>
-                  Choisir mon abonnement 🚀
+                  Découvrir les offres 🚀
                 </Link>
               </div>
             )}
