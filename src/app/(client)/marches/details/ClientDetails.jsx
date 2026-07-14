@@ -1,0 +1,1043 @@
+'use client';
+import { useState, useEffect, use, Suspense } from 'react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { db, auth } from '@/lib/firebase';
+import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, PageBreak, AlignmentType } from "docx";
+import { saveAs } from "file-saver";
+import { track } from '@/lib/track';
+
+// ── Affichage structuré de l'analyse IA d'un marché ──
+// ── Rangée de badges de classification (métadonnées non sensibles, visibles par tous) ──
+function ClassificationBadges({ marche }) {
+  if (!marche) return null;
+
+  const EMPTY = ['Non spécifié', 'Non communiqué', 'Non datée'];
+  const has = (v) => v && !EMPTY.includes(v);
+
+  const badges = [];
+
+  // Procédure → bleu
+  if (has(marche.procedure)) {
+    badges.push(<span key="procedure" className="badge badge-blue">{marche.procedure}</span>);
+  }
+
+  // Secteur → vert
+  if (has(marche.secteur)) {
+    badges.push(<span key="secteur" className="badge badge-green">{marche.secteur}</span>);
+  }
+
+  // Région → gris avec 📍
+  if (has(marche.region)) {
+    badges.push(<span key="region" className="badge badge-gray">📍 {marche.region}</span>);
+  }
+
+  // Urgence → couleur selon la valeur
+  if (has(marche.urgence)) {
+    const u = marche.urgence;
+    let urgStyle = null;
+    if (u === 'Urgent') {
+      urgStyle = { background: 'var(--danger-muted)', color: 'var(--danger)' };
+    } else if (u === 'Bientôt') {
+      urgStyle = { background: 'var(--accent-muted)', color: 'var(--accent)' };
+    } else if (u === 'Clôturé') {
+      urgStyle = { textDecoration: 'line-through' };
+    }
+    badges.push(
+      <span key="urgence" className="badge badge-gray" style={urgStyle || undefined}>{u}</span>
+    );
+  }
+
+  // Montant estimé → gris avec 💰
+  if (has(marche.montantEstime)) {
+    badges.push(<span key="montant" className="badge badge-gray">💰 {marche.montantEstime}</span>);
+  }
+
+  // Relation (additif / rectificatif / report / annulation) → alerte visible
+  if (marche.relation) {
+    const relLabels = {
+      additif: 'Additif',
+      rectificatif: 'Rectificatif',
+      report: 'Report de date',
+      annulation: 'Annulation',
+    };
+    const label = relLabels[marche.relation] || marche.relation;
+    const isDanger = marche.relation === 'annulation';
+    const relStyle = isDanger
+      ? { background: 'var(--danger-muted)', color: 'var(--danger)' }
+      : { background: 'var(--accent-muted)', color: 'var(--accent)' };
+    badges.push(
+      <span key="relation" className="badge" style={{ ...relStyle, fontWeight: 700 }}>⚠️ {label}</span>
+    );
+  }
+
+  if (badges.length === 0) return null;
+
+  return (
+    <div className="flex flex-wrap gap-2" style={{ marginBottom: '24px' }}>
+      {badges}
+    </div>
+  );
+}
+
+function AnalysisField({ label, value }) {
+  if (!value || value === 'Non spécifié' || value === 'Non communiqué') return null;
+  return (
+    <div>
+      <p className="text-xs text-muted" style={{ marginBottom: '2px' }}>{label}</p>
+      <p className="text-sm text-primary" style={{ fontWeight: 600, lineHeight: 1.4 }}>{value}</p>
+    </div>
+  );
+}
+
+function PiecesList({ title, items, icon }) {
+  if (!items || items.length === 0) return null;
+  return (
+    <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', padding: '14px' }}>
+      <p className="text-sm font-bold" style={{ marginBottom: '8px', color: 'var(--text-primary)' }}>{icon} {title}</p>
+      <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        {items.map((it, i) => (
+          <li key={i} className="text-sm text-secondary" style={{ display: 'flex', gap: '8px', lineHeight: 1.4 }}>
+            <span style={{ color: 'var(--primary)', flexShrink: 0 }}>✓</span>
+            <span>{it}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function ListBlock({ title, items, color = 'var(--text-primary)', bullet = '•' }) {
+  if (!items || items.length === 0) return null;
+  return (
+    <div>
+      <p className="text-sm font-bold" style={{ marginBottom: '8px', color }}>{title}</p>
+      <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        {items.map((it, i) => (
+          <li key={i} className="text-sm text-secondary" style={{ display: 'flex', gap: '8px', lineHeight: 1.5 }}>
+            <span style={{ color, flexShrink: 0 }}>{bullet}</span>
+            <span>{it}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function AnalysisView({ analysis, onRerun, analyzing }) {
+  return (
+    <div style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border-hover)', borderRadius: 'var(--radius-md)', padding: '20px' }}>
+      <div className="flex justify-between items-center" style={{ marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+        <h4 className="heading-sm" style={{ color: 'var(--primary-dark)' }}>🧠 Analyse IA du marché</h4>
+        <button onClick={onRerun} disabled={analyzing} className="btn btn-outline btn-sm" style={{ padding: '5px 12px', fontSize: '0.78rem' }}>
+          {analyzing ? 'Analyse…' : '↻ Ré-analyser'}
+        </button>
+      </div>
+
+      {/* Résumé */}
+      {analysis.resume && (
+        <div style={{ background: 'var(--success-muted)', border: '1px solid rgba(5,150,105,0.18)', borderRadius: 'var(--radius-sm)', padding: '14px', marginBottom: '18px' }}>
+          <p className="text-sm" style={{ color: 'var(--primary-dark)', lineHeight: 1.6 }}>{analysis.resume}</p>
+        </div>
+      )}
+
+      {/* Champs clés */}
+      <div className="grid grid-3 gap-4" style={{ marginBottom: '18px' }}>
+        <AnalysisField label="N° du marché" value={analysis.numeroMarche} />
+        <AnalysisField label="Type de procédure" value={analysis.typeProcedure} />
+        <AnalysisField label="Autorité contractante" value={analysis.autoriteContractante} />
+        <AnalysisField label="Ministère" value={analysis.ministere} />
+        <AnalysisField label="Région" value={analysis.region} />
+        <AnalysisField label="Commune" value={analysis.commune} />
+        <AnalysisField label="Budget estimatif" value={analysis.budget} />
+        <AnalysisField label="Financement" value={analysis.financement} />
+        <AnalysisField label="Durée d'exécution" value={analysis.dureeExecution} />
+        <AnalysisField label="Date limite" value={analysis.dateLimite} />
+        <AnalysisField label="Heure limite" value={analysis.heureLimite} />
+        <AnalysisField label="Lieu d'exécution" value={analysis.lieuExecution} />
+        <AnalysisField label="Email" value={analysis.contactEmail} />
+        <AnalysisField label="Téléphone" value={analysis.contactTelephone} />
+      </div>
+
+      {/* Pièces à fournir */}
+      {(analysis.piecesAdministratives?.length || analysis.piecesTechniques?.length || analysis.piecesFinancieres?.length) ? (
+        <div style={{ marginBottom: '18px' }}>
+          <p className="text-xs text-muted" style={{ fontWeight: 700, letterSpacing: '0.04em', marginBottom: '10px', textTransform: 'uppercase' }}>Pièces à fournir</p>
+          <div className="grid grid-3 gap-3">
+            <PiecesList title="Administratives" icon="📋" items={analysis.piecesAdministratives} />
+            <PiecesList title="Techniques" icon="🛠️" items={analysis.piecesTechniques} />
+            <PiecesList title="Financières" icon="💰" items={analysis.piecesFinancieres} />
+          </div>
+        </div>
+      ) : null}
+
+      {/* Conditions / critères / risques */}
+      <div className="grid grid-2 gap-6">
+        <div className="flex flex-col gap-4">
+          <ListBlock title="Conditions de participation" items={analysis.conditionsParticipation} color="var(--forest)" />
+          <ListBlock title="Critères de sélection" items={analysis.criteresSelection} color="var(--primary-dark)" />
+        </div>
+        <ListBlock title="⚠️ Points de vigilance" items={analysis.risques} color="var(--danger)" bullet="!" />
+      </div>
+
+      <p className="text-xs text-muted" style={{ marginTop: '16px', fontStyle: 'italic' }}>
+        Analyse générée automatiquement par IA — à recouper avec le document officiel avant toute soumission.
+      </p>
+    </div>
+  );
+}
+
+function DetailsContent() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
+  
+  const [marche, setMarche] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [step3Status, setStep3Status] = useState('idle'); // idle, checking, ok, warning
+  
+  // Fonction pour extraire intelligemment les documents requis selon la description
+  const extractSpecificDocuments = (m) => {
+    if (!m) return [];
+    
+    // Si la catégorie est recrutement et que le scraper a déjà mis des trucs pertinents
+    if (m.category === 'Recrutement' && m.requirements && m.requirements.length > 0 && m.requirements[0] !== "Voir les documents requis dans l'avis officiel") {
+       return m.requirements; 
+    }
+    
+    const text = (m.description || "").toLowerCase() + " " + (m.title || "").toLowerCase();
+    const reqs = [];
+    
+    if (m.category === 'Recrutement') {
+      if (text.includes('cv') || text.includes('curriculum vitae')) reqs.push('CV à jour');
+      if (text.includes('lettre de motivation')) reqs.push('Lettre de motivation');
+      if (text.includes('diplôme') || text.includes('diplome')) reqs.push('Copie des diplômes');
+      if (text.includes('certificat') || text.includes('attestation')) reqs.push('Certificats de travail / Attestations');
+      if (text.includes('cni') || text.includes("carte d'identité") || text.includes('passeport')) reqs.push("Pièce d'identité (CNI/Passeport)");
+    } else {
+      if (text.includes('agrément') || text.includes('agrement technique') || text.includes('certificat de qualification')) reqs.push('Agrément technique / Certificat de qualification');
+      if (text.includes('caution') || text.includes('garantie de soumission')) reqs.push('Caution de soumission / Garantie bancaire');
+      if (text.includes("chiffre d'affaire") || text.includes('chiffre d’affaire') || text.includes('bilan') || text.includes('états financiers')) reqs.push('États financiers / Preuve de chiffre d\'affaires');
+      if (text.includes('bonne fin') || text.includes('bonne exécution') || text.includes('marché similaire') || text.includes('expérience')) reqs.push('Attestations de bonne exécution (marchés similaires)');
+      if (text.includes('ligne de crédit') || text.includes('ligne de credit') || text.includes('capacité financière')) reqs.push('Attestation de ligne de crédit bancaire');
+      if (text.includes('cv') || text.includes('diplôme') || text.includes('personnel')) reqs.push('CV et diplômes du personnel clé (si requis)');
+      if (text.includes('matériel') || text.includes('logistique') || text.includes('équipement')) reqs.push('Preuves de disposition du matériel essentiel');
+      if (text.includes('méthodologie') || text.includes('planning') || text.includes('calendrier')) reqs.push('Note méthodologique et planning d\'exécution');
+    }
+    
+    return reqs;
+  };
+
+  const specificDocs = extractSpecificDocuments(marche);
+  const [userData, setUserData] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  // Paywall states
+  const [showPricing, setShowPricing] = useState(false);
+
+  // Studio de Candidature states
+  const [showStudio, setShowStudio] = useState(false);
+  const [studioStep, setStudioStep] = useState(1);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [generatingDoc, setGeneratingDoc] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [extractedData, setExtractedData] = useState(null);
+  const [generationError, setGenerationError] = useState(null);
+
+  // CRM states
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+
+  // Lecteur PDF intégré
+  const [pdfDoc, setPdfDoc] = useState(null); // { name, url }
+  const pdfProxy = (url) => `/api/pdf?url=${encodeURIComponent(url)}`;
+
+  // Analyse IA du marché
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analyzeError, setAnalyzeError] = useState(null);
+  const [freshAnalysis, setFreshAnalysis] = useState(null);
+
+  const handleAnalyzeMarket = async () => {
+    if (!marche) return;
+    track('click', { id: 'analyze_market', label: 'Analyser IA' });
+    // L'analyse IA est réservée aux utilisateurs connectés : on joint le token.
+    if (!auth.currentUser) {
+      setAnalyzeError('Veuillez vous connecter pour lancer l\'analyse IA.');
+      return;
+    }
+    setAnalyzing(true);
+    setAnalyzeError(null);
+    try {
+      const idToken = await auth.currentUser.getIdToken();
+      const res = await fetch('/api/analyze-market', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ marketId: marche.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "L'analyse a échoué.");
+      setFreshAnalysis(data.analysis);
+    } catch (e) {
+      setAnalyzeError(e.message);
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  // 1. Listen to Auth State
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        try {
+          const userDocRef = doc(db, 'users', currentUser.uid);
+          const userSnap = await getDoc(userDocRef);
+          if (userSnap.exists()) {
+            setUserData(userSnap.data());
+          } else {
+            const defaultProfile = { email: currentUser.email, isSubscribed: false };
+            await setDoc(userDocRef, defaultProfile);
+            setUserData(defaultProfile);
+          }
+        } catch (e) {
+          console.error("Error loading user profile:", e);
+        }
+      } else {
+        setUserData(null);
+      }
+      setAuthLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // 2. Fetch Tender Details
+  useEffect(() => {
+    if (!id) {
+      setLoading(false);
+      return;
+    }
+    const fetchDetail = async () => {
+      try {
+        const docRef = doc(db, 'marches', id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setMarche({ id: docSnap.id, ...docSnap.data() });
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDetail();
+  }, [id]);
+
+  // Analytics : vue d'un marché (une fois, quand le marché est chargé)
+  useEffect(() => {
+    if (marche) {
+      track('market_view', { marketId: marche.id, title: marche.title, category: marche.category });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [marche?.id]);
+
+  const handleFileChange = (e) => {
+    setSelectedFiles(Array.from(e.target.files));
+  };
+
+  const convertFileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve({
+        name: file.name,
+        mimeType: file.type,
+        data: reader.result.split(',')[1] // remove data:image/png;base64,
+      });
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleGenerate = async () => {
+    if (selectedFiles.length === 0) {
+      alert("Veuillez sélectionner au moins un document.");
+      return;
+    }
+    setGeneratingDoc(true);
+    setGenerationError(null);
+    try {
+      const base64Files = await Promise.all(selectedFiles.map(convertFileToBase64));
+      const response = await fetch('/api/analyze-documents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ market: marche, files: base64Files })
+      });
+      if (!response.ok) throw new Error("Erreur lors de l'analyse des documents");
+      const data = await response.json();
+      setExtractedData(data);
+      setStudioStep(3);
+    } catch (err) {
+      console.error(err);
+      setGenerationError("Une erreur est survenue lors de l'analyse de vos documents par l'IA. Vérifiez la taille des fichiers.");
+    } finally {
+      setGeneratingDoc(false);
+    }
+  };
+
+  const handleDownload = async () => {
+    if (!extractedData) return;
+    
+    const companyInfo = extractedData.extractedCompanyInfo || {};
+    const offer = extractedData.generatedOffer || {};
+
+    const createText = (text) => {
+      if (!text) return [new Paragraph({ children: [new TextRun({ text: "Non renseigné" })], spacing: { after: 200 } })];
+      const lines = text.split('\n').filter(l => l.trim() !== '');
+      return lines.map(line => new Paragraph({ children: [new TextRun({ text: line })], spacing: { after: 120 } }));
+    };
+
+    const docFile = new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            // PAGE DE GARDE
+            new Paragraph({ children: [new TextRun({ text: "DOSSIER DE CANDIDATURE - OFFRE TECHNIQUE", bold: true, size: 48, color: "064E3B" })], alignment: AlignmentType.CENTER, spacing: { before: 1000, after: 400 } }),
+            new Paragraph({ children: [new TextRun({ text: `Appel d'offres : ${marche.title || '[Titre du marché]'}`, size: 28 })], alignment: AlignmentType.CENTER, spacing: { after: 200 } }),
+            new Paragraph({ children: [new TextRun({ text: `Présenté par : ${companyInfo.name || '[VOTRE ENTREPRISE]'}`, size: 32, bold: true, color: "000000" })], alignment: AlignmentType.CENTER, spacing: { after: 400 } }),
+            new Paragraph({ children: [new TextRun({ text: `RCCM : ${companyInfo.rccm || 'N/A'} | IFU : ${companyInfo.ifu || 'N/A'}`, size: 24 })], alignment: AlignmentType.CENTER, spacing: { after: 200 } }),
+            new Paragraph({ children: [new TextRun({ text: `Adresse : ${companyInfo.address || 'N/A'}`, size: 24 })], alignment: AlignmentType.CENTER, spacing: { after: 800 } }),
+            new Paragraph({ children: [new TextRun({ text: `Date : ${new Date().toLocaleDateString('fr-FR')}`, size: 24 })], alignment: AlignmentType.CENTER }),
+            new Paragraph({ children: [new PageBreak()] }),
+
+            // LETTRE DE SOUMISSION
+            new Paragraph({ children: [new TextRun({ text: "LETTRE DE SOUMISSION", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            new Paragraph({ children: [new TextRun({ text: `À l'attention de : ${marche.source || "L'autorité contractante"}`, bold: true })] }),
+            new Paragraph({ children: [new TextRun({ text: "Objet : Soumission pour le marché relatif à " + (marche.title || '[Objet du marché]'), bold: true })], spacing: { before: 200, after: 400 } }),
+            new Paragraph({ children: [new TextRun({ text: "Monsieur/Madame le Directeur," })], spacing: { after: 200 } }),
+            new Paragraph({ children: [new TextRun({ text: `Après avoir examiné le Dossier d'Appel d'Offres, nous, soussignés ${companyInfo.name || '[Votre entreprise]'}, représentés par ${companyInfo.managerName || 'le Gérant'}, vous proposons de réaliser et d'achever les prestations conformément aux conditions du DAO.` })], spacing: { after: 200 } }),
+            new Paragraph({ children: [new PageBreak()] }),
+
+            // SECTION 1: PRÉSENTATION
+            new Paragraph({ children: [new TextRun({ text: "1. PRÉSENTATION DE L'ENTREPRISE", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            ...createText(offer.presentation || "Non renseigné"),
+            new Paragraph({ children: [new PageBreak()] }),
+
+            // SECTION 2: COMPRÉHENSION
+            new Paragraph({ children: [new TextRun({ text: "2. COMPRÉHENSION DU BESOIN ET ENJEUX", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            ...createText(offer.comprehension || "Non renseigné"),
+            new Paragraph({ children: [new PageBreak()] }),
+
+            // SECTION 3: MÉTHODOLOGIE
+            new Paragraph({ children: [new TextRun({ text: "3. MÉTHODOLOGIE D'EXÉCUTION", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            ...createText(offer.methodology || "Non renseigné"),
+            new Paragraph({ children: [new PageBreak()] }),
+
+            // SECTION 4: MOYENS HUMAINS
+            new Paragraph({ children: [new TextRun({ text: "4. MOYENS HUMAINS ET ORGANISATION", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            ...createText(offer.humanResources || "Non renseigné"),
+            new Paragraph({ children: [new PageBreak()] }),
+
+            // SECTION 5: MOYENS MATÉRIELS
+            new Paragraph({ children: [new TextRun({ text: "5. MOYENS MATÉRIELS ET LOGISTIQUES", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            ...createText(offer.materials || "Non renseigné"),
+            new Paragraph({ children: [new PageBreak()] }),
+
+            // SECTION 6: QUALITÉ & RISQUES
+            new Paragraph({ children: [new TextRun({ text: "6. APPROCHE QUALITÉ ET GESTION DES RISQUES", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            ...createText(offer.qualityAndRisks || "Non renseigné"),
+            new Paragraph({ children: [new PageBreak()] }),
+
+            // SECTION 7: PLANNING
+            new Paragraph({ children: [new TextRun({ text: "7. PLANNING D'EXÉCUTION", bold: true, size: 32, color: "064E3B" })], spacing: { after: 400 } }),
+            ...createText(offer.planning || "Non renseigné"),
+          ],
+        },
+      ],
+    });
+
+    Packer.toBlob(docFile).then((blob) => {
+      saveAs(blob, `Dossier_Technique_${companyInfo.name ? companyInfo.name.replace(/\s+/g, '_') : 'Entreprise'}.docx`);
+    });
+  };
+
+  useEffect(() => {
+    if (userData && userData.crm && id) {
+      setIsFollowing(!!userData.crm[id]);
+    } else {
+      setIsFollowing(false);
+    }
+  }, [userData, id]);
+
+  const handleToggleFollow = async () => {
+    if (!user) {
+      // router.push is not available here, fallback to alert or link
+      alert('Veuillez vous connecter pour suivre ce marché.');
+      return;
+    }
+    setFollowLoading(true);
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      const currentCrm = userData?.crm || {};
+      let newCrm = { ...currentCrm };
+      
+      if (isFollowing) {
+        delete newCrm[id];
+      } else {
+        newCrm[id] = { status: 'favoris', addedAt: new Date().toISOString() };
+      }
+
+      await updateDoc(userRef, { crm: newCrm });
+      setUserData({ ...userData, crm: newCrm });
+      setIsFollowing(!isFollowing);
+    } catch (e) {
+      console.error("Error toggling follow:", e);
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
+  if (loading || authLoading) {
+    return (
+      <div className="text-center" style={{ padding: '80px 0' }}>
+        <span className="loader" style={{ width: '40px', height: '40px' }}></span>
+        <p className="text-secondary" style={{ marginTop: '16px' }}>Chargement des détails du marché...</p>
+      </div>
+    );
+  }
+
+  if (!marche) {
+    return (
+      <div className="text-center" style={{ padding: '80px 0' }}>
+        <h2 className="heading-md">Marché introuvable</h2>
+        <p className="text-secondary" style={{ marginBottom: '24px' }}>Ce marché n'existe pas ou a été archivé.</p>
+        <Link href="/marches" className="btn btn-primary">Retour aux marchés</Link>
+      </div>
+    );
+  }
+
+  const isUserLoggedIn = !!user;
+  const isUserSubscribed = userData?.isSubscribed === true;
+  const hasFullAccess = isUserSubscribed || marche.category === 'Recrutement';
+
+  // Mocking dates if they don't exist in the DB for the demo
+  const deadlineDate = marche.deadline ? new Date(marche.deadline).toLocaleDateString('fr-FR') : 'À vérifier sur le DAO';
+  const openingTime = marche.openingTime || 'Non communiqué — voir le DAO';
+
+  return (
+    <>
+    <div className="grid grid-3 gap-8 relative">
+      {/* Main Info */}
+      <div className="card" style={{ gridColumn: 'span 2' }}>
+        <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
+          <span className="badge badge-green">{marche.status}</span>
+          <span className="text-muted text-xs">
+            Publié le {marche.publishedAt ? new Date(marche.publishedAt).toLocaleDateString('fr-FR') : 'Date inconnue'}
+          </span>
+        </div>
+
+        <div className="flex justify-between items-start" style={{ gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
+          <h1 className="heading-lg" style={{ color: 'var(--text-primary)', flex: 1 }}>{marche.title}</h1>
+          {isUserLoggedIn && hasFullAccess && (
+            <button 
+              onClick={handleToggleFollow}
+              disabled={followLoading}
+              className={`btn ${isFollowing ? 'btn-outline' : 'btn-primary'}`}
+              style={{ padding: '8px 16px', fontSize: '0.9rem' }}
+            >
+              {followLoading ? '...' : isFollowing ? 'Retirer du suivi' : '🔖 Suivre ce marché'}
+            </button>
+          )}
+        </div>
+
+        {/* Badges de classification (métadonnées non sensibles, visibles par tous) */}
+        <ClassificationBadges marche={marche} />
+
+        <h3 className="heading-md" style={{ marginBottom: '12px' }}>Description du projet</h3>
+        
+        {hasFullAccess ? (
+          <p className="text-secondary" style={{ marginBottom: '30px', whiteSpace: 'pre-line' }}>
+            {marche.description}
+          </p>
+        ) : (
+          <div style={{ position: 'relative', marginBottom: '30px' }}>
+            <p className="text-secondary" style={{ whiteSpace: 'pre-line', marginBottom: '8px' }}>
+              {marche.description ? marche.description.substring(0, 150) + '...' : 'Description non disponible.'}
+            </p>
+            <p className="text-secondary" style={{ 
+              filter: 'blur(4px)', 
+              userSelect: 'none',
+              lineHeight: '1.8'
+            }}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            </p>
+            <div style={{
+              position: 'absolute',
+              top: 0, left: 0, width: '100%', height: '100%',
+              background: 'linear-gradient(to bottom, transparent 20%, var(--color-bg) 95%)',
+              pointerEvents: 'none'
+            }}></div>
+          </div>
+        )}
+        
+        <div className="divider"></div>
+        
+        <div className="flex justify-between items-center" style={{ flexWrap: 'wrap', gap: '16px', marginBottom: '20px' }}>
+          <div>
+            <p className="text-xs text-muted">ORGANISME ÉMETTEUR</p>
+            <p className="text-sm text-primary" style={{ fontWeight: 600 }}>
+              {hasFullAccess ? marche.source : '••••••••••••••••'}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-muted">CATÉGORIE</p>
+            <p className="text-sm text-gold" style={{ fontWeight: 600 }}>{marche.category || 'Non spécifié'}</p>
+          </div>
+          {marche.ministere && marche.ministere !== 'Non spécifié' && (
+            <div>
+              <p className="text-xs text-muted">MINISTÈRE</p>
+              <p className="text-sm text-primary" style={{ fontWeight: 600 }}>{marche.ministere}</p>
+            </div>
+          )}
+          {marche.commune && marche.commune !== 'Non spécifié' && (
+            <div>
+              <p className="text-xs text-muted">COMMUNE</p>
+              <p className="text-sm text-primary" style={{ fontWeight: 600 }}>{marche.commune}</p>
+            </div>
+          )}
+        </div>
+
+        {/* NOUVEAU : INFORMATIONS DE RECRUTEMENT */}
+        {marche.category === 'Recrutement' && (
+          <div style={{ background: 'var(--accent-muted)', border: '1px solid rgba(217,119,6,0.22)', padding: '16px', borderRadius: 'var(--radius-md)', marginBottom: '20px' }}>
+            <h4 className="heading-sm" style={{ marginBottom: '12px', color: 'var(--accent)' }}>📋 Informations de Candidature</h4>
+            <div style={{ marginBottom: '16px' }}>
+              <p className="text-xs text-muted" style={{ marginBottom: '8px' }}>DOCUMENTS REQUIS</p>
+              <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: 0 }} className="text-sm text-secondary">
+                {(marche.requirements || ['Voir les détails dans la description complète ci-dessus']).map((req, i) => (
+                  <li key={i}>{req}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-xs text-muted" style={{ marginBottom: '8px' }}>COMMENT POSTULER</p>
+              <p className="text-sm text-primary" style={{ fontWeight: 600 }}>{marche.contactInfo || "Voir l'avis complet ci-dessus"}</p>
+            </div>
+          </div>
+        )}
+
+        {/* NOUVEAU : CALENDRIER DU MARCHÉ */}
+        {hasFullAccess && (
+          <div style={{ background: 'var(--success-muted)', border: '1px solid rgba(5,150,105,0.2)', padding: '16px', borderRadius: 'var(--radius-md)' }}>
+            <h4 className="heading-sm" style={{ marginBottom: '12px', color: 'var(--primary-dark)' }}>📅 Calendrier du Marché</h4>
+            <div className="grid grid-2 gap-4">
+              <div>
+                <p className="text-xs text-muted">DATE LIMITE DE DÉPÔT</p>
+                <p className="text-sm" style={{ fontWeight: 600, color: 'var(--danger)' }}>{deadlineDate}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted">OUVERTURE DES PLIS</p>
+                <p className="text-sm text-primary" style={{ fontWeight: 600 }}>{openingTime}</p>
+              </div>
+            </div>
+            <p className="text-xs text-secondary" style={{ marginTop: '12px', fontStyle: 'italic' }}>
+              *Veillez à déposer votre dossier physique avant la date et l'heure limite.
+            </p>
+          </div>
+        )}
+
+        {/* DOCUMENTS OFFICIELS (PDF) */}
+        {Array.isArray(marche.documents) && marche.documents.length > 0 && (
+          hasFullAccess ? (
+            <div style={{ marginTop: '20px', background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', padding: '16px', borderRadius: 'var(--radius-md)' }}>
+              <h4 className="heading-sm" style={{ marginBottom: '12px', color: 'var(--primary-dark)' }}>
+                📎 Documents officiels ({marche.documents.length})
+              </h4>
+              <div className="flex flex-col gap-2">
+                {marche.documents.map((docItem, i) => (
+                  <div key={i} className="flex items-center justify-between gap-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', padding: '10px 12px', flexWrap: 'wrap' }}>
+                    <span className="text-sm" style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                      <span>📄</span>
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={docItem.name}>{docItem.name || `Document ${i + 1}`}</span>
+                    </span>
+                    <span className="flex gap-2" style={{ flexShrink: 0 }}>
+                      <button onClick={() => { track('download', { marketId: marche.id, docName: docItem.name }); setPdfDoc(docItem); }} className="btn btn-primary btn-sm" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+                        👁️ Lire ici
+                      </button>
+                      <a href={pdfProxy(docItem.url)} target="_blank" rel="noreferrer" onClick={() => track('download', { marketId: marche.id, docName: docItem.name })} className="btn btn-outline btn-sm" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+                        ⬇️ Ouvrir
+                      </a>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div style={{ marginTop: '20px', background: 'var(--accent-muted)', border: '1px solid rgba(217,119,6,0.28)', padding: '16px', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+              <p className="text-sm" style={{ color: 'var(--accent)', fontWeight: 600 }}>
+                🔒 {marche.documents.length} document(s) officiel(s) (DAO, avis…) disponible(s) avec un accès Premium.
+              </p>
+            </div>
+          )
+        )}
+
+        {/* ANALYSE IA DU MARCHÉ */}
+        {hasFullAccess && (() => {
+          const analysis = freshAnalysis || marche.aiAnalysis || null;
+          const hasPdf = Array.isArray(marche.documents) && marche.documents.length > 0;
+          return (
+            <div style={{ marginTop: '20px' }}>
+              {analysis ? (
+                <AnalysisView analysis={analysis} onRerun={handleAnalyzeMarket} analyzing={analyzing} />
+              ) : (
+                <div style={{ background: 'linear-gradient(135deg, rgba(5,150,105,0.06), rgba(6,78,59,0.03))', border: '1px solid var(--color-border-hover)', borderRadius: 'var(--radius-md)', padding: '20px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.6rem', marginBottom: '8px' }}>🧠</div>
+                  <h4 className="heading-sm" style={{ marginBottom: '6px' }}>Analyse IA du marché</h4>
+                  <p className="text-secondary text-sm" style={{ maxWidth: '460px', margin: '0 auto 16px' }}>
+                    {hasPdf
+                      ? "L'IA lit le document officiel et en extrait automatiquement les informations clés, les pièces à fournir et un résumé."
+                      : "Aucun document PDF n'est encore associé à ce marché — l'analyse sera disponible après le prochain scraping."}
+                  </p>
+                  {hasPdf && (
+                    <button onClick={handleAnalyzeMarket} className="btn btn-primary" disabled={analyzing}>
+                      {analyzing ? (
+                        <><span className="loader" style={{ width: '16px', height: '16px', borderWidth: '2px' }}></span> Analyse en cours…</>
+                      ) : (
+                        "🧠 Analyser ce marché avec l'IA"
+                      )}
+                    </button>
+                  )}
+                  {analyzeError && <p className="text-sm" style={{ color: 'var(--danger)', marginTop: '12px' }}>⚠️ {analyzeError}</p>}
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
+      </div>
+
+      {/* Sidebar Paywall / Actions */}
+      <div className="flex flex-col gap-6" style={{ height: 'fit-content' }}>
+
+        {marche.category === 'Recrutement' ? (
+          <div className="card text-center" style={{ border: '1px solid var(--green)', boxShadow: '0 8px 30px rgba(5,150,105,0.15)' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>✅</div>
+            <h3 className="heading-md" style={{ marginBottom: '12px', color: 'var(--green)' }}>Accès Gratuit</h3>
+            <p className="text-secondary text-sm" style={{ marginBottom: '24px' }}>
+              La consultation des offres d'emploi et de recrutement est 100% libre et gratuite sur Wend-Kabré.
+            </p>
+            <button 
+              className="btn btn-outline w-full" 
+              style={{ border: '1px solid var(--green)', color: 'var(--green)' }}
+              onClick={() => window.scrollTo({ top: document.body.scrollHeight / 2, behavior: 'smooth' })}
+            >
+              Voir les instructions de candidature
+            </button>
+          </div>
+        ) : (
+          <>
+            {!isUserLoggedIn && (
+              <div className="card text-center" style={{ border: '1px solid var(--primary)', boxShadow: 'var(--shadow-gold)' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>🔒</div>
+                <h3 className="heading-md" style={{ marginBottom: '12px', color: 'var(--primary)' }}>Détails Verrouillés</h3>
+                <p className="text-secondary text-sm" style={{ marginBottom: '24px' }}>
+                  Créez un compte gratuit, puis passez Premium pour consulter les pièces requises et utiliser le Studio de Candidature.
+                </p>
+                <Link href="/inscription" className="btn btn-primary w-full text-center" style={{ marginBottom: '12px' }}>
+                  Créer un compte gratuit 🚀
+                </Link>
+              </div>
+            )}
+
+            {isUserLoggedIn && !isUserSubscribed && (
+              <div className="card" style={{ border: '1px solid var(--primary)', boxShadow: 'var(--shadow-gold)' }}>
+                <div className="text-center" style={{ marginBottom: '24px' }}>
+                  <div style={{ fontSize: '2rem', marginBottom: '12px' }}>✨</div>
+                  <span className="tag" style={{ background: 'var(--grad-accent)', color: '#fff', marginBottom: '12px', display: 'inline-block' }}>Exclusivité Premium</span>
+                  <h3 className="heading-md" style={{ color: 'var(--accent)', marginBottom: '8px', marginTop: '8px' }}>Débloquez tout le potentiel</h3>
+                  <p className="text-muted text-xs" style={{ lineHeight: 1.7 }}>
+                    Accédez aux détails complets et laissez l'IA générer votre offre technique sur-mesure dans notre Studio de Candidature.
+                  </p>
+                  <div style={{ background: 'var(--color-bg-2)', padding: '12px', borderRadius: 'var(--radius-sm)', marginTop: '16px' }}>
+                    <p className="text-sm font-bold text-primary">Testez l'outil complet</p>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', margin: '4px 0' }}>
+                      2 500 FCFA <span style={{ fontSize: '0.8rem', fontWeight: 400, color: 'var(--text-muted)' }}>/ 7 Jours</span>
+                    </h2>
+                  </div>
+                </div>
+                <Link href="/tarifs" className="btn btn-accent w-full" style={{ justifyContent: 'center' }}>
+                  Découvrir les offres 🚀
+                </Link>
+              </div>
+            )}
+
+            {isUserLoggedIn && isUserSubscribed && (
+              <div className="card flex flex-col justify-between" style={{ border: '1px solid var(--primary)', gap: '16px' }}>
+                <div>
+                  <div className="flex items-center gap-2" style={{ marginBottom: '10px' }}>
+                    <span className="badge badge-gold">Outil Premium</span>
+                    <h3 className="heading-md">Studio de Candidature</h3>
+                  </div>
+                  <p className="text-secondary text-xs" style={{ marginBottom: '16px' }}>
+                    Ne perdez plus de temps. Laissez notre IA générer la trame complète de votre dossier technique et administratif.
+                  </p>
+                  
+                  <button 
+                    onClick={() => setShowStudio(true)} 
+                    className="btn btn-gold w-full text-center"
+                  >
+                    Générer mon Dossier 🪄
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+
+    {/* STUDIO DE CANDIDATURE MODAL */}
+    {showStudio && (
+      <div style={{
+        position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+        backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 9999,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px'
+      }}>
+        <div className="card" style={{ 
+          width: '100%', maxWidth: '800px', maxHeight: '90vh', overflowY: 'auto',
+          border: '1px solid var(--primary)', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' 
+        }}>
+          <div className="flex justify-between items-center" style={{ marginBottom: '24px' }}>
+            <h2 className="heading-lg" style={{ color: 'var(--primary)' }}>Studio de Candidature 🪄</h2>
+            <button onClick={() => setShowStudio(false)} aria-label="Fermer" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+          </div>
+
+          {/* Stepper */}
+          <div className="flex gap-4" style={{ marginBottom: '32px', borderBottom: '1px solid var(--color-border)', paddingBottom: '16px' }}>
+            <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 1 ? 'var(--primary)' : 'var(--text-muted)' }}>
+              <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>1</div>
+              <div className="text-xs">Dossier Administratif</div>
+            </div>
+            <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 2 ? 'var(--primary)' : 'var(--text-muted)' }}>
+              <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>2</div>
+              <div className="text-xs">Offre Technique (IA)</div>
+            </div>
+            <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 3 ? 'var(--primary)' : 'var(--text-muted)' }}>
+              <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>3</div>
+              <div className="text-xs">Vérification & Dépôt</div>
+            </div>
+          </div>
+
+          {/* STEP 1 */}
+          {studioStep === 1 && (
+            <div className="animate-fadeIn">
+              <h3 className="heading-md" style={{ marginBottom: '16px' }}>Étape 1 : Pièces à fournir</h3>
+              
+              <div style={{ background: 'var(--success-muted)', border: '1px solid rgba(5,150,105,0.2)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
+                <h4 className="text-sm font-bold text-primary" style={{ marginBottom: '12px' }}>📌 Documents attendus pour ce marché :</h4>
+                
+                <p className="text-xs text-muted" style={{ marginBottom: '8px' }}>Socle administratif (obligatoire pour tout marché) :</p>
+                <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: '0 0 16px 0' }} className="text-sm text-secondary">
+                  <li>Registre de Commerce (RCCM)</li>
+                  <li>Attestation de Situation Fiscale (ASF) ou IFU</li>
+                  <li>Attestation de la CNSS</li>
+                </ul>
+
+                <p className="text-xs text-muted" style={{ marginBottom: '8px' }}>Documents spécifiques à cet avis :</p>
+                <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: 0 }} className="text-sm text-secondary">
+                  {specificDocs.length > 0 ? (
+                    specificDocs.map((req, i) => (
+                      <li key={i}>{req}</li>
+                    ))
+                  ) : (
+                    <li>Veuillez lire attentivement la description de l'avis pour d'éventuelles exigences particulières.</li>
+                  )}
+                </ul>
+              </div>
+
+              <p className="text-sm text-secondary" style={{ marginBottom: '16px' }}>
+                Veuillez sélectionner vos documents numérisés correspondants. L'IA les lira pour vérifier leur conformité et rédiger l'offre technique avec vos vraies données.
+              </p>
+              
+              <div style={{ border: '2px dashed var(--primary)', padding: '30px', textAlign: 'center', borderRadius: '8px', marginBottom: '24px', background: 'var(--primary-muted)' }}>
+                <input type="file" multiple accept="image/*,application/pdf" onChange={handleFileChange} id="fileUpload" style={{ display: 'none' }} />
+                <label htmlFor="fileUpload" className="btn btn-outline" style={{ borderColor: 'var(--primary)', color: 'var(--primary)', cursor: 'pointer', display: 'inline-block', marginBottom: '16px' }}>
+                  📁 Sélectionner vos fichiers
+                </label>
+                <p className="text-xs text-muted">Formats acceptés : PDF, JPG, PNG.</p>
+                
+                {selectedFiles.length > 0 && (
+                  <div style={{ marginTop: '16px', textAlign: 'left' }}>
+                    <p className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px' }}>Fichiers sélectionnés ({selectedFiles.length}) :</p>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, maxHeight: '100px', overflowY: 'auto' }}>
+                      {selectedFiles.map((f, i) => (
+                        <li key={i} className="text-xs text-secondary" style={{ padding: '4px 0', borderBottom: '1px solid var(--color-border)' }}>📄 {f.name}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+              
+              <button onClick={() => setStudioStep(2)} className="btn btn-primary w-full text-center" disabled={selectedFiles.length === 0} style={{ opacity: selectedFiles.length === 0 ? 0.5 : 1 }}>
+                Continuer avec ces documents →
+              </button>
+            </div>
+          )}
+
+          {/* STEP 2 */}
+          {studioStep === 2 && (
+            <div className="animate-fadeIn">
+              <h3 className="heading-md" style={{ marginBottom: '16px' }}>Génération Complète de l'Offre</h3>
+              <p className="text-sm text-secondary" style={{ marginBottom: '24px' }}>
+                Notre IA va analyser vos {selectedFiles.length} documents et rédiger l'<strong>intégralité de l'offre technique sur-mesure</strong> pour ce marché spécifique.
+              </p>
+
+              {generationError && (
+                <div style={{ background: 'var(--danger-muted)', color: 'var(--danger)', padding: '16px', borderRadius: '8px', marginBottom: '24px', fontSize: '0.9rem' }}>
+                  ❌ {generationError}
+                </div>
+              )}
+
+              {!generatingDoc && !generationError && !extractedData ? (
+                <button onClick={handleGenerate} className="btn btn-gold w-full text-center" style={{ fontSize: '1.1rem', padding: '16px' }}>
+                  🪄 Lancer l'Analyse IA et Rédiger l'Offre
+                </button>
+              ) : null}
+
+              {generatingDoc && (
+                <div className="text-center" style={{ padding: '30px 0' }}>
+                  <div style={{ 
+                    width: '100%', height: '8px', background: 'var(--color-border)', borderRadius: '4px', overflow: 'hidden', marginBottom: '24px' 
+                  }}>
+                    <div style={{ 
+                      width: '50%', height: '100%', background: 'var(--primary)', borderRadius: '4px',
+                      animation: 'progressAnim 2s infinite linear' 
+                    }}></div>
+                  </div>
+                  <style>{`
+                    @keyframes progressAnim {
+                      0% { transform: translateX(-100%); }
+                      100% { transform: translateX(200%); }
+                    }
+                  `}</style>
+                  <p className="text-gold" style={{ fontWeight: 'bold', marginBottom: '8px' }}>Traitement en cours...</p>
+                  <p className="text-xs text-secondary">Lecture OCR, extraction des données, et rédaction sur-mesure de la méthodologie (Cela peut prendre jusqu'à 60 secondes).</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* STEP 3 */}
+          {studioStep === 3 && extractedData && (
+            <div className="animate-fadeIn">
+              <div className="flex items-center gap-3" style={{ marginBottom: '16px' }}>
+                <span style={{ fontSize: '2rem' }}>✅</span>
+                <h3 className="heading-md text-green">Offre Rédigée avec Succès !</h3>
+              </div>
+              
+              <div style={{ background: 'var(--success-muted)', border: '1px solid rgba(5,150,105,0.2)', padding: '16px', borderRadius: '8px', marginBottom: '20px' }}>
+                <div className="flex justify-between items-center" style={{ marginBottom: '12px' }}>
+                  <h4 className="text-sm font-bold text-primary">Score de Concordance</h4>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 900, color: extractedData.concordanceScore >= 80 ? 'var(--green)' : 'var(--primary)' }}>
+                    {extractedData.concordanceScore}%
+                  </span>
+                </div>
+                {extractedData.missingDocuments && extractedData.missingDocuments.length > 0 ? (
+                  <div>
+                    <p className="text-xs text-muted" style={{ marginBottom: '8px' }}>Documents manquants ou non détectés :</p>
+                    <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: 0 }} className="text-xs text-secondary">
+                      {extractedData.missingDocuments.map((doc, i) => <li key={i}>{doc}</li>)}
+                    </ul>
+                  </div>
+                ) : (
+                  <p className="text-xs text-green">Tous les documents requis semblent présents !</p>
+                )}
+              </div>
+
+              <div style={{ background: 'var(--danger-muted)', border: '1px solid rgba(220,38,38,0.28)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
+                <h4 className="text-sm" style={{ color: 'var(--danger)', marginBottom: '8px', fontWeight: 'bold' }}>⚠️ Responsabilité de Relecture</h4>
+                <p className="text-xs text-secondary" style={{ marginBottom: '12px' }}>
+                  Bien que l'IA ait rédigé l'offre de bout en bout pour vous (Méthodologie, Risques, Planning), il s'agit de <strong>contenu généré automatiquement</strong>. Vous êtes responsable de vérifier si les délais et approches inventés par l'IA correspondent aux capacités réelles de votre entreprise.
+                </p>
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input type="checkbox" checked={agreedToTerms} onChange={(e) => setAgreedToTerms(e.target.checked)} style={{ marginTop: '2px' }} />
+                  <span className="text-xs text-primary">Je m'engage à relire et adapter le document final généré par l'IA avant toute soumission officielle.</span>
+                </label>
+              </div>
+
+              <div className="grid grid-2 gap-4" style={{ marginBottom: '24px' }}>
+                <button 
+                  onClick={handleDownload}
+                  disabled={!agreedToTerms} 
+                  className="btn btn-primary w-full text-center" 
+                  style={{ opacity: agreedToTerms ? 1 : 0.5 }}
+                >
+                  📥 Télécharger l'Offre Rédigée (.docx)
+                </button>
+              </div>
+            </div>
+          )}
+
+        </div>
+      </div>
+    )}
+
+    {/* LECTEUR PDF INTÉGRÉ */}
+    {pdfDoc && (
+      <div
+        style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(2,44,34,0.82)', zIndex: 99999, display: 'flex', flexDirection: 'column', padding: '16px' }}
+        onClick={() => setPdfDoc(null)}
+      >
+        <div
+          className="flex items-center justify-between"
+          style={{ padding: '10px 6px', color: '#fff', gap: '12px' }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <span style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+            <span>📄</span>
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600 }}>{pdfDoc.name || 'Document'}</span>
+          </span>
+          <span className="flex gap-2" style={{ flexShrink: 0 }}>
+            <a href={pdfProxy(pdfDoc.url)} target="_blank" rel="noreferrer" className="btn btn-sm" style={{ background: 'rgba(255,255,255,0.14)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)', padding: '6px 12px', fontSize: '0.8rem' }}>
+              Ouvrir dans un onglet ↗
+            </a>
+            <button onClick={() => setPdfDoc(null)} aria-label="Fermer" className="btn btn-sm" style={{ background: 'rgba(255,255,255,0.14)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)', padding: '6px 12px', fontSize: '0.8rem' }}>
+              ✕ Fermer
+            </button>
+          </span>
+        </div>
+        <iframe
+          src={pdfProxy(pdfDoc.url)}
+          title={pdfDoc.name || 'Document PDF'}
+          onClick={(e) => e.stopPropagation()}
+          style={{ flex: 1, width: '100%', border: 'none', borderRadius: 'var(--radius-md)', background: '#fff' }}
+        />
+      </div>
+    )}
+    </>
+  );
+}
+
+export default function MarcheDetailPage() {
+  return (
+    <main className="container section animate-fadeIn">
+      <div style={{ marginBottom: '30px' }}>
+        <Link href="/marches" className="text-green text-sm" style={{ fontWeight: 600 }}>← Retour à la liste</Link>
+      </div>
+      
+      <Suspense fallback={
+        <div className="text-center" style={{ padding: '80px 0' }}>
+          <span className="loader" style={{ width: '40px', height: '40px' }}></span>
+          <p className="text-secondary" style={{ marginTop: '16px' }}>Initialisation...</p>
+        </div>
+      }>
+        <DetailsContent />
+      </Suspense>
+    </main>
+  );
+}

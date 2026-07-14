@@ -16,6 +16,7 @@ import PaymentsSection from '@/components/admin/sections/PaymentsSection';
 import MarchesSection from '@/components/admin/sections/MarchesSection';
 import ScraperSection from '@/components/admin/sections/ScraperSection';
 import CouponsSection from '@/components/admin/sections/CouponsSection';
+import BroadcastSection from '@/components/admin/sections/BroadcastSection';
 import layout from '@/components/admin/adminLayout.module.css';
 
 const ADMIN_EMAIL = 'zidadesire20@gmail.com';
@@ -27,6 +28,7 @@ const SECTION_META = {
   users: { title: 'Utilisateurs & Abonnements', sub: 'Gérez les PME inscrites et leurs abonnements' },
   payments: { title: 'Paiements', sub: 'Validez les demandes de paiement par reçu' },
   coupons: { title: 'Coupons promotionnels', sub: 'Créez et gérez les codes de réduction' },
+  broadcast: { title: 'Diffusions (Relance)', sub: 'Envoyez des messages ciblés à vos utilisateurs' },
   marches: { title: 'Marchés', sub: 'Consultez et gérez les marchés en base' },
   scraper: { title: 'Extraction', sub: 'Pilotez le robot d\'aspiration des sources' },
 };
@@ -273,6 +275,7 @@ export default function AdminPage() {
     { id: 'users', icon: '👥', label: 'Utilisateurs' },
     { id: 'payments', icon: '💳', label: 'Paiements', badge: pendingCount },
     { id: 'coupons', icon: '🎟️', label: 'Coupons' },
+    { id: 'broadcast', icon: '📢', label: 'Diffusions' },
     { id: 'marches', icon: '📄', label: 'Marchés', badge: marchesList.length, badgeMuted: true },
     { id: 'scraper', icon: '🤖', label: 'Extraction' },
   ];
@@ -305,6 +308,7 @@ export default function AdminPage() {
           {section === 'users' && <UsersSection users={usersList} processingUser={processingUser} onUpdateSubscription={handleUpdateSubscription} onDeleteUser={handleDeleteUser} onSuspend={handleSuspend} events={events} />}
           {section === 'payments' && <PaymentsSection requests={paymentRequests} onAction={handleRequestAction} onViewScreenshot={setSelectedScreenshot} />}
           {section === 'coupons' && <CouponsSection />}
+          {section === 'broadcast' && <BroadcastSection users={usersList} />}
           {section === 'marches' && <MarchesSection marches={marchesList} onDelete={handleDeleteMarche} />}
           {section === 'scraper' && <ScraperSection scraping={scraping} scrapeLogs={scrapeLogs} onScrape={handleForceScrape} />}
         </main>

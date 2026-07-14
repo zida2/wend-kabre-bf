@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import LiveFeed from '@/components/client/LiveFeed';
+import LeadMagnet from '@/components/client/LeadMagnet';
 
 // ─────────────────────────────────────────────────────────────────────
 // Données : Étapes de procédure réelles pour chaque type de marché
@@ -153,6 +154,8 @@ export default function Home() {
               </div>
             ))}
           </div>
+
+          <LeadMagnet />
         </div>
       </section>
 
