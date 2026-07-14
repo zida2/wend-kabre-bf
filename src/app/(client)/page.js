@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import LiveFeed from '@/components/client/LiveFeed';
 import LeadMagnet from '@/components/client/LeadMagnet';
+import TestimonialsSection from '@/components/client/TestimonialsSection';
 
 // ─────────────────────────────────────────────────────────────────────
 // Données : Étapes de procédure réelles pour chaque type de marché
@@ -358,40 +359,9 @@ export default function Home() {
       </section>
 
       {/* ════════════════════════════════════════════
-          SECTION TÉMOIGNAGES
+          SECTION TÉMOIGNAGES (DYNAMIC)
       ════════════════════════════════════════════ */}
-      <section className="section">
-        <div className="container">
-          <div className="text-center" style={{ marginBottom: '52px' }}>
-            <span className="badge badge-accent" style={{ marginBottom: '16px' }}>⭐ Vos Avis</span>
-            <h2 className="heading-lg" style={{ marginBottom: '16px' }}>
-              Ils gagnent des marchés avec nous
-            </h2>
-            <p className="lead mx-auto" style={{ maxWidth: '580px' }}>
-              Découvrez les retours des entrepreneurs burkinabè qui utilisent déjà Wend-Kabré pour développer leur chiffre d'affaires.
-            </p>
-          </div>
-
-          <div className="grid grid-3 gap-6">
-            {TESTIMONIALS.map((testi, i) => (
-              <div key={i} className={`card-glass hover-lift animate-fadeInUp delay-${(i % 5) + 1}`} style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div className="flex gap-1">
-                  {[...Array(testi.rating)].map((_, j) => (
-                    <span key={j} style={{ color: '#F59E0B', fontSize: '1.2rem' }}>★</span>
-                  ))}
-                </div>
-                <p className="text-secondary" style={{ lineHeight: 1.7, fontStyle: 'italic', flex: 1 }}>
-                  "{testi.content}"
-                </p>
-                <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '16px', marginTop: 'auto' }}>
-                  <p style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{testi.name}</p>
-                  <p className="text-muted text-xs">{testi.role}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TestimonialsSection />
 
       {/* ════════════════════════════════════════════
           SECTION URGENCE / CTA FINAL
