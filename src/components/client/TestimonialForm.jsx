@@ -34,7 +34,7 @@ export default function TestimonialForm() {
         setFormData({ name: '', role: '', content: '', rating: 5 });
       }, 3000);
     } catch (error) {
-      console.error('Erreur lors de la soumission de l\\'avis:', error);
+      console.error("Erreur lors de la soumission de l'avis:", error);
       alert('Une erreur est survenue.');
     } finally {
       setLoading(false);
