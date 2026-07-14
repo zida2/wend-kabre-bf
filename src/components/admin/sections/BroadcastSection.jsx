@@ -77,7 +77,7 @@ export default function BroadcastSection({ users }) {
                 onClick={() => {
                   const phones = targetUsers.map(u => u.phone).filter(Boolean).join(', ');
                   navigator.clipboard.writeText(phones);
-                  alert('Numéros copiés !\\nCréez une Liste de Diffusion sur l\\'application WhatsApp de votre téléphone et collez ces numéros pour envoyer le message à tout le monde en une seule fois sans payer d\\'API.');
+                  alert("Numéros copiés !\\nCréez une Liste de Diffusion sur l'application WhatsApp de votre téléphone et collez ces numéros pour envoyer le message à tout le monde en une seule fois sans payer d'API.");
                 }}
                 className="btn btn-sm hover-lift" 
                 style={{ background: '#25D366', color: '#fff', border: 'none' }}
