@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import layout from '../adminLayout.module.css';
 
 export default function BroadcastSection({ users }) {
-  const [message, setMessage] = useState('Bonjour !\nNous avons détecté de nouveaux marchés dans votre secteur d\'activité. Connectez-vous sur Wend-Kabré pour les découvrir.');
+  const [message, setMessage] = useState('Cher(e) Partenaire,\n\nNous vous informons que de nouveaux appels d\'offres stratégiques correspondant à votre secteur d\'activité viennent d\'être publiés sur Wend-Kabré.\n\nConnectez-vous dès maintenant à votre espace pour consulter le cahier des charges et utiliser notre Assistant IA pour préparer votre dossier de soumission technique.\n\nCordialement,\nL\'équipe Wend-Kabré');
   const [sectorFilter, setSectorFilter] = useState('');
 
   // Extract unique sectors from users to build filter options
