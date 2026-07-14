@@ -23,6 +23,8 @@ export default function DashboardPage() {
   const [matchingMarches, setMatchingMarches] = useState([]);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileForm, setProfileForm] = useState({ name: '', rccm: '', ifu: '', phone: '' });
 
   const SUGGESTED_KEYWORDS = ['Informatique', 'BTP', 'Fournitures', 'Recrutement', 'Consultant', 'Sécurité', 'Nettoyage'];
 
@@ -44,6 +46,12 @@ export default function DashboardPage() {
         if (userSnap.exists()) {
           const data = userSnap.data();
           setUserData(data);
+          setProfileForm({ 
+            name: data.name || '', 
+            rccm: data.rccm || '', 
+            ifu: data.ifu || '', 
+            phone: data.phone || '' 
+          });
           // Source de vérité unique : alertPrefs.keywords (migration douce depuis l'ancien champ racine data.keywords)
           setKeywords(data.alertPrefs?.keywords || data.keywords || []);
           
@@ -164,6 +172,27 @@ export default function DashboardPage() {
     }
   };
 
+  const saveProfileSettings = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await updateDoc(doc(db, 'users', user.uid), {
+        name: profileForm.name,
+        rccm: profileForm.rccm,
+        ifu: profileForm.ifu,
+        phone: profileForm.phone
+      });
+      setUserData(prev => ({ ...prev, ...profileForm }));
+      setShowProfileModal(false);
+      showToast('Profil mis à jour avec succès !', 'success');
+    } catch (err) {
+      console.error(err);
+      showToast('Erreur lors de la mise à jour du profil.', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   // --- CRM Logic ---
   const [crmMarches, setCrmMarches] = useState([]);
 
@@ -277,9 +306,9 @@ export default function DashboardPage() {
             <h4 style={{ color: 'var(--danger)', fontWeight: 700, marginBottom: '4px' }}>🚨 Urgence : Profil incomplet</h4>
             <p className="text-sm text-secondary">Renseignez votre N° RCCM et votre IFU pour pouvoir utiliser le Générateur de Devis Universel.</p>
           </div>
-          <Link href="/dashboard" className="btn btn-sm" style={{ background: 'var(--danger)', color: '#fff', border: 'none' }}>
+          <button onClick={() => setShowProfileModal(true)} className="btn btn-sm" style={{ background: 'var(--danger)', color: '#fff', border: 'none', cursor: 'pointer' }}>
             Compléter mon profil
-          </Link>
+          </button>
         </div>
       )}
 
@@ -692,6 +721,43 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* MODALE DE PROFIL */}
+      {showProfileModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(5px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 99999
+        }}>
+          <div className="card animate-fadeInUp" style={{ maxWidth: '450px', width: '90%', position: 'relative' }}>
+            <h2 className="heading-md" style={{ color: 'var(--primary)', marginBottom: '16px' }}>Compléter mon profil</h2>
+            <form onSubmit={saveProfileSettings} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label className="text-sm font-bold text-secondary" style={{ display: 'block', marginBottom: '8px' }}>Nom de l'entreprise</label>
+                <input type="text" className="form-input" style={{ width: '100%', background: 'var(--color-surface-2)', color: 'var(--text-primary)', border: '1px solid var(--color-border)' }} value={profileForm.name} onChange={e => setProfileForm({...profileForm, name: e.target.value})} placeholder="Ex: Mon Entreprise SARL" required />
+              </div>
+              <div>
+                <label className="text-sm font-bold text-secondary" style={{ display: 'block', marginBottom: '8px' }}>Numéro RCCM</label>
+                <input type="text" className="form-input" style={{ width: '100%', background: 'var(--color-surface-2)', color: 'var(--text-primary)', border: '1px solid var(--color-border)' }} value={profileForm.rccm} onChange={e => setProfileForm({...profileForm, rccm: e.target.value})} placeholder="Ex: BF OUA 2023 B..." />
+              </div>
+              <div>
+                <label className="text-sm font-bold text-secondary" style={{ display: 'block', marginBottom: '8px' }}>IFU</label>
+                <input type="text" className="form-input" style={{ width: '100%', background: 'var(--color-surface-2)', color: 'var(--text-primary)', border: '1px solid var(--color-border)' }} value={profileForm.ifu} onChange={e => setProfileForm({...profileForm, ifu: e.target.value})} placeholder="Ex: 0000000X" />
+              </div>
+              <div>
+                <label className="text-sm font-bold text-secondary" style={{ display: 'block', marginBottom: '8px' }}>Téléphone (WhatsApp)</label>
+                <input type="text" className="form-input" style={{ width: '100%', background: 'var(--color-surface-2)', color: 'var(--text-primary)', border: '1px solid var(--color-border)' }} value={profileForm.phone} onChange={e => setProfileForm({...profileForm, phone: e.target.value})} placeholder="Ex: +226 70 00 00 00" />
+              </div>
+              <div className="flex gap-4" style={{ marginTop: '16px' }}>
+                <button type="button" className="btn btn-outline flex-1" onClick={() => setShowProfileModal(false)}>Annuler</button>
+                <button type="submit" className="btn btn-primary flex-1" disabled={saving}>{saving ? 'Sauvegarde...' : 'Sauvegarder'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
