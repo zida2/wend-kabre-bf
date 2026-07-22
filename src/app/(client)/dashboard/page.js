@@ -276,8 +276,8 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container animate-fadeIn" style={{ padding: '60px 20px' }}>
-      <div className="flex justify-between items-center" style={{ marginBottom: '24px' }}>
+    <div className="container section animate-fadeIn">
+      <div className="flex justify-between items-center flex-wrap gap-4" style={{ marginBottom: '24px' }}>
         <h1 className="heading-lg">
           {userData?.name ? `Espace PME — ${userData.name}` : 'Mon Espace PME'}
         </h1>
@@ -370,7 +370,7 @@ export default function DashboardPage() {
         </div>
 
         {/* COL 2 & 3: Alertes et Mots clés */}
-        <div className="card" style={{ gridColumn: 'span 2' }}>
+        <div className="card col-span-2">
           <div className="flex items-center gap-2" style={{ marginBottom: '16px' }}>
             <span style={{ fontSize: '1.5rem' }}>🔔</span>
             <h3 className="heading-md">Configuration des Alertes (WhatsApp & Email)</h3>
@@ -596,7 +596,7 @@ export default function DashboardPage() {
                 {crmMarches.filter(m => m.crmStatus === 'soumis').map(m => (
                   <div key={m.id} style={{ background: 'var(--color-bg)', padding: '12px', borderRadius: '6px', border: '1px solid var(--color-border)' }}>
                     <h5 className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px' }}>{m.title}</h5>
-                    <div className="flex justify-between items-center" style={{ marginTop: '12px' }}>
+                    <div className="flex justify-between items-center flex-wrap" style={{ marginTop: '12px', gap: '8px' }}>
                       <Link href={`/marches/details?id=${m.id}`} className="text-xs" style={{ color: 'var(--green)', textDecoration: 'underline' }}>Détails</Link>
                       <select 
                         className="form-input text-xs" 

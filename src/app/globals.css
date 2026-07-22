@@ -191,6 +191,10 @@ input, select, textarea { font-family: inherit; outline: none; border: none; }
 .grid-auto { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
 .grid-auto-sm { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
 
+@media (min-width: 769px) {
+  .col-span-2 { grid-column: span 2; }
+}
+
 .text-center { text-align: center; }
 .text-right  { text-align: right; }
 .w-full      { width: 100%; }
