@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -11,7 +11,7 @@ import {
   AlertTriangle, ArrowLeft, Save, Printer, Mail
 } from 'lucide-react';
 
-export default function DossierPage() {
+function DossierContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const marcheId = searchParams.get('id');
@@ -566,5 +566,18 @@ export default function DossierPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function DossierPage() {
+  return (
+    <Suspense fallback={
+      <div className="container section" style={{ textAlign: 'center', padding: '100px 20px' }}>
+        <span className="loader" style={{ width: '40px', height: '40px' }}></span>
+        <p className="text-secondary" style={{ marginTop: '16px' }}>Chargement...</p>
+      </div>
+    }>
+      <DossierContent />
+    </Suspense>
   );
 }
