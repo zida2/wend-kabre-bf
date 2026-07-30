@@ -58,10 +58,22 @@ service cloud.firestore {
     // ── Dossiers de marchés : réservés au propriétaire ───────────────
     // Chaque dossier est identifié par {userId}_{marcheId}
     match /dossiers/{dossierId} {
-      allow read:   if isSignedIn() && request.auth.uid == resource.data.userId;
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow update: if isSignedIn() && request.auth.uid == resource.data.userId;
-      allow delete: if isSignedIn() && request.auth.uid == resource.data.userId;
+      // Lecture : autorisée si l'utilisateur est authentifié ET que le dossierId commence par son UID
+      // Cela permet de lire même si le document n'existe pas encore (resource.data sera null)
+      allow read:   if isSignedIn() && dossierId.matches(request.auth.uid + '_.*');
+      
+      // Création : l'utilisateur doit être authentifié et le userId dans le document doit correspondre
+      allow create: if isSignedIn() 
+                    && request.resource.data.userId == request.auth.uid
+                    && dossierId == request.auth.uid + '_' + request.resource.data.marcheId;
+      
+      // Mise à jour : vérifier que l'utilisateur est le propriétaire
+      allow update: if isSignedIn() 
+                    && resource.data.userId == request.auth.uid
+                    && request.resource.data.userId == request.auth.uid;
+      
+      // Suppression : uniquement le propriétaire
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
     }
 
     // ── Demandes de paiement (contiennent des reçus / PII) ───────────
