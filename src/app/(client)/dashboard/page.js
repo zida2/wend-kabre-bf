@@ -447,9 +447,14 @@ export default function DashboardPage() {
             <FileText size={24} color="var(--forest)" />
             <h3 className="heading-md">Mon Pipeline de Candidatures</h3>
           </div>
-          <Link href="/devis" className="btn btn-primary btn-sm">
-            Gérer mes Devis
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/guide-soumission" className="btn btn-outline btn-sm" style={{ color: 'var(--primary)', borderColor: 'var(--primary)' }}>
+              📖 Guide de Soumission
+            </Link>
+            <Link href="/devis" className="btn btn-primary btn-sm">
+              Gérer mes Devis
+            </Link>
+          </div>
         </div>
 
         <div className={styles.kanbanBoard}>

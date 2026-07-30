@@ -142,11 +142,14 @@ export default function ModelesArcopPage() {
           <CheckCircle size={20} color="var(--primary)" /> 
           À propos des modèles ARCOP
         </h3>
-        <p className="text-secondary text-sm" style={{ lineHeight: 1.6 }}>
+        <p className="text-secondary text-sm" style={{ lineHeight: 1.6, marginBottom: '20px' }}>
           L'Autorité de Régulation de la Commande Publique (ARCOP) exige que les dossiers de candidature respectent des formats stricts. 
           En utilisant ces générateurs, nous pré-remplissons les informations de votre entreprise (Nom, RCCM, IFU, Adresse) directement dans les canevas officiels.
           Cela réduit drastiquement les risques de rejet de votre offre pour "non-conformité administrative".
         </p>
+        <Link href="/guide-soumission" className="btn btn-primary">
+          📖 Voir le Guide complet de Dépôt ARCOP
+        </Link>
       </div>
 
     </div>
