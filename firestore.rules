@@ -55,6 +55,15 @@ service cloud.firestore {
       allow update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
     }
 
+    // ── Dossiers de marchés : réservés au propriétaire ───────────────
+    // Chaque dossier est identifié par {userId}_{marcheId}
+    match /dossiers/{dossierId} {
+      allow read:   if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow delete: if isSignedIn() && request.auth.uid == resource.data.userId;
+    }
+
     // ── Demandes de paiement (contiennent des reçus / PII) ───────────
     // Le propriétaire crée et lit ses propres demandes ; seul l'admin peut
     // les lister toutes et changer leur statut (validation manuelle).

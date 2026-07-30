@@ -182,6 +182,7 @@ export default function DashboardPage() {
 
   // CRM Logic
   const [crmMarches, setCrmMarches] = useState([]);
+  const [dossierProgress, setDossierProgress] = useState({});
 
   useEffect(() => {
     if (userData && userData.crm && allMarches.length > 0) {
@@ -198,6 +199,45 @@ export default function DashboardPage() {
       setCrmMarches([]);
     }
   }, [userData, allMarches]);
+
+  // Charger la progression des dossiers
+  useEffect(() => {
+    const loadDossierProgress = async () => {
+      if (!user || crmMarches.length === 0) return;
+      
+      const progressMap = {};
+      for (const m of crmMarches) {
+        if (m.crmStatus === 'preparation') {
+          try {
+            const dossierSnap = await getDoc(doc(db, 'dossiers', `${user.uid}_${m.id}`));
+            if (dossierSnap.exists()) {
+              const data = dossierSnap.data();
+              const checks = [
+                data.attestationImpots,
+                data.attestationCNSS,
+                data.attestationRCCM,
+                data.attestationIFU,
+                data.attestationARCOP,
+                data.lettresoumission,
+                data.declarationProbite,
+                data.enveloppe1Complete,
+                data.enveloppe2Complete,
+              ];
+              const completed = checks.filter(Boolean).length;
+              progressMap[m.id] = Math.round((completed / checks.length) * 100);
+            } else {
+              progressMap[m.id] = 0;
+            }
+          } catch (err) {
+            progressMap[m.id] = 0;
+          }
+        }
+      }
+      setDossierProgress(progressMap);
+    };
+    
+    loadDossierProgress();
+  }, [user, crmMarches]);
 
   const updateCrmStatus = async (marcheId, newStatus) => {
     if (!user) return;
@@ -492,8 +532,34 @@ export default function DashboardPage() {
             {crmMarches.filter(m => m.crmStatus === 'preparation').map(m => (
               <div key={m.id} className={styles.kanbanItem}>
                 <div className={styles.kanbanItemTitle}>{m.title}</div>
+                {dossierProgress[m.id] !== undefined && (
+                  <div style={{ marginTop: '8px', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                      <span className="text-xs text-muted">Progression</span>
+                      <span className="text-xs" style={{ fontWeight: 700, color: dossierProgress[m.id] === 100 ? 'var(--green)' : 'var(--accent)' }}>
+                        {dossierProgress[m.id]}%
+                      </span>
+                    </div>
+                    <div style={{ 
+                      height: '6px', 
+                      background: 'var(--color-surface-2)', 
+                      borderRadius: '50px',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        height: '100%',
+                        width: `${dossierProgress[m.id]}%`,
+                        background: dossierProgress[m.id] === 100 ? 'var(--green)' : 'var(--grad-accent)',
+                        transition: 'width 0.3s ease',
+                        borderRadius: '50px'
+                      }} />
+                    </div>
+                  </div>
+                )}
                 <div className={styles.kanbanActions}>
-                  <Link href={`/marches/details?id=${m.id}`} className="text-xs text-teal font-semibold hover-lift" style={{ textDecoration: 'underline' }}>Détails</Link>
+                  <Link href={`/marches/dossier?id=${m.id}`} className="btn btn-sm" style={{ background: 'var(--accent)', color: '#fff', padding: '6px 12px', fontSize: '0.75rem', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                    📁 Monter le dossier
+                  </Link>
                   <select 
                     className={styles.selectStatus}
                     value="preparation"
