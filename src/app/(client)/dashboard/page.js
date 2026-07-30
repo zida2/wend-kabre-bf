@@ -7,6 +7,11 @@ import { doc, getDoc, updateDoc, collection, getDocs, query, where } from 'fireb
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { recommendMarkets } from '@/lib/recommend';
+import { 
+  Bell, FileText, CheckCircle, TrendingUp, LogOut, AlertTriangle, 
+  Settings, X, Star, Clock, CheckSquare, Briefcase, Plus, Save
+} from 'lucide-react';
+import styles from './dashboard.module.css';
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
@@ -18,7 +23,7 @@ export default function DashboardPage() {
 
   const [keywords, setKeywords] = useState([]);
   const [newKeyword, setNewKeyword] = useState('');
-  const [toast, setToast] = useState(null); // { message: '', type: 'success' | 'error' }
+  const [toast, setToast] = useState(null); 
   const [allMarches, setAllMarches] = useState([]);
   const [matchingMarches, setMatchingMarches] = useState([]);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
@@ -52,18 +57,12 @@ export default function DashboardPage() {
             ifu: data.ifu || '', 
             phone: data.phone || '' 
           });
-          // Source de vérité unique : alertPrefs.keywords (migration douce depuis l'ancien champ racine data.keywords)
           setKeywords(data.alertPrefs?.keywords || data.keywords || []);
           
-          if (!data.hasSeenWelcome) {
-            setShowWelcomeModal(true);
-          }
-          if (!data.hasSeenUpdateModal) {
-            setShowUpdateModal(true);
-          }
+          if (!data.hasSeenWelcome) setShowWelcomeModal(true);
+          if (!data.hasSeenUpdateModal) setShowUpdateModal(true);
         }
 
-        // Vérifier si l'utilisateur a un paiement en attente
         const q = query(
           collection(db, 'payment_requests'), 
           where('userId', '==', currentUser.uid),
@@ -81,7 +80,6 @@ export default function DashboardPage() {
     return () => unsubscribe();
   }, [router]);
 
-  // Chargement des marchés de la base
   useEffect(() => {
     const fetchAllMarches = async () => {
       try {
@@ -90,17 +88,15 @@ export default function DashboardPage() {
         marchesSnap.forEach(d => {
           arr.push({ id: d.id, ...d.data() });
         });
-        // Trier par date de publication décroissante
         arr.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
         setAllMarches(arr);
       } catch (err) {
-        console.error("Error loading markets in dashboard:", err);
+        console.error("Error loading markets:", err);
       }
     };
     fetchAllMarches();
   }, []);
 
-  // Filtrage intelligent selon les mots-clés de l'utilisateur
   useEffect(() => {
     if (allMarches.length === 0) return;
     if (keywords.length > 0) {
@@ -116,7 +112,6 @@ export default function DashboardPage() {
       });
       setMatchingMarches(filtered);
     } else {
-      // Si aucun mot-clé, on montre les 5 derniers marchés publiés
       setMatchingMarches(allMarches.slice(0, 5));
     }
   }, [keywords, allMarches]);
@@ -132,16 +127,12 @@ export default function DashboardPage() {
       try {
         await updateDoc(doc(db, 'users', user.uid), { hasSeenWelcome: true });
         setUserData(prev => ({ ...prev, hasSeenWelcome: true }));
-      } catch (err) {
-        console.error("Erreur flag welcome", err);
-      }
+      } catch (err) {}
     }
   };
 
   const addKeyword = (kw) => {
-    if (kw && !keywords.includes(kw)) {
-      setKeywords([...keywords, kw]);
-    }
+    if (kw && !keywords.includes(kw)) setKeywords([...keywords, kw]);
     setNewKeyword('');
   };
 
@@ -153,19 +144,16 @@ export default function DashboardPage() {
     setSaving(true);
     try {
       const userDocRef = doc(db, 'users', user.uid);
-      // Écriture dans la source de vérité canonique partagée avec la page /alertes et le moteur d'alertes
       await updateDoc(userDocRef, {
         'alertPrefs.keywords': keywords,
         'alertPrefs.active': true,
       });
-      // Refléter localement pour rester cohérent avec /alertes
       setUserData(prev => ({
         ...prev,
         alertPrefs: { ...(prev?.alertPrefs || {}), keywords, active: true },
       }));
-      showToast('Vos préférences d\'alerte ont été sauvegardées avec succès !', 'success');
+      showToast('Vos préférences d\'alerte ont été sauvegardées !', 'success');
     } catch (err) {
-      console.error(err);
       showToast('Erreur lors de la sauvegarde.', 'error');
     } finally {
       setSaving(false);
@@ -186,14 +174,13 @@ export default function DashboardPage() {
       setShowProfileModal(false);
       showToast('Profil mis à jour avec succès !', 'success');
     } catch (err) {
-      console.error(err);
-      showToast('Erreur lors de la mise à jour du profil.', 'error');
+      showToast('Erreur lors de la mise à jour.', 'error');
     } finally {
       setSaving(false);
     }
   };
 
-  // --- CRM Logic ---
+  // CRM Logic
   const [crmMarches, setCrmMarches] = useState([]);
 
   useEffect(() => {
@@ -205,7 +192,6 @@ export default function DashboardPage() {
           crmList.push({ ...found, crmStatus: data.status, addedAt: data.addedAt });
         }
       }
-      // Trier par date d'ajout
       crmList.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
       setCrmMarches(crmList);
     } else {
@@ -217,19 +203,13 @@ export default function DashboardPage() {
     if (!user) return;
     try {
       const userRef = doc(db, 'users', user.uid);
-      const currentCrm = userData?.crm || {};
-      const newCrm = { ...currentCrm };
-      
-      if (newCrm[marcheId]) {
-        newCrm[marcheId].status = newStatus;
-      }
-
+      const newCrm = { ...(userData?.crm || {}) };
+      if (newCrm[marcheId]) newCrm[marcheId].status = newStatus;
       await updateDoc(userRef, { crm: newCrm });
       setUserData({ ...userData, crm: newCrm });
       showToast('Statut mis à jour !', 'success');
     } catch (e) {
-      console.error(e);
-      showToast('Erreur lors de la mise à jour.', 'error');
+      showToast('Erreur de mise à jour.', 'error');
     }
   };
 
@@ -237,20 +217,16 @@ export default function DashboardPage() {
     if (!user) return;
     try {
       const userRef = doc(db, 'users', user.uid);
-      const currentCrm = userData?.crm || {};
-      const newCrm = { ...currentCrm };
+      const newCrm = { ...(userData?.crm || {}) };
       delete newCrm[marcheId];
       await updateDoc(userRef, { crm: newCrm });
       setUserData({ ...userData, crm: newCrm });
       showToast('Marché retiré du suivi.', 'success');
     } catch (e) {
-      console.error(e);
-      showToast('Erreur lors de la suppression.', 'error');
+      showToast('Erreur de suppression.', 'error');
     }
   };
 
-  // --- Recommandations (§7) ---
-  // Profil dérivé des mots-clés (source de vérité alertPrefs.keywords) + secteur/région éventuels.
   const recommendedMarches = useMemo(() => {
     const profile = {
       keywords,
@@ -260,7 +236,6 @@ export default function DashboardPage() {
     return recommendMarkets(allMarches, profile, 6);
   }, [allMarches, keywords, userData]);
 
-  // Couleur du badge de compatibilité selon le score.
   const scoreColor = (score) => {
     if (score >= 70) return { bg: 'var(--success-muted)', color: 'var(--green)', border: 'var(--green)' };
     if (score >= 40) return { bg: 'var(--accent-muted)', color: 'var(--gold)', border: 'rgba(217,119,6,0.4)' };
@@ -275,20 +250,33 @@ export default function DashboardPage() {
     );
   }
 
+  // Count active CRM items
+  const favorisCount = crmMarches.filter(m => m.crmStatus === 'favoris').length;
+  const prepCount = crmMarches.filter(m => m.crmStatus === 'preparation').length;
+  const soumisCount = crmMarches.filter(m => m.crmStatus === 'soumis').length;
+
   return (
-    <div className="container section animate-fadeIn">
-      <div className="flex justify-between items-center flex-wrap gap-4" style={{ marginBottom: '24px' }}>
-        <h1 className="heading-lg">
-          {userData?.name ? `Espace PME — ${userData.name}` : 'Mon Espace PME'}
+    <div className={styles.dashboardContainer}>
+      
+      <div className={styles.header}>
+        <h1 className={styles.pageTitle}>
+          Tableau de bord {userData?.name ? `— ${userData.name}` : ''}
         </h1>
-        <button onClick={handleLogout} className="btn btn-outline">Se déconnecter</button>
+        <div className="flex gap-3">
+          <button onClick={() => setShowProfileModal(true)} className="btn btn-outline" title="Paramètres">
+            <Settings size={18} /> Profil
+          </button>
+          <button onClick={handleLogout} className="btn btn-outline" title="Se déconnecter">
+            <LogOut size={18} />
+          </button>
+        </div>
       </div>
 
       {(!userData?.isSubscribed && !pendingPayment) && (
         <div style={{ background: 'var(--accent-muted)', borderLeft: '4px solid var(--accent)', padding: '16px 24px', borderRadius: 'var(--radius-sm)', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', boxShadow: 'var(--shadow-gold)' }}>
           <div>
             <h4 style={{ color: 'var(--accent)', fontWeight: 800, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '1.2rem' }}>⏱️</span> Offre de Bienvenue : Pass Essai à 2 500 FCFA
+              <Star size={20} /> Offre de Bienvenue : Pass Essai à 2 500 FCFA
             </h4>
             <p className="text-sm" style={{ color: 'var(--text-primary)' }}>
               Débloquez l'assistant IA et maximisez vos chances de remporter vos premiers marchés.
@@ -301,86 +289,64 @@ export default function DashboardPage() {
       )}
 
       {(!userData?.rccm || !userData?.ifu) && (
-        <div style={{ background: 'var(--danger-muted)', borderLeft: '4px solid var(--danger)', padding: '16px 24px', borderRadius: 'var(--radius-sm)', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ background: 'var(--danger-muted)', borderLeft: '4px solid var(--danger)', padding: '16px 24px', borderRadius: 'var(--radius-sm)', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <h4 style={{ color: 'var(--danger)', fontWeight: 700, marginBottom: '4px' }}>🚨 Urgence : Profil incomplet</h4>
-            <p className="text-sm text-secondary">Renseignez votre N° RCCM et votre IFU pour pouvoir utiliser le Générateur de Devis Universel.</p>
+            <h4 style={{ color: 'var(--danger)', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <AlertTriangle size={18} /> Profil incomplet
+            </h4>
+            <p className="text-sm text-secondary">Renseignez votre N° RCCM et votre IFU pour générer des devis valides.</p>
           </div>
-          <button onClick={() => setShowProfileModal(true)} className="btn btn-sm" style={{ background: 'var(--danger)', color: '#fff', border: 'none', cursor: 'pointer' }}>
+          <button onClick={() => setShowProfileModal(true)} className="btn btn-sm" style={{ background: 'var(--danger)', color: '#fff' }}>
             Compléter mon profil
           </button>
         </div>
       )}
 
-      <div className="grid grid-3 gap-8">
-        
-        {/* COL 1: Profil & Statut */}
-        <div className="card" style={{ height: 'fit-content' }}>
-          <h3 className="heading-md" style={{ marginBottom: '16px' }}>
-            {userData?.name ? `Profil de ${userData.name}` : 'Mon Profil'}
-          </h3>
-          <p className="text-secondary text-sm" style={{ marginBottom: '8px' }}>
-            <strong>Email :</strong> {user?.email}
-          </p>
-          <div style={{ marginBottom: '24px' }}>
-            <strong>Statut : </strong>
-            {userData?.isSubscribed ? (
-              <>
-                <span className="badge badge-gold" style={{ marginLeft: '8px' }}>Premium Actif</span>
-                {userData.subscriptionExpiresAt && (
-                  <div style={{ marginTop: '12px', fontSize: '0.85rem', color: 'var(--green)', background: 'var(--success-muted)', padding: '8px', borderRadius: '4px', border: '1px solid var(--green)' }}>
-                    ⏳ Expire le : <strong>{new Date(userData.subscriptionExpiresAt).toLocaleDateString('fr-FR')}</strong>
-                    <br/>(Reste {Math.ceil((new Date(userData.subscriptionExpiresAt) - new Date()) / (1000 * 60 * 60 * 24))} jours)
-                  </div>
-                )}
-              </>
-            ) : (
-              <span className="badge badge-gray" style={{ marginLeft: '8px' }}>Compte Gratuit</span>
-            )}
+      {/* --- STATS GRID --- */}
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <div className={`${styles.statIconWrapper} ${styles.blue}`}>
+            <Briefcase size={26} />
           </div>
-
-          {!userData?.isSubscribed && pendingPayment && (
-            <div style={{ background: 'var(--accent-muted)', padding: '16px', borderRadius: '8px', border: '1px solid rgba(217,119,6,0.3)', marginTop: '20px' }}>
-              <h4 className="text-gold text-sm" style={{ marginBottom: '8px', fontWeight: 'bold' }}>⏳ Approbation en attente</h4>
-              <p className="text-xs text-secondary" style={{ marginBottom: '12px' }}>
-                Votre reçu est en cours d'analyse manuelle par notre équipe. Votre compte Premium sera activé d'ici quelques minutes.
-              </p>
-            </div>
-          )}
-
-          {!userData?.isSubscribed && !pendingPayment && (
-            <div style={{ background: 'var(--success-muted)', padding: '16px', borderRadius: '8px', border: '1px solid var(--green)', marginTop: '20px', textAlign: 'center' }}>
-              <h4 className="text-green text-sm" style={{ marginBottom: '8px', fontWeight: 'bold' }}>🚀 Passez à la vitesse supérieure</h4>
-              <p className="text-xs text-secondary" style={{ marginBottom: '12px' }}>
-                Débloquez le Studio de Candidature IA et les alertes WhatsApp instantanées pour multiplier vos chances.
-              </p>
-              <Link href="/tarifs" className="btn btn-primary w-full text-center" style={{ padding: '10px', fontSize: '0.9rem' }}>
-                S'abonner maintenant
-              </Link>
-            </div>
-          )}
-
-          <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--color-border)' }}>
-            <h4 className="heading-sm" style={{ marginBottom: '12px' }}>🛠️ Outils Pratiques</h4>
-            <Link href="/devis" className="btn btn-outline w-full text-center" style={{ padding: '12px', justifyContent: 'center', display: 'flex', gap: '8px' }}>
-              📄 Créer un Devis Rapide
-            </Link>
+          <div className={styles.statContent}>
+            <span className={styles.statValue}>{matchingMarches.length}</span>
+            <span className={styles.statLabel}>Marchés correspondants</span>
           </div>
-
         </div>
 
-        {/* COL 2 & 3: Alertes et Mots clés */}
-        <div className="card col-span-2">
+        <div className={styles.statCard}>
+          <div className={`${styles.statIconWrapper} ${styles.gold}`}>
+            <Star size={26} />
+          </div>
+          <div className={styles.statContent}>
+            <span className={styles.statValue}>{crmMarches.length}</span>
+            <span className={styles.statLabel}>Candidatures suivies</span>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <div className={`${styles.statIconWrapper} ${styles.primary}`}>
+            <CheckCircle size={26} />
+          </div>
+          <div className={styles.statContent}>
+            <span className={styles.statValue}>{soumisCount}</span>
+            <span className={styles.statLabel}>Dossiers Soumis</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-3 gap-8">
+        {/* COL 1: Profil & Alertes */}
+        <div className="card col-span-1" style={{ height: 'fit-content' }}>
           <div className="flex items-center gap-2" style={{ marginBottom: '16px' }}>
-            <span style={{ fontSize: '1.5rem' }}>🔔</span>
-            <h3 className="heading-md">Configuration des Alertes (WhatsApp & Email)</h3>
+            <Bell size={24} color="var(--primary)" />
+            <h3 className="heading-md">Mots-clés & Alertes</h3>
           </div>
           <p className="text-secondary text-sm" style={{ marginBottom: '24px' }}>
-            Ajoutez les catégories ou mots-clés de votre secteur d'activité. Notre moteur cherchera ces termes dans les nouveaux appels d'offres et vous préviendra instantanément.
+            Mots-clés surveillés par notre IA pour vos alertes WhatsApp et Email.
           </p>
 
-          <div style={{ marginBottom: '24px' }}>
-            <label className="text-sm text-secondary" style={{ display: 'block', marginBottom: '8px' }}>Suggestions rapides :</label>
+          <div style={{ marginBottom: '20px' }}>
             <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
               {SUGGESTED_KEYWORDS.map(sk => (
                 <button 
@@ -395,361 +361,240 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="flex gap-2" style={{ marginBottom: '24px' }}>
+          <div className="flex gap-2" style={{ marginBottom: '16px' }}>
             <input 
               type="text" 
-              placeholder="Ex: Fourniture de bureau, Forage..."
+              placeholder="Ex: Fourniture..."
               value={newKeyword}
               onChange={(e) => setNewKeyword(e.target.value)}
               className="form-input"
-              style={{ flex: 1, color: 'var(--text-primary)', backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-border-strong)' }}
+              style={{ flex: 1, padding: '10px', fontSize: '0.9rem' }}
               onKeyDown={(e) => e.key === 'Enter' && addKeyword(newKeyword)}
             />
-            <button onClick={() => addKeyword(newKeyword)} className="btn btn-outline" style={{ borderColor: 'var(--green)', color: 'var(--green)' }}>
-              Ajouter
+            <button onClick={() => addKeyword(newKeyword)} className="btn btn-outline" style={{ padding: '10px', borderColor: 'var(--green)', color: 'var(--green)' }}>
+              <Plus size={18} />
             </button>
           </div>
 
-          <div style={{ minHeight: '100px', background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px', border: '1px solid var(--color-border)', marginBottom: '24px' }}>
+          <div style={{ minHeight: '80px', background: 'var(--color-surface-2)', padding: '12px', borderRadius: '8px', border: '1px solid var(--color-border)', marginBottom: '24px' }}>
             {keywords.length === 0 ? (
-              <p className="text-center text-sm" style={{ marginTop: '20px', color: 'var(--text-muted)' }}>Vous n'avez aucun mot-clé configuré.</p>
+              <p className="text-center text-xs" style={{ marginTop: '20px', color: 'var(--text-muted)' }}>Aucun mot-clé configuré.</p>
             ) : (
-              <div className="flex gap-3" style={{ flexWrap: 'wrap' }}>
+              <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
                 {keywords.map(kw => (
-                  <div key={kw} className="badge flex items-center gap-2" style={{ background: 'var(--green)', color: "#fff", padding: '6px 12px' }}>
+                  <div key={kw} className="badge flex items-center gap-1" style={{ background: 'var(--green)', color: "#fff", padding: '4px 10px' }}>
                     {kw}
-                    <button onClick={() => removeKeyword(kw)} aria-label={`Retirer ${kw}`} style={{ background: 'none', border: 'none', color: "#fff", cursor: 'pointer', fontWeight: 'bold' }}>✕</button>
+                    <button onClick={() => removeKeyword(kw)} aria-label={`Retirer ${kw}`} style={{ background: 'none', border: 'none', color: "#fff", cursor: 'pointer', marginLeft: '4px' }}><X size={14}/></button>
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          <button 
-            onClick={savePreferences} 
-            className="btn btn-primary w-full text-center"
-            disabled={saving}
-          >
-            {saving ? 'Sauvegarde...' : '💾 Sauvegarder mes alertes'}
+          <button onClick={savePreferences} className="btn btn-primary w-full text-center" disabled={saving}>
+            <Save size={18} /> {saving ? 'Sauvegarde...' : 'Sauvegarder'}
           </button>
         </div>
 
-      </div>
-
-      {/* SECTION : MARCHÉS RECOMMANDÉS (§7) */}
-      <div className="card" style={{ marginTop: '40px' }}>
-        <div className="flex items-center gap-2" style={{ marginBottom: '8px' }}>
-          <span style={{ fontSize: '1.5rem' }}>✨</span>
-          <h3 className="heading-md">Marchés recommandés pour vous</h3>
-        </div>
-        <p className="text-secondary text-sm" style={{ marginBottom: '24px' }}>
-          Sélection personnalisée selon vos mots-clés, avec un score de compatibilité calculé automatiquement.
-        </p>
-
-        {keywords.length === 0 ? (
-          <p className="text-secondary text-sm text-center" style={{ padding: '40px', background: 'var(--color-surface-2)', borderRadius: '8px' }}>
-            Configurez vos mots-clés ci-dessus pour recevoir des recommandations de marchés adaptées à votre activité.
-          </p>
-        ) : recommendedMarches.length === 0 ? (
-          <p className="text-secondary text-sm text-center" style={{ padding: '40px', background: 'var(--color-surface-2)', borderRadius: '8px' }}>
-            Aucun marché correspondant pour l'instant. Nous vous préviendrons dès qu'une opportunité pertinente sera publiée.
-          </p>
-        ) : (
-          <div className="grid grid-3 gap-6">
-            {recommendedMarches.map((m) => {
-              const c = scoreColor(m.score);
-              return (
-                <div key={m.id} style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column' }}>
-                  <div className="flex justify-between items-center gap-2" style={{ marginBottom: '12px' }}>
-                    <span className="badge" style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}`, fontWeight: 'bold' }}>
-                      {m.score}% compatible
-                    </span>
-                    {m.urgence && m.urgence !== 'Non datée' && m.urgence !== 'Normal' && (
-                      <span className="badge" style={{ background: (m.urgence === 'Urgent' ? 'var(--danger)' : 'var(--gold)'), color: '#fff', fontSize: '0.7rem' }}>
-                        {m.urgence === 'Urgent' ? '🔴 Urgent' : '🟠 Bientôt'}
+        {/* COL 2 & 3: Recommandations */}
+        <div className="card col-span-2">
+          <div className="flex items-center gap-2" style={{ marginBottom: '24px' }}>
+            <TrendingUp size={24} color="var(--accent)" />
+            <h3 className="heading-md">Marchés Recommandés</h3>
+          </div>
+          
+          {keywords.length === 0 ? (
+            <div style={{ padding: '40px', background: 'var(--color-surface-2)', borderRadius: '8px', textAlign: 'center' }}>
+              <p className="text-secondary text-sm">
+                Configurez vos mots-clés pour recevoir des recommandations adaptées.
+              </p>
+            </div>
+          ) : recommendedMarches.length === 0 ? (
+            <div style={{ padding: '40px', background: 'var(--color-surface-2)', borderRadius: '8px', textAlign: 'center' }}>
+              <p className="text-secondary text-sm">Aucun marché récent ne correspond à vos mots-clés.</p>
+            </div>
+          ) : (
+            <div className="grid grid-2 gap-6">
+              {recommendedMarches.map((m) => {
+                const c = scoreColor(m.score);
+                return (
+                  <div key={m.id} style={{ background: 'var(--color-surface-2)', padding: '20px', borderRadius: '12px', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column' }}>
+                    <div className="flex justify-between items-center gap-2" style={{ marginBottom: '12px' }}>
+                      <span className="badge" style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}` }}>
+                        {m.score}% de match
                       </span>
-                    )}
+                      {m.urgence === 'Urgent' && (
+                        <span className="badge" style={{ background: 'var(--danger)', color: '#fff', fontSize: '0.7rem' }}>🔴 Urgent</span>
+                      )}
+                    </div>
+                    <h5 className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px', lineHeight: '1.4' }}>{m.title}</h5>
+                    <p className="text-xs text-secondary" style={{ marginBottom: '16px' }}>{m.secteur || m.category}</p>
+                    <Link href={`/marches/details?id=${m.id}`} className="btn btn-outline text-center" style={{ marginTop: 'auto', padding: '8px', fontSize: '0.85rem' }}>
+                      Voir détails & Postuler
+                    </Link>
                   </div>
-                  <h5 className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px', lineHeight: '1.4' }}>{m.title}</h5>
-                  {(m.secteur || m.category) && (
-                    <p className="text-xs text-secondary" style={{ marginBottom: '12px' }}>
-                      {m.secteur || m.category}
-                    </p>
-                  )}
-                  {/* FOMO effect */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '16px', background: 'rgba(239, 68, 68, 0.08)', padding: '6px', borderRadius: '4px' }}>
-                    <span style={{ fontSize: '0.8rem' }}>🔥</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--danger)', fontWeight: '700' }}>
-                      {(m.id.charCodeAt(0) % 5) + 2} autres PME étudient ce marché
-                    </span>
-                  </div>
-                  <Link
-                    href={`/marches/details?id=${m.id}`}
-                    className="btn btn-outline text-center"
-                    style={{ marginTop: 'auto', padding: '8px', fontSize: '0.85rem' }}
-                  >
-                    Voir les détails
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* SECTION CRM : MON SUIVI DE CANDIDATURES (KANBAN) */}
+      {/* --- CRM KANBAN --- */}
       <div className="card" style={{ marginTop: '40px' }}>
-        <h3 className="heading-md" style={{ marginBottom: '24px' }}>📌 Mon Suivi de Candidatures</h3>
-        
-        {crmMarches.length === 0 ? (
-          <p className="text-secondary text-sm text-center" style={{ padding: '40px', background: 'var(--color-surface-2)', borderRadius: '8px' }}>
-            Vous ne suivez aucun marché pour le moment. Cliquez sur "🔖 Suivre ce marché" dans la page de détails d'un appel d'offres pour le retrouver ici.
-          </p>
-        ) : (
-          <div className="grid grid-3 gap-6">
-            
-            {/* Colonne 1: Favoris */}
-            <div style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px', borderTop: '4px solid var(--gold)' }}>
-              <h4 className="heading-sm" style={{ marginBottom: '16px', color: 'var(--gold)', display: 'flex', justifyContent: 'space-between' }}>
-                <span>⭐ Favoris</span>
-                <span className="badge" style={{ background: 'var(--color-border)' }}>{crmMarches.filter(m => m.crmStatus === 'favoris').length}</span>
-              </h4>
-              <div className="flex flex-col gap-4">
-                {crmMarches.filter(m => m.crmStatus === 'favoris').map(m => (
-                  <div key={m.id} style={{ background: 'var(--color-bg)', padding: '12px', borderRadius: '6px', border: '1px solid var(--color-border)' }}>
-                    <h5 className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px' }}>{m.title}</h5>
-                    <div className="flex justify-between items-center" style={{ marginTop: '12px', gap: '8px' }}>
-                      <Link href={`/marches/details?id=${m.id}`} className="text-xs" style={{ color: 'var(--gold)', textDecoration: 'underline' }}>Détails</Link>
-                      
-                      {!userData?.isSubscribed ? (
-                         <Link href="/tarifs" className="text-xs" style={{ background: 'var(--grad-accent)', color: '#fff', padding: '4px 8px', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', textAlign: 'center', flex: 1 }}>Rédiger (IA) 🪄</Link>
-                      ) : (
-                         <Link href={`/marches/details?id=${m.id}`} className="text-xs" style={{ background: 'var(--grad-primary)', color: '#fff', padding: '4px 8px', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', textAlign: 'center', flex: 1 }}>Rédiger (IA) 🪄</Link>
-                      )}
-                      
-                      <select 
-                        className="form-input text-xs" 
-                        style={{ padding: '4px', width: 'auto', background: 'var(--color-surface)', color: 'var(--text-primary)', border: '1px solid var(--gold)' }}
-                        value="favoris"
-                        onChange={(e) => {
-                          if (e.target.value === 'remove') removeCrm(m.id);
-                          else updateCrmStatus(m.id, e.target.value);
-                        }}
-                      >
-                        <option value="favoris">⭐ Favoris</option>
-                        <option value="preparation">⏳ En préparation</option>
-                        <option value="soumis">✅ Soumis</option>
-                        <option value="remove">❌ Retirer</option>
-                      </select>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Colonne 2: En préparation */}
-            <div style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px', borderTop: '4px solid #0D9488' }}>
-              <h4 className="heading-sm" style={{ marginBottom: '16px', color: '#0D9488', display: 'flex', justifyContent: 'space-between' }}>
-                <span>⏳ En préparation</span>
-                <span className="badge" style={{ background: 'var(--color-border)' }}>{crmMarches.filter(m => m.crmStatus === 'preparation').length}</span>
-              </h4>
-              <div className="flex flex-col gap-4">
-                {crmMarches.filter(m => m.crmStatus === 'preparation').map(m => (
-                  <div key={m.id} style={{ background: 'var(--color-bg)', padding: '12px', borderRadius: '6px', border: '1px solid var(--color-border)' }}>
-                    <h5 className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px' }}>{m.title}</h5>
-                    <div className="flex justify-between items-center" style={{ marginTop: '12px', gap: '8px' }}>
-                      <Link href={`/marches/details?id=${m.id}`} className="text-xs" style={{ color: '#0D9488', textDecoration: 'underline' }}>Détails</Link>
-                      
-                      {!userData?.isSubscribed ? (
-                         <Link href="/tarifs" className="text-xs" style={{ background: 'var(--grad-accent)', color: '#fff', padding: '4px 8px', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', textAlign: 'center', flex: 1 }}>Rédiger (IA) 🪄</Link>
-                      ) : (
-                         <Link href={`/marches/details?id=${m.id}`} className="text-xs" style={{ background: 'var(--grad-primary)', color: '#fff', padding: '4px 8px', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', textAlign: 'center', flex: 1 }}>Rédiger (IA) 🪄</Link>
-                      )}
-                      
-                      <select 
-                        className="form-input text-xs" 
-                        style={{ padding: '4px', width: 'auto', background: 'var(--color-surface)', color: 'var(--text-primary)', border: '1px solid #0D9488' }}
-                        value="preparation"
-                        onChange={(e) => {
-                          if (e.target.value === 'remove') removeCrm(m.id);
-                          else updateCrmStatus(m.id, e.target.value);
-                        }}
-                      >
-                        <option value="favoris">⭐ Favoris</option>
-                        <option value="preparation">⏳ En préparation</option>
-                        <option value="soumis">✅ Soumis</option>
-                        <option value="remove">❌ Retirer</option>
-                      </select>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Colonne 3: Soumis */}
-            <div style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px', borderTop: '4px solid var(--green)' }}>
-              <h4 className="heading-sm" style={{ marginBottom: '16px', color: 'var(--green)', display: 'flex', justifyContent: 'space-between' }}>
-                <span>✅ Soumis</span>
-                <span className="badge" style={{ background: 'var(--color-border)' }}>{crmMarches.filter(m => m.crmStatus === 'soumis').length}</span>
-              </h4>
-              <div className="flex flex-col gap-4">
-                {crmMarches.filter(m => m.crmStatus === 'soumis').map(m => (
-                  <div key={m.id} style={{ background: 'var(--color-bg)', padding: '12px', borderRadius: '6px', border: '1px solid var(--color-border)' }}>
-                    <h5 className="text-sm text-primary" style={{ fontWeight: 'bold', marginBottom: '8px' }}>{m.title}</h5>
-                    <div className="flex justify-between items-center flex-wrap" style={{ marginTop: '12px', gap: '8px' }}>
-                      <Link href={`/marches/details?id=${m.id}`} className="text-xs" style={{ color: 'var(--green)', textDecoration: 'underline' }}>Détails</Link>
-                      <select 
-                        className="form-input text-xs" 
-                        style={{ padding: '4px', width: 'auto', background: 'var(--color-surface)', color: 'var(--text-primary)', border: '1px solid var(--green)' }}
-                        value="soumis"
-                        onChange={(e) => {
-                          if (e.target.value === 'remove') removeCrm(m.id);
-                          else updateCrmStatus(m.id, e.target.value);
-                        }}
-                      >
-                        <option value="favoris">⭐ Favoris</option>
-                        <option value="preparation">⏳ En préparation</option>
-                        <option value="soumis">✅ Soumis</option>
-                        <option value="remove">❌ Retirer</option>
-                      </select>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
+        <div className="flex justify-between items-center flex-wrap gap-4" style={{ marginBottom: '16px' }}>
+          <div className="flex items-center gap-2">
+            <FileText size={24} color="var(--forest)" />
+            <h3 className="heading-md">Mon Pipeline de Candidatures</h3>
           </div>
-        )}
+          <Link href="/devis" className="btn btn-primary btn-sm">
+            Gérer mes Devis
+          </Link>
+        </div>
+
+        <div className={styles.kanbanBoard}>
+          
+          <div className={`${styles.kanbanColumn} ${styles.favoris}`}>
+            <div className={styles.kanbanHeader}>
+              <span className={styles.kanbanTitle}><Star size={18} /> Favoris</span>
+              <span className={styles.kanbanCount}>{favorisCount}</span>
+            </div>
+            {crmMarches.filter(m => m.crmStatus === 'favoris').map(m => (
+              <div key={m.id} className={styles.kanbanItem}>
+                <div className={styles.kanbanItemTitle}>{m.title}</div>
+                <div className={styles.kanbanActions}>
+                  <Link href={`/marches/details?id=${m.id}`} className="text-xs text-gold font-semibold hover-lift" style={{ textDecoration: 'underline' }}>Détails</Link>
+                  <select 
+                    className={styles.selectStatus}
+                    value="favoris"
+                    onChange={(e) => e.target.value === 'remove' ? removeCrm(m.id) : updateCrmStatus(m.id, e.target.value)}
+                  >
+                    <option value="favoris">Favoris</option>
+                    <option value="preparation">En préparation</option>
+                    <option value="soumis">Soumis</option>
+                    <option value="remove">Retirer ❌</option>
+                  </select>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className={`${styles.kanbanColumn} ${styles.preparation}`}>
+            <div className={styles.kanbanHeader}>
+              <span className={styles.kanbanTitle}><Clock size={18} /> En préparation</span>
+              <span className={styles.kanbanCount}>{prepCount}</span>
+            </div>
+            {crmMarches.filter(m => m.crmStatus === 'preparation').map(m => (
+              <div key={m.id} className={styles.kanbanItem}>
+                <div className={styles.kanbanItemTitle}>{m.title}</div>
+                <div className={styles.kanbanActions}>
+                  <Link href={`/marches/details?id=${m.id}`} className="text-xs text-teal font-semibold hover-lift" style={{ textDecoration: 'underline' }}>Détails</Link>
+                  <select 
+                    className={styles.selectStatus}
+                    value="preparation"
+                    onChange={(e) => e.target.value === 'remove' ? removeCrm(m.id) : updateCrmStatus(m.id, e.target.value)}
+                  >
+                    <option value="favoris">Favoris</option>
+                    <option value="preparation">En préparation</option>
+                    <option value="soumis">Soumis</option>
+                    <option value="remove">Retirer ❌</option>
+                  </select>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className={`${styles.kanbanColumn} ${styles.soumis}`}>
+            <div className={styles.kanbanHeader}>
+              <span className={styles.kanbanTitle}><CheckSquare size={18} /> Soumis</span>
+              <span className={styles.kanbanCount}>{soumisCount}</span>
+            </div>
+            {crmMarches.filter(m => m.crmStatus === 'soumis').map(m => (
+              <div key={m.id} className={styles.kanbanItem}>
+                <div className={styles.kanbanItemTitle}>{m.title}</div>
+                <div className={styles.kanbanActions}>
+                  <Link href={`/marches/details?id=${m.id}`} className="text-xs text-green font-semibold hover-lift" style={{ textDecoration: 'underline' }}>Détails</Link>
+                  <select 
+                    className={styles.selectStatus}
+                    value="soumis"
+                    onChange={(e) => e.target.value === 'remove' ? removeCrm(m.id) : updateCrmStatus(m.id, e.target.value)}
+                  >
+                    <option value="favoris">Favoris</option>
+                    <option value="preparation">En préparation</option>
+                    <option value="soumis">Soumis</option>
+                    <option value="remove">Retirer ❌</option>
+                  </select>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
       </div>
 
       {/* TOAST FLOTTANT */}
       {toast && (
-        <div style={{
-          position: 'fixed',
-          bottom: '30px',
-          right: '30px',
-          background: toast.type === 'success' ? 'var(--primary)' : 'var(--danger)',
-          color: '#fff',
-          padding: '14px 24px',
-          borderRadius: '8px',
-          boxShadow: '0 20px 40px rgba(6,78,59,0.25)',
-          zIndex: 100000,
-          fontWeight: '600',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          border: '1px solid var(--color-border)',
-        }} className="animate-fadeIn">
-          <span>{toast.type === 'success' ? '✅' : '❌'}</span>
-          <span style={{ fontSize: '0.9rem' }}>{toast.message}</span>
-          <button 
-            onClick={() => setToast(null)} 
-            style={{ background: 'none', border: 'none', color: '#fff', marginLeft: '12px', cursor: 'pointer', fontSize: '1rem', fontWeight: 'bold' }}
-          >
-            ✕
-          </button>
+        <div style={{ position: 'fixed', bottom: '30px', right: '30px', background: toast.type === 'success' ? 'var(--primary)' : 'var(--danger)', color: '#fff', padding: '14px 24px', borderRadius: '8px', boxShadow: '0 20px 40px rgba(6,78,59,0.25)', zIndex: 100000, display: 'flex', alignItems: 'center', gap: '12px' }} className="animate-fadeIn">
+          {toast.type === 'success' ? <CheckCircle size={18} /> : <AlertTriangle size={18} />}
+          <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{toast.message}</span>
+          <button onClick={() => setToast(null)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}><X size={18}/></button>
         </div>
       )}
 
       {/* WELCOME MODAL */}
       {showWelcomeModal && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(5px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 99999
-        }}>
-          <div className="card animate-fadeIn" style={{ maxWidth: '500px', width: '90%', position: 'relative', border: '1px solid var(--gold)' }}>
-            <h2 className="heading-md text-gold" style={{ marginBottom: '16px', textAlign: 'center' }}>
-              🎉 Bienvenue sur Wend-Kabré !
-            </h2>
-            <p className="text-secondary" style={{ marginBottom: '16px', lineHeight: '1.6' }}>
-              Nous sommes ravis de vous compter parmi nous, <strong>{userData?.name || 'cher partenaire'}</strong>. 
-              Notre système d'Intelligence Artificielle scrute en permanence les appels d'offres au Burkina Faso pour vous faire gagner du temps.
+        <div className={styles.modalOverlay}>
+          <div className={`card ${styles.modalContent}`}>
+            <h2 className="heading-md text-gold text-center" style={{ marginBottom: '16px' }}>Bienvenue sur Wend-Kabré ! 🎉</h2>
+            <p className="text-secondary text-sm" style={{ marginBottom: '16px' }}>
+              Notre IA scrute en permanence les appels d'offres au Burkina Faso pour vous.
             </p>
-            <div style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
-              <h4 style={{ marginBottom: '12px', color: 'var(--text-primary)' }}>Comment ça marche ?</h4>
-              <ul style={{ paddingLeft: '20px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-                <li style={{ marginBottom: '8px' }}><strong>1. Configurez vos mots-clés</strong> (ex: BTP, Informatique...) sur ce tableau de bord.</li>
-                <li style={{ marginBottom: '8px' }}><strong>2. Recevez des alertes ciblées</strong> sur WhatsApp et par Email.</li>
-                <li><strong>3. Suivez vos candidatures</strong> grâce à notre CRM intégré.</li>
-              </ul>
-            </div>
-            <p className="text-sm" style={{ color: 'var(--green)', marginBottom: '24px', textAlign: 'center', fontStyle: 'italic' }}>
-              N'hésitez pas à nous contacter pour profiter d'un essai Premium offert !
-            </p>
-            <button 
-              onClick={dismissWelcomeModal}
-              className="btn btn-primary"
-              style={{ width: '100%', padding: '12px', fontSize: '1rem' }}
-            >
-              J'ai compris, configurer mes mots-clés
-            </button>
+            <ul style={{ paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '24px' }}>
+              <li><strong>1. Configurez vos mots-clés</strong></li>
+              <li><strong>2. Recevez des alertes</strong> WhatsApp/Email</li>
+              <li><strong>3. Gérez vos devis et candidatures</strong></li>
+            </ul>
+            <button onClick={dismissWelcomeModal} className="btn btn-primary w-full">J'ai compris</button>
           </div>
         </div>
       )}
 
-      {/* MODALE DE MISE À JOUR */}
+      {/* UPDATE MODAL */}
       {showUpdateModal && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(5px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 99999
-        }}>
-          <div className="card animate-fadeInUp" style={{ maxWidth: '450px', textAlign: 'center', position: 'relative' }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎉</div>
-            <h2 className="heading-md" style={{ color: 'var(--green)', marginBottom: '16px' }}>Mise à jour terminée !</h2>
-            <p className="text-secondary" style={{ marginBottom: '24px', lineHeight: '1.6' }}>
-              Bonne nouvelle ! L'application est maintenant à jour et totalement fonctionnelle. Votre compte est actuellement en <strong>Mode Gratuit</strong>. Vous pouvez naviguer sur la plateforme et mettre à niveau votre forfait à tout moment pour accéder aux appels d'offres.
+        <div className={styles.modalOverlay}>
+          <div className={`card ${styles.modalContent} text-center`}>
+            <h2 className="heading-md text-green" style={{ marginBottom: '16px' }}>Mise à jour terminée !</h2>
+            <p className="text-secondary text-sm" style={{ marginBottom: '24px' }}>
+              Votre espace a été mis à jour avec le nouveau tableau de bord et le système de devis avancé.
             </p>
-            <button 
-              className="btn btn-primary" 
-              onClick={async () => {
-                setShowUpdateModal(false);
-                if (user) {
-                  await updateDoc(doc(db, 'users', user.uid), { 
-                    hasSeenUpdateModal: true
-                  });
-                  setUserData(prev => ({ ...prev, hasSeenUpdateModal: true }));
-                }
-              }}
-              style={{ width: '100%', padding: '14px' }}
-            >
-              C'est parti !
-            </button>
+            <button onClick={async () => { setShowUpdateModal(false); if (user) { await updateDoc(doc(db, 'users', user.uid), { hasSeenUpdateModal: true }); setUserData(prev => ({ ...prev, hasSeenUpdateModal: true })); } }} className="btn btn-primary w-full">Découvrir</button>
           </div>
         </div>
       )}
 
-      {/* MODALE DE PROFIL */}
+      {/* PROFILE MODAL */}
       {showProfileModal && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(5px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 99999
-        }}>
-          <div className="card animate-fadeInUp" style={{ maxWidth: '450px', width: '90%', position: 'relative' }}>
-            <h2 className="heading-md" style={{ color: 'var(--primary)', marginBottom: '16px' }}>Compléter mon profil</h2>
-            <form onSubmit={saveProfileSettings} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className={styles.modalOverlay}>
+          <div className={`card ${styles.modalContent}`}>
+            <h2 className="heading-md text-primary" style={{ marginBottom: '16px' }}>Mon Profil Entreprise</h2>
+            <form onSubmit={saveProfileSettings} className="flex flex-col gap-4">
               <div>
-                <label className="text-sm font-bold text-secondary" style={{ display: 'block', marginBottom: '8px' }}>Nom de l'entreprise</label>
-                <input type="text" className="form-input" style={{ width: '100%', background: 'var(--color-surface-2)', color: 'var(--text-primary)', border: '1px solid var(--color-border)' }} value={profileForm.name} onChange={e => setProfileForm({...profileForm, name: e.target.value})} placeholder="Ex: Mon Entreprise SARL" required />
+                <label className="text-sm font-bold text-secondary">Nom de l'entreprise</label>
+                <input type="text" className="form-input" value={profileForm.name} onChange={e => setProfileForm({...profileForm, name: e.target.value})} required />
               </div>
               <div>
-                <label className="text-sm font-bold text-secondary" style={{ display: 'block', marginBottom: '8px' }}>Numéro RCCM</label>
-                <input type="text" className="form-input" style={{ width: '100%', background: 'var(--color-surface-2)', color: 'var(--text-primary)', border: '1px solid var(--color-border)' }} value={profileForm.rccm} onChange={e => setProfileForm({...profileForm, rccm: e.target.value})} placeholder="Ex: BF OUA 2023 B..." />
+                <label className="text-sm font-bold text-secondary">Numéro RCCM</label>
+                <input type="text" className="form-input" value={profileForm.rccm} onChange={e => setProfileForm({...profileForm, rccm: e.target.value})} placeholder="BF OUA..." />
               </div>
               <div>
-                <label className="text-sm font-bold text-secondary" style={{ display: 'block', marginBottom: '8px' }}>IFU</label>
-                <input type="text" className="form-input" style={{ width: '100%', background: 'var(--color-surface-2)', color: 'var(--text-primary)', border: '1px solid var(--color-border)' }} value={profileForm.ifu} onChange={e => setProfileForm({...profileForm, ifu: e.target.value})} placeholder="Ex: 0000000X" />
+                <label className="text-sm font-bold text-secondary">IFU</label>
+                <input type="text" className="form-input" value={profileForm.ifu} onChange={e => setProfileForm({...profileForm, ifu: e.target.value})} placeholder="00012345Z" />
               </div>
               <div>
-                <label className="text-sm font-bold text-secondary" style={{ display: 'block', marginBottom: '8px' }}>Téléphone (WhatsApp)</label>
-                <input type="text" className="form-input" style={{ width: '100%', background: 'var(--color-surface-2)', color: 'var(--text-primary)', border: '1px solid var(--color-border)' }} value={profileForm.phone} onChange={e => setProfileForm({...profileForm, phone: e.target.value})} placeholder="Ex: +226 70 00 00 00" />
+                <label className="text-sm font-bold text-secondary">Téléphone</label>
+                <input type="text" className="form-input" value={profileForm.phone} onChange={e => setProfileForm({...profileForm, phone: e.target.value})} placeholder="+226..." />
               </div>
-              <div className="flex gap-4" style={{ marginTop: '16px' }}>
+              <div className="flex gap-4 mt-4">
                 <button type="button" className="btn btn-outline flex-1" onClick={() => setShowProfileModal(false)}>Annuler</button>
                 <button type="submit" className="btn btn-primary flex-1" disabled={saving}>{saving ? 'Sauvegarde...' : 'Sauvegarder'}</button>
               </div>
