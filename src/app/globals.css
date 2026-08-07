@@ -7,48 +7,48 @@
    ============================================= */
 :root {
   /* ── Fonds */
-  --color-bg:        #F7FDF9; /* blanc verdâtre */
-  --color-bg-2:      #ECFDF3; /* section alternée */
+  --color-bg:        #FFFFFF; /* blanc pur */
+  --color-bg-2:      #F8FAFC; /* gris très clair */
   --color-surface:   #FFFFFF;
-  --color-surface-2: #F3FBF6;
-  --color-surface-3: #E3F5EA;
+  --color-surface-2: #F8FAFC;
+  --color-surface-3: #F1F5F9;
 
   /* ── Bordures */
-  --color-border:       #DCEFE4;
-  --color-border-hover: #A7E3C0;
-  --color-border-strong:#C5E7D2;
+  --color-border:       #E2E8F0;
+  --color-border-hover: #CBD5E1;
+  --color-border-strong:#94A3B8;
 
   /* ── Primaire : Émeraude (boutons, accents, liens) */
   --primary:       #059669; /* emerald-600 */
   --primary-light: #10B981; /* emerald-500 */
   --primary-lighter:#34D399;/* emerald-400 */
   --primary-dark:  #047857; /* emerald-700 */
-  --primary-muted: rgba(5, 150, 105, 0.10);
+  --primary-muted: rgba(5, 150, 105, 0.08);
 
   /* ── Neutre corporate : Vert Forêt (titres, nav, texte fort) */
   --forest:        #064E3B; /* emerald-900 */
   --forest-light:  #065F46; /* emerald-800 */
   --forest-dark:   #022C22; /* emerald-950 */
-  --forest-muted:  rgba(6, 78, 59, 0.06);
+  --forest-muted:  rgba(6, 78, 59, 0.05);
 
   /* ── Accent rare : Ambre (mises en avant ponctuelles) */
   --accent:        #D97706; /* amber-600 */
   --accent-light:  #F59E0B; /* amber-500 */
-  --accent-muted:  rgba(217, 119, 6, 0.10);
-  --teal:          #0D9488; /* teal-600 — 3e accent (procédures) */
+  --accent-muted:  rgba(217, 119, 6, 0.08);
+  --teal:          #0D9488; /* teal-600 — usage limité */
 
   /* ── Statuts */
   --success:       #059669;
-  --success-muted: rgba(5, 150, 105, 0.10);
+  --success-muted: rgba(5, 150, 105, 0.08);
   --danger:        #DC2626;
-  --danger-muted:  rgba(220, 38, 38, 0.08);
+  --danger-muted:  rgba(220, 38, 38, 0.06);
   --warning:       #D97706;
 
-  /* ── Texte */
-  --text-primary:   #052e23; /* vert quasi-noir */
-  --text-secondary: #37544a;
-  --text-muted:     #5f7d71;
-  --text-invert:    #F7FDF9;
+  /* ── Texte (contraste WCAG AA minimum 4.5:1) */
+  --text-primary:   #1e293b; /* slate-800 - contraste 14:1 sur blanc */
+  --text-secondary: #475569; /* slate-600 - contraste 8:1 sur blanc */
+  --text-muted:     #64748b; /* slate-500 - contraste 6:1 sur blanc */
+  --text-invert:    #FFFFFF;
 
   /* ── Alias de compatibilité (anciens noms encore utilisés dans le code) */
   --gold:        var(--primary);
@@ -71,8 +71,8 @@
   --grad-forest:  linear-gradient(135deg, #065F46 0%, #064E3B 100%);
   --grad-blue:    linear-gradient(135deg, #065F46 0%, #064E3B 100%);
   --grad-accent:  linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-  --grad-surface: linear-gradient(180deg, #FFFFFF 0%, #F3FBF6 100%);
-  --grad-hero:    radial-gradient(ellipse 90% 65% at 50% -5%, rgba(5, 150, 105, 0.10) 0%, transparent 65%);
+  --grad-surface: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  --grad-hero:    radial-gradient(ellipse 90% 65% at 50% -5%, rgba(5, 150, 105, 0.06) 0%, transparent 65%);
 
   /* ── Ombres (douces, teintées vert, jamais noires dures) */
   --shadow-xs:     0 1px 2px rgba(6, 78, 59, 0.04);
@@ -423,12 +423,12 @@ input, select, textarea { font-family: inherit; outline: none; border: none; }
   line-height: 1.4;
 }
 
-.badge-gold  { background: var(--accent-muted);  color: var(--accent);      border: 1px solid rgba(217,119,6,0.22); }
-.badge-accent{ background: var(--accent-muted);  color: var(--accent);      border: 1px solid rgba(217,119,6,0.22); }
-.badge-blue  { background: var(--forest-muted);  color: var(--forest);      border: 1px solid rgba(6,78,59,0.18); }
-.badge-green { background: var(--success-muted); color: var(--primary-dark);border: 1px solid rgba(5,150,105,0.22); }
-.badge-red   { background: var(--danger-muted);  color: #B91C1C;            border: 1px solid rgba(220,38,38,0.2); }
-.badge-gray  { background: rgba(95,125,113,0.1); color: #47635a;            border: 1px solid rgba(95,125,113,0.2); }
+.badge-gold  { background: var(--accent-muted);  color: #92400E;            border: 1px solid rgba(217,119,6,0.20); }
+.badge-accent{ background: var(--accent-muted);  color: #92400E;            border: 1px solid rgba(217,119,6,0.20); }
+.badge-blue  { background: var(--forest-muted);  color: var(--forest);      border: 1px solid rgba(6,78,59,0.15); }
+.badge-green { background: var(--success-muted); color: var(--primary-dark);border: 1px solid rgba(5,150,105,0.20); }
+.badge-red   { background: var(--danger-muted);  color: #991B1B;            border: 1px solid rgba(220,38,38,0.18); }
+.badge-gray  { background: rgba(100,116,139,0.08); color: #334155;         border: 1px solid rgba(100,116,139,0.18); }
 
 /* =============================================
    FORMS
