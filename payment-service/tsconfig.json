@@ -15,5 +15,7 @@
     "declaration": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "prisma"]
+  // Les tests sont exécutés par Vitest (esbuild), pas par tsc : les inclure
+  // ferait échouer le build de production et enverrait du code de test dans dist/.
+  "exclude": ["node_modules", "dist", "prisma", "src/**/*.test.ts"]
 }
