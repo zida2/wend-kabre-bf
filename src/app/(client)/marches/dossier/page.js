@@ -6,10 +6,11 @@ import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
 import Link from 'next/link';
-import { 
-  FileText, CheckCircle, Download, ExternalLink, 
+import {
+  FileText, CheckCircle, Download, ExternalLink,
   AlertTriangle, ArrowLeft, Save, Printer, Mail
 } from 'lucide-react';
+import { PIECES_ADMINISTRATIVES, CHECKLIST_DEPOT, regleEnveloppe, VALIDITE_PIECES_MOIS } from '@/lib/arcop';
 
 function DossierContent() {
   const searchParams = useSearchParams();
@@ -24,22 +25,33 @@ function DossierContent() {
   const [toast, setToast] = useState(null);
 
   // État du dossier avec checklist
+  // Modèle aligné sur le référentiel ARCOP (cf. src/lib/arcop.js).
+  // Le suivi portait auparavant sur une « copie de l'IFU » et un « agrément
+  // ARCOP » qui ne figurent pas parmi les pièces exigées, tout en ignorant
+  // trois pièces qui, elles, le sont — un dossier à 100 % pouvait donc être
+  // rejeté au dépôt.
   const [dossier, setDossier] = useState({
-    // Pièces administratives
-    attestationImpots: false,
-    attestationCNSS: false,
-    attestationRCCM: false,
-    attestationIFU: false,
-    attestationARCOP: false,
-    
-    // Documents ARCOP générés
+    // Les six pièces administratives exigées
+    situationFiscale: false,
+    situationCotisante: false,
+    nonEngagementAJE: false,
+    reglementationTravail: false,
+    rccm: false,
+    nonFaillite: false,
+
+    // Documents à produire
     lettresoumission: false,
     declarationProbite: false,
-    
-    // Enveloppes
-    enveloppe1Complete: false,
-    enveloppe2Complete: false,
-    
+
+    // Blocs de la vérification avant dépôt
+    garantieSoumission: false,
+    preuvesReferences: false,
+    accordGroupement: false,
+    enGroupement: false,
+
+    // Pli (art. 101 : enveloppe unique hors prestations intellectuelles)
+    pliPrepare: false,
+
     // Notes personnelles
     notes: '',
   });
@@ -92,15 +104,15 @@ function DossierContent() {
   // Calcul de la progression
   const calculateProgress = () => {
     const checks = [
-      dossier.attestationImpots,
-      dossier.attestationCNSS,
-      dossier.attestationRCCM,
-      dossier.attestationIFU,
-      dossier.attestationARCOP,
+      ...PIECES_ADMINISTRATIVES.map((p) => dossier[p.id]),
       dossier.lettresoumission,
       dossier.declarationProbite,
-      dossier.enveloppe1Complete,
-      dossier.enveloppe2Complete,
+      dossier.garantieSoumission,
+      dossier.preuvesReferences,
+      // L'accord de groupement ne compte que si l'utilisateur soumissionne
+      // effectivement en groupement.
+      ...(dossier.enGroupement ? [dossier.accordGroupement] : []),
+      dossier.pliPrepare,
     ];
     const completed = checks.filter(Boolean).length;
     return Math.round((completed / checks.length) * 100);
@@ -271,21 +283,21 @@ function DossierContent() {
             {/* Attestation Impôts */}
             <div style={{ 
               padding: '16px', 
-              background: dossier.attestationImpots ? 'var(--success-muted)' : 'var(--color-surface-2)',
-              border: `1px solid ${dossier.attestationImpots ? 'var(--green)' : 'var(--color-border)'}`,
+              background: dossier.situationFiscale ? 'var(--success-muted)' : 'var(--color-surface-2)',
+              border: `1px solid ${dossier.situationFiscale ? 'var(--green)' : 'var(--color-border)'}`,
               borderRadius: '8px'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flex: 1 }}>
                   <input 
                     type="checkbox" 
-                    checked={dossier.attestationImpots}
-                    onChange={() => toggleCheck('attestationImpots')}
+                    checked={dossier.situationFiscale}
+                    onChange={() => toggleCheck('situationFiscale')}
                     style={{ width: '20px', height: '20px' }}
                   />
                   <span className="text-sm" style={{ fontWeight: 600 }}>Attestation de non-redevance fiscale</span>
                 </label>
-                {dossier.attestationImpots && <CheckCircle size={20} color="var(--green)" />}
+                {dossier.situationFiscale && <CheckCircle size={20} color="var(--green)" />}
               </div>
               <a 
                 href="https://esintax.impots.bf" 
@@ -301,21 +313,21 @@ function DossierContent() {
             {/* Attestation CNSS */}
             <div style={{ 
               padding: '16px', 
-              background: dossier.attestationCNSS ? 'var(--success-muted)' : 'var(--color-surface-2)',
-              border: `1px solid ${dossier.attestationCNSS ? 'var(--green)' : 'var(--color-border)'}`,
+              background: dossier.situationCotisante ? 'var(--success-muted)' : 'var(--color-surface-2)',
+              border: `1px solid ${dossier.situationCotisante ? 'var(--green)' : 'var(--color-border)'}`,
               borderRadius: '8px'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flex: 1 }}>
                   <input 
                     type="checkbox" 
-                    checked={dossier.attestationCNSS}
-                    onChange={() => toggleCheck('attestationCNSS')}
+                    checked={dossier.situationCotisante}
+                    onChange={() => toggleCheck('situationCotisante')}
                     style={{ width: '20px', height: '20px' }}
                   />
                   <span className="text-sm" style={{ fontWeight: 600 }}>Attestation CNSS à jour</span>
                 </label>
-                {dossier.attestationCNSS && <CheckCircle size={20} color="var(--green)" />}
+                {dossier.situationCotisante && <CheckCircle size={20} color="var(--green)" />}
               </div>
               <a 
                 href="https://www.cnss.bf" 
@@ -331,76 +343,59 @@ function DossierContent() {
             {/* RCCM */}
             <div style={{ 
               padding: '16px', 
-              background: dossier.attestationRCCM ? 'var(--success-muted)' : 'var(--color-surface-2)',
-              border: `1px solid ${dossier.attestationRCCM ? 'var(--green)' : 'var(--color-border)'}`,
+              background: dossier.rccm ? 'var(--success-muted)' : 'var(--color-surface-2)',
+              border: `1px solid ${dossier.rccm ? 'var(--green)' : 'var(--color-border)'}`,
               borderRadius: '8px'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flex: 1 }}>
                   <input 
                     type="checkbox" 
-                    checked={dossier.attestationRCCM}
-                    onChange={() => toggleCheck('attestationRCCM')}
+                    checked={dossier.rccm}
+                    onChange={() => toggleCheck('rccm')}
                     style={{ width: '20px', height: '20px' }}
                   />
                   <span className="text-sm" style={{ fontWeight: 600 }}>Copie du RCCM</span>
                 </label>
-                {dossier.attestationRCCM && <CheckCircle size={20} color="var(--green)" />}
+                {dossier.rccm && <CheckCircle size={20} color="var(--green)" />}
               </div>
               <p className="text-xs text-muted">Document délivré par le CEFORE ou le Guichet Unique</p>
             </div>
 
-            {/* IFU */}
-            <div style={{ 
-              padding: '16px', 
-              background: dossier.attestationIFU ? 'var(--success-muted)' : 'var(--color-surface-2)',
-              border: `1px solid ${dossier.attestationIFU ? 'var(--green)' : 'var(--color-border)'}`,
-              borderRadius: '8px'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flex: 1 }}>
-                  <input 
-                    type="checkbox" 
-                    checked={dossier.attestationIFU}
-                    onChange={() => toggleCheck('attestationIFU')}
-                    style={{ width: '20px', height: '20px' }}
-                  />
-                  <span className="text-sm" style={{ fontWeight: 600 }}>Copie de l'IFU</span>
-                </label>
-                {dossier.attestationIFU && <CheckCircle size={20} color="var(--green)" />}
-              </div>
-              <p className="text-xs text-muted">Identifiant Fiscal Unique</p>
-            </div>
+            {/* Pièces exigées qui manquaient au suivi : non engagement Trésor,
+                réglementation du travail, non faillite. */}
+            {PIECES_ADMINISTRATIVES
+              .filter((p) => ['nonEngagementAJE', 'reglementationTravail', 'nonFaillite'].includes(p.id))
+              .map((piece) => (
+                <div key={piece.id} style={{
+                  padding: '16px',
+                  background: dossier[piece.id] ? 'var(--success-muted)' : 'var(--color-surface-2)',
+                  border: `1px solid ${dossier[piece.id] ? 'var(--green)' : 'var(--color-border)'}`,
+                  borderRadius: '8px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flex: 1 }}>
+                      <input
+                        type="checkbox"
+                        checked={!!dossier[piece.id]}
+                        onChange={() => toggleCheck(piece.id)}
+                        style={{ width: '20px', height: '20px' }}
+                      />
+                      <span className="text-sm" style={{ fontWeight: 600 }}>{piece.label}</span>
+                    </label>
+                    {dossier[piece.id] && <CheckCircle size={20} color="var(--green)" />}
+                  </div>
+                  <p className="text-xs text-muted">Délivrée par : {piece.emetteur}</p>
+                </div>
+              ))}
 
-            {/* Agrément ARCOP */}
-            <div style={{ 
-              padding: '16px', 
-              background: dossier.attestationARCOP ? 'var(--success-muted)' : 'var(--color-surface-2)',
-              border: `1px solid ${dossier.attestationARCOP ? 'var(--green)' : 'var(--color-border)'}`,
-              borderRadius: '8px'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flex: 1 }}>
-                  <input 
-                    type="checkbox" 
-                    checked={dossier.attestationARCOP}
-                    onChange={() => toggleCheck('attestationARCOP')}
-                    style={{ width: '20px', height: '20px' }}
-                  />
-                  <span className="text-sm" style={{ fontWeight: 600 }}>Agrément ARCOP</span>
-                </label>
-                {dossier.attestationARCOP && <CheckCircle size={20} color="var(--green)" />}
-              </div>
-              <a 
-                href="https://www.arcop.bf" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="btn btn-outline btn-sm"
-                style={{ width: '100%', justifyContent: 'center', gap: '8px' }}
-              >
-                <ExternalLink size={16} /> Accéder à ARCOP
-              </a>
-            </div>
+            <p className="text-xs" style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>
+              <AlertTriangle size={12} className="inline mr-1" />
+              Ces pièces doivent dater de moins de {VALIDITE_PIECES_MOIS} mois au dépôt.
+              La liste exacte figurant dans le dossier d'appel à concurrence fait foi.
+            </p>
+
+            {/* Bloc retiré : « Agrément ARCOP » ne fait pas partie des pièces exigées. */}
           </div>
         </div>
 
@@ -480,53 +475,80 @@ function DossierContent() {
           <div className="card">
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <Mail size={24} color="var(--forest)" />
-              <h3 className="heading-md">Enveloppes</h3>
+              <h3 className="heading-md">Vérification avant dépôt</h3>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {/* Enveloppe 1 */}
-              <div style={{ 
-                padding: '16px', 
-                background: dossier.enveloppe1Complete ? 'var(--success-muted)' : 'var(--color-surface-2)',
-                border: `1px solid ${dossier.enveloppe1Complete ? 'var(--green)' : 'var(--color-border)'}`,
-                borderRadius: '8px'
-              }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '12px' }}>
-                  <input 
-                    type="checkbox" 
-                    checked={dossier.enveloppe1Complete}
-                    onChange={() => toggleCheck('enveloppe1Complete')}
-                    style={{ width: '20px', height: '20px' }}
-                  />
-                  <span className="text-sm" style={{ fontWeight: 600 }}>Enveloppe 1 — Documents Administratifs</span>
-                  {dossier.enveloppe1Complete && <CheckCircle size={20} color="var(--green)" />}
-                </label>
-                <p className="text-xs text-muted">
-                  Contient : Attestations (Impôts, CNSS, RCCM, IFU), Agrément ARCOP
-                </p>
-              </div>
+              {/* Les blocs 2 à 4 de la liste de contrôle officielle. Le bloc 1
+                  (pièces administratives) est suivi dans la colonne de gauche. */}
+              {CHECKLIST_DEPOT.filter((b) => b.id !== 'piecesAdministratives').map((bloc) => {
+                const estGroupement = bloc.id === 'accordGroupement';
+                const coche = !!dossier[bloc.id];
+                const inactif = estGroupement && !dossier.enGroupement;
+                return (
+                  <div key={bloc.id} style={{
+                    padding: '16px',
+                    background: coche && !inactif ? 'var(--success-muted)' : 'var(--color-surface-2)',
+                    border: `1px solid ${coche && !inactif ? 'var(--green)' : 'var(--color-border)'}`,
+                    borderRadius: '8px',
+                    opacity: inactif ? 0.55 : 1,
+                  }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: inactif ? 'default' : 'pointer', marginBottom: '8px' }}>
+                      <input
+                        type="checkbox"
+                        checked={coche}
+                        disabled={inactif}
+                        onChange={() => toggleCheck(bloc.id)}
+                        style={{ width: '20px', height: '20px' }}
+                      />
+                      <span className="text-sm" style={{ fontWeight: 600 }}>{bloc.titre}</span>
+                      {coche && !inactif && <CheckCircle size={20} color="var(--green)" />}
+                    </label>
+                    <p className="text-xs text-muted">{bloc.controle}</p>
+                    {estGroupement && (
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px', cursor: 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          checked={!!dossier.enGroupement}
+                          onChange={() => toggleCheck('enGroupement')}
+                        />
+                        <span className="text-xs text-muted">Je soumissionne en groupement</span>
+                      </label>
+                    )}
+                  </div>
+                );
+              })}
 
-              {/* Enveloppe 2 */}
-              <div style={{ 
-                padding: '16px', 
-                background: dossier.enveloppe2Complete ? 'var(--success-muted)' : 'var(--color-surface-2)',
-                border: `1px solid ${dossier.enveloppe2Complete ? 'var(--green)' : 'var(--color-border)'}`,
-                borderRadius: '8px'
-              }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '12px' }}>
-                  <input 
-                    type="checkbox" 
-                    checked={dossier.enveloppe2Complete}
-                    onChange={() => toggleCheck('enveloppe2Complete')}
-                    style={{ width: '20px', height: '20px' }}
-                  />
-                  <span className="text-sm" style={{ fontWeight: 600 }}>Enveloppe 2 — Offre Technique & Financière</span>
-                  {dossier.enveloppe2Complete && <CheckCircle size={20} color="var(--green)" />}
-                </label>
-                <p className="text-xs text-muted">
-                  Contient : Lettre de soumission, Déclaration de probité, Devis détaillé
-                </p>
-              </div>
+              {/* Pli — art. 101 du décret n°2024-1748 */}
+              {(() => {
+                const enveloppe = regleEnveloppe(marche?.natureArcop || 'TRAVAUX');
+                return (
+                  <div style={{
+                    padding: '16px',
+                    background: dossier.pliPrepare ? 'var(--success-muted)' : 'var(--color-surface-2)',
+                    border: `1px solid ${dossier.pliPrepare ? 'var(--green)' : 'var(--color-border)'}`,
+                    borderRadius: '8px'
+                  }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '8px' }}>
+                      <input
+                        type="checkbox"
+                        checked={!!dossier.pliPrepare}
+                        onChange={() => toggleCheck('pliPrepare')}
+                        style={{ width: '20px', height: '20px' }}
+                      />
+                      <span className="text-sm" style={{ fontWeight: 600 }}>
+                        {enveloppe.type === 'UNIQUE' ? 'Pli préparé (enveloppe unique)' : 'Plis préparés (double enveloppe)'}
+                      </span>
+                      {dossier.pliPrepare && <CheckCircle size={20} color="var(--green)" />}
+                    </label>
+                    <p className="text-xs text-muted">{enveloppe.resume}</p>
+                    <p className="text-xs" style={{ color: 'var(--text-muted)', marginTop: '6px', fontStyle: 'italic' }}>
+                      {enveloppe.article} du décret n°2024-1748. La double enveloppe
+                      technique/financière ne s'applique plus hors prestations intellectuelles.
+                    </p>
+                  </div>
+                );
+              })()}
             </div>
           </div>
 
