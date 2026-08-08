@@ -374,14 +374,14 @@ export default function TarifsPage() {
             left: 0, 
             width: '100%', 
             height: '100%',
-            backgroundColor: 'rgba(0,0,0,0.95)', 
+            backgroundColor: 'rgba(0,0,0,0.75)', 
             zIndex: 9999,
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center', 
             padding: '20px',
             overflowY: 'auto',
-            backdropFilter: 'blur(10px)'
+            backdropFilter: 'blur(8px)'
           }}
           onClick={() => {
             track('payment_abandon', { planId: selectedPlan.id });
@@ -394,9 +394,9 @@ export default function TarifsPage() {
             style={{ 
               width: '100%', 
               maxWidth: '520px',
-              background: 'linear-gradient(135deg, #0a0f1a 0%, #1a1f2e 100%)',
+              background: 'var(--color-bg-1)',
               border: `3px solid ${selectedPlan.borderColor}`,
-              boxShadow: `0 25px 70px rgba(0,0,0,0.6), 0 0 50px ${selectedPlan.borderColor}40`,
+              boxShadow: `0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px ${selectedPlan.borderColor}20`,
               borderRadius: '24px',
               position: 'relative',
               overflow: 'hidden'
@@ -408,10 +408,9 @@ export default function TarifsPage() {
               top: 0,
               left: 0,
               right: 0,
-              height: '300px',
-              background: `radial-gradient(ellipse at top, ${selectedPlan.borderColor}20, transparent)`,
-              pointerEvents: 'none',
-              animation: 'pulse 3s ease-in-out infinite'
+              height: '200px',
+              background: `linear-gradient(180deg, ${selectedPlan.borderColor}08, transparent)`,
+              pointerEvents: 'none'
             }} />
 
             {/* Header avec close button élégant */}
@@ -421,12 +420,12 @@ export default function TarifsPage() {
                   width: '48px',
                   height: '48px',
                   borderRadius: '12px',
-                  background: `linear-gradient(135deg, ${selectedPlan.borderColor}30, ${selectedPlan.borderColor}10)`,
+                  background: `linear-gradient(135deg, ${selectedPlan.borderColor}20, ${selectedPlan.borderColor}10)`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '24px',
-                  border: `2px solid ${selectedPlan.borderColor}50`
+                  border: `2px solid ${selectedPlan.borderColor}40`
                 }}>
                   💳
                 </div>
@@ -449,9 +448,9 @@ export default function TarifsPage() {
                   width: '40px',
                   height: '40px',
                   borderRadius: '10px',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: 'var(--text-muted)', 
+                  background: 'var(--color-surface-2)',
+                  border: '1px solid var(--color-border)',
+                  color: 'var(--text-secondary)', 
                   fontSize: '20px', 
                   cursor: 'pointer',
                   transition: 'all 0.2s',
@@ -460,15 +459,15 @@ export default function TarifsPage() {
                   justifyContent: 'center'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.background = 'rgba(239,68,68,0.15)';
-                  e.target.style.borderColor = 'rgba(239,68,68,0.3)';
+                  e.target.style.background = 'rgba(239,68,68,0.1)';
+                  e.target.style.borderColor = '#ef4444';
                   e.target.style.color = '#ef4444';
                   e.target.style.transform = 'scale(1.05)';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.background = 'rgba(255,255,255,0.05)';
-                  e.target.style.borderColor = 'rgba(255,255,255,0.1)';
-                  e.target.style.color = 'var(--text-muted)';
+                  e.target.style.background = 'var(--color-surface-2)';
+                  e.target.style.borderColor = 'var(--color-border)';
+                  e.target.style.color = 'var(--text-secondary)';
                   e.target.style.transform = 'scale(1)';
                 }}
               >
@@ -478,35 +477,24 @@ export default function TarifsPage() {
 
             {/* Plan card avec effet glassmorphism */}
             <div style={{ 
-              background: `linear-gradient(135deg, ${selectedPlan.borderColor}15, ${selectedPlan.borderColor}05)`,
-              backdropFilter: 'blur(20px)',
-              border: `1px solid ${selectedPlan.borderColor}40`, 
+              background: `linear-gradient(135deg, ${selectedPlan.borderColor}12, ${selectedPlan.borderColor}05)`,
+              border: `2px solid ${selectedPlan.borderColor}30`, 
               padding: '28px', 
               borderRadius: '20px', 
               marginBottom: '32px', 
               textAlign: 'center',
               position: 'relative',
               overflow: 'hidden',
-              boxShadow: `inset 0 1px 1px ${selectedPlan.borderColor}20`
+              boxShadow: `0 4px 20px ${selectedPlan.borderColor}10`
             }}>
-              {/* Effet shine */}
-              <div style={{
-                position: 'absolute',
-                top: '-50%',
-                left: '-50%',
-                width: '200%',
-                height: '200%',
-                background: 'linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent)',
-                animation: 'shine 3s ease-in-out infinite'
-              }} />
               
-              <div style={{ fontSize: '3rem', marginBottom: '12px', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))' }}>
+              <div style={{ fontSize: '3rem', marginBottom: '12px' }}>
                 {selectedPlan.icon}
               </div>
               <p className="text-xs" style={{ color: selectedPlan.color, marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>
                 Vous souscrivez au
               </p>
-              <h3 className="heading-lg" style={{ color: selectedPlan.color, marginBottom: '16px', textShadow: `0 2px 20px ${selectedPlan.borderColor}40` }}>
+              <h3 className="heading-lg" style={{ color: selectedPlan.color, marginBottom: '16px' }}>
                 {selectedPlan.name}
               </h3>
               <div style={{ 
@@ -519,12 +507,7 @@ export default function TarifsPage() {
                 <span style={{ 
                   fontSize: '3rem', 
                   fontWeight: 900, 
-                  color: '#fff',
-                  textShadow: '0 4px 30px rgba(0,0,0,0.5)',
-                  background: `linear-gradient(135deg, ${selectedPlan.borderColor}, ${selectedPlan.color})`,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
+                  color: selectedPlan.color
                 }}>
                   {formatPrice(parseInt(getPrice(selectedPlan).replace(/\s/g, ''), 10))}
                 </span>
@@ -540,9 +523,8 @@ export default function TarifsPage() {
 
             {/* Money Fusion features card */}
             <div style={{
-              background: 'rgba(255,255,255,0.03)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--color-surface-2)',
+              border: '2px solid var(--color-border)',
               borderRadius: '16px',
               padding: '24px',
               marginBottom: '24px',
@@ -554,7 +536,7 @@ export default function TarifsPage() {
                 gap: '12px', 
                 marginBottom: '16px',
                 paddingBottom: '16px',
-                borderBottom: '1px solid rgba(255,255,255,0.1)'
+                borderBottom: '1px solid var(--color-border)'
               }}>
                 <div style={{
                   width: '36px',
@@ -570,7 +552,7 @@ export default function TarifsPage() {
                   🔒
                 </div>
                 <div style={{ flex: 1 }}>
-                  <strong style={{ color: '#fff', display: 'block', marginBottom: '2px', fontSize: '1rem' }}>
+                  <strong style={{ color: 'var(--text-primary)', display: 'block', marginBottom: '2px', fontSize: '1rem' }}>
                     Paiement sécurisé Money Fusion
                   </strong>
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0 }}>
@@ -595,9 +577,9 @@ export default function TarifsPage() {
                     alignItems: 'center',
                     gap: '8px',
                     padding: '10px 12px',
-                    background: 'rgba(255,255,255,0.03)',
+                    background: 'var(--color-bg-2)',
                     borderRadius: '10px',
-                    border: '1px solid rgba(255,255,255,0.05)'
+                    border: '1px solid var(--color-border)'
                   }}>
                     <span style={{ fontSize: '16px' }}>{item.icon}</span>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
@@ -611,10 +593,9 @@ export default function TarifsPage() {
             {/* Message d'erreur moderne */}
             {errorMessage && (
               <div style={{
-                background: 'linear-gradient(135deg, rgba(239,68,68,0.15), rgba(220,38,38,0.1))',
-                backdropFilter: 'blur(10px)',
-                border: '2px solid rgba(239,68,68,0.4)',
-                color: '#fca5a5',
+                background: 'rgba(239,68,68,0.1)',
+                border: '2px solid rgba(239,68,68,0.3)',
+                color: '#dc2626',
                 padding: '16px 20px',
                 borderRadius: '14px',
                 marginBottom: '24px',
@@ -626,10 +607,10 @@ export default function TarifsPage() {
               }}>
                 <span style={{ fontSize: '20px', flexShrink: 0 }}>⚠️</span>
                 <div style={{ flex: 1 }}>
-                  <strong style={{ display: 'block', marginBottom: '4px', color: '#fca5a5' }}>
+                  <strong style={{ display: 'block', marginBottom: '4px', color: '#dc2626' }}>
                     Erreur de paiement
                   </strong>
-                  <span style={{ color: '#fecaca' }}>{errorMessage}</span>
+                  <span style={{ color: '#ef4444' }}>{errorMessage}</span>
                 </div>
               </div>
             )}
@@ -716,9 +697,9 @@ export default function TarifsPage() {
             {/* Footer avec mentions légales */}
             <div style={{
               padding: '16px',
-              background: 'rgba(255,255,255,0.02)',
+              background: 'var(--color-surface-2)',
               borderRadius: '12px',
-              border: '1px solid rgba(255,255,255,0.05)'
+              border: '1px solid var(--color-border)'
             }}>
               <p style={{ 
                 fontSize: '0.7rem', 
@@ -741,14 +722,6 @@ export default function TarifsPage() {
 
           {/* Animations CSS */}
           <style jsx>{`
-            @keyframes pulse {
-              0%, 100% { opacity: 0.5; }
-              50% { opacity: 0.8; }
-            }
-            @keyframes shine {
-              0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-              100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-            }
             @keyframes shake {
               0%, 100% { transform: translateX(0); }
               25% { transform: translateX(-10px); }
