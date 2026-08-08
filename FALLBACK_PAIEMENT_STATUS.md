@@ -187,65 +187,253 @@ Conversion /contact: X%
 
 ## 🔧 Validation manuelle des paiements OCR
 
-### Process admin à implémenter
+### Dashboard Admin Amélioré ✅
 
-1. **Dashboard admin** → Section "Paiements en attente"
-2. **Liste des payment_requests** avec `status: PENDING`
-3. **Pour chaque demande** :
-   - Afficher screenshot
-   - Vérifier montant, date, numéro
-   - Valider ✓ ou rejeter ✗
-4. **Si validé** :
-   - Créer transaction dans `payment_transactions`
-   - Activer abonnement user
-   - Mettre à jour `payment_requests.status = APPROVED`
-   - Envoyer email confirmation
-5. **Si rejeté** :
-   - Mettre à jour `payment_requests.status = REJECTED`
-   - Envoyer email avec raison
+Le dashboard admin a été **amélioré** avec une interface complète pour gérer les paiements OCR :
 
-### Code exemple validation
+#### 1. **Section Paiements (`/admin` → Paiements)**
+
+**Statistiques en temps réel** :
+- ⏳ **Nombre en attente** : Demandes à valider
+- ✓ **Nombre validés** : Historique des paiements approuvés
+- ✕ **Nombre rejetés** : Demandes refusées
+- 💰 **Total validé** : Somme en FCFA des paiements approuvés
+
+**Tableau des paiements avec** :
+- 👤 **Utilisateur** : Nom + Email
+- 📅 **Date de demande** : Format court + heure
+- 💳 **Plan & Montant** : Badge plan + montant formaté
+- 📱 **Méthode** : Orange Money 🟠 / Moov Money 🔵 avec icône
+- 🖼️ **Preuve** : Bouton "Voir" pour screenshot + info fichier (nom, taille)
+- 🏷️ **Statut** : Badge coloré (En attente / Validé / Rejeté) + date de traitement
+- ⚙️ **Actions** : 
+  - Bouton "✓ Approuver" (vert)
+  - Bouton "✕ Rejeter" (rouge)
+  - Disposés en colonne pour meilleure lisibilité
+
+**Box d'instructions** (visible si paiements en attente) :
+```
+💡 Instructions de validation
+Orange Money : 62 20 28 77 • Moov Money : 06 13 90 16
+Vérifiez le montant, la date et le numéro de destinataire sur la preuve de paiement avant validation.
+```
+
+**Filtres** :
+- 📊 **Par statut** : En attente / Validé / Rejeté
+- 💳 **Par méthode** : Orange Money / Moov Money / Money Fusion
+- 🔍 **Recherche** : Par nom, email ou plan
+
+**Tri et pagination** :
+- Tri par date, statut, utilisateur
+- 15 résultats par page
+
+#### 2. **Workflow de Validation**
+
+Quand l'admin clique sur **"✓ Approuver"** :
+
+1. ✅ **Mise à jour Firestore `payment_requests`** :
+   ```javascript
+   {
+     status: "approved",
+     processedAt: "2026-08-08T15:30:00Z",
+     processedBy: "admin@wend-kabre.com"
+   }
+   ```
+
+2. 🎯 **Activation automatique de l'abonnement** :
+   - **Starter / Free** → 7 jours
+   - **Premium** → 30 jours
+   - **Enterprise** → 365 jours (1 an)
+   
+3. 📝 **Création log d'audit admin** :
+   ```javascript
+   {
+     action: "payment_approved",
+     message: "Paiement OCR validé — 15000 FCFA — user@example.com",
+     target: "payment_request_id",
+     targetUser: "user_id",
+     amount: 15000,
+     plan: "premium",
+     createdAt: Timestamp
+   }
+   ```
+
+4. 📧 **Email de confirmation** (TODO) :
+   - Template "payment-approved"
+   - Variables : nom, plan, montant, durée, date
+   - Lien vers dashboard
+
+5. 🎉 **Toast succès** :
+   ```
+   ✅ Paiement validé ! Abonnement PREMIUM activé pour 30 jours.
+   ```
+
+Quand l'admin clique sur **"✕ Rejeter"** :
+
+1. ❌ **Mise à jour Firestore** :
+   ```javascript
+   {
+     status: "rejected",
+     processedAt: "2026-08-08T15:30:00Z",
+     processedBy: "admin@wend-kabre.com"
+   }
+   ```
+
+2. 📝 **Log d'audit** :
+   ```javascript
+   {
+     action: "payment_rejected",
+     message: "Paiement OCR rejeté — 15000 FCFA — user@example.com",
+     ...
+   }
+   ```
+
+3. 📧 **Email de rejet** (TODO) :
+   - Template "payment-rejected"
+   - Raison du rejet
+   - Lien pour soumettre nouveau paiement
+
+4. ℹ️ **Toast info** :
+   ```
+   🚫 Demande de paiement rejetée.
+   ```
+
+#### 3. **Modale Screenshot**
+
+Quand l'admin clique sur **"👁️ Voir"** :
+- Overlay avec flou backdrop
+- Image centrée, max 70vh
+- Bouton fermer en haut à droite
+- Titre "Reçu de paiement"
+
+#### 4. **Données Firestore**
+
+Collection : `payment_requests`
+
+**Avant validation** :
 ```javascript
-// pages/api/admin/validate-payment.ts
-export async function POST(req) {
-  const { requestId, action } = await req.json();
-  
-  if (action === 'approve') {
-    // 1. Récupérer payment_request
-    const request = await getDoc(doc(db, 'payment_requests', requestId));
-    
-    // 2. Créer transaction SUCCESS
-    await addDoc(collection(db, 'payment_transactions'), {
-      userId: request.userId,
-      amount: request.amount,
-      planId: request.plan,
-      status: 'SUCCESS',
-      paymentMethod: 'ORANGE_MONEY_MANUAL',
-      reference: `WK-MANUAL-${Date.now()}`,
-      createdAt: new Date()
-    });
-    
-    // 3. Activer abonnement
-    await updateDoc(doc(db, 'users', request.userId), {
-      subscriptionPlan: request.plan,
-      subscriptionStatus: 'ACTIVE',
-      subscriptionStartDate: new Date()
-    });
-    
-    // 4. Update request
-    await updateDoc(doc(db, 'payment_requests', requestId), {
-      status: 'APPROVED',
-      processedAt: new Date()
-    });
-    
-    // 5. Envoyer email
-    await sendEmail({
-      to: request.userEmail,
-      subject: 'Paiement validé - Wend-Kabré',
-      template: 'payment-approved'
-    });
-  }
+{
+  id: "auto-generated-id",
+  userId: "user-firebase-id",
+  userEmail: "user@example.com",
+  plan: "PREMIUM",
+  amount: 15000,
+  paymentMethod: "ORANGE_MONEY_OCR", // ou MOOV_MONEY_OCR
+  status: "PENDING",
+  screenshot: "https://firebasestorage...",
+  screenshotName: "screenshot.jpg",
+  screenshotSize: 245678,
+  createdAt: Timestamp,
+  processedAt: null,
+  processedBy: null,
+  notes: "En attente de validation manuelle - Système OCR temporaire"
 }
+```
+
+**Après validation** :
+```javascript
+{
+  // ... mêmes champs
+  status: "approved", // ou "rejected"
+  processedAt: Timestamp,
+  processedBy: "zidadesire20@gmail.com"
+}
+```
+
+---
+
+### Process admin détaillé
+
+1. **Recevoir notification** (TODO)
+   - Email admin : "Nouveau paiement à valider"
+   - Badge rouge sur section Paiements dans sidebar
+
+2. **Ouvrir dashboard admin** 
+   - https://wend-kabre-bf.vercel.app/admin
+   - Connexion avec compte admin
+   - Cliquer sur "💳 Paiements" dans sidebar
+
+3. **Consulter la liste**
+   - Voir statistiques rapides en haut
+   - Filtrer par "En attente" si besoin
+   - Trier par date (plus récent en premier)
+
+4. **Pour chaque demande en attente** :
+   - Cliquer sur "👁️ Voir" pour ouvrir screenshot
+   - **Vérifier** :
+     * ✅ Le montant correspond au plan
+     * ✅ La date est récente (< 7 jours)
+     * ✅ Le numéro de destinataire est correct :
+       - Orange Money : **62 20 28 77**
+       - Moov Money : **06 13 90 16**
+     * ✅ Le message SMS est clair et complet
+     * ✅ L'utilisateur existe et l'email correspond
+
+5. **Valider ou Rejeter**
+   - Si tout est OK → Cliquer "✓ Approuver"
+   - Si problème → Cliquer "✕ Rejeter"
+   - Attendre le toast de confirmation
+   - Vérifier que le statut passe à "Validé" ou "Rejeté"
+
+6. **Notification utilisateur** (TODO)
+   - Email automatique envoyé
+   - User reçoit confirmation ou raison du rejet
+
+---
+
+### Code exemple validation (déjà implémenté)
+
+```javascript
+// src/app/(admin)/admin/page.js
+const handleRequestAction = async (requestId, userId, planId, status) => {
+  try {
+    const request = paymentRequests.find(r => r.id === requestId);
+    const requestUser = usersList.find(u => u.id === userId);
+    
+    // 1. Mettre à jour Firestore
+    await updateDoc(doc(db, 'payment_requests', requestId), { 
+      status,
+      processedAt: new Date().toISOString(),
+      processedBy: user.email
+    });
+    
+    if (status === 'approved') {
+      // 2. Déterminer durée selon plan
+      let days = 30;
+      const planLower = (planId || '').toLowerCase();
+      if (planLower === 'starter' || planLower === 'free') days = 7;
+      else if (planLower === 'premium') days = 30;
+      else if (planLower === 'enterprise') days = 365;
+      
+      // 3. Activer abonnement
+      await applySubscription(userId, days);
+      
+      // 4. Log admin
+      await logAdminAction('payment_approved', {
+        message: `Paiement OCR validé — ${request?.amount} FCFA — ${requestUser?.email}`,
+        target: requestId,
+        targetUser: userId,
+        amount: request?.amount,
+        plan: planId,
+      });
+      
+      // 5. TODO: Envoyer email
+      // await fetch('/api/send-email', { ... });
+      
+      showToast(`✅ Paiement validé ! Abonnement ${planId.toUpperCase()} activé pour ${days} jours.`, 'success');
+    } 
+    else if (status === 'rejected') {
+      await logAdminAction('payment_rejected', { ... });
+      // TODO: Email rejet
+      showToast('🚫 Demande de paiement rejetée.', 'info');
+    }
+    
+    fetchAdminData();
+  } catch (err) {
+    console.error(err);
+    showToast('❌ Erreur : ' + err.message, 'error');
+  }
+};
 ```
 
 ---
@@ -257,9 +445,22 @@ export async function POST(req) {
 - [x] Page `/paiement-ocr` créée
 - [x] Logique fallback dans `/tarifs`
 - [x] Tracking analytics en place
-- [ ] **Dashboard admin validation paiements OCR**
-- [ ] **Intégration service email** (SendGrid/Resend) pour contact form
+- [x] **Dashboard admin validation paiements OCR** ✅
+  - [x] Section Paiements améliorée avec statistiques
+  - [x] Colonnes enrichies (méthode, date formatée, etc.)
+  - [x] Filtres par statut et méthode de paiement
+  - [x] Box d'instructions pour validation
+  - [x] Workflow complet validation/rejet
+  - [x] Logs d'audit automatiques
+  - [x] Activation automatique abonnement selon plan
+- [ ] **Intégration service email** (SendGrid/Resend)
+  - [x] Templates HTML créés (EMAIL_TEMPLATES.md)
+  - [ ] Créer route API `/api/send-email`
+  - [ ] Décommenter code email dans admin
+  - [ ] Tester envoi emails
 - [ ] **Notifications admin** quand nouveau payment_request
+  - [ ] Email admin sur nouvelle demande
+  - [ ] Badge notification sur sidebar
 
 ### Long terme (après Money Fusion)
 - [ ] Récupérer credentials Money Fusion
@@ -375,9 +576,10 @@ Aucune nouvelle variable requise - utilise Firebase existant
 | Page `/paiement-ocr` | ✅ Terminé | Upload screenshot, Firestore storage |
 | Fallback automatique | ✅ Terminé | Redirection si Money Fusion échoue |
 | Tracking analytics | ✅ Terminé | 3 nouveaux events trackés |
-| Dashboard admin validation | ⏳ TODO | Nécessaire pour valider paiements OCR |
-| Service email contact | ⏳ TODO | Remplacer console.log par SendGrid |
-| Notifications admin | ⏳ TODO | Email quand nouveau payment_request |
+| Dashboard admin validation | ✅ Terminé | Interface complète avec stats, filtres, workflow |
+| Templates email | ✅ Terminé | 3 templates HTML prêts (EMAIL_TEMPLATES.md) |
+| Service email API | ⏳ TODO | Route `/api/send-email` à créer |
+| Notifications admin | ⏳ TODO | Email + badge quand nouveau payment_request |
 
 ---
 

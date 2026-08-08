@@ -195,23 +195,101 @@ export default function AdminPage() {
 
   const handleRequestAction = async (requestId, userId, planId, status) => {
     try {
-      await updateDoc(doc(db, 'payment_requests', requestId), { status });
-      if (status === 'approved') {
-        const days = planId === 'starter' ? 7 : 30;
-        await applySubscription(userId, days);
-        showToast('✅ Demande validée et abonnement activé !', 'success');
-      } else {
-        showToast('🚫 Demande de reçu rejetée.', 'info');
-      }
-      await logAdminAction(`payment_${status}`, {
-        message: status === 'approved' ? 'Paiement validé et abonnement activé' : 'Demande de paiement rejetée',
-        target: requestId,
-        targetUser: userId,
+      // Récupérer les détails de la demande pour l'email
+      const request = paymentRequests.find(r => r.id === requestId);
+      const requestUser = usersList.find(u => u.id === userId);
+      
+      // Mettre à jour le statut dans Firestore
+      await updateDoc(doc(db, 'payment_requests', requestId), { 
+        status,
+        processedAt: new Date().toISOString(),
+        processedBy: user.email
       });
+      
+      if (status === 'approved') {
+        // Déterminer la durée selon le plan
+        let days = 30; // Par défaut Premium = 30 jours
+        const planLower = (planId || '').toLowerCase();
+        
+        if (planLower === 'starter' || planLower === 'free') {
+          days = 7;
+        } else if (planLower === 'premium') {
+          days = 30;
+        } else if (planLower === 'enterprise') {
+          days = 365; // Entreprise = 1 an
+        }
+        
+        // Activer l'abonnement
+        await applySubscription(userId, days);
+        
+        // Log admin action
+        await logAdminAction(`payment_approved`, {
+          message: `Paiement OCR validé — ${request?.amount || 0} FCFA — ${requestUser?.email || userId}`,
+          target: requestId,
+          targetUser: userId,
+          amount: request?.amount,
+          plan: planId,
+        });
+        
+        // TODO: Envoyer email de confirmation
+        // Décommenter quand SendGrid/Resend sera configuré
+        /*
+        await fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to: requestUser?.email,
+            subject: '✅ Paiement validé - Wend-Kabré',
+            template: 'payment-approved',
+            data: {
+              userName: requestUser?.displayName || requestUser?.email,
+              plan: planId.toUpperCase(),
+              amount: request?.amount,
+              duration: days,
+              validatedAt: new Date().toLocaleString('fr-FR')
+            }
+          })
+        });
+        */
+        
+        showToast(`✅ Paiement validé ! Abonnement ${planId.toUpperCase()} activé pour ${days} jours.`, 'success');
+        
+      } else if (status === 'rejected') {
+        // Log admin action
+        await logAdminAction(`payment_rejected`, {
+          message: `Paiement OCR rejeté — ${request?.amount || 0} FCFA — ${requestUser?.email || userId}`,
+          target: requestId,
+          targetUser: userId,
+          amount: request?.amount,
+          plan: planId,
+        });
+        
+        // TODO: Envoyer email de rejet avec raison
+        /*
+        await fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to: requestUser?.email,
+            subject: '❌ Paiement non validé - Wend-Kabré',
+            template: 'payment-rejected',
+            data: {
+              userName: requestUser?.displayName || requestUser?.email,
+              plan: planId.toUpperCase(),
+              amount: request?.amount,
+              reason: 'Veuillez nous contacter pour plus d\'informations.'
+            }
+          })
+        });
+        */
+        
+        showToast('🚫 Demande de paiement rejetée.', 'info');
+      }
+      
       fetchAdminData();
     } catch (err) {
-      console.error(err);
-      showToast('❌ Erreur lors du traitement de la demande.', 'error');
+      console.error('Erreur traitement paiement:', err);
+      showToast('❌ Erreur lors du traitement de la demande : ' + err.message, 'error');
     }
   };
 
