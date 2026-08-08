@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { db, auth } from '@/lib/firebase';
 import { collection, getDocs, orderBy, query, doc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import { isSubscriptionActive } from '@/lib/subscription';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Composant Paywall : CTA Premium affiché sur les cartes verrouillées
@@ -160,7 +161,7 @@ export default function RecrutementsPage() {
     fetchMarches();
   }, []);
 
-  const isSubscribed = userData?.isSubscribed === true;
+  const isSubscribed = isSubscriptionActive(userData);
 
   const filteredMarches = marches.filter(m => {
     if (m.category !== 'Recrutement') return false;

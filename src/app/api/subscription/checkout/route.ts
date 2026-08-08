@@ -1,26 +1,54 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { paymentServiceClient } from '@/lib/paymentServiceClient';
+import { getAdminAuth } from '@/lib/firebaseAdmin';
+import { mintServiceJwt } from '@/lib/serviceToken';
+import { PLAN_PRICES } from '@/lib/subscription';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
+  // L'identité vient du jeton Firebase vérifié, plus du corps de la requête :
+  // n'importe qui pouvait auparavant lancer un paiement au nom d'un autre
+  // compte en changeant `userId`.
+  const authHeader = req.headers.get('authorization') || '';
+  if (!authHeader.startsWith('Bearer ')) {
+    return NextResponse.json(
+      { success: false, error: 'Connectez-vous pour souscrire un abonnement.' },
+      { status: 401 }
+    );
+  }
+
+  const adminAuth = await getAdminAuth();
+  if (!adminAuth) {
+    return NextResponse.json(
+      { success: false, error: 'Service indisponible (Admin SDK non configuré).' },
+      { status: 503 }
+    );
+  }
+
+  let decoded;
+  try {
+    decoded = await adminAuth.verifyIdToken(authHeader.slice('Bearer '.length).trim());
+  } catch {
+    return NextResponse.json(
+      { success: false, error: 'Session expirée, reconnectez-vous.' },
+      { status: 401 }
+    );
+  }
+
   try {
     const body = await req.json();
-    const { userId, email, phone, planId } = body;
+    const { phone, planId } = body;
 
-    if (!userId || !email || !planId) {
+    if (!planId) {
       return NextResponse.json(
-        { success: false, error: 'Champs requis manquants (userId, email, planId).' },
+        { success: false, error: 'Champ requis manquant (planId).' },
         { status: 400 }
       );
     }
 
-    // Détermination du montant selon le plan
-    const planPrices: Record<string, number> = {
-      FREE: 0,
-      PREMIUM: 15000,
-      ENTERPRISE: 55000
-    };
-
-    const amount = planPrices[planId];
+    // Le montant est toujours dérivé du plan côté serveur, jamais reçu du client.
+    const amount = PLAN_PRICES[planId as keyof typeof PLAN_PRICES];
     if (amount === undefined) {
       return NextResponse.json(
         { success: false, error: 'Plan invalide (choisir FREE, PREMIUM ou ENTERPRISE).' },
@@ -32,25 +60,31 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         success: true,
         message: 'Le plan gratuit ne nécessite pas de paiement.',
-        planId: 'FREE'
+        planId: 'FREE',
       });
     }
 
-    // Appel du microservice payment-service via le client interne
-    const result = await paymentServiceClient.createPayment({
-      userId,
-      email,
-      phone,
-      amount,
-      planId
-    });
+    const email = decoded.email;
+    if (!email) {
+      return NextResponse.json(
+        { success: false, error: 'Aucune adresse e-mail associée à ce compte.' },
+        { status: 400 }
+      );
+    }
+
+    const serviceToken = mintServiceJwt({ uid: decoded.uid, email, role: 'USER' });
+
+    const result = await paymentServiceClient.createPayment(
+      { userId: decoded.uid, email, phone, amount, planId },
+      `Bearer ${serviceToken}`
+    );
 
     return NextResponse.json(result, { status: 200 });
   } catch (error: any) {
     console.error('Erreur checkout abonnement Wend-Kabré:', error.message);
     return NextResponse.json(
       { success: false, error: error.message || 'Échec de l\'initialisation du paiement.' },
-      { status: 500 }
+      { status: 502 }
     );
   }
 }

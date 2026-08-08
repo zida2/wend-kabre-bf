@@ -9,6 +9,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, PageBreak, AlignmentType } from "docx";
 import { saveAs } from "file-saver";
 import { track } from '@/lib/track';
+import { isSubscriptionActive } from '@/lib/subscription';
 
 // ── Affichage structuré de l'analyse IA d'un marché ──
 // ── Rangée de badges de classification (métadonnées non sensibles, visibles par tous) ──
@@ -522,7 +523,7 @@ function DetailsContent() {
   }
 
   const isUserLoggedIn = !!user;
-  const isUserSubscribed = userData?.isSubscribed === true;
+  const isUserSubscribed = isSubscriptionActive(userData);
   const hasFullAccess = isUserSubscribed || marche.category === 'Recrutement';
 
   // Mocking dates if they don't exist in the DB for the demo

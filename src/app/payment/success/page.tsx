@@ -3,6 +3,8 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,14 +16,55 @@ function PaymentSuccessContent() {
 
   const [confirming, setConfirming] = useState<boolean>(true);
   const [confirmed, setConfirmed] = useState<boolean>(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number>(8);
 
+  // Cette page annonçait « Abonnement Activé » après un simple setTimeout de
+  // 1,8 s, sans rien vérifier. On déclenche désormais la réconciliation réelle
+  // PostgreSQL → Firestore et on n'affiche le succès que si elle aboutit.
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setConfirming(false);
-      setConfirmed(true);
-    }, 1800);
-    return () => clearTimeout(timeout);
+    let cancelled = false;
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (cancelled) return;
+      if (!user) {
+        setConfirming(false);
+        setSyncError('Connectez-vous pour finaliser l\'activation de votre abonnement.');
+        return;
+      }
+
+      try {
+        const token = await user.getIdToken();
+        const res = await fetch('/api/subscription/sync', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: '{}',
+        });
+        const data = await res.json();
+        if (cancelled) return;
+
+        if (res.ok && data.success && data.isSubscribed) {
+          setExpiresAt(data.expiresAt || null);
+          setConfirmed(true);
+        } else {
+          // Le webhook Money Fusion peut arriver après le retour du client.
+          setSyncError(
+            data?.error ||
+              'Paiement pris en compte, activation en cours. Rechargez cette page dans quelques instants.'
+          );
+        }
+      } catch {
+        if (!cancelled) setSyncError('Impossible de joindre le service d\'activation.');
+      } finally {
+        if (!cancelled) setConfirming(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -59,20 +102,26 @@ function PaymentSuccessContent() {
         </div>
 
         <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
-          {confirming ? 'Activation en cours...' : 'Abonnement Activé !'}
+          {confirming ? 'Activation en cours...' : confirmed ? 'Abonnement Activé !' : 'Activation en attente'}
         </h1>
 
         <p className="text-slate-400 text-sm leading-relaxed mb-6">
           {confirming
             ? 'Nous finalisons votre abonnement. Merci de patienter quelques secondes.'
-            : 'Votre paiement Money Fusion a été validé avec succès. Votre accès Premium Wend-Kabré est maintenant actif.'}
+            : confirmed
+              ? 'Votre paiement Money Fusion a été validé avec succès. Votre accès Premium Wend-Kabré est maintenant actif.'
+              : syncError}
         </p>
 
         <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-4 mb-8 text-left space-y-2 text-xs">
           <div className="flex justify-between">
             <span className="text-slate-500">Statut</span>
-            <span className="font-semibold text-emerald-400">
-              {confirmed ? '✓ Actif (30 Jours)' : 'En attente de validation'}
+            <span className={`font-semibold ${confirmed ? 'text-emerald-400' : 'text-amber-300'}`}>
+              {confirmed
+                ? expiresAt
+                  ? `✓ Actif jusqu'au ${new Date(expiresAt).toLocaleDateString('fr-FR')}`
+                  : '✓ Actif'
+                : 'En attente de validation'}
             </span>
           </div>
           {refParam && (
