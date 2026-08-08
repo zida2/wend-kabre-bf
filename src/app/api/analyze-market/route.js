@@ -3,8 +3,9 @@
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateObject } from 'ai';
 import { z } from 'zod';
-import { db } from '@/lib/firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+// Écriture via l'Admin SDK (cf. /api/scrape) : `marches` n'est plus modifiable
+// depuis le navigateur.
+import { getAdminDb } from '@/lib/firebaseAdmin';
 import { verifyFirebaseToken } from '@/lib/authGuard';
 
 export const maxDuration = 60;
@@ -77,11 +78,21 @@ export async function POST(req) {
   }
   if (!marketId) return Response.json({ error: 'marketId manquant' }, { status: 400 });
 
+  const adminDb = await getAdminDb();
+  if (!adminDb) {
+    return Response.json(
+      { error: 'Service indisponible (Firebase Admin SDK non configuré).' },
+      { status: 503 }
+    );
+  }
+  const marketRef = adminDb.collection('marches').doc(marketId);
+
   // Marché + choix du PDF
   let market;
   try {
-    const snap = await getDoc(doc(db, 'marches', marketId));
-    if (!snap.exists()) return Response.json({ error: 'Marché introuvable' }, { status: 404 });
+    const snap = await marketRef.get();
+    // Admin SDK : `exists` est une propriété, pas une méthode comme côté client.
+    if (!snap.exists) return Response.json({ error: 'Marché introuvable' }, { status: 404 });
     market = { id: snap.id, ...snap.data() };
   } catch (e) {
     return Response.json({ error: 'Lecture du marché impossible' }, { status: 500 });
@@ -120,9 +131,10 @@ export async function POST(req) {
 
     const analysis = { ...object, analyzedUrl: chosenUrl, analyzedAt: new Date().toISOString() };
 
-    // Cache sur le marché (écriture serveur autorisée par les règles marchés)
+    // Cache sur le marché (écriture serveur via l'Admin SDK, qui contourne les
+    // règles Firestore par conception).
     try {
-      await updateDoc(doc(db, 'marches', marketId), { aiAnalysis: analysis });
+      await marketRef.update({ aiAnalysis: analysis });
     } catch (e) {
       console.error('[analyze-market] écriture cache échouée:', e?.message);
     }

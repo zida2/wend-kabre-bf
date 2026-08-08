@@ -37,6 +37,15 @@ async function fetchFullText(url, fallbackDesc) {
   return fallbackDesc;
 }
 
+/**
+ * ⚠️ MODULE INUTILISÉ — aucun import dans le projet. Le scraping réel vit dans
+ * src/app/api/scrape/route.js, qui écrit via l'Admin SDK.
+ *
+ * Les écritures ci-dessous passent par le SDK *client* : depuis que
+ * firestore.rules interdit l'écriture navigateur sur `marches`, elles
+ * échoueraient en PERMISSION_DENIED. Ne pas rebrancher cette fonction sans
+ * l'avoir migrée vers getAdminDb().
+ */
 export async function runClientScrape() {
   const listTenders = [];
 

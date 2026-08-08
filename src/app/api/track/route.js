@@ -1,8 +1,9 @@
 // Ingestion des événements analytics. Enrichit chaque événement avec la
 // géolocalisation (en-têtes Vercel) et l'analyse du User-Agent, puis écrit
 // dans la collection Firestore `events` (append-only, lecture admin).
-import { db } from '@/lib/firebase';
-import { collection, addDoc } from 'firebase/firestore';
+// Écriture via l'Admin SDK : le SDK client obligeait à laisser `events` en
+// `allow create: if true`, donc ouvert à n'importe quel visiteur.
+import { getAdminDb } from '@/lib/firebaseAdmin';
 
 export const dynamic = 'force-dynamic';
 
@@ -84,7 +85,12 @@ export async function POST(request) {
   };
 
   try {
-    await addDoc(collection(db, 'events'), doc);
+    const adminDb = await getAdminDb();
+    if (adminDb) {
+      await adminDb.collection('events').add(doc);
+    } else {
+      console.error('[track] Admin SDK non configuré — événement ignoré.');
+    }
   } catch (err) {
     // silencieux : ne jamais renvoyer d'erreur au client analytics
     console.error('[track] write error:', err?.message);
