@@ -160,11 +160,20 @@ export default function TarifsPage() {
         // Redirection vers Money Fusion
         window.location.href = data.paymentUrl;
       } else {
-        setErrorMessage(data.error || 'Impossible d\'initialiser le paiement. Veuillez réessayer.');
+        // FALLBACK: Rediriger vers ancien système OCR en attendant credentials Money Fusion
+        console.warn('Money Fusion indisponible, fallback vers ancien système:', data.error);
+        track('payment_fallback_ocr', { planId: selectedPlan.id, reason: data.error });
+        
+        // Fermer le modal et rediriger vers page de paiement OCR
+        setShowPayModal(false);
+        router.push(`/paiement-ocr?plan=${selectedPlan.id.toLowerCase()}&amount=${finalPrice}`);
       }
     } catch (error) {
       console.error('Erreur paiement:', error);
-      setErrorMessage('Une erreur technique est survenue. Veuillez contacter le support.');
+      // FALLBACK: En cas d'erreur réseau, utiliser aussi l'ancien système
+      track('payment_error_fallback', { planId: selectedPlan.id, error: error.message });
+      setShowPayModal(false);
+      router.push(`/paiement-ocr?plan=${selectedPlan.id.toLowerCase()}&amount=${parseInt(getPrice(selectedPlan).replace(/\s/g, ''), 10)}`);
     } finally {
       setPaymentLoading(false);
     }
@@ -358,22 +367,78 @@ export default function TarifsPage() {
 
       {/* MODAL DE PAIEMENT MONEY FUSION */}
       {showPayModal && selectedPlan && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-          backgroundColor: 'rgba(0,0,0,0.90)', zIndex: 9999,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px',
-          overflowY: 'auto'
-        }}>
-          <div className="card animate-fadeIn" style={{ 
-            width: '100%', maxWidth: '500px',
-            border: `2px solid ${selectedPlan.borderColor}`, 
-            boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
-          }}>
-            {/* Header */}
-            <div className="flex justify-between items-center" style={{ marginBottom: '24px' }}>
-              <h2 className="heading-md" style={{ color: selectedPlan.color }}>
-                💳 Paiement Sécurisé
-              </h2>
+        <div 
+          style={{
+            position: 'fixed', 
+            top: 0, 
+            left: 0, 
+            width: '100%', 
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.95)', 
+            zIndex: 9999,
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            padding: '20px',
+            overflowY: 'auto',
+            backdropFilter: 'blur(10px)'
+          }}
+          onClick={() => {
+            track('payment_abandon', { planId: selectedPlan.id });
+            setShowPayModal(false);
+          }}
+        >
+          <div 
+            className="card animate-fadeIn" 
+            onClick={(e) => e.stopPropagation()}
+            style={{ 
+              width: '100%', 
+              maxWidth: '520px',
+              background: 'linear-gradient(135deg, #0a0f1a 0%, #1a1f2e 100%)',
+              border: `3px solid ${selectedPlan.borderColor}`,
+              boxShadow: `0 25px 70px rgba(0,0,0,0.6), 0 0 50px ${selectedPlan.borderColor}40`,
+              borderRadius: '24px',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+          >
+            {/* Gradient overlay animé */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '300px',
+              background: `radial-gradient(ellipse at top, ${selectedPlan.borderColor}20, transparent)`,
+              pointerEvents: 'none',
+              animation: 'pulse 3s ease-in-out infinite'
+            }} />
+
+            {/* Header avec close button élégant */}
+            <div className="flex justify-between items-center" style={{ marginBottom: '32px', position: 'relative', zIndex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  background: `linear-gradient(135deg, ${selectedPlan.borderColor}30, ${selectedPlan.borderColor}10)`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '24px',
+                  border: `2px solid ${selectedPlan.borderColor}50`
+                }}>
+                  💳
+                </div>
+                <div>
+                  <h2 className="heading-md" style={{ color: selectedPlan.color, marginBottom: '2px' }}>
+                    Paiement Sécurisé
+                  </h2>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
+                    Propulsé par Money Fusion
+                  </p>
+                </div>
+              </div>
               <button 
                 onClick={() => { 
                   track('payment_abandon', { planId: selectedPlan.id }); 
@@ -381,140 +446,324 @@ export default function TarifsPage() {
                 }} 
                 aria-label="Fermer" 
                 style={{ 
-                  background: 'none', 
-                  border: 'none', 
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
                   color: 'var(--text-muted)', 
-                  fontSize: '1.5rem', 
+                  fontSize: '20px', 
                   cursor: 'pointer',
-                  transition: 'color 0.2s'
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
-                onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'}
-                onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'rgba(239,68,68,0.15)';
+                  e.target.style.borderColor = 'rgba(239,68,68,0.3)';
+                  e.target.style.color = '#ef4444';
+                  e.target.style.transform = 'scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'rgba(255,255,255,0.05)';
+                  e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+                  e.target.style.color = 'var(--text-muted)';
+                  e.target.style.transform = 'scale(1)';
+                }}
               >
                 ✕
               </button>
             </div>
 
-            {/* Plan sélectionné */}
+            {/* Plan card avec effet glassmorphism */}
             <div style={{ 
-              background: `linear-gradient(135deg, ${selectedPlan.borderColor}15, ${selectedPlan.borderColor}05)`, 
+              background: `linear-gradient(135deg, ${selectedPlan.borderColor}15, ${selectedPlan.borderColor}05)`,
+              backdropFilter: 'blur(20px)',
               border: `1px solid ${selectedPlan.borderColor}40`, 
-              padding: '20px', 
-              borderRadius: 'var(--radius-lg)', 
-              marginBottom: '28px', 
-              textAlign: 'center' 
+              padding: '28px', 
+              borderRadius: '20px', 
+              marginBottom: '32px', 
+              textAlign: 'center',
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: `inset 0 1px 1px ${selectedPlan.borderColor}20`
             }}>
-              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>{selectedPlan.icon}</div>
-              <p className="text-xs text-muted" style={{ marginBottom: '4px' }}>Vous souscrivez au</p>
-              <h3 className="heading-lg" style={{ color: selectedPlan.color, marginBottom: '12px' }}>
+              {/* Effet shine */}
+              <div style={{
+                position: 'absolute',
+                top: '-50%',
+                left: '-50%',
+                width: '200%',
+                height: '200%',
+                background: 'linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent)',
+                animation: 'shine 3s ease-in-out infinite'
+              }} />
+              
+              <div style={{ fontSize: '3rem', marginBottom: '12px', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))' }}>
+                {selectedPlan.icon}
+              </div>
+              <p className="text-xs" style={{ color: selectedPlan.color, marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>
+                Vous souscrivez au
+              </p>
+              <h3 className="heading-lg" style={{ color: selectedPlan.color, marginBottom: '16px', textShadow: `0 2px 20px ${selectedPlan.borderColor}40` }}>
                 {selectedPlan.name}
               </h3>
-              <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                {formatPrice(parseInt(getPrice(selectedPlan).replace(/\s/g, ''), 10))} <span className="text-sm text-secondary">FCFA</span>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'baseline', 
+                justifyContent: 'center', 
+                gap: '8px',
+                marginBottom: '8px' 
+              }}>
+                <span style={{ 
+                  fontSize: '3rem', 
+                  fontWeight: 900, 
+                  color: '#fff',
+                  textShadow: '0 4px 30px rgba(0,0,0,0.5)',
+                  background: `linear-gradient(135deg, ${selectedPlan.borderColor}, ${selectedPlan.color})`,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text'
+                }}>
+                  {formatPrice(parseInt(getPrice(selectedPlan).replace(/\s/g, ''), 10))}
+                </span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                  <span className="text-sm" style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>FCFA</span>
+                  <span className="text-xs text-muted">/ mois</span>
+                </div>
               </div>
-              <p className="text-xs text-muted" style={{ marginTop: '4px' }}>
-                {billingAnnual ? 'Facturé annuellement' : 'Facturé mensuellement'}
+              <p className="text-xs text-muted" style={{ margin: '8px 0 0 0' }}>
+                {billingAnnual ? '💎 Facturé annuellement (économisez 20%)' : '📅 Facturation mensuelle'}
               </p>
             </div>
 
-            {/* Informations Money Fusion */}
+            {/* Money Fusion features card */}
             <div style={{
-              background: 'var(--color-surface-2)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-md)',
-              padding: '20px',
+              background: 'rgba(255,255,255,0.03)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '16px',
+              padding: '24px',
               marginBottom: '24px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px'
+              position: 'relative'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontSize: '1.5rem' }}>🔒</span>
-                <div>
-                  <strong style={{ color: 'var(--text-primary)', display: 'block', marginBottom: '2px' }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '12px', 
+                marginBottom: '16px',
+                paddingBottom: '16px',
+                borderBottom: '1px solid rgba(255,255,255,0.1)'
+              }}>
+                <div style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '8px',
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '18px',
+                  boxShadow: '0 4px 12px rgba(16,185,129,0.3)'
+                }}>
+                  🔒
+                </div>
+                <div style={{ flex: 1 }}>
+                  <strong style={{ color: '#fff', display: 'block', marginBottom: '2px', fontSize: '1rem' }}>
                     Paiement sécurisé Money Fusion
                   </strong>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
-                    Payez par Orange Money, Moov Money ou carte bancaire
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0 }}>
+                    Orange Money • Moov Money • Carte bancaire
                   </p>
                 </div>
               </div>
               
               <div style={{ 
-                background: 'var(--color-surface-3)', 
-                padding: '12px', 
-                borderRadius: 'var(--radius-sm)',
-                fontSize: '0.85rem',
-                color: 'var(--text-secondary)'
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: '12px'
               }}>
-                ✓ Activation instantanée<br />
-                ✓ Transaction cryptée SSL/TLS<br />
-                ✓ Aucune donnée bancaire conservée
+                {[
+                  { icon: '⚡', text: 'Activation instantanée' },
+                  { icon: '🛡️', text: 'Cryptage SSL/TLS' },
+                  { icon: '✓', text: 'Transaction sécurisée' },
+                  { icon: '🔐', text: 'Données protégées' }
+                ].map((item, i) => (
+                  <div key={i} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '10px 12px',
+                    background: 'rgba(255,255,255,0.03)',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(255,255,255,0.05)'
+                  }}>
+                    <span style={{ fontSize: '16px' }}>{item.icon}</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                      {item.text}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Message d'erreur */}
+            {/* Message d'erreur moderne */}
             {errorMessage && (
               <div style={{
-                background: 'rgba(239, 68, 68, 0.1)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
-                color: '#ef4444',
-                padding: '12px 16px',
-                borderRadius: 'var(--radius-md)',
-                marginBottom: '20px',
-                fontSize: '0.9rem'
+                background: 'linear-gradient(135deg, rgba(239,68,68,0.15), rgba(220,38,38,0.1))',
+                backdropFilter: 'blur(10px)',
+                border: '2px solid rgba(239,68,68,0.4)',
+                color: '#fca5a5',
+                padding: '16px 20px',
+                borderRadius: '14px',
+                marginBottom: '24px',
+                fontSize: '0.9rem',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '12px',
+                animation: 'shake 0.5s ease'
               }}>
-                ⚠️ {errorMessage}
+                <span style={{ fontSize: '20px', flexShrink: 0 }}>⚠️</span>
+                <div style={{ flex: 1 }}>
+                  <strong style={{ display: 'block', marginBottom: '4px', color: '#fca5a5' }}>
+                    Erreur de paiement
+                  </strong>
+                  <span style={{ color: '#fecaca' }}>{errorMessage}</span>
+                </div>
               </div>
             )}
 
-            {/* Bouton de paiement */}
+            {/* Bouton de paiement avec effet premium */}
             <button 
               onClick={handleMoneyFusionPayment}
               disabled={paymentLoading}
               className="btn btn-primary btn-lg"
               style={{
                 width: '100%',
-                background: paymentLoading ? 'var(--color-surface-3)' : 'var(--grad-primary)',
+                background: paymentLoading 
+                  ? 'linear-gradient(135deg, #374151, #1f2937)' 
+                  : `linear-gradient(135deg, ${selectedPlan.borderColor}, ${selectedPlan.color})`,
                 cursor: paymentLoading ? 'not-allowed' : 'pointer',
-                opacity: paymentLoading ? 0.6 : 1,
+                opacity: paymentLoading ? 0.7 : 1,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '10px',
-                marginBottom: '16px'
+                gap: '12px',
+                marginBottom: '20px',
+                fontSize: '1.05rem',
+                fontWeight: 700,
+                padding: '18px 32px',
+                borderRadius: '14px',
+                border: 'none',
+                color: '#fff',
+                boxShadow: paymentLoading 
+                  ? 'none' 
+                  : `0 8px 30px ${selectedPlan.borderColor}50, inset 0 1px 1px rgba(255,255,255,0.2)`,
+                transition: 'all 0.3s ease',
+                position: 'relative',
+                overflow: 'hidden'
+              }}
+              onMouseEnter={(e) => {
+                if (!paymentLoading) {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = `0 12px 40px ${selectedPlan.borderColor}60, inset 0 1px 1px rgba(255,255,255,0.3)`;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!paymentLoading) {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = `0 8px 30px ${selectedPlan.borderColor}50, inset 0 1px 1px rgba(255,255,255,0.2)`;
+                }
               }}
             >
+              {/* Effet de brillance au hover */}
+              {!paymentLoading && (
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: '-100%',
+                  width: '100%',
+                  height: '100%',
+                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                  transition: 'left 0.6s ease'
+                }} className="shine-effect" />
+              )}
+              
               {paymentLoading ? (
                 <>
-                  <span className="loader" style={{ width: '18px', height: '18px' }}></span>
-                  <span>Connexion à Money Fusion...</span>
+                  <div className="loader" style={{ 
+                    width: '20px', 
+                    height: '20px',
+                    border: '3px solid rgba(255,255,255,0.2)',
+                    borderTopColor: '#fff',
+                    borderRadius: '50%',
+                    animation: 'spin 0.8s linear infinite'
+                  }}></div>
+                  <span>Connexion sécurisée en cours...</span>
                 </>
               ) : (
                 <>
-                  <span>Procéder au paiement</span>
-                  <span>→</span>
+                  <span>Procéder au paiement sécurisé</span>
+                  <span style={{ 
+                    fontSize: '20px',
+                    transition: 'transform 0.3s ease'
+                  }} className="arrow-icon">→</span>
                 </>
               )}
             </button>
 
-            {/* Footer */}
-            <p style={{ 
-              fontSize: '0.75rem', 
-              color: 'var(--text-muted)', 
-              textAlign: 'center',
-              lineHeight: 1.5
+            {/* Footer avec mentions légales */}
+            <div style={{
+              padding: '16px',
+              background: 'rgba(255,255,255,0.02)',
+              borderRadius: '12px',
+              border: '1px solid rgba(255,255,255,0.05)'
             }}>
-              En cliquant sur "Procéder au paiement", vous acceptez nos{' '}
-              <Link href="/conditions" style={{ color: 'var(--primary)', textDecoration: 'none' }}>
-                conditions générales
-              </Link>
-              {' '}et notre{' '}
-              <Link href="/confidentialite" style={{ color: 'var(--primary)', textDecoration: 'none' }}>
-                politique de confidentialité
-              </Link>.
-            </p>
+              <p style={{ 
+                fontSize: '0.7rem', 
+                color: 'var(--text-muted)', 
+                textAlign: 'center',
+                lineHeight: 1.6,
+                margin: 0
+              }}>
+                🔒 Connexion sécurisée SSL/TLS • En procédant au paiement, vous acceptez nos{' '}
+                <Link href="/conditions" style={{ color: selectedPlan.color, textDecoration: 'none', fontWeight: 600 }}>
+                  CGV
+                </Link>
+                {' '}et notre{' '}
+                <Link href="/confidentialite" style={{ color: selectedPlan.color, textDecoration: 'none', fontWeight: 600 }}>
+                  politique de confidentialité
+                </Link>.
+              </p>
+            </div>
           </div>
+
+          {/* Animations CSS */}
+          <style jsx>{`
+            @keyframes pulse {
+              0%, 100% { opacity: 0.5; }
+              50% { opacity: 0.8; }
+            }
+            @keyframes shine {
+              0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+              100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            }
+            @keyframes shake {
+              0%, 100% { transform: translateX(0); }
+              25% { transform: translateX(-10px); }
+              75% { transform: translateX(10px); }
+            }
+            @keyframes spin {
+              to { transform: rotate(360deg); }
+            }
+            button:hover .shine-effect {
+              left: 100%;
+            }
+            button:hover .arrow-icon {
+              transform: translateX(4px);
+            }
+          `}</style>
         </div>
       )}
     </>
