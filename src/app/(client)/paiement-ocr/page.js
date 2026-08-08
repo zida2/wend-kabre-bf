@@ -167,34 +167,66 @@ function PaiementOCRContent() {
                     marginBottom: '20px', 
                     fontSize: '1.1rem' 
                   }}>
-                    📱 Instructions de paiement Orange Money
+                    📱 Instructions de paiement Mobile Money
                   </h3>
                   
-                  <ol style={{ 
-                    paddingLeft: '20px', 
-                    color: 'var(--text-primary)', 
-                    lineHeight: 1.8,
-                    fontSize: '0.95rem'
-                  }}>
-                    <li style={{ marginBottom: '12px' }}>
-                      Composez <strong style={{ color: 'var(--primary)', fontSize: '1.05rem' }}>#144*82#</strong> sur votre téléphone Orange Money
-                    </li>
-                    <li style={{ marginBottom: '12px' }}>
-                      Sélectionnez <strong style={{ color: 'var(--text-primary)' }}>1. Transfert d'argent</strong>
-                    </li>
-                    <li style={{ marginBottom: '12px' }}>
-                      Entrez le numéro destinataire: <strong style={{ color: 'var(--primary)', fontSize: '1.05rem' }}>+226 70 00 00 00</strong>
-                    </li>
-                    <li style={{ marginBottom: '12px' }}>
-                      Montant: <strong style={{ color: 'var(--primary)', fontSize: '1.15rem' }}>{parseInt(amount, 10).toLocaleString('fr-FR')} FCFA</strong>
-                    </li>
-                    <li style={{ marginBottom: '12px' }}>
-                      Validez avec votre code secret
-                    </li>
-                    <li style={{ marginBottom: '0' }}>
-                      <strong style={{ color: 'var(--primary)' }}>Prenez une capture d'écran</strong> du message de confirmation reçu par SMS
-                    </li>
-                  </ol>
+                  {/* Orange Money */}
+                  <div style={{ marginBottom: '24px', paddingBottom: '24px', borderBottom: '1px solid var(--color-border)' }}>
+                    <p style={{ fontWeight: 600, color: 'var(--primary)', marginBottom: '12px', fontSize: '0.95rem' }}>
+                      🟠 Option 1 : Orange Money
+                    </p>
+                    <ol style={{ 
+                      paddingLeft: '20px', 
+                      color: 'var(--text-primary)', 
+                      lineHeight: 1.8,
+                      fontSize: '0.9rem'
+                    }}>
+                      <li style={{ marginBottom: '10px' }}>
+                        Composez <strong style={{ color: 'var(--primary)', fontSize: '1.05rem' }}>#144*82#</strong>
+                      </li>
+                      <li style={{ marginBottom: '10px' }}>
+                        Sélectionnez <strong>1. Transfert d'argent</strong>
+                      </li>
+                      <li style={{ marginBottom: '10px' }}>
+                        Numéro: <strong style={{ color: 'var(--primary)', fontSize: '1.05rem' }}>62 20 28 77</strong>
+                      </li>
+                      <li style={{ marginBottom: '10px' }}>
+                        Montant: <strong style={{ color: 'var(--primary)', fontSize: '1.1rem' }}>{parseInt(amount, 10).toLocaleString('fr-FR')} FCFA</strong>
+                      </li>
+                      <li style={{ marginBottom: '0' }}>
+                        Validez et <strong style={{ color: 'var(--primary)' }}>prenez un screenshot du SMS</strong>
+                      </li>
+                    </ol>
+                  </div>
+
+                  {/* Moov Money */}
+                  <div>
+                    <p style={{ fontWeight: 600, color: 'var(--primary)', marginBottom: '12px', fontSize: '0.95rem' }}>
+                      🔵 Option 2 : Moov Money
+                    </p>
+                    <ol style={{ 
+                      paddingLeft: '20px', 
+                      color: 'var(--text-primary)', 
+                      lineHeight: 1.8,
+                      fontSize: '0.9rem'
+                    }}>
+                      <li style={{ marginBottom: '10px' }}>
+                        Composez <strong style={{ color: 'var(--primary)', fontSize: '1.05rem' }}>#155#</strong>
+                      </li>
+                      <li style={{ marginBottom: '10px' }}>
+                        Sélectionnez <strong>1. Transfert d'argent</strong>
+                      </li>
+                      <li style={{ marginBottom: '10px' }}>
+                        Numéro: <strong style={{ color: 'var(--primary)', fontSize: '1.05rem' }}>06 13 90 16</strong>
+                      </li>
+                      <li style={{ marginBottom: '10px' }}>
+                        Montant: <strong style={{ color: 'var(--primary)', fontSize: '1.1rem' }}>{parseInt(amount, 10).toLocaleString('fr-FR')} FCFA</strong>
+                      </li>
+                      <li style={{ marginBottom: '0' }}>
+                        Validez et <strong style={{ color: 'var(--primary)' }}>prenez un screenshot du SMS</strong>
+                      </li>
+                    </ol>
+                  </div>
                 </div>
 
                 {/* Formulaire upload */}
