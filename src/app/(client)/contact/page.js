@@ -437,22 +437,22 @@ export default function ContactPage() {
             </div>
 
             <div className="card-glass" style={{ padding: '24px', textAlign: 'center' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '12px' }}>📱</div>
+              <div style={{ fontSize: '2rem', marginBottom: '12px' }}>💬</div>
               <h3 className="text-primary" style={{ fontWeight: 600, marginBottom: '8px', fontSize: '0.95rem' }}>
-                Orange Money
+                WhatsApp
               </h3>
-              <a href="https://wa.me/22662202877" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontSize: '0.9rem', textDecoration: 'none', fontWeight: 500 }}>
-                62 20 28 77
+              <a href="https://wa.me/22606139016" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontSize: '0.9rem', textDecoration: 'none', fontWeight: 500 }}>
+                06 13 90 16
               </a>
             </div>
 
             <div className="card-glass" style={{ padding: '24px', textAlign: 'center' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '12px' }}>💳</div>
+              <div style={{ fontSize: '2rem', marginBottom: '12px' }}>📱</div>
               <h3 className="text-primary" style={{ fontWeight: 600, marginBottom: '8px', fontSize: '0.95rem' }}>
-                Moov Money
+                Orange Money
               </h3>
               <p style={{ color: 'var(--primary)', fontSize: '0.9rem', margin: 0, fontWeight: 500 }}>
-                06 13 90 16
+                62 20 28 77
               </p>
             </div>
           </div>
