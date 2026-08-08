@@ -155,33 +155,38 @@ function PaiementOCRContent() {
 
                 {/* Instructions de paiement */}
                 <div style={{
-                  background: 'var(--color-bg-2)',
-                  border: '1px solid var(--color-border)',
+                  background: 'rgba(5, 150, 105, 0.08)',
+                  border: '2px solid rgba(5, 150, 105, 0.25)',
                   borderRadius: '16px',
                   padding: '28px',
                   marginBottom: '32px'
                 }}>
-                  <h3 className="text-primary" style={{ fontWeight: 600, marginBottom: '20px', fontSize: '1.1rem' }}>
+                  <h3 style={{ 
+                    color: 'var(--primary)', 
+                    fontWeight: 600, 
+                    marginBottom: '20px', 
+                    fontSize: '1.1rem' 
+                  }}>
                     📱 Instructions de paiement Orange Money
                   </h3>
                   
                   <ol style={{ 
                     paddingLeft: '20px', 
-                    color: 'var(--text-secondary)', 
+                    color: 'var(--text-primary)', 
                     lineHeight: 1.8,
                     fontSize: '0.95rem'
                   }}>
                     <li style={{ marginBottom: '12px' }}>
-                      Composez <strong style={{ color: 'var(--primary)' }}>#144*82#</strong> sur votre téléphone Orange Money
+                      Composez <strong style={{ color: 'var(--primary)', fontSize: '1.05rem' }}>#144*82#</strong> sur votre téléphone Orange Money
                     </li>
                     <li style={{ marginBottom: '12px' }}>
-                      Sélectionnez <strong>1. Transfert d'argent</strong>
+                      Sélectionnez <strong style={{ color: 'var(--text-primary)' }}>1. Transfert d'argent</strong>
                     </li>
                     <li style={{ marginBottom: '12px' }}>
-                      Entrez le numéro destinataire: <strong style={{ color: 'var(--primary)' }}>+226 70 00 00 00</strong>
+                      Entrez le numéro destinataire: <strong style={{ color: 'var(--primary)', fontSize: '1.05rem' }}>+226 70 00 00 00</strong>
                     </li>
                     <li style={{ marginBottom: '12px' }}>
-                      Montant: <strong style={{ color: 'var(--primary)', fontSize: '1.1rem' }}>{parseInt(amount, 10).toLocaleString('fr-FR')} FCFA</strong>
+                      Montant: <strong style={{ color: 'var(--primary)', fontSize: '1.15rem' }}>{parseInt(amount, 10).toLocaleString('fr-FR')} FCFA</strong>
                     </li>
                     <li style={{ marginBottom: '12px' }}>
                       Validez avec votre code secret
@@ -261,18 +266,18 @@ function PaiementOCRContent() {
 
                   {/* Info utilisateur */}
                   <div style={{
-                    background: 'var(--color-bg-2)',
-                    border: '1px solid var(--color-border)',
+                    background: 'rgba(5, 150, 105, 0.08)',
+                    border: '2px solid rgba(5, 150, 105, 0.25)',
                     borderRadius: '12px',
                     padding: '16px',
                     marginBottom: '24px',
                     fontSize: '0.9rem'
                   }}>
-                    <p style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>
-                      <strong>Compte:</strong> {user.email}
+                    <p style={{ margin: '0 0 8px 0', color: 'var(--text-primary)' }}>
+                      <strong style={{ color: 'var(--primary)' }}>Compte:</strong> {user.email}
                     </p>
-                    <p style={{ margin: 0, color: 'var(--text-secondary)' }}>
-                      <strong>Montant:</strong> {parseInt(amount, 10).toLocaleString('fr-FR')} FCFA
+                    <p style={{ margin: 0, color: 'var(--text-primary)' }}>
+                      <strong style={{ color: 'var(--primary)' }}>Montant:</strong> {parseInt(amount, 10).toLocaleString('fr-FR')} FCFA
                     </p>
                   </div>
 
@@ -330,6 +335,18 @@ function PaiementOCRContent() {
       <style jsx>{`
         @keyframes spin {
           to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+          .card {
+            padding: 32px 20px !important;
+          }
+          h1 {
+            font-size: 1.5rem !important;
+          }
+          h3 {
+            font-size: 1rem !important;
+          }
         }
       `}</style>
     </main>

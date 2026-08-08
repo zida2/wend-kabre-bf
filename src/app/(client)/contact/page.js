@@ -138,23 +138,30 @@ export default function ContactPage() {
                       onChange={handleChange}
                       required
                       placeholder="Ex: Jean Ouédraogo"
+                      className="form-input"
                       style={{
                         width: '100%',
                         padding: '14px 16px',
                         borderRadius: '12px',
-                        border: '1px solid var(--color-border)',
-                        background: 'var(--color-bg-2)',
+                        border: '2px solid var(--color-border)',
+                        background: 'var(--color-surface-2)',
                         color: 'var(--text-primary)',
                         fontSize: '1rem',
-                        transition: 'border-color 0.2s'
+                        transition: 'all 0.2s'
                       }}
-                      onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                      onBlur={(e) => e.target.style.borderColor = 'var(--color-border)'}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = 'var(--primary)';
+                        e.target.style.background = 'var(--color-bg-1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'var(--color-border)';
+                        e.target.style.background = 'var(--color-surface-2)';
+                      }}
                     />
                   </div>
 
                   {/* Email et Téléphone */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                  <div className="form-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
                     <div>
                       <label htmlFor="email" style={{ 
                         display: 'block', 
@@ -173,18 +180,25 @@ export default function ContactPage() {
                         onChange={handleChange}
                         required
                         placeholder="jean@entreprise.bf"
+                        className="form-input"
                         style={{
                           width: '100%',
                           padding: '14px 16px',
                           borderRadius: '12px',
-                          border: '1px solid var(--color-border)',
-                          background: 'var(--color-bg-2)',
+                          border: '2px solid var(--color-border)',
+                          background: 'var(--color-surface-2)',
                           color: 'var(--text-primary)',
                           fontSize: '1rem',
-                          transition: 'border-color 0.2s'
+                          transition: 'all 0.2s'
                         }}
-                        onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                        onBlur={(e) => e.target.style.borderColor = 'var(--color-border)'}
+                        onFocus={(e) => {
+                          e.target.style.borderColor = 'var(--primary)';
+                          e.target.style.background = 'var(--color-bg-1)';
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.borderColor = 'var(--color-border)';
+                          e.target.style.background = 'var(--color-surface-2)';
+                        }}
                       />
                     </div>
 
@@ -206,18 +220,25 @@ export default function ContactPage() {
                         onChange={handleChange}
                         required
                         placeholder="+226 70 00 00 00"
+                        className="form-input"
                         style={{
                           width: '100%',
                           padding: '14px 16px',
                           borderRadius: '12px',
-                          border: '1px solid var(--color-border)',
-                          background: 'var(--color-bg-2)',
+                          border: '2px solid var(--color-border)',
+                          background: 'var(--color-surface-2)',
                           color: 'var(--text-primary)',
                           fontSize: '1rem',
-                          transition: 'border-color 0.2s'
+                          transition: 'all 0.2s'
                         }}
-                        onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                        onBlur={(e) => e.target.style.borderColor = 'var(--color-border)'}
+                        onFocus={(e) => {
+                          e.target.style.borderColor = 'var(--primary)';
+                          e.target.style.background = 'var(--color-bg-1)';
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.borderColor = 'var(--color-border)';
+                          e.target.style.background = 'var(--color-surface-2)';
+                        }}
                       />
                     </div>
                   </div>
@@ -241,18 +262,25 @@ export default function ContactPage() {
                       onChange={handleChange}
                       required
                       placeholder="Ex: Mon Entreprise SARL"
+                      className="form-input"
                       style={{
                         width: '100%',
                         padding: '14px 16px',
                         borderRadius: '12px',
-                        border: '1px solid var(--color-border)',
-                        background: 'var(--color-bg-2)',
+                        border: '2px solid var(--color-border)',
+                        background: 'var(--color-surface-2)',
                         color: 'var(--text-primary)',
                         fontSize: '1rem',
-                        transition: 'border-color 0.2s'
+                        transition: 'all 0.2s'
                       }}
-                      onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                      onBlur={(e) => e.target.style.borderColor = 'var(--color-border)'}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = 'var(--primary)';
+                        e.target.style.background = 'var(--color-bg-1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'var(--color-border)';
+                        e.target.style.background = 'var(--color-surface-2)';
+                      }}
                     />
                   </div>
 
@@ -272,19 +300,26 @@ export default function ContactPage() {
                       name="plan"
                       value={formData.plan}
                       onChange={handleChange}
+                      className="form-input"
                       style={{
                         width: '100%',
                         padding: '14px 16px',
                         borderRadius: '12px',
-                        border: '1px solid var(--color-border)',
-                        background: 'var(--color-bg-2)',
+                        border: '2px solid var(--color-border)',
+                        background: 'var(--color-surface-2)',
                         color: 'var(--text-primary)',
                         fontSize: '1rem',
-                        transition: 'border-color 0.2s',
+                        transition: 'all 0.2s',
                         cursor: 'pointer'
                       }}
-                      onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                      onBlur={(e) => e.target.style.borderColor = 'var(--color-border)'}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = 'var(--primary)';
+                        e.target.style.background = 'var(--color-bg-1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'var(--color-border)';
+                        e.target.style.background = 'var(--color-surface-2)';
+                      }}
                     >
                       <option value="PREMIUM">Plan Premium (15,000 FCFA/mois)</option>
                       <option value="ENTERPRISE">Plan Entreprise (55,000 FCFA/mois)</option>
@@ -310,20 +345,27 @@ export default function ContactPage() {
                       onChange={handleChange}
                       rows={5}
                       placeholder="Décrivez-nous votre projet, vos besoins spécifiques, le nombre de collaborateurs..."
+                      className="form-input"
                       style={{
                         width: '100%',
                         padding: '14px 16px',
                         borderRadius: '12px',
-                        border: '1px solid var(--color-border)',
-                        background: 'var(--color-bg-2)',
+                        border: '2px solid var(--color-border)',
+                        background: 'var(--color-surface-2)',
                         color: 'var(--text-primary)',
                         fontSize: '1rem',
                         fontFamily: 'inherit',
                         resize: 'vertical',
-                        transition: 'border-color 0.2s'
+                        transition: 'all 0.2s'
                       }}
-                      onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                      onBlur={(e) => e.target.style.borderColor = 'var(--color-border)'}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = 'var(--primary)';
+                        e.target.style.background = 'var(--color-bg-1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'var(--color-border)';
+                        e.target.style.background = 'var(--color-surface-2)';
+                      }}
                     />
                   </div>
 
@@ -378,13 +420,18 @@ export default function ContactPage() {
           </div>
 
           {/* Informations de contact alternatives */}
-          <div className="grid grid-3 gap-4" style={{ marginTop: '48px' }}>
+          <div className="contact-grid" style={{ 
+            marginTop: '48px',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '20px'
+          }}>
             <div className="card-glass" style={{ padding: '24px', textAlign: 'center' }}>
               <div style={{ fontSize: '2rem', marginBottom: '12px' }}>📧</div>
               <h3 className="text-primary" style={{ fontWeight: 600, marginBottom: '8px', fontSize: '0.95rem' }}>
                 Email
               </h3>
-              <a href="mailto:contact@wend-kabre.com" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textDecoration: 'none' }}>
+              <a href="mailto:contact@wend-kabre.com" style={{ color: 'var(--primary)', fontSize: '0.9rem', textDecoration: 'none', fontWeight: 500 }}>
                 contact@wend-kabre.com
               </a>
             </div>
@@ -394,7 +441,7 @@ export default function ContactPage() {
               <h3 className="text-primary" style={{ fontWeight: 600, marginBottom: '8px', fontSize: '0.95rem' }}>
                 WhatsApp
               </h3>
-              <a href="https://wa.me/22670000000" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textDecoration: 'none' }}>
+              <a href="https://wa.me/22670000000" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontSize: '0.9rem', textDecoration: 'none', fontWeight: 500 }}>
                 +226 70 00 00 00
               </a>
             </div>
@@ -404,7 +451,7 @@ export default function ContactPage() {
               <h3 className="text-primary" style={{ fontWeight: 600, marginBottom: '8px', fontSize: '0.95rem' }}>
                 Horaires
               </h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0, fontWeight: 500 }}>
                 Lun-Ven 8h-18h
               </p>
             </div>
@@ -416,8 +463,17 @@ export default function ContactPage() {
         @keyframes spin {
           to { transform: rotate(360deg); }
         }
+        
+        .form-input::placeholder {
+          color: var(--text-muted);
+          opacity: 0.6;
+        }
+        
         @media (max-width: 768px) {
-          .grid-3 {
+          .card {
+            padding: 32px 24px !important;
+          }
+          .contact-grid {
             grid-template-columns: 1fr !important;
           }
         }
