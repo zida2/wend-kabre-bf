@@ -4,6 +4,7 @@ import { env } from '../config/environment.js';
 import { logger } from '../utils/logger.js';
 import { prisma } from '../config/database.js';
 import { BadRequestError, UnauthorizedError, ForbiddenError } from '../utils/errors.js';
+import { extractClientIp, ipMatchesCidr } from '../utils/network.js';
 
 export interface WebhookValidationResult {
   valid: boolean;
@@ -15,38 +16,13 @@ export class WebhookSecurityService {
   private static readonly REPLAY_WINDOW_MS = 10 * 60 * 1000;
   private static readonly NONCE_TTL_DAYS = 30;
 
-  private static extractClientIp(req: any): string {
-    if (!req) return 'unknown';
-    const forwardedFor = req.headers['x-forwarded-for'];
-    if (typeof forwardedFor === 'string') {
-      const firstIp = forwardedFor.split(',')[0]?.trim();
-      if (firstIp) return firstIp;
-    }
-    if (Array.isArray(forwardedFor) && forwardedFor.length > 0) {
-      return forwardedFor[0].trim();
-    }
-    return req.ip
-      || req.socket?.remoteAddress
-      || req.connection?.remoteAddress
-      || 'unknown';
-  }
-
   public static validateIpWhitelist(req: any): boolean {
     const allowedIps = moneyFusionConfig.allowedIps;
     if (!allowedIps || allowedIps.length === 0) {
       return true;
     }
-    const clientIp = this.extractClientIp(req);
-    const isAllowed = allowedIps.some((allowedIp) => {
-      if (allowedIp.includes('/')) {
-        try {
-          return clientIp.startsWith(allowedIp.split('/')[0].split('.').slice(0, 2).join('.'));
-        } catch {
-          return false;
-        }
-      }
-      return clientIp === allowedIp || clientIp.endsWith('.' + allowedIp);
-    });
+    const clientIp = extractClientIp(req);
+    const isAllowed = allowedIps.some((allowedIp) => ipMatchesCidr(clientIp, allowedIp));
     if (!isAllowed) {
       logger.warn(`[WEBHOOK_SECURITY] IP refusée: ${clientIp} (attendue: ${allowedIps.join(', ')})`);
       throw new ForbiddenError(`Accès refusé pour cette adresse IP: ${clientIp}`);
@@ -130,23 +106,38 @@ export class WebhookSecurityService {
     return match;
   }
 
-  public static async preventReplayAttack(reference: string, eventTimestamp?: number | string): Promise<boolean> {
+  /**
+   * Empêche le rejeu d'une notification déjà traitée.
+   *
+   * La clé était auparavant `${reference}_${Date.now()}` quand le payload ne
+   * portait pas d'horodatage — donc unique à chaque appel, et l'anti-rejeu ne
+   * bloquait rien. Elle dérive désormais du *contenu* de la notification :
+   * rejouer un payload identique est refusé, mais deux événements légitimes
+   * distincts sur la même référence (PENDING puis SUCCESS) restent acceptés.
+   */
+  public static async preventReplayAttack(
+    reference: string,
+    eventTimestamp?: number | string,
+    payloadFingerprint?: string
+  ): Promise<boolean> {
     if (!reference) {
       throw new BadRequestError('Référence manquante pour contrôle anti-rejeu.');
     }
 
-    const ts = eventTimestamp ? new Date(eventTimestamp).getTime() : Date.now();
     const now = Date.now();
 
-    if (eventTimestamp && !Number.isNaN(ts)) {
-      const ageMs = now - ts;
-      if (ageMs > this.REPLAY_WINDOW_MS) {
-        logger.warn(`[WEBHOOK_SECURITY] Webhook trop ancien: ${ageMs / 1000}s. Référence: ${reference}`);
-        throw new BadRequestError('Notification webhook expirée (anti-rejeu).');
+    if (eventTimestamp) {
+      const ts = new Date(eventTimestamp).getTime();
+      if (!Number.isNaN(ts)) {
+        const ageMs = now - ts;
+        if (ageMs > this.REPLAY_WINDOW_MS) {
+          logger.warn(`[WEBHOOK_SECURITY] Webhook trop ancien: ${ageMs / 1000}s. Référence: ${reference}`);
+          throw new BadRequestError('Notification webhook expirée (anti-rejeu).');
+        }
       }
     }
 
-    const nonceKey = `${reference}_${ts}`;
+    const nonceKey = `${reference}_${payloadFingerprint || 'nofingerprint'}`;
 
     let existing;
     try {
@@ -165,12 +156,15 @@ export class WebhookSecurityService {
     }
 
     const expiresAt = new Date(now + this.NONCE_TTL_DAYS * 24 * 60 * 60 * 1000);
+    const eventTs = eventTimestamp && !Number.isNaN(new Date(eventTimestamp).getTime())
+      ? new Date(eventTimestamp)
+      : null;
     try {
       await prisma.processedWebhook.create({
         data: {
           nonceKey,
           reference,
-          eventTs: eventTimestamp ? new Date(ts) : null,
+          eventTs,
           expiresAt
         }
       });
@@ -242,10 +236,23 @@ export class WebhookSecurityService {
         return { valid: false, reference, error: 'Signature HMAC invalide.' };
       }
 
+      // Empreinte du contenu : la signature quand elle est fournie (unique par
+      // payload), sinon un hachage du corps brut.
+      const bodyForFingerprint = typeof rawBody === 'string'
+        ? rawBody
+        : Buffer.isBuffer(rawBody)
+          ? rawBody.toString('utf8')
+          : JSON.stringify(payload);
+      const fingerprint = crypto
+        .createHash('sha256')
+        .update(signatureHeader ? String(signatureHeader) : bodyForFingerprint)
+        .digest('hex');
+
       try {
         await this.preventReplayAttack(
           reference,
-          payload?.timestamp || payload?.created_at || payload?.eventTime || payload?.time
+          payload?.timestamp || payload?.created_at || payload?.eventTime || payload?.time,
+          fingerprint
         );
       } catch (replayErr: any) {
         return { valid: false, reference, error: replayErr?.message || 'Anti-rejeu : webhook déjà traité ou expiré.' };
