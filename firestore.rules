@@ -32,17 +32,27 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if isAdmin() || (isSignedIn() && request.auth.uid == userId);
 
-      // Création : uniquement son propre profil, non abonné par défaut.
+      // Création : uniquement son propre profil, non abonné par défaut,
+      //   rôle USER imposé. Une fois créé, les champs sensibles sont
+      //   verrouillés côté client : seul l'Admin SDK peut les modifier.
       allow create: if isSignedIn()
                     && request.auth.uid == userId
-                    && request.resource.data.isSubscribed == false;
+                    && request.resource.data.isSubscribed == false
+                    && request.resource.data.role == 'USER';
 
-      // Mise à jour : l'admin, ou le propriétaire sur son propre profil.
-      // NB : l'auto-activation Premium simulée étant conservée (choix produit),
-      //      le propriétaire peut écrire ses champs d'abonnement — donc
-      //      l'auto-attribution Premium reste possible (risque accepté).
+      // ⚠️ Champs sensibles : modifiables UNIQUEMENT via Firebase Admin SDK.
+      //    Ces lignes vérifient que :
+      //      - le client n'écrit PAS subscription/role/paymentStatus
+      //        à une valeur DIFFÉRENTE de ce qui existe déjà
+      //    (isAdmin() dans les règles = compte admin, mais Admin SDK
+      //     bypass complètement les règles Firestore).
+      function restrictedFieldsChanged() {
+        return request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(['isSubscribed', 'subscriptionExpiresAt', 'role', 'paymentStatus', 'lastPaymentDate']);
+      }
+
       allow update: if isAdmin()
-                    || (isSignedIn() && request.auth.uid == userId);
+                    || (isSignedIn() && request.auth.uid == userId && !restrictedFieldsChanged());
 
       // Suppression : admin uniquement.
       allow delete: if isAdmin();

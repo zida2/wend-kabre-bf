@@ -1,0 +1,44 @@
+{
+  "name": "payment-service",
+  "version": "1.0.0",
+  "description": "Microservice de paiement indépendant Money Fusion pour la plateforme Wend-Kabré SaaS",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "npx --no-install tsc && npx prisma generate",
+    "start": "node dist/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:studio": "prisma studio"
+  },
+  "keywords": [
+    "payment",
+    "money-fusion",
+    "express",
+    "typescript",
+    "prisma",
+    "wend-kabre"
+  ],
+  "author": "Wend-Kabré Team",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^5.10.0",
+    "axios": "^1.6.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.3",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/node": "^20.11.20",
+    "prisma": "^5.10.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3"
+  }
+}

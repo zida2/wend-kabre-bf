@@ -18,6 +18,9 @@ import ScraperSection from '@/components/admin/sections/ScraperSection';
 import CouponsSection from '@/components/admin/sections/CouponsSection';
 import BroadcastSection from '@/components/admin/sections/BroadcastSection';
 import TestimonialsAdminSection from '@/components/admin/sections/TestimonialsAdminSection';
+import TransactionsSection from '@/components/admin/sections/TransactionsSection';
+import WebhooksSection from '@/components/admin/sections/WebhooksSection';
+import AuditLogsSection from '@/components/admin/sections/AuditLogsSection';
 import layout from '@/components/admin/adminLayout.module.css';
 
 const ADMIN_EMAIL = 'zidadesire20@gmail.com';
@@ -33,6 +36,9 @@ const SECTION_META = {
   testimonials: { title: 'Avis Clients', sub: 'Validez et gérez les témoignages publiés' },
   marches: { title: 'Marchés', sub: 'Consultez et gérez les marchés en base' },
   scraper: { title: 'Extraction', sub: 'Pilotez le robot d\'aspiration des sources' },
+  transactions: { title: 'Transactions DB', sub: 'Transactions PostgreSQL MoneyFusion — Wend-Kabré' },
+  webhooks: { title: 'Webhooks', sub: 'Journal des callbacks MoneyFusion (succès, échecs, rejeux)' },
+  auditlogs: { title: 'Journal d\'audit', sub: 'Historique des actions admin et paiements validés' },
 };
 
 export default function AdminPage() {
@@ -98,8 +104,6 @@ export default function AdminPage() {
       setLoading(false);
     }
 
-    // Suivi (runs scraping + journal d'audit) — indépendant : une erreur de
-    // permission (règles non déployées) ne doit pas casser le reste du dashboard.
     try {
       const runsSnap = await getDocs(query(collection(db, 'scrape_runs'), orderBy('createdAt', 'desc'), limit(10)));
       setScrapeRuns(runsSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
@@ -143,7 +147,6 @@ export default function AdminPage() {
     }
   };
 
-  // Mise à jour d'abonnement (admin authentifié autorisé par isAdmin()). days === 0 => désactivation.
   const applySubscription = async (userId, days) => {
     const userRef = doc(db, 'users', userId);
     if (days === 0) {
@@ -281,6 +284,9 @@ export default function AdminPage() {
     { id: 'testimonials', icon: '⭐', label: 'Avis' },
     { id: 'marches', icon: '📄', label: 'Marchés', badge: marchesList.length, badgeMuted: true },
     { id: 'scraper', icon: '🤖', label: 'Extraction' },
+    { id: 'transactions', icon: '💰', label: 'Transactions DB' },
+    { id: 'webhooks', icon: '🔔', label: 'Webhooks' },
+    { id: 'auditlogs', icon: '📜', label: 'Audit' },
   ];
 
   if (loading) {
@@ -315,6 +321,9 @@ export default function AdminPage() {
           {section === 'testimonials' && <TestimonialsAdminSection />}
           {section === 'marches' && <MarchesSection marches={marchesList} onDelete={handleDeleteMarche} />}
           {section === 'scraper' && <ScraperSection scraping={scraping} scrapeLogs={scrapeLogs} onScrape={handleForceScrape} />}
+          {section === 'transactions' && <TransactionsSection />}
+          {section === 'webhooks' && <WebhooksSection />}
+          {section === 'auditlogs' && <AuditLogsSection />}
         </main>
       </div>
 

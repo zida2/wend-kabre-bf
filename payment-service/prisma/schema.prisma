@@ -1,0 +1,168 @@
+// Prisma schema for Wend-KabrÃƒÂ© Payment Microservice
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum PlanType {
+  FREE
+  PREMIUM
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum WebhookEventType {
+  PAYMENT_SUCCESS
+  PAYMENT_FAILED
+  PAYMENT_CANCELLED
+  SUBSCRIPTION_ACTIVATED
+  SUBSCRIPTION_EXPIRED
+  UNKNOWN
+}
+
+enum AuditAction {
+  ROLE_CHANGE
+  PAYMENT_VALIDATION
+  PAYMENT_REFUND
+  SUBSCRIPTION_UPDATE
+  USER_DELETE
+  USER_SUSPEND
+  USER_REACTIVATE
+  ADMIN_LOGIN
+  SETTINGS_CHANGE
+  WEBHOOK_MANUAL_RETRY
+}
+
+model User {
+  id            String               @id @default(uuid())
+  email         String               @unique
+  phone         String?
+  name          String?
+  role          UserRole             @default(USER)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  subscriptions Subscription[]
+  transactions  PaymentTransaction[]
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+model Subscription {
+  id        String             @id @default(uuid())
+  userId    String
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan      PlanType           @default(FREE)
+  startDate DateTime           @default(now())
+  endDate   DateTime
+  status    SubscriptionStatus @default(ACTIVE)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@map("subscriptions")
+}
+
+model PaymentTransaction {
+  id                 String        @id @default(uuid())
+  userId             String
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reference          String        @unique
+  moneyFusionId      String?
+  amount             Float
+  currency           String        @default("XOF")
+  planId             String
+  status             PaymentStatus @default(PENDING)
+  paymentMethod      String        @default("MONEY_FUSION")
+  rawCallbackPayload Json?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  webhookEvents      WebhookEvent[]
+
+  @@index([userId])
+  @@index([reference])
+  @@index([status])
+  @@map("payment_transactions")
+}
+
+model WebhookEvent {
+  id              String            @id @default(uuid())
+  eventType       WebhookEventType  @default(UNKNOWN)
+  reference       String?
+  paymentTransactionId String?
+  paymentTransaction  PaymentTransaction? @relation(fields: [paymentTransactionId], references: [id], onDelete: SetNull)
+  rawPayload      Json
+  signature       String?
+  sourceIp        String?
+  hmacValidated   Boolean           @default(false)
+  ipValidated     Boolean           @default(false)
+  replayChecked   Boolean           @default(false)
+  success         Boolean           @default(false)
+  errorMessage    String?
+  processedAt     DateTime?
+  createdAt       DateTime          @default(now())
+
+  @@index([reference])
+  @@index([eventType])
+  @@index([success])
+  @@index([createdAt])
+  @@map("webhook_events")
+}
+
+model ProcessedWebhook {
+  id         String   @id @default(uuid())
+  nonceKey   String   @unique
+  reference  String
+  eventTs    DateTime?
+  processedAt DateTime @default(now())
+  expiresAt  DateTime?
+
+  @@index([nonceKey])
+  @@index([reference])
+  @@index([expiresAt])
+  @@map("processed_webhooks")
+}
+
+model AuditLog {
+  id         String      @id @default(uuid())
+  actorId    String?
+  actorEmail String?
+  actorRole  UserRole?
+  action     AuditAction
+  message    String
+  metadata   Json?
+  targetUserId String?
+  targetUser   User?    @relation(fields: [targetUserId], references: [id], onDelete: SetNull)
+  createdAt  DateTime    @default(now())
+
+  @@index([actorId])
+  @@index([action])
+  @@index([targetUserId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

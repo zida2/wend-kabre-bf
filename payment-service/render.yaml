@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: payment-service-wendkabre
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: RENDER_EXTERNAL_URL
+        value: https://payment-service-wendkabre.onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: wendkabre-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONEY_FUSION_API_URL
+        value: https://api.moneyfusion.net/v1
+      - key: MONEY_FUSION_TOKEN
+        sync: false
+      - key: MONEY_FUSION_API_KEY
+        sync: false
+      - key: MONEY_FUSION_WEBHOOK_SECRET
+        sync: false
+
+databases:
+  - name: wendkabre-db
+    region: frankfurt
+    plan: free
