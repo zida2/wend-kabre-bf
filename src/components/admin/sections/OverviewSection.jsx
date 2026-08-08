@@ -1,8 +1,9 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { getUserStatus } from '@/lib/subscription';
+import { adminFetch } from '@/lib/adminClient';
 
-const REVENUE_PER_PREMIUM = 12500; // FCFA / mois (estimation)
 const DAY = 24 * 60 * 60 * 1000;
 
 function StatTile({ icon, label, value, sub, accent = 'var(--primary)' }) {
@@ -193,10 +194,27 @@ function RecentActivity({ logs }) {
 
 export default function OverviewSection({ users, marches, requests, scrapeRuns = [], adminLogs = [] }) {
   const now = Date.now();
-  const premiumCount = users.filter((u) => u.isSubscribed && !u.isTrial).length;
+
+  // Le chiffre d'affaires réel vit dans PostgreSQL (payment-service). Il était
+  // auparavant estimé par `premiumCount × 12 500 FCFA` en dur, ce qui donnait
+  // deux CA contradictoires dans la même console.
+  const [revenue, setRevenue] = useState(null);
+  const [revenueError, setRevenueError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    adminFetch('/api/admin/payment/stats').then(({ ok, data, error }) => {
+      if (cancelled) return;
+      if (ok && data?.stats) setRevenue(data.stats.totalRevenue || 0);
+      else setRevenueError(error);
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  const premiumCount = users.filter((u) => getUserStatus(u) === 'premium').length;
+  const trialCount = users.filter((u) => getUserStatus(u) === 'essai').length;
   const pendingPayments = requests.filter((r) => r.status === 'pending').length;
   const activeAlerts = users.filter((u) => u.alertPrefs?.active === true).length;
-  const revenue = premiumCount * REVENUE_PER_PREMIUM;
   const newUsers7d = users.filter((u) => u.createdAt && now - new Date(u.createdAt).getTime() < 7 * DAY).length;
   const newMarches24h = marches.filter((m) => m.publishedAt && now - new Date(m.publishedAt).getTime() < DAY).length;
   const expiringSoon = marches.filter((m) => {
@@ -211,7 +229,20 @@ export default function OverviewSection({ users, marches, requests, scrapeRuns =
       {/* KPIs */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
         <StatTile icon="👥" label="Utilisateurs" value={users.length} sub={`+${newUsers7d} sur 7 j`} accent="var(--forest)" />
-        <StatTile icon="💎" label="Abonnés Premium" value={premiumCount} sub={`${revenue.toLocaleString('fr-FR')} FCFA/mois`} accent="var(--accent)" />
+        <StatTile
+          icon="💎"
+          label="Abonnés Premium"
+          value={premiumCount}
+          sub={trialCount > 0 ? `+ ${trialCount} en essai` : 'hors essais'}
+          accent="var(--accent)"
+        />
+        <StatTile
+          icon="💰"
+          label="Chiffre d'affaires"
+          value={revenue === null ? (revenueError ? '—' : '…') : `${revenue.toLocaleString('fr-FR')} FCFA`}
+          sub={revenueError ? 'Service paiement injoignable' : 'encaissé (Money Fusion)'}
+          accent="var(--primary)"
+        />
         <StatTile icon="📈" label="Taux de conversion" value={`${conversion}%`} sub="inscription → abonnement" accent="var(--primary)" />
         <StatTile icon="📄" label="Marchés en base" value={marches.length} accent="var(--primary)" />
         <StatTile icon="🆕" label="Nouveaux marchés" value={newMarches24h} sub="dernières 24 h" accent="var(--forest)" />

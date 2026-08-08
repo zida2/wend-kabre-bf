@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { paymentServiceClient } from '@/lib/paymentServiceClient';
+import { authorizeAdminProxy } from '@/lib/adminAuth';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    const authHeader = req.headers.get('authorization') || undefined;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { success: false, error: 'Accès administrateur authentifié requis.' },
-        { status: 401 }
-      );
+    const auth = await authorizeAdminProxy(req);
+    if (!auth.ok) {
+      return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
     }
+    const authHeader = auth.authHeader;
     const { searchParams } = new URL(req.url);
     const queryString = searchParams.toString();
     const url = '/api/admin/payment/transactions' + (queryString ? `?${queryString}` : '');

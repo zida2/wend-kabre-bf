@@ -2,6 +2,7 @@
 
 import DataTable from '../DataTable';
 import { useState, useEffect } from 'react';
+import { adminFetch } from '@/lib/adminClient';
 
 const STATUS_BADGE = {
   SUCCESS: { cls: 'badge-green', label: 'Succès' },
@@ -10,11 +11,11 @@ const STATUS_BADGE = {
   CANCELLED: { cls: 'badge-muted', label: 'Annulé' },
 };
 
+// Aligné sur WEND_KABRE_PLANS (payment-service/src/types/payment.types.ts).
 const PLAN_BADGE = {
   FREE: { cls: 'badge-muted', label: 'Gratuit' },
   PREMIUM: { cls: 'badge-gold', label: 'Premium' },
   ENTERPRISE: { cls: 'badge-green', label: 'Entreprise' },
-  STARTER: { cls: 'badge-accent', label: 'Starter 7j' },
 };
 
 export default function TransactionsSection() {
@@ -27,37 +28,25 @@ export default function TransactionsSection() {
     async function load() {
       setLoading(true);
       setError(null);
-      try {
-        const token = localStorage.getItem('admin_token') || '';
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const [tx, st] = await Promise.all([
+        adminFetch('/api/admin/payment/transactions?limit=100'),
+        adminFetch('/api/admin/payment/stats'),
+      ]);
 
-        const [txRes, statsRes] = await Promise.all([
-          fetch('/api/admin/payment/transactions?limit=100', { headers }).catch(() => null),
-          fetch('/api/admin/payment/stats', { headers }).catch(() => null),
-        ]);
-
-        if (txRes && txRes.ok) {
-          const data = await txRes.json();
-          if (data.success) setRows(data.transactions || []);
-        }
-
-        if (statsRes && statsRes.ok) {
-          const s = await statsRes.json();
-          if (s.success && s.stats) {
-            setStats({
-              total: s.stats.totalTransactions || 0,
-              revenue: s.stats.totalRevenue || 0,
-              success: s.stats.successfulPayments || 0,
-              failed: s.stats.failedPayments || 0,
-              pending: s.stats.pendingPayments || 0,
-            });
-          }
-        }
-      } catch (e) {
-        setError(e.message || 'Erreur chargement');
-      } finally {
-        setLoading(false);
+      if (tx.ok) setRows(tx.data.transactions || []);
+      if (st.ok && st.data.stats) {
+        const s = st.data.stats;
+        setStats({
+          total: s.totalTransactions || 0,
+          revenue: s.totalRevenue || 0,
+          success: s.successfulPayments || 0,
+          failed: s.failedPayments || 0,
+          pending: s.pendingPayments || 0,
+        });
       }
+
+      if (!tx.ok || !st.ok) setError(tx.error || st.error);
+      setLoading(false);
     }
     load();
   }, []);
@@ -66,10 +55,16 @@ export default function TransactionsSection() {
     {
       key: 'user',
       label: 'Utilisateur',
+      // L'API renvoie l'utilisateur imbriqué (`include: { user: … }`), pas
+      // aplati en userName/userEmail.
       render: (r) => (
         <div>
-          <div style={{ fontWeight: 700 }}>{r.userName || r.userId?.toString()?.slice(0, 8) || '—'}</div>
-          <div className="text-xs text-muted">{r.userEmail || 'ID: ' + (r.userId || '—')}</div>
+          <div style={{ fontWeight: 700 }}>
+            {r.user?.name || r.user?.email || r.userId?.toString()?.slice(0, 8) || '—'}
+          </div>
+          <div className="text-xs text-muted">
+            {r.user?.email || 'ID: ' + (r.userId || '—')}
+          </div>
         </div>
       ),
     },
@@ -77,7 +72,7 @@ export default function TransactionsSection() {
       key: 'reference',
       label: 'Référence',
       sortable: true,
-      render: (r) => <code style={{ fontSize: '0.72rem' }}>{r.reference || r.providerReference || '—'}</code>,
+      render: (r) => <code style={{ fontSize: '0.72rem' }}>{r.reference || '—'}</code>,
     },
     {
       key: 'plan',
@@ -88,9 +83,9 @@ export default function TransactionsSection() {
       },
     },
     {
-      key: 'provider',
+      key: 'paymentMethod',
       label: 'Processeur',
-      render: (r) => <span className="text-sm">{r.provider || 'MoneyFusion'}</span>,
+      render: (r) => <span className="text-sm">{r.paymentMethod || '—'}</span>,
     },
     {
       key: 'amount',
@@ -182,7 +177,7 @@ export default function TransactionsSection() {
           columns={columns}
           rows={rows}
           getRowKey={(r) => r.id || r.reference}
-          searchKeys={['reference', 'providerReference', 'userName', 'userEmail', 'planId']}
+          searchKeys={['reference', 'planId', 'paymentMethod']}
           searchPlaceholder="Rechercher une transaction (référence, utilisateur)…"
           filters={[
             {

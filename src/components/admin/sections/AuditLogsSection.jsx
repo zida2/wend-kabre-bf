@@ -2,7 +2,12 @@
 
 import DataTable from '../DataTable';
 import { useState, useEffect } from 'react';
+import { adminFetch } from '@/lib/adminClient';
 
+// Les clés doivent correspondre à l'enum AuditAction de
+// payment-service/prisma/schema.prisma. Les entrées absentes de l'enum
+// (MARCHE_DELETE, COUPON_*, BROADCAST_SENT…) proviennent du journal Firestore
+// `admin_logs` et sont conservées pour un affichage unifié à terme.
 const ACTION_BADGE = {
   ROLE_CHANGE: { cls: 'badge-gold', label: 'Changement rôle' },
   PAYMENT_VALIDATION: { cls: 'badge-green', label: 'Paiement validé' },
@@ -31,25 +36,20 @@ export default function AuditLogsSection() {
     async function load() {
       setLoading(true);
       setError(null);
-      try {
-        const token = localStorage.getItem('admin_token') || '';
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
-        const res = await fetch('/api/admin/audit-logs?limit=200', { headers });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.success) setLogs(data.logs || []);
-        }
-      } catch (e) {
-        setError(e.message || 'Erreur chargement');
-      } finally {
-        setLoading(false);
+      const { ok, data, error: err } = await adminFetch('/api/admin/audit-logs?limit=200');
+      if (ok) {
+        setLogs(data.logs || []);
+      } else {
+        setError(err);
       }
+      setLoading(false);
     }
     load();
   }, []);
 
   const byAction = logs.reduce((acc, l) => {
-    acc[l.actionType] = (acc[l.actionType] || 0) + 1;
+    if (!l.action) return acc;
+    acc[l.action] = (acc[l.action] || 0) + 1;
     return acc;
   }, {});
   const topAction = Object.entries(byAction).sort((a, b) => b[1] - a[1])[0];
@@ -75,11 +75,11 @@ export default function AuditLogsSection() {
       },
     },
     {
-      key: 'actionType',
+      key: 'action',
       label: 'Action',
       sortable: true,
       render: (r) => {
-        const b = ACTION_BADGE[r.actionType] || { cls: 'badge-muted', label: r.actionType || '—' };
+        const b = ACTION_BADGE[r.action] || { cls: 'badge-muted', label: r.action || '—' };
         return <span className={`badge ${b.cls}`} style={{ fontSize: '0.72rem' }}>{b.label}</span>;
       },
     },
@@ -101,17 +101,19 @@ export default function AuditLogsSection() {
       key: 'target',
       label: 'Cible',
       render: (r) => {
-        const hasTarget = r.targetUserId || r.targetUserEmail || r.targetPaymentRef || r.targetType;
+        // L'API renvoie la cible imbriquée (`targetUser`) et la référence de
+        // paiement dans `metadata`, pas à plat sur la ligne.
+        const targetEmail = r.targetUser?.email;
+        const paymentRef = r.metadata?.reference;
+        const hasTarget = r.targetUserId || targetEmail || paymentRef;
         return (
           <div className="text-sm">
-            {r.targetUserEmail && (
-              <div style={{ fontWeight: 600 }}>{r.targetUserEmail}</div>
-            )}
-            {!r.targetUserEmail && r.targetUserId && (
+            {targetEmail && <div style={{ fontWeight: 600 }}>{targetEmail}</div>}
+            {!targetEmail && r.targetUserId && (
               <div className="text-muted">User ID: {r.targetUserId?.toString()?.slice(0, 10)}…</div>
             )}
-            {r.targetPaymentRef && (
-              <code style={{ fontSize: '0.68rem' }}>Paiement: {r.targetPaymentRef}</code>
+            {paymentRef && (
+              <code style={{ fontSize: '0.68rem' }}>Paiement: {paymentRef}</code>
             )}
             {!hasTarget && <span className="text-muted">—</span>}
           </div>

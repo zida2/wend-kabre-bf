@@ -2,24 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import DataTable from '../DataTable';
-
-// Classe un utilisateur dans une catégorie de statut unique.
-// Priorité : Suspendu > Premium > Essai > Expiré > Gratuit.
-function getUserStatus(u) {
-  if (u?.suspended === true) return 'suspendu';
-  if (u?.isSubscribed && !u?.isTrial) return 'premium';
-  if (u?.isTrial) return 'essai';
-  if (u?.subscriptionExpiresAt && new Date(u.subscriptionExpiresAt).getTime() < Date.now()) return 'expire';
-  return 'gratuit';
-}
-
-const STATUS_META = {
-  suspendu: { label: 'Suspendu', badge: 'badge-gray' },
-  premium: { label: 'Premium', badge: 'badge-green' },
-  essai: { label: 'Essai', badge: 'badge-blue' },
-  expire: { label: 'Expiré', badge: 'badge-gray' },
-  gratuit: { label: 'Gratuit', badge: 'badge-gray' },
-};
+import { getUserStatus, STATUS_META, isSubscriptionActive } from '@/lib/subscription';
 
 export default function UsersSection({ users, processingUser, onUpdateSubscription, onDeleteUser, onSuspend, events = [] }) {
   const [detailUser, setDetailUser] = useState(null);
@@ -35,30 +18,6 @@ export default function UsersSection({ users, processingUser, onUpdateSubscripti
     `mailto:${u.email}?subject=${encodeURIComponent('Votre essai gratuit sur Wend-Kabré')}&body=${encodeURIComponent(
       `Bonjour ${u.name || ''},\n\nMerci pour votre inscription sur Wend-Kabré !\nPour vous souhaiter la bienvenue, je viens de vous activer un accès Premium Gratuit de 2 jours.\n\nL'équipe Wend-Kabré`
     )}`;
-
-  const busy = processingUser !== null && processingUser !== undefined;
-
-  const actionBtn = (label, onClick, variant, title) => {
-    const styleMap = {
-      trial: { background: 'var(--success-muted)', border: '1px solid var(--primary)', color: 'var(--primary-dark)' },
-      month: { background: 'var(--color-surface-2)', border: '1px solid var(--color-border-strong)', color: 'var(--text-secondary)' },
-      year: { background: 'var(--grad-accent)', border: 'none', color: '#fff' },
-      neutral: { background: 'var(--color-surface-2)', border: '1px solid var(--color-border-strong)', color: 'var(--text-secondary)' },
-      warn: { background: 'var(--warning-muted, var(--color-surface-2))', border: '1px solid var(--color-border-strong)', color: 'var(--text-secondary)' },
-      danger: { background: 'var(--danger-muted)', border: '1px solid rgba(220,38,38,0.3)', color: 'var(--danger)' },
-    };
-    return (
-      <button
-        onClick={onClick}
-        disabled={busy}
-        className="btn btn-sm"
-        style={{ padding: '6px 12px', fontSize: '0.78rem', fontWeight: 700, ...styleMap[variant] }}
-        title={title}
-      >
-        {label}
-      </button>
-    );
-  };
 
   const columns = [
     {
@@ -101,7 +60,16 @@ export default function UsersSection({ users, processingUser, onUpdateSubscripti
       label: 'Expiration',
       sortable: true,
       sortValue: (u) => (u.subscriptionExpiresAt ? new Date(u.subscriptionExpiresAt).getTime() : 0),
-      render: (u) => <span className="text-sm text-muted">{u.subscriptionExpiresAt ? new Date(u.subscriptionExpiresAt).toLocaleDateString('fr-FR') : '—'}</span>,
+      render: (u) => {
+        if (!u.subscriptionExpiresAt) return <span className="text-sm text-muted">—</span>;
+        const expired = !isSubscriptionActive(u);
+        return (
+          <span className="text-sm" style={{ color: expired ? 'var(--danger)' : 'var(--text-muted)' }}>
+            {new Date(u.subscriptionExpiresAt).toLocaleDateString('fr-FR')}
+            {expired && ' (expiré)'}
+          </span>
+        );
+      },
     },
     {
       key: 'actions',
@@ -268,7 +236,7 @@ function UserDetailModal({ user, events, onClose, processingUser, onUpdateSubscr
                   <button onClick={() => onUpdateSubscription(user.id, 7)} className="btn btn-sm" style={{ background: 'var(--success-muted)', color: 'var(--primary-dark)', border: '1px solid var(--primary)', fontWeight: 600 }}>+7 jours (Essai)</button>
                   <button onClick={() => onUpdateSubscription(user.id, 30)} className="btn btn-sm" style={{ background: '#fff', color: 'var(--text-secondary)', border: '1px solid var(--color-border-strong)', fontWeight: 600 }}>+1 mois</button>
                   <button onClick={() => onUpdateSubscription(user.id, 365)} className="btn btn-sm" style={{ background: 'var(--grad-accent)', color: '#fff', border: 'none', fontWeight: 600 }}>+1 an</button>
-                  {user.isSubscribed && (
+                  {isSubscriptionActive(user) && (
                     <button onClick={() => onUpdateSubscription(user.id, 0)} className="btn btn-sm" style={{ background: 'var(--danger-muted)', color: 'var(--danger)', border: '1px solid rgba(220,38,38,0.3)', fontWeight: 600 }}>Désactiver</button>
                   )}
                 </div>
