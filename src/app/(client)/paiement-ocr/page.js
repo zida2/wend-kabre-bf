@@ -182,10 +182,10 @@ function PaiementOCRContent() {
                       fontSize: '0.9rem'
                     }}>
                       <li style={{ marginBottom: '10px' }}>
-                        Composez <strong style={{ color: 'var(--primary)', fontSize: '1.05rem' }}>#144*82#</strong>
+                        Composez <strong style={{ color: 'var(--primary)', fontSize: '1.05rem' }}>*144#</strong>
                       </li>
                       <li style={{ marginBottom: '10px' }}>
-                        Sélectionnez <strong>1. Transfert d'argent</strong>
+                        Sélectionnez <strong>Transfert d'argent</strong>
                       </li>
                       <li style={{ marginBottom: '10px' }}>
                         Numéro: <strong style={{ color: 'var(--primary)', fontSize: '1.05rem' }}>62 20 28 77</strong>
@@ -211,10 +211,10 @@ function PaiementOCRContent() {
                       fontSize: '0.9rem'
                     }}>
                       <li style={{ marginBottom: '10px' }}>
-                        Composez <strong style={{ color: 'var(--primary)', fontSize: '1.05rem' }}>#155#</strong>
+                        Composez <strong style={{ color: 'var(--primary)', fontSize: '1.05rem' }}>*555#</strong>
                       </li>
                       <li style={{ marginBottom: '10px' }}>
-                        Sélectionnez <strong>1. Transfert d'argent</strong>
+                        Sélectionnez <strong>Transfert d'argent</strong>
                       </li>
                       <li style={{ marginBottom: '10px' }}>
                         Numéro: <strong style={{ color: 'var(--primary)', fontSize: '1.05rem' }}>06 13 90 16</strong>
