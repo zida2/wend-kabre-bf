@@ -247,6 +247,7 @@ function DetailsContent() {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [extractedData, setExtractedData] = useState(null);
   const [generationError, setGenerationError] = useState(null);
+  const [enGroupement, setEnGroupement] = useState(false);
 
   // CRM states
   const [isFollowing, setIsFollowing] = useState(false);
@@ -789,7 +790,7 @@ function DetailsContent() {
                   </p>
                   
                   <button 
-                    onClick={() => setShowStudio(true)} 
+                    onClick={() => window.location.href = `/marches/studio?id=${marche.id}`}
                     className="btn btn-gold w-full text-center"
                   >
                     Générer mon Dossier 🪄
@@ -819,18 +820,45 @@ function DetailsContent() {
           </div>
 
           {/* Stepper */}
-          <div className="flex gap-4" style={{ marginBottom: '32px', borderBottom: '1px solid var(--color-border)', paddingBottom: '16px' }}>
-            <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 1 ? 'var(--primary)' : 'var(--text-muted)' }}>
-              <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>1</div>
-              <div className="text-xs">Dossier Administratif</div>
+          <div style={{ marginBottom: '32px' }}>
+            {/* Barre de progression */}
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span className="text-xs text-muted" style={{ fontWeight: 600 }}>PROGRESSION</span>
+                <span className="text-xs" style={{ fontWeight: 700, color: 'var(--primary)' }}>
+                  {Math.round((studioStep / 3) * 100)}%
+                </span>
+              </div>
+              <div style={{ 
+                height: '8px', 
+                background: 'var(--color-border)', 
+                borderRadius: '50px',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  height: '100%',
+                  width: `${(studioStep / 3) * 100}%`,
+                  background: 'var(--grad-primary)',
+                  transition: 'width 0.3s ease',
+                  borderRadius: '50px'
+                }} />
+              </div>
             </div>
-            <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 2 ? 'var(--primary)' : 'var(--text-muted)' }}>
-              <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>2</div>
-              <div className="text-xs">Offre Technique (IA)</div>
-            </div>
-            <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 3 ? 'var(--primary)' : 'var(--text-muted)' }}>
-              <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>3</div>
-              <div className="text-xs">Vérification & Dépôt</div>
+
+            {/* Étapes */}
+            <div className="flex gap-4" style={{ borderBottom: '1px solid var(--color-border)', paddingBottom: '16px' }}>
+              <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 1 ? 'var(--primary)' : 'var(--text-muted)' }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>1</div>
+                <div className="text-xs">Dossier Administratif</div>
+              </div>
+              <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 2 ? 'var(--primary)' : 'var(--text-muted)' }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>2</div>
+                <div className="text-xs">Offre Technique (IA)</div>
+              </div>
+              <div style={{ flex: 1, textAlign: 'center', color: studioStep >= 3 ? 'var(--primary)' : 'var(--text-muted)' }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>3</div>
+                <div className="text-xs">Vérification & Dépôt</div>
+              </div>
             </div>
           </div>
 
@@ -842,11 +870,14 @@ function DetailsContent() {
               <div style={{ background: 'var(--success-muted)', border: '1px solid rgba(5,150,105,0.2)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
                 <h4 className="text-sm font-bold text-primary" style={{ marginBottom: '12px' }}>📌 Documents attendus pour ce marché :</h4>
                 
-                <p className="text-xs text-muted" style={{ marginBottom: '8px' }}>Socle administratif (obligatoire pour tout marché) :</p>
+                <p className="text-xs text-muted" style={{ marginBottom: '8px' }}>Socle administratif (6 pièces obligatoires - Référentiel ARCOP) :</p>
                 <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: '0 0 16px 0' }} className="text-sm text-secondary">
                   <li>Registre de Commerce (RCCM)</li>
-                  <li>Attestation de Situation Fiscale (ASF) ou IFU</li>
-                  <li>Attestation de la CNSS</li>
+                  <li>Attestation de non-redevance fiscale (DGI)</li>
+                  <li>Attestation CNSS à jour</li>
+                  <li>Certificat de non-engagement auprès du Trésor (AJE)</li>
+                  <li>Certificat de respect de la réglementation du travail (INSS)</li>
+                  <li>Certificat de non-faillite (Tribunal de Commerce)</li>
                 </ul>
 
                 <p className="text-xs text-muted" style={{ marginBottom: '8px' }}>Documents spécifiques à cet avis :</p>
@@ -859,6 +890,25 @@ function DetailsContent() {
                     <li>Veuillez lire attentivement la description de l'avis pour d'éventuelles exigences particulières.</li>
                   )}
                 </ul>
+
+                {/* Accord de groupement */}
+                <div style={{ marginTop: '16px', padding: '12px', background: 'var(--color-bg)', borderRadius: '6px', border: '1px solid var(--color-border)' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={enGroupement}
+                      onChange={(e) => setEnGroupement(e.target.checked)}
+                    />
+                    <span className="text-xs text-primary" style={{ fontWeight: 600 }}>
+                      Je soumissionne en groupement
+                    </span>
+                  </label>
+                  {enGroupement && (
+                    <p className="text-xs text-muted" style={{ marginTop: '8px', paddingLeft: '24px' }}>
+                      ⚠️ N'oubliez pas de joindre l'accord de groupement signé par toutes les parties.
+                    </p>
+                  )}
+                </div>
               </div>
 
               <p className="text-sm text-secondary" style={{ marginBottom: '16px' }}>
@@ -887,6 +937,25 @@ function DetailsContent() {
               <button onClick={() => setStudioStep(2)} className="btn btn-primary w-full text-center" disabled={selectedFiles.length === 0} style={{ opacity: selectedFiles.length === 0 ? 0.5 : 1 }}>
                 Continuer avec ces documents →
               </button>
+              
+              {/* Navigation : voir les autres étapes */}
+              <div style={{ marginTop: '16px', display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                <button 
+                  onClick={() => setStudioStep(2)} 
+                  className="btn btn-outline btn-sm"
+                  style={{ fontSize: '0.75rem', padding: '4px 12px' }}
+                >
+                  Aperçu Étape 2
+                </button>
+                <button 
+                  onClick={() => setStudioStep(3)} 
+                  className="btn btn-outline btn-sm"
+                  style={{ fontSize: '0.75rem', padding: '4px 12px' }}
+                  disabled={!extractedData}
+                >
+                  Aperçu Étape 3
+                </button>
+              </div>
             </div>
           )}
 
@@ -905,9 +974,30 @@ function DetailsContent() {
               )}
 
               {!generatingDoc && !generationError && !extractedData ? (
-                <button onClick={handleGenerate} className="btn btn-gold w-full text-center" style={{ fontSize: '1.1rem', padding: '16px' }}>
-                  🪄 Lancer l'Analyse IA et Rédiger l'Offre
-                </button>
+                <>
+                  <button onClick={handleGenerate} className="btn btn-gold w-full text-center" style={{ fontSize: '1.1rem', padding: '16px' }}>
+                    🪄 Lancer l'Analyse IA et Rédiger l'Offre
+                  </button>
+                  
+                  {/* Navigation */}
+                  <div style={{ marginTop: '16px', display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                    <button 
+                      onClick={() => setStudioStep(1)} 
+                      className="btn btn-outline btn-sm"
+                      style={{ fontSize: '0.75rem', padding: '4px 12px' }}
+                    >
+                      ← Retour Étape 1
+                    </button>
+                    <button 
+                      onClick={() => setStudioStep(3)} 
+                      className="btn btn-outline btn-sm"
+                      style={{ fontSize: '0.75rem', padding: '4px 12px' }}
+                      disabled={!extractedData}
+                    >
+                      Aperçu Étape 3
+                    </button>
+                  </div>
+                </>
               ) : null}
 
               {generatingDoc && (
@@ -979,6 +1069,24 @@ function DetailsContent() {
                   style={{ opacity: agreedToTerms ? 1 : 0.5 }}
                 >
                   📥 Télécharger l'Offre Rédigée (.docx)
+                </button>
+              </div>
+              
+              {/* Navigation */}
+              <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                <button 
+                  onClick={() => setStudioStep(1)} 
+                  className="btn btn-outline btn-sm"
+                  style={{ fontSize: '0.75rem', padding: '4px 12px' }}
+                >
+                  ← Étape 1
+                </button>
+                <button 
+                  onClick={() => setStudioStep(2)} 
+                  className="btn btn-outline btn-sm"
+                  style={{ fontSize: '0.75rem', padding: '4px 12px' }}
+                >
+                  ← Étape 2
                 </button>
               </div>
             </div>
