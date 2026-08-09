@@ -1,5 +1,7 @@
-import { db } from '@/lib/firebase';
-import { collection, addDoc, getDocs, query, where, updateDoc } from 'firebase/firestore';
+// Écritures via l'Admin SDK. Le SDK client imposait de laisser `marches` et
+// `scrape_runs` ouverts en écriture à tout le monde dans firestore.rules —
+// c'est-à-dire la collection produit destructible par n'importe quel visiteur.
+import { getAdminDb } from '@/lib/firebaseAdmin';
 import * as cheerio from 'cheerio';
 import { classifyMarket, isRealTender } from '@/lib/marketClassifier';
 import { processAlertsForTenders } from '@/lib/alertEngine';
@@ -336,15 +338,30 @@ export async function GET(request) {
   // Déduplications et sauvegarde Firestore en parallèle pour gagner du temps
   let addedCount = 0;
   const newTenders = [];
-  const tendersRef = collection(db, 'marches');
+
+  const adminDb = await getAdminDb();
+  if (!adminDb) {
+    // Échec bruyant : sans Admin SDK le scraping ne peut plus rien écrire
+    // depuis que les règles Firestore refusent l'écriture client.
+    console.error('[Scrape] Firebase Admin SDK non configuré — aucune écriture possible.');
+    return Response.json(
+      {
+        error: 'Firebase Admin SDK non configuré (FIREBASE_ADMIN_* ou FIREBASE_SERVICE_ACCOUNT manquant).',
+        added: 0,
+        total: listTenders.length,
+      },
+      { status: 503 }
+    );
+  }
+
+  const tendersRef = adminDb.collection('marches');
   const CLASSIF_KEYS = ['procedure', 'region', 'commune', 'ministere', 'montantEstime', 'urgence', 'secteur', 'relation', 'normalizedTitle'];
 
   await Promise.allSettled(classifiedTenders.map(async (tender) => {
     try {
-      const q = query(tendersRef, where('title', '==', tender.title));
-      const snap = await getDocs(q);
+      const snap = await tendersRef.where('title', '==', tender.title).get();
       if (snap.empty) {
-        await addDoc(tendersRef, tender);
+        await tendersRef.add(tender);
         addedCount++;
         newTenders.push(tender);
       } else {
@@ -362,7 +379,7 @@ export async function GET(request) {
           if (existingData[k] === undefined && tender[k] !== undefined) updates[k] = tender[k];
         }
         if (Object.keys(updates).length) {
-          await updateDoc(existingDoc.ref, updates);
+          await existingDoc.ref.update(updates);
         }
       }
     } catch (e) {
@@ -372,7 +389,7 @@ export async function GET(request) {
 
   // Enregistre le run pour le suivi de santé du scraping (§1/§10 du cahier des charges)
   try {
-    await addDoc(collection(db, 'scrape_runs'), {
+    await adminDb.collection('scrape_runs').add({
       added: addedCount,
       total: listTenders.length,
       kept: classifiedTenders.length,

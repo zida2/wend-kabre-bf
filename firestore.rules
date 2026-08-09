@@ -17,14 +17,19 @@ service cloud.firestore {
 
     // ── Marchés publics ──────────────────────────────────────────────
     // Lecture publique (les titres/catégories sont gratuits).
-    // ⚠️ ÉCRITURE : laissée ouverte car le robot d'extraction (cron
-    //    /api/scrape) s'exécute côté serveur SANS contexte d'authentification
-    //    (il utilise le SDK client). Pour verrouiller l'écriture aux seuls
-    //    admin/scraper, il faut migrer /api/scrape vers le Firebase Admin SDK
-    //    (compte de service) — voir README/notes de sécurité.
+    //
+    // ÉCRITURE : réservée au serveur. /api/scrape et /api/analyze-market
+    // utilisent désormais le Firebase Admin SDK, qui contourne entièrement ces
+    // règles — `if false` ne les gêne donc pas, mais ferme la porte au
+    // navigateur. Auparavant `allow write: if true` laissait n'importe quel
+    // visiteur modifier ou supprimer toute la collection produit.
+    //
+    // Seule exception client : la suppression manuelle depuis la console admin
+    // (src/app/(admin)/admin/page.js), qui utilise le SDK client.
     match /marches/{marchId} {
       allow read: if true;
-      allow write: if true;
+      allow create, update: if false;
+      allow delete: if isAdmin();
     }
 
     // ── Profils utilisateurs (PME) ───────────────────────────────────
@@ -103,22 +108,22 @@ service cloud.firestore {
     }
 
     // ── Runs du robot de scraping (suivi de santé §1/§10) ────────────
-    // Création ouverte : le cron /api/scrape écrit sans contexte d'auth
-    //   (même limitation que /marches — à verrouiller via l'Admin SDK plus tard).
-    // Lecture réservée à l'admin.
+    // Écrits par /api/scrape via l'Admin SDK (qui contourne ces règles).
+    // Lecture réservée à l'admin, aucune écriture depuis le navigateur.
     match /scrape_runs/{runId} {
       allow read:   if isAdmin();
-      allow create: if true;
-      allow update, delete: if isAdmin();
+      allow create, update: if false;
+      allow delete: if isAdmin();
     }
 
     // ── Événements analytics (§2/§10) ────────────────────────────────
-    // Création ouverte (collecte anonyme des visiteurs via /api/track, sans
-    //   contexte d'auth). Append-only. Lecture réservée à l'admin.
+    // Collecte anonyme des visiteurs : le navigateur POST vers /api/track, qui
+    // écrit via l'Admin SDK. La création directe était ouverte à tous, ce qui
+    // permettait d'injecter n'importe quelle donnée analytique.
+    // Append-only, lecture réservée à l'admin.
     match /events/{eventId} {
       allow read:   if isAdmin();
-      allow create: if true;
-      allow update, delete: if false;
+      allow create, update, delete: if false;
     }
 
     // ── Coupons promotionnels (§4) ───────────────────────────────────

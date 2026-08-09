@@ -3,21 +3,12 @@ import { paymentService } from '../services/payment.service.js';
 import { webhookService } from '../services/webhook.service.js';
 import { WebhookSecurityService } from '../services/webhookSecurity.service.js';
 import { AuditLogService } from '../services/auditLog.service.js';
+import { notifyAppSubscriptionChanged } from '../services/appSync.service.js';
 import { logger } from '../utils/logger.js';
 import { prisma } from '../config/database.js';
 import { AuditAction, WebhookEventType } from '@prisma/client';
 
-function extractClientIp(req: any): string {
-  const forwardedFor = req.headers['x-forwarded-for'];
-  if (typeof forwardedFor === 'string') {
-    const firstIp = forwardedFor.split(',')[0]?.trim();
-    if (firstIp) return firstIp;
-  }
-  if (Array.isArray(forwardedFor) && forwardedFor.length > 0) {
-    return forwardedFor[0].trim();
-  }
-  return req.ip || req.socket?.remoteAddress || req.connection?.remoteAddress || 'unknown';
-}
+import { extractClientIp } from '../utils/network.js';
 
 function inferWebhookEventType(payload: any, finalStatus?: string): WebhookEventType {
   const status = (finalStatus || payload?.status || '').toString().toUpperCase();
@@ -31,7 +22,22 @@ export class PaymentController {
   public async createPayment(req: Request, res: Response, next: NextFunction) {
     const startTime = Date.now();
     try {
-      const { userId, email, phone, amount, planId } = req.body;
+      const { email, phone, amount, planId } = req.body;
+
+      // L'identité vient du jeton vérifié, jamais du corps de la requête :
+      // cette route était ouverte, n'importe qui pouvait créer une transaction
+      // — et donc une ligne `users` — au nom de n'importe quel identifiant.
+      const authUser = (req as any).user;
+      const userId = authUser?.id;
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'Authentification requise.' });
+      }
+      if (req.body.userId && req.body.userId !== userId) {
+        return res.status(403).json({
+          success: false,
+          error: 'Le userId fourni ne correspond pas au compte authentifié.'
+        });
+      }
 
       logger.paymentCreated(userId, planId as string, Number(amount), 'init');
 
@@ -190,6 +196,12 @@ export class PaymentController {
             payload
           );
         } catch (_auditErr) { /* audit log ne doit jamais casser la réponse */ }
+
+        // 7bis) Propager l'activation à l'application (Firestore), sans quoi
+        // l'accès premium n'est accordé qu'au retour du client sur le site.
+        if (expectedTx?.userId) {
+          await notifyAppSubscriptionChanged(expectedTx.userId);
+        }
       } else if (result.status === 'FAILED' || result.status === 'CANCELLED') {
         logger.paymentRefused(reference, expectedAmount || 0, result.status);
       }

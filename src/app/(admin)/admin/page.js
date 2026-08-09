@@ -150,7 +150,7 @@ export default function AdminPage() {
   const applySubscription = async (userId, days) => {
     const userRef = doc(db, 'users', userId);
     if (days === 0) {
-      await updateDoc(userRef, { isSubscribed: false, subscriptionExpiresAt: null });
+      await updateDoc(userRef, { isSubscribed: false, isTrial: false, subscriptionExpiresAt: null });
       return;
     }
     const target = usersList.find((u) => u.id === userId);
@@ -160,17 +160,23 @@ export default function AdminPage() {
       if (currentExp > new Date()) expirationDate = currentExp;
     }
     expirationDate.setDate(expirationDate.getDate() + days);
-    
+
+    const isTrialGrant = days === 7;
+
     const updateData = {
       isSubscribed: true,
       lastPaymentDate: new Date().toISOString(),
       subscriptionExpiresAt: expirationDate.toISOString(),
+      // `isTrial` = l'accès en cours est un essai (lu par getUserStatus).
+      // `hasUsedTrial` = un essai a déjà été consommé par le passé (lu par la
+      // page tarifs pour empêcher un second essai). Les deux sont distincts.
+      isTrial: isTrialGrant,
     };
-    
-    if (days === 7) {
+
+    if (isTrialGrant) {
       updateData.hasUsedTrial = true;
     }
-    
+
     await updateDoc(userRef, updateData);
   };
 

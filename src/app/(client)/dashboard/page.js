@@ -7,6 +7,7 @@ import { doc, getDoc, updateDoc, collection, getDocs, query, where } from 'fireb
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { recommendMarkets } from '@/lib/recommend';
+import { isSubscriptionActive } from '@/lib/subscription';
 import { 
   Bell, FileText, CheckCircle, TrendingUp, LogOut, AlertTriangle, 
   Settings, X, Star, Clock, CheckSquare, Briefcase, Plus, Save
@@ -312,7 +313,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {(!userData?.isSubscribed && !pendingPayment) && (
+      {(!isSubscriptionActive(userData) && !pendingPayment) && (
         <div style={{ background: 'var(--accent-muted)', borderLeft: '4px solid var(--accent)', padding: '16px 24px', borderRadius: 'var(--radius-sm)', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', boxShadow: 'var(--shadow-gold)' }}>
           <div>
             <h4 style={{ color: 'var(--accent)', fontWeight: 800, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>

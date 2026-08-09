@@ -76,22 +76,10 @@ app.use(cors({
   maxAge: 86400
 }));
 
-app.use((req: any, _res, next) => {
-  const chunks: Buffer[] = [];
-  req.on('data', (chunk: Buffer) => chunks.push(chunk));
-  req.on('end', () => {
-    try {
-      req.rawBody = Buffer.concat(chunks).toString('utf8');
-    } catch {
-      req.rawBody = '';
-    }
-    next();
-  });
-  if (chunks.length === 0) {
-    next();
-  }
-});
-
+// `rawBody` est capturé par le hook `verify` d'express.json ci-dessous : il est
+// appelé avec le Buffer brut avant le parsing JSON, ce qui est exactement ce dont
+// la vérification HMAC des webhooks a besoin. Ne pas ajouter de middleware de
+// lecture de stream en amont : il consommerait la requête et casserait le parsing.
 app.use(express.json({
   limit: '1mb',
   verify: (req: any, _res, buf) => {
@@ -138,7 +126,7 @@ app.get('/api/payment/return', (req: Request, res: Response) => {
       : `${moneyFusionConfig.appSuccessUrl}?ref=${encodeURIComponent(ref)}&status=PENDING`;
 
   res.redirect(302, target);
-});});
+});
 
 // Interception des routes inexistantes (404)
 app.use((req: Request, res: Response, next) => {

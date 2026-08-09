@@ -138,15 +138,19 @@ export default function TarifsPage() {
 
     try {
       const phone = user.phoneNumber || '+22670000000';
-      const finalPrice = parseInt(getPrice(selectedPlan).replace(/\s/g, ''), 10);
 
-      // Appeler le payment service pour créer une session Money Fusion
+      // L'identité et le montant sont déterminés côté serveur à partir de ce
+      // jeton et du planId ; les envoyer depuis le navigateur n'aurait aucune
+      // valeur de preuve.
+      const idToken = await user.getIdToken();
+
       const response = await fetch('/api/subscription/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`,
+        },
         body: JSON.stringify({
-          userId: user.uid,
-          email: user.email,
           phone: phone,
           planId: selectedPlan.id,
         })

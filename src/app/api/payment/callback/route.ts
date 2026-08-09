@@ -12,10 +12,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { resolvePaymentServiceUrl } from '@/lib/paymentServiceClient';
 
-const PAYMENT_SERVICE_URL = 
-  process.env.PAYMENT_SERVICE_URL || 
-  'https://payment-service-1-sex9.onrender.com';
+const PAYMENT_SERVICE_URL = resolvePaymentServiceUrl();
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);

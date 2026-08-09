@@ -1,7 +1,25 @@
-const PAYMENT_SERVICE_URL =
-  process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL || 
-  process.env.PAYMENT_SERVICE_URL || 
-  'https://payment-service-1-sex9.onrender.com';
+const PAYMENT_SERVICE_FALLBACK_URL = 'https://payment-service-1-sex9.onrender.com';
+
+/**
+ * Résout l'URL de base du microservice de paiement.
+ *
+ * render.yaml câble PAYMENT_SERVICE_URL via `fromService … property: host`, qui
+ * renvoie un hostname nu (`mon-service.onrender.com`) sans schéma : concaténé
+ * tel quel, `fetch` échoue. On préfixe donc https:// quand le schéma manque, et
+ * on retire le / final pour que les concaténations de chemins restent propres.
+ */
+export function resolvePaymentServiceUrl(): string {
+  const raw = (
+    process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL ||
+    process.env.PAYMENT_SERVICE_URL ||
+    PAYMENT_SERVICE_FALLBACK_URL
+  ).trim().replace(/\/$/, '');
+
+  if (!raw) return PAYMENT_SERVICE_FALLBACK_URL;
+  return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+}
+
+const PAYMENT_SERVICE_URL = resolvePaymentServiceUrl();
 
 export interface CreatePaymentParams {
   userId: string;
@@ -111,11 +129,17 @@ export class PaymentServiceClient {
   /**
    * Initialise un paiement via le microservice payment-service
    */
-  public async createPayment(params: CreatePaymentParams): Promise<CreatePaymentResult> {
+  public async createPayment(
+    params: CreatePaymentParams,
+    authHeader?: string
+  ): Promise<CreatePaymentResult> {
     try {
       const data = await safeFetchJSON(`${this.baseUrl}/api/payment/create`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(authHeader ? { Authorization: authHeader } : {}),
+        },
         body: JSON.stringify(params),
         timeout: 15000,
       });
@@ -189,8 +213,7 @@ export class PaymentServiceClient {
    * Utilisé par le Next.js Dashboard Admin pour relayer les appels.
    */
   async proxyGET(path: string, authHeader?: string): Promise<any> {
-    const base = (process.env.PAYMENT_SERVICE_URL || 'http://localhost:3001').replace(/\/$/, '');
-    const res = await fetch(base + path, {
+    const res = await fetch(this.baseUrl + path, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

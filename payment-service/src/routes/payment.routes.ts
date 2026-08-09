@@ -4,12 +4,15 @@ import { paymentController } from '../controllers/payment.controller.js';
 import { validateBody } from '../middlewares/validation.middleware.js';
 import { paymentCreateLimiter } from '../middlewares/rateLimit.middleware.js';
 import { authenticateJWT } from '../middlewares/auth.middleware.js';
+import { requireAdmin } from '../middlewares/admin.middleware.js';
 
 const router = Router();
 
 // Schema de validation Zod pour la création de paiement
 const createPaymentSchema = z.object({
-  userId: z.string().min(1, 'userId est requis'),
+  // Optionnel : l'identité fait foi côté jeton (cf. paymentController.createPayment).
+  // S'il est présent, il doit correspondre au compte authentifié.
+  userId: z.string().min(1).optional(),
   email: z.string().email('Adresse e-mail invalide'),
   phone: z.string().optional(),
   amount: z.number().positive('Le montant doit être un nombre positif'),
@@ -30,6 +33,7 @@ const callbackSchema = z.object({
 router.post(
   '/create',
   paymentCreateLimiter,
+  authenticateJWT,
   validateBody(createPaymentSchema),
   paymentController.createPayment
 );
@@ -60,6 +64,7 @@ router.get(
 router.get(
   '/stats',
   authenticateJWT,
+  requireAdmin,
   paymentController.getStats
 );
 

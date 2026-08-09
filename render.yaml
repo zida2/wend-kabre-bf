@@ -20,14 +20,24 @@ services:
   # ==========================================================================
   # SERVICE 2 — Microservice de Paiement Money Fusion
   # ==========================================================================
+  # ⚠️ AVANT D'APPLIQUER CE BLUEPRINT : Render rattache un service par son `name`.
+  # Le service réellement en ligne répond sur payment-service-1-sex9.onrender.com,
+  # ce qui correspond à un service nommé `payment-service-1`, pas au nom ci-dessous.
+  # Appliquer tel quel créerait un SECOND service à une autre URL. Vérifier le nom
+  # exact dans le dashboard Render et l'aligner ici avant tout `Apply Blueprint`.
   - type: web
     name: payment-service-wendkabre
     region: frankfurt
     plan: free
     runtime: node
     rootDir: payment-service
-    buildCommand: npm install && npx prisma generate && npm run build
-    startCommand: node dist/server.js
+    # --include=dev est indispensable : Render pose NODE_ENV=production, ce qui
+    # fait sauter les devDependencies à l'install — typescript serait absent.
+    # `npm run build` enchaîne prisma generate puis tsc (dans cet ordre).
+    buildCommand: npm install --include=dev && npm run build
+    # `npm start` et non `node dist/server.js` : le script start applique
+    # d'abord `prisma migrate deploy`.
+    startCommand: npm start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
@@ -35,6 +45,8 @@ services:
       - key: PORT
         value: "10000"
       - key: APP_URL
+        # `property: host` renvoie un hostname nu, sans schéma. Le helper
+        # urlLike() de src/config/environment.ts préfixe https:// à la volée.
         fromService:
           name: wend-kabre-backend
           type: web
@@ -42,7 +54,7 @@ services:
         options:
           expand: true
       - key: RENDER_EXTERNAL_URL
-        sync: false
+        value: https://payment-service-1-sex9.onrender.com
       - key: DATABASE_URL
         fromDatabase:
           name: wendkabre-payment-db
@@ -61,6 +73,11 @@ services:
         sync: false
       - key: PAYMENT_CURRENCY
         value: XOF
+      # Secret partagé avec le service Next : permet au webhook Money Fusion de
+      # déclencher la resynchronisation Firestore d'un abonnement. Doit avoir la
+      # MÊME valeur que l'APP_SYNC_SECRET de wend-kabre-backend.
+      - key: APP_SYNC_SECRET
+        generateValue: true
 
   # ==========================================================================
   # SERVICE 1 — Application Wend-Kabré Principale (Next.js)
@@ -94,6 +111,14 @@ services:
           type: web
           property: env
           envVarKey: JWT_SECRET
+      # Reprend la valeur générée côté payment-service : les deux doivent être
+      # identiques pour que la notification serveur-à-serveur soit acceptée.
+      - key: APP_SYNC_SECRET
+        fromService:
+          name: payment-service-wendkabre
+          type: web
+          property: env
+          envVarKey: APP_SYNC_SECRET
       - key: DATABASE_URL
         fromDatabase:
           name: wendkabre-payment-db
@@ -120,7 +145,35 @@ services:
         generateValue: true
       - key: CRON_SECRET
         generateValue: true
-      - key: EMAIL_USER
+      - key: NEXT_PUBLIC_SCRAPER_SECRET
         sync: false
-      - key: EMAIL_APP_PASSWORD
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+      # URL du microservice exposée au navigateur. PAYMENT_SERVICE_URL est déjà
+      # câblée plus haut via fromService pour les appels serveur.
+      - key: NEXT_PUBLIC_PAYMENT_SERVICE_URL
+        sync: false
+
+      # ─── Intégrations optionnelles ───────────────────────────────────────
+      # Absentes, elles ne bloquent pas le démarrage : le service journalise au
+      # boot quelles fonctionnalités sont désactivées (cf. src/lib/integrations.js).
+
+      # E-mail (nodemailer/Gmail) — noms alignés sur src/lib/mail.js.
+      - key: GMAIL_EMAIL
+        sync: false
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+
+      # Assistant IA (Google Gemini)
+      - key: GEMINI_API_KEY
+        sync: false
+
+      # Alertes SMS / WhatsApp (Twilio)
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_SMS_FROM
+        sync: false
+      - key: TWILIO_WHATSAPP_FROM
         sync: false

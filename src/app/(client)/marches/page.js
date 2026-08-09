@@ -6,6 +6,7 @@ import { collection, getDocs, orderBy, query, doc, getDoc } from 'firebase/fires
 import { onAuthStateChanged } from 'firebase/auth';
 import { track } from '@/lib/track';
 import { expandQuery, normalize } from '@/lib/searchSynonyms';
+import { isSubscriptionActive } from '@/lib/subscription';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Composant Paywall : CTA Premium affiché sur les cartes verrouillées
@@ -171,7 +172,7 @@ export default function MarchesPage() {
     fetchMarches();
   }, []);
 
-  const isSubscribed = userData?.isSubscribed === true;
+  const isSubscribed = isSubscriptionActive(userData);
 
   const categoriesList = [
     { id: 'All', label: 'Toutes les offres', icon: '📋' },

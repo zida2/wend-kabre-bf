@@ -86,6 +86,28 @@ function SubscriptionContent() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [pollingActive, setPollingActive] = useState<boolean>(false);
 
+  /**
+   * Propage l'abonnement PostgreSQL vers Firestore avant l'affichage.
+   * Sans cet appel, cette page pouvait annoncer « ACTIVE » pendant que
+   * l'application continuait de bloquer l'accès, faute d'avoir mis à jour le
+   * document Firestore sur lequel reposent toutes les gardes premium.
+   */
+  const syncSubscription = useCallback(async (user: any) => {
+    if (!user) return;
+    try {
+      const token = await user.getIdToken();
+      await fetch('/api/subscription/sync', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: '{}',
+      });
+    } catch (err) {
+      // Best-effort : l'affichage ci-dessous reste correct même si la
+      // propagation échoue.
+      console.warn('[subscription] synchronisation Firestore ignorée:', err);
+    }
+  }, []);
+
   const fetchSubscription = useCallback(async (uid: string) => {
     try {
       const res = await fetch(`/api/subscription/status?userId=${encodeURIComponent(uid)}`);
@@ -105,48 +127,69 @@ function SubscriptionContent() {
     async function init() {
       setLoading(true);
       const user = await getCurrentFirebaseUser();
-      const effectiveUserId = user?.uid || 'usr_demo_123';
       setCurrentUser(user);
-      await fetchSubscription(effectiveUserId);
+
+      if (!user) {
+        // Auparavant la page interrogeait l'identifiant fictif 'usr_demo_123'
+        // pour les visiteurs non connectés, ce qui affichait un abonnement
+        // qui n'était celui de personne.
+        setSubscription(null);
+        setErrorMessage('Connectez-vous pour consulter votre abonnement.');
+        setLoading(false);
+        return;
+      }
+
+      await syncSubscription(user);
+      await fetchSubscription(user.uid);
 
       if (refParam) {
         setPollingActive(true);
       }
     }
     init();
-  }, [fetchSubscription, refParam]);
+  }, [fetchSubscription, syncSubscription, refParam]);
 
+  // Attente de la notification Money Fusion après un retour de paiement.
   useEffect(() => {
-    if (!pollingActive) return;
+    if (!pollingActive || !currentUser) return;
     const interval = setInterval(async () => {
-      const uid = currentUser?.uid || 'usr_demo_123';
       try {
-        const res = await fetch(`/api/subscription/status?userId=${encodeURIComponent(uid)}`);
+        const res = await fetch(`/api/subscription/status?userId=${encodeURIComponent(currentUser.uid)}`);
         const data = await res.json();
         if (data.success) {
           setSubscription(data.subscription);
           if (data.subscription.status === 'ACTIVE' && data.subscription.plan !== 'FREE') {
             setPollingActive(false);
+            // L'abonnement vient d'être validé : propager vers Firestore pour
+            // que l'accès premium soit réellement débloqué dans l'application.
+            await syncSubscription(currentUser);
           }
         }
       } catch { /* ignore */ }
     }, 5000);
     return () => clearInterval(interval);
-  }, [pollingActive, currentUser]);
+  }, [pollingActive, currentUser, syncSubscription]);
 
   const handleCheckout = async (planId: 'PREMIUM' | 'ENTERPRISE') => {
     setCheckoutLoading(planId);
     setErrorMessage(null);
 
     try {
-      const uid = currentUser?.uid || 'usr_demo_123';
-      const email = currentUser?.email || 'entreprise@burkina.bf';
-      const phone = currentUser?.phoneNumber || '+22670000000';
+      if (!currentUser) {
+        setErrorMessage('Connectez-vous pour souscrire un abonnement.');
+        return;
+      }
+      const phone = currentUser.phoneNumber || '+22670000000';
+      const idToken = await currentUser.getIdToken();
 
+      // Identité et montant sont déterminés côté serveur à partir du jeton.
       const response = await fetch('/api/subscription/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: uid, email, phone, planId })
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ phone, planId })
       });
 
       const data = await response.json();

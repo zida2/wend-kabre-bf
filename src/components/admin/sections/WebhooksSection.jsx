@@ -2,22 +2,32 @@
 
 import DataTable from '../DataTable';
 import { useState, useEffect } from 'react';
+import { adminFetch } from '@/lib/adminClient';
 
+// Aligné sur l'enum WebhookEventType de payment-service/prisma/schema.prisma.
 const EVENT_BADGE = {
   PAYMENT_SUCCESS: { cls: 'badge-green', label: 'Paiement Succès' },
   PAYMENT_FAILED: { cls: 'badge-red', label: 'Paiement Échec' },
-  PAYMENT_PENDING: { cls: 'badge-accent', label: 'Paiement En attente' },
-  REFUND_SUCCESS: { cls: 'badge-muted', label: 'Remboursement' },
-  SUBSCRIPTION_CREATED: { cls: 'badge-gold', label: 'Abonnement créé' },
-  SUBSCRIPTION_CANCELLED: { cls: 'badge-muted', label: 'Abonnement annulé' },
+  PAYMENT_CANCELLED: { cls: 'badge-muted', label: 'Paiement Annulé' },
+  SUBSCRIPTION_ACTIVATED: { cls: 'badge-gold', label: 'Abonnement activé' },
+  SUBSCRIPTION_EXPIRED: { cls: 'badge-muted', label: 'Abonnement expiré' },
+  UNKNOWN: { cls: 'badge-muted', label: 'Inconnu' },
 };
 
 const DELIVERY_BADGE = {
-  DELIVERED: { cls: 'badge-green', label: 'Livré' },
-  FAILED: { cls: 'badge-red', label: 'Échec' },
-  PENDING: { cls: 'badge-accent', label: 'En attente' },
-  RETRYING: { cls: 'badge-gold', label: 'Rejeu' },
+  DELIVERED: { cls: 'badge-green', label: 'Traité' },
+  FAILED: { cls: 'badge-red', label: 'Rejeté' },
+  PENDING: { cls: 'badge-accent', label: 'Non traité' },
 };
+
+// Le modèle WebhookEvent ne stocke pas de statut de livraison : il expose
+// `success` (traitement métier abouti) et `processedAt` (date de traitement).
+// On en dérive l'état affiché plutôt que de lire un champ inexistant.
+function deliveryState(e) {
+  if (e?.success === true) return 'DELIVERED';
+  if (e?.processedAt || e?.errorMessage) return 'FAILED';
+  return 'PENDING';
+}
 
 export default function WebhooksSection() {
   const [events, setEvents] = useState([]);
@@ -29,27 +39,21 @@ export default function WebhooksSection() {
     async function load() {
       setLoading(true);
       setError(null);
-      try {
-        const token = localStorage.getItem('admin_token') || '';
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
-        const res = await fetch('/api/admin/payment/webhooks?limit=100', { headers });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.success) setEvents(data.events || []);
-        }
-      } catch (e) {
-        setError(e.message || 'Erreur chargement');
-      } finally {
-        setLoading(false);
+      const { ok, data, error: err } = await adminFetch('/api/admin/payment/webhooks?limit=100');
+      if (ok) {
+        setEvents(data.events || []);
+      } else {
+        setError(err);
       }
+      setLoading(false);
     }
     load();
   }, []);
 
   const stats = {
     total: events.length,
-    delivered: events.filter((e) => e.deliveryStatus === 'DELIVERED').length,
-    failed: events.filter((e) => e.deliveryStatus === 'FAILED').length,
+    delivered: events.filter((e) => deliveryState(e) === 'DELIVERED').length,
+    failed: events.filter((e) => deliveryState(e) === 'FAILED').length,
     successEvents: events.filter((e) => e.eventType === 'PAYMENT_SUCCESS').length,
   };
 
@@ -68,8 +72,12 @@ export default function WebhooksSection() {
       label: 'Référence paiement',
       render: (r) => (
         <div>
-          <code style={{ fontSize: '0.72rem' }}>{r.paymentReference || r.reference || '—'}</code>
-          {r.amount && <div className="text-xs text-muted" style={{ marginTop: '3px' }}>{Number(r.amount).toLocaleString('fr-FR')} FCFA</div>}
+          <code style={{ fontSize: '0.72rem' }}>{r.reference || '—'}</code>
+          {r.rawPayload?.amount && (
+            <div className="text-xs text-muted" style={{ marginTop: '3px' }}>
+              {Number(r.rawPayload.amount).toLocaleString('fr-FR')} FCFA
+            </div>
+          )}
         </div>
       ),
     },
@@ -83,21 +91,21 @@ export default function WebhooksSection() {
           {r.ipValidated !== false && <div>🛡️ IP whitelistée</div>}
           {r.ipValidated === false && <div style={{ color: 'var(--danger)' }}>⚠️ IP hors whitelist</div>}
           {r.replayChecked && <div>🚫 Anti-rejeu OK</div>}
-          {r.duplicate && <div style={{ color: 'var(--accent)' }}>♻️ Doublon détecté</div>}
         </div>
       ),
     },
     {
       key: 'deliveryStatus',
-      label: 'Livraison',
+      label: 'Traitement',
       sortable: true,
+      sortValue: (r) => deliveryState(r),
       render: (r) => {
-        const b = DELIVERY_BADGE[r.deliveryStatus] || DELIVERY_BADGE.PENDING;
+        const b = DELIVERY_BADGE[deliveryState(r)];
         return (
           <div>
             <span className={`badge ${b.cls}`}>{b.label}</span>
-            {typeof r.retryCount === 'number' && r.retryCount > 0 && (
-              <div className="text-xs text-muted" style={{ marginTop: '3px' }}>{r.retryCount} rejeu(x)</div>
+            {r.errorMessage && (
+              <div className="text-xs" style={{ marginTop: '3px', color: 'var(--danger)' }}>{r.errorMessage}</div>
             )}
           </div>
         );
@@ -107,10 +115,10 @@ export default function WebhooksSection() {
       key: 'createdAt',
       label: 'Horodatage',
       sortable: true,
-      sortValue: (r) => (r.receivedAt || r.createdAt ? new Date(r.receivedAt || r.createdAt).getTime() : 0),
+      sortValue: (r) => (r.createdAt ? new Date(r.createdAt).getTime() : 0),
       render: (r) => (
         <div className="text-sm text-muted">
-          {r.receivedAt || r.createdAt ? new Date(r.receivedAt || r.createdAt).toLocaleString('fr-FR') : '—'}
+          {r.createdAt ? new Date(r.createdAt).toLocaleString('fr-FR') : '—'}
         </div>
       ),
     },

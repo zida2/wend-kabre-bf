@@ -3,11 +3,24 @@ import { z } from 'zod';
 
 dotenv.config();
 
+/**
+ * Render injecte les URLs inter-services via `fromService … property: host`, qui
+ * renvoie un hostname nu (`mon-service.onrender.com`) sans schéma. Tel quel, il
+ * échoue la validation `.url()` et fait planter le service au démarrage. On
+ * préfixe donc en https:// quand le schéma manque, et on retire le / final.
+ */
+const urlLike = () =>
+  z.string().transform((val) => {
+    const trimmed = val.trim().replace(/\/$/, '');
+    if (!trimmed) return trimmed;
+    return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  }).pipe(z.string().url());
+
 const envSchema = z.object({
   PORT: z.string().default('5000').transform((val) => parseInt(val, 10)),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  RENDER_EXTERNAL_URL: z.string().url().default('https://payment-service-wendkabre.onrender.com'),
-  APP_URL: z.string().url().optional(),
+  RENDER_EXTERNAL_URL: urlLike().default('https://payment-service-wendkabre.onrender.com'),
+  APP_URL: urlLike().optional(),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL est requise'),
   JWT_SECRET: z.string().min(8, 'JWT_SECRET doit contenir au moins 8 caractères'),
   MONEY_FUSION_API_URL: z.string().url().default('https://api.moneyfusion.net/v1'),
@@ -15,7 +28,11 @@ const envSchema = z.object({
   MONEY_FUSION_API_KEY: z.string().default('MF_TEST_API_KEY'),
   MONEY_FUSION_WEBHOOK_SECRET: z.string().default('MF_WEBHOOK_SECRET'),
   MONEY_FUSION_ALLOWED_IPS: z.string().optional(),
-  PAYMENT_CURRENCY: z.string().default('XOF')
+  PAYMENT_CURRENCY: z.string().default('XOF'),
+  // Secret partagé avec l'application Next.js, pour déclencher la
+  // resynchronisation d'un abonnement dès la validation du webhook.
+  // Doit être identique des deux côtés. Absent = notification désactivée.
+  APP_SYNC_SECRET: z.string().optional()
 });
 
 const _env = envSchema.safeParse(process.env);

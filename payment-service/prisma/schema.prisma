@@ -4,10 +4,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Pas de `directUrl` : la connection string Render PostgreSQL est une connexion
+// directe (pas de pooler type PgBouncer/Accelerate en amont). Déclarer un
+// directUrl non défini fait échouer prisma migrate/generate.
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum PlanType {
