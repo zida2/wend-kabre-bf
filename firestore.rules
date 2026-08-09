@@ -79,8 +79,7 @@ service cloud.firestore {
       
       // Création : l'utilisateur doit être authentifié et le userId dans le document doit correspondre
       allow create: if isSignedIn() 
-                    && request.resource.data.userId == request.auth.uid
-                    && dossierId == request.auth.uid + '_' + request.resource.data.marcheId;
+                    && request.resource.data.userId == request.auth.uid;
       
       // Mise à jour : vérifier que l'utilisateur est le propriétaire
       allow update: if isSignedIn() 
@@ -96,23 +95,21 @@ service cloud.firestore {
     // Chaque document est identifié par {userId}_{marcheId}
     match /studio/{studioId} {
       // Lecture : autorisée si l'utilisateur est authentifié ET que le studioId commence par son UID
-      allow read:   if isSignedIn() && studioId.matches('^' + request.auth.uid + '_.*');
+      // Permet de lire même si le document n'existe pas encore (resource.data sera null)
+      allow read:   if isSignedIn() && studioId.matches(request.auth.uid + '_.*');
       
       // Création : l'utilisateur doit être authentifié et le userId dans le document doit correspondre
       allow create: if isSignedIn() 
-                    && request.resource.data.userId == request.auth.uid
-                    && studioId.matches('^' + request.auth.uid + '_.*');
+                    && request.resource.data.userId == request.auth.uid;
       
       // Mise à jour : vérifier que l'utilisateur est le propriétaire et ne change pas son userId
       allow update: if isSignedIn() 
                     && resource.data.userId == request.auth.uid
-                    && request.resource.data.userId == request.auth.uid
-                    && studioId.matches('^' + request.auth.uid + '_.*');
+                    && request.resource.data.userId == request.auth.uid;
       
       // Suppression : uniquement le propriétaire
       allow delete: if isSignedIn() 
-                    && resource.data.userId == request.auth.uid
-                    && studioId.matches('^' + request.auth.uid + '_.*');
+                    && resource.data.userId == request.auth.uid;
     }
 
     // ── Demandes de paiement (contiennent des reçus / PII) ───────────

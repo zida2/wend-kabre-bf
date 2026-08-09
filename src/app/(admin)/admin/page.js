@@ -26,19 +26,19 @@ import layout from '@/components/admin/adminLayout.module.css';
 const ADMIN_EMAIL = 'zidadesire20@gmail.com';
 
 const SECTION_META = {
-  overview: { title: 'Vue d\'ensemble', sub: 'Indicateurs clés et tendances de la plateforme' },
-  analytics: { title: 'Analytique visiteurs', sub: 'Trafic, provenance, comportement et conversion' },
-  stats: { title: 'Statistiques avancées', sub: 'Marchés par ministère/région/secteur, valeur, qualité du scraping' },
-  users: { title: 'Utilisateurs & Abonnements', sub: 'Gérez les PME inscrites et leurs abonnements' },
-  payments: { title: 'Paiements', sub: 'Validez les demandes de paiement par reçu' },
-  coupons: { title: 'Coupons promotionnels', sub: 'Créez et gérez les codes de réduction' },
-  broadcast: { title: 'Diffusions (Relance)', sub: 'Envoyez des messages ciblés à vos utilisateurs' },
-  testimonials: { title: 'Avis Clients', sub: 'Validez et gérez les témoignages publiés' },
-  marches: { title: 'Marchés', sub: 'Consultez et gérez les marchés en base' },
-  scraper: { title: 'Extraction', sub: 'Pilotez le robot d\'aspiration des sources' },
-  transactions: { title: 'Transactions DB', sub: 'Transactions PostgreSQL MoneyFusion — Wend-Kabré' },
-  webhooks: { title: 'Webhooks', sub: 'Journal des callbacks MoneyFusion (succès, échecs, rejeux)' },
-  auditlogs: { title: 'Journal d\'audit', sub: 'Historique des actions admin et paiements validés' },
+  overview: { title: 'Tableau de bord', sub: 'Indicateurs clés et santé de la plateforme', category: 'Dashboard' },
+  analytics: { title: 'Analytique', sub: 'Trafic, comportement utilisateur et conversion', category: 'Analytics' },
+  stats: { title: 'Statistiques avancées', sub: 'Répartition des marchés et qualité du scraping', category: 'Analytics' },
+  users: { title: 'Utilisateurs', sub: 'Gestion des PME et leurs abonnements', category: 'Business' },
+  payments: { title: 'Paiements', sub: 'Validation des demandes de paiement par reçu', category: 'Business' },
+  coupons: { title: 'Coupons', sub: 'Codes promotionnels et réductions', category: 'Marketing' },
+  broadcast: { title: 'Diffusions', sub: 'Messages ciblés aux utilisateurs', category: 'Marketing' },
+  testimonials: { title: 'Avis clients', sub: 'Validation des témoignages', category: 'Marketing' },
+  marches: { title: 'Marchés', sub: 'Gestion et consultation du catalogue', category: 'Contenu' },
+  scraper: { title: 'Extraction', sub: 'Aspiration automatique des sources', category: 'Contenu' },
+  transactions: { title: 'Transactions', sub: 'Transactions PostgreSQL Money Fusion', category: 'Monitoring' },
+  webhooks: { title: 'Webhooks', sub: 'Callbacks et logs paiements', category: 'Monitoring' },
+  auditlogs: { title: 'Journal d\'audit', sub: 'Historique complet des actions', category: 'Monitoring' },
 };
 
 export default function AdminPage() {
@@ -357,6 +357,35 @@ export default function AdminPage() {
 
   const pendingCount = paymentRequests.filter((r) => r.status === 'pending').length;
 
+  // Grouper les sections par catégorie
+  const sectionsByCategory = {
+    'Dashboard': [
+      { id: 'overview', icon: '📊', label: 'Tableau de bord' },
+    ],
+    'Analytics': [
+      { id: 'analytics', icon: '📈', label: 'Analytique' },
+      { id: 'stats', icon: '📊', label: 'Statistiques' },
+    ],
+    'Business': [
+      { id: 'users', icon: '👥', label: 'Utilisateurs' },
+      { id: 'payments', icon: '💳', label: 'Paiements', badge: pendingCount },
+    ],
+    'Marketing': [
+      { id: 'coupons', icon: '🎟️', label: 'Coupons' },
+      { id: 'broadcast', icon: '📢', label: 'Diffusions' },
+      { id: 'testimonials', icon: '⭐', label: 'Avis' },
+    ],
+    'Contenu': [
+      { id: 'marches', icon: '📄', label: 'Marchés', badge: marchesList.length, badgeMuted: true },
+      { id: 'scraper', icon: '🤖', label: 'Extraction' },
+    ],
+    'Monitoring': [
+      { id: 'transactions', icon: '💰', label: 'Transactions' },
+      { id: 'webhooks', icon: '🔔', label: 'Webhooks' },
+      { id: 'auditlogs', icon: '📜', label: 'Audit' },
+    ],
+  };
+
   const sections = [
     { id: 'overview', icon: '📊', label: 'Vue d\'ensemble' },
     { id: 'analytics', icon: '📈', label: 'Analytique' },
@@ -387,12 +416,70 @@ export default function AdminPage() {
   return (
     <div className="animate-fadeIn">
       <div className={layout.shell}>
-        <AdminSidebar sections={sections} active={section} onSelect={setSection} onLogout={handleLogout} />
+        <AdminSidebar 
+          sections={sections} 
+          active={section} 
+          onSelect={setSection} 
+          onLogout={handleLogout}
+          sectionsByCategory={sectionsByCategory}
+        />
 
         <main className={layout.main}>
           <div className={layout.pageHead}>
-            <h1 className={layout.pageTitle}>{meta.title}</h1>
-            <p className={layout.pageSub}>{meta.sub}</p>
+            <div>
+              <h1 className={layout.pageTitle}>{meta.title}</h1>
+              <p className={layout.pageSub}>{meta.sub}</p>
+            </div>
+            
+            {/* Indicateurs de statut temps réel */}
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'flex-end', alignItems: 'center' }}>
+              {pendingCount > 0 && (
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px',
+                  padding: '8px 14px',
+                  background: 'var(--danger-muted)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid rgba(220,38,38,0.2)'
+                }}>
+                  <span style={{ fontSize: '1rem' }}>⚠️</span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--danger)' }}>
+                    {pendingCount} paiement{pendingCount > 1 ? 's' : ''} en attente
+                  </span>
+                </div>
+              )}
+              
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                padding: '8px 14px',
+                background: 'var(--primary-muted)',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid rgba(5,150,105,0.2)'
+              }}>
+                <span style={{ fontSize: '1rem' }}>✓</span>
+                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  {usersList.length} utilisateur{usersList.length > 1 ? 's' : ''}
+                </span>
+              </div>
+
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                padding: '8px 14px',
+                background: 'var(--forest-muted)',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid rgba(30,100,70,0.2)'
+              }}>
+                <span style={{ fontSize: '1rem' }}>📊</span>
+                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  {marchesList.length} marché{marchesList.length > 1 ? 's' : ''}
+                </span>
+              </div>
+            </div>
           </div>
 
           {section === 'overview' && <OverviewSection users={usersList} marches={marchesList} requests={paymentRequests} scrapeRuns={scrapeRuns} adminLogs={adminLogs} />}
