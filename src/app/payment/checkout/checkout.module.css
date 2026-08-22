@@ -1,0 +1,477 @@
+/* Checkout Page Styles */
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 40px 20px;
+}
+
+.wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.loading {
+  text-align: center;
+  padding: 100px 20px;
+  font-size: 1.2rem;
+  color: #667eea;
+  font-weight: 600;
+}
+
+/* ===== Summary Section (Left) ===== */
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.summaryTitle {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0;
+  color: #1a202c;
+}
+
+.planCard {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.planName {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #667eea;
+}
+
+.planDescription {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0 0 25px 0;
+}
+
+.priceBreakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+  padding-bottom: 25px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.breakdownRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+.amount {
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.active {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-top: 2px solid #f0f0f0;
+}
+
+.totalLabel {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.totalAmount {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #667eea;
+}
+
+.paymentMethods {
+  background: #f9fafb;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.methodsTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  color: #1a202c;
+}
+
+.methodsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.method {
+  font-size: 0.9rem;
+  color: #4b5563;
+  padding: 8px 0;
+}
+
+.featuresIncluded {
+  background: #f0f4ff;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  margin-top: 20px;
+}
+
+.featureTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  color: #667eea;
+}
+
+.featureList {
+  margin: 0;
+  padding-left: 20px;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+.featureList li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.helpSection {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.helpTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #1a202c;
+}
+
+.helpText {
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin: 0;
+}
+
+.helpLink {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.helpLink:hover {
+  text-decoration: underline;
+}
+
+/* ===== Form Section (Right) ===== */
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1a202c;
+}
+
+.errorAlert {
+  background: #ffebee;
+  border: 1px solid #f48fb1;
+  color: #c62828;
+  padding: 14px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.form {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.input,
+.select {
+  padding: 12px 14px;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+.checkbox {
+  margin-top: 4px;
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.submitButton {
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+}
+
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.submitButton.loading {
+  background: linear-gradient(135deg, #5570d8 0%, #693990 100%);
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cancelButton {
+  padding: 12px 20px;
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancelButton:hover {
+  background: #f9fafb;
+  transform: translateY(-1px);
+}
+
+.securityNotice {
+  background: #e8f5e9;
+  border: 1px solid #81c784;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.noticeTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2e7d32;
+  margin: 0 0 8px 0;
+}
+
+.noticeText {
+  font-size: 0.85rem;
+  color: #388e3c;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 1024px) {
+  .wrapper {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .summary {
+    order: 2;
+  }
+
+  .formSection {
+    order: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 15px;
+  }
+
+  .wrapper {
+    gap: 20px;
+  }
+
+  .summaryTitle,
+  .formTitle {
+    font-size: 1.3rem;
+  }
+
+  .planCard,
+  .form {
+    padding: 20px;
+  }
+
+  .totalAmount {
+    font-size: 1.5rem;
+  }
+
+  .checkboxLabel {
+    font-size: 0.85rem;
+  }
+
+  .featureList {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 15px 10px;
+  }
+
+  .summaryTitle,
+  .formTitle {
+    font-size: 1.1rem;
+  }
+
+  .planName {
+    font-size: 1.2rem;
+  }
+
+  .planCard,
+  .form {
+    padding: 15px;
+  }
+
+  .priceBreakdown,
+  .featureList {
+    font-size: 0.85rem;
+  }
+
+  .breakdownRow {
+    font-size: 0.85rem;
+  }
+
+  .totalRow {
+    padding: 15px 0;
+  }
+
+  .totalLabel {
+    font-size: 1rem;
+  }
+
+  .totalAmount {
+    font-size: 1.3rem;
+  }
+
+  .input,
+  .select,
+  .submitButton {
+    font-size: 0.9rem;
+    padding: 12px;
+  }
+
+  .methodsList {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .method {
+    font-size: 0.8rem;
+  }
+}

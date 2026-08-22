@@ -1,0 +1,501 @@
+/* Pricing Page Styles */
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 0;
+}
+
+/* ===== Hero Section ===== */
+.hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 80px 40px;
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.heroContent {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: 0 0 20px 0;
+  letter-spacing: -1px;
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  margin: 0 0 15px 0;
+  opacity: 0.95;
+  font-weight: 500;
+}
+
+.description {
+  font-size: 1.1rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* ===== Pricing Section ===== */
+.pricingSection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 80px 20px;
+}
+
+.cardsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  margin-bottom: 80px;
+}
+
+/* Pricing Card */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 40px 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  border: 2px solid transparent;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.card.popular {
+  border: 2px solid #667eea;
+  transform: scale(1.05);
+}
+
+.card.popular:hover {
+  transform: scale(1.05) translateY(-5px);
+}
+
+.badge {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Card Header */
+.cardHeader {
+  margin-bottom: 30px;
+  text-align: center;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 30px;
+}
+
+.planName {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 0 15px 0;
+  color: #1a202c;
+}
+
+.priceSection {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 5px;
+  margin: 20px 0;
+}
+
+.price {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #667eea;
+}
+
+.currency {
+  font-size: 1.2rem;
+  color: #666;
+  font-weight: 600;
+}
+
+.duration {
+  font-size: 1rem;
+  color: #999;
+  font-weight: 500;
+}
+
+.free {
+  font-size: 1.3rem;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.planDescription {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 15px 0 0 0;
+  font-weight: 500;
+}
+
+/* Features List */
+.featuresList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 30px;
+  min-height: 200px;
+}
+
+.feature {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.featureIcon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.featureText {
+  line-height: 1.4;
+}
+
+/* CTA Button */
+.ctaWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.ctaButton {
+  width: 100%;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.ctaButton:hover:not(:disabled) {
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+}
+
+.ctaButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ctaButton.current {
+  background: #e0e0e0;
+  color: #666;
+  cursor: default;
+}
+
+.link {
+  text-decoration: none;
+}
+
+/* ===== Comparison Section ===== */
+.comparisonSection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 20px;
+  background: white;
+  margin-top: 60px;
+}
+
+.comparisonTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  margin: 0 0 50px 0;
+  color: #1a202c;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.comparisonTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.comparisonTable thead {
+  background: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.comparisonTable th {
+  padding: 20px 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #1a202c;
+  font-size: 0.95rem;
+}
+
+.comparisonTable th.highlight {
+  background: #f0f4ff;
+  color: #667eea;
+}
+
+.comparisonTable td {
+  padding: 18px 15px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.comparisonTable td.feature {
+  font-weight: 600;
+  color: #1a202c;
+  min-width: 200px;
+}
+
+.comparisonTable tbody tr:hover {
+  background: #fafbfc;
+}
+
+/* ===== FAQ Section ===== */
+.faqSection {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 80px 20px;
+}
+
+.faqTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  margin: 0 0 50px 0;
+  color: #1a202c;
+}
+
+.faqList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.faqItem {
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.faqItem:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.faqQuestion {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  color: #1a202c;
+}
+
+.faqAnswer {
+  margin: 0;
+  color: #666;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* ===== CTA Section ===== */
+.ctaSection {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 80px 40px;
+  text-align: center;
+  margin-top: 60px;
+}
+
+.ctaContent {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.ctaTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0 0 15px 0;
+}
+
+.ctaSubtitle {
+  font-size: 1.2rem;
+  margin: 0 0 40px 0;
+  opacity: 0.95;
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ctaButtonPrimary,
+.ctaButtonSecondary {
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+  cursor: pointer;
+  border: none;
+}
+
+.ctaButtonPrimary {
+  background: white;
+  color: #667eea;
+}
+
+.ctaButtonPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.ctaButtonSecondary {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.ctaButtonSecondary:hover {
+  background: white;
+  color: #667eea;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .hero {
+    padding: 60px 20px;
+    margin-bottom: 40px;
+  }
+
+  .title {
+    font-size: 2.2rem;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+  }
+
+  .cardsContainer {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .card.popular {
+    transform: scale(1);
+  }
+
+  .card.popular:hover {
+    transform: translateY(-5px);
+  }
+
+  .comparisonSection,
+  .faqSection {
+    padding: 40px 20px;
+  }
+
+  .comparisonTitle,
+  .faqTitle {
+    font-size: 2rem;
+  }
+
+  .ctaSection {
+    padding: 60px 20px;
+  }
+
+  .ctaTitle {
+    font-size: 1.8rem;
+  }
+
+  .ctaButtons {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .ctaButtonPrimary,
+  .ctaButtonSecondary {
+    width: 100%;
+  }
+
+  .pricingSection {
+    padding: 0 20px 40px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 40px 15px;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .card {
+    padding: 25px 20px;
+  }
+
+  .price {
+    font-size: 2.2rem;
+  }
+
+  .planName {
+    font-size: 1.5rem;
+  }
+
+  .featuresList {
+    min-height: auto;
+  }
+
+  .comparisonTable th,
+  .comparisonTable td {
+    padding: 12px 10px;
+    font-size: 0.85rem;
+  }
+
+  .faqItem {
+    padding: 15px;
+  }
+
+  .faqQuestion {
+    font-size: 1rem;
+  }
+
+  .faqAnswer {
+    font-size: 0.9rem;
+  }
+}
