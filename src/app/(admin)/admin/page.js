@@ -10,6 +10,7 @@ import { logAdminAction } from '@/lib/adminLog';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import OverviewSection from '@/components/admin/sections/OverviewSection';
 import AnalyticsSection from '@/components/admin/sections/AnalyticsSection';
+import VisitorsRealtimeSection from '@/components/admin/sections/VisitorsRealtimeSection';
 import StatsSection from '@/components/admin/sections/StatsSection';
 import UsersSection from '@/components/admin/sections/UsersSection';
 import PaymentsSection from '@/components/admin/sections/PaymentsSection';
@@ -28,6 +29,7 @@ const ADMIN_EMAIL = 'zidadesire20@gmail.com';
 const SECTION_META = {
   overview: { title: 'Tableau de bord', sub: 'Indicateurs clés et santé de la plateforme', category: 'Dashboard' },
   analytics: { title: 'Analytique', sub: 'Trafic, comportement utilisateur et conversion', category: 'Analytics' },
+  visitors: { title: 'Visiteurs en Temps Réel', sub: 'Liste complète des visiteurs avec date et heure', category: 'Analytics' },
   stats: { title: 'Statistiques avancées', sub: 'Répartition des marchés et qualité du scraping', category: 'Analytics' },
   users: { title: 'Utilisateurs', sub: 'Gestion des PME et leurs abonnements', category: 'Business' },
   payments: { title: 'Paiements', sub: 'Validation des demandes de paiement par reçu', category: 'Business' },
@@ -364,6 +366,7 @@ export default function AdminPage() {
     ],
     'Analytics': [
       { id: 'analytics', icon: '📈', label: 'Analytique' },
+      { id: 'visitors', icon: '🕐', label: 'Visiteurs en Temps Réel' },
       { id: 'stats', icon: '📊', label: 'Statistiques' },
     ],
     'Business': [
@@ -389,6 +392,7 @@ export default function AdminPage() {
   const sections = [
     { id: 'overview', icon: '📊', label: 'Vue d\'ensemble' },
     { id: 'analytics', icon: '📈', label: 'Analytique' },
+    { id: 'visitors', icon: '🕐', label: 'Visiteurs en Temps Réel' },
     { id: 'stats', icon: '📊', label: 'Statistiques' },
     { id: 'users', icon: '👥', label: 'Utilisateurs' },
     { id: 'payments', icon: '💳', label: 'Paiements', badge: pendingCount },
@@ -484,6 +488,7 @@ export default function AdminPage() {
 
           {section === 'overview' && <OverviewSection users={usersList} marches={marchesList} requests={paymentRequests} scrapeRuns={scrapeRuns} adminLogs={adminLogs} />}
           {section === 'analytics' && <AnalyticsSection events={events} users={usersList} />}
+          {section === 'visitors' && <VisitorsRealtimeSection events={events} users={usersList} />}
           {section === 'stats' && <StatsSection marches={marchesList} events={events} scrapeRuns={scrapeRuns} users={usersList} />}
           {section === 'users' && <UsersSection users={usersList} processingUser={processingUser} onUpdateSubscription={handleUpdateSubscription} onDeleteUser={handleDeleteUser} onSuspend={handleSuspend} events={events} />}
           {section === 'payments' && <PaymentsSection requests={paymentRequests} onAction={handleRequestAction} onViewScreenshot={setSelectedScreenshot} />}
