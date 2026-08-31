@@ -98,6 +98,9 @@ export default function Home() {
               <Link href="/marches" className="btn btn-primary btn-lg">
                 Explorer les marchés
               </Link>
+              <Link href="/guide-soumission" className="btn btn-outline btn-lg">
+                📖 Guide Complet
+              </Link>
               <Link href="#comment-ca-marche" className="btn btn-outline btn-lg">
                 Comment ça marche ?
               </Link>
@@ -707,11 +710,27 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Lien vers guide */}
+          {/* Lien vers guide - Version améliorée */}
           <div className="text-center" style={{ marginTop: '40px' }}>
-            <Link href="/guide-soumission" className="btn btn-outline">
-              Consulter le guide de soumission
-            </Link>
+            <div style={{
+              display: 'inline-block',
+              padding: '24px 32px',
+              background: 'linear-gradient(135deg, var(--primary-muted) 0%, var(--success-muted) 100%)',
+              borderRadius: 'var(--radius-md)',
+              border: '2px solid var(--primary)',
+              boxShadow: '0 4px 12px rgba(6,78,59,0.1)'
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '12px' }}>📚</div>
+              <h4 className="heading-sm" style={{ marginBottom: '8px', color: 'var(--primary-dark)' }}>
+                Le Guide Complet des Marchés Publics
+              </h4>
+              <p className="text-sm text-secondary" style={{ marginBottom: '16px', maxWidth: '400px' }}>
+                31 chapitres · 5 tomes · Conforme Décret 2024-1748
+              </p>
+              <Link href="/guide-soumission" className="btn btn-primary">
+                📖 Ouvrir le guide interactif
+              </Link>
+            </div>
           </div>
         </div>
       </section>

@@ -62,6 +62,7 @@ export default function Navbar() {
         <div className={styles.navLinks}>
           <Link href="/marches" className={styles.navLink}>Marchés Publics</Link>
           <Link href="/recrutements" className={styles.navLink}>Recrutements</Link>
+          <Link href="/guide-soumission" className={styles.navLink}>📖 Guide Complet</Link>
           <Link href="/assistant" className={styles.navLink}>Assistant IA 🤖</Link>
           {!isPremium && (
             <Link href="/tarifs" className={`${styles.navLink} ${styles.navLinkAccent}`}>Tarifs 💎</Link>
@@ -111,6 +112,7 @@ export default function Navbar() {
         <div className={styles.mobileMenu}>
           <Link href="/marches" className={styles.mobileLink} onClick={closeMenu}>Marchés Publics</Link>
           <Link href="/recrutements" className={styles.mobileLink} onClick={closeMenu}>Recrutements</Link>
+          <Link href="/guide-soumission" className={styles.mobileLink} onClick={closeMenu}>📖 Guide Complet</Link>
           <Link href="/assistant" className={styles.mobileLink} onClick={closeMenu}>Assistant IA 🤖</Link>
           {!isPremium && (
             <Link href="/tarifs" className={`${styles.mobileLink} ${styles.mobileLinkAccent}`} onClick={closeMenu}>Tarifs 💎</Link>

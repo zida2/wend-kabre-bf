@@ -1,7 +1,7 @@
 'use client';
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { BookOpen, CheckCircle, AlertTriangle, FileText, Briefcase, ChevronRight, PackageOpen, HelpCircle, Scale, Gavel } from 'lucide-react';
+import { BookOpen, CheckCircle, AlertTriangle, FileText, Briefcase, ChevronRight, ChevronLeft, PackageOpen, HelpCircle, Scale, Gavel, Search, Home } from 'lucide-react';
 import {
   NATURES,
   AUTORITES,
@@ -118,6 +118,8 @@ export default function GuideSoumissionPage() {
   const [nature, setNature] = useState('TRAVAUX');
   const [montant, setMontant] = useState('');
   const [autorite, setAutorite] = useState('ETAT');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
 
   const resultat = useMemo(
     () => resolveProcedure({ nature, montantTTC: Number(montant), autorite }),
@@ -472,69 +474,401 @@ export default function GuideSoumissionPage() {
 
   const meta = steps.find((s) => s.id === activeStep);
 
+  // Fonction de recherche
+  const filteredSteps = useMemo(() => {
+    if (!searchQuery.trim()) return steps;
+    const query = searchQuery.toLowerCase();
+    return steps.filter(step => 
+      step.title.toLowerCase().includes(query) ||
+      step.id.toString().includes(query)
+    );
+  }, [searchQuery, steps]);
+
+  // Navigation entre les pages avec animation
+  const goToStep = (stepId) => {
+    setActiveStep(stepId);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <div className="container section animate-fadeIn">
-      <div className="flex justify-between items-center flex-wrap gap-4" style={{ marginBottom: '24px' }}>
-        <div>
-          <h1 className="heading-lg">Guide de soumission</h1>
-          <p className="text-secondary mt-2">
-            Aligné sur la loi n°005-2024/ALT du 20 avril 2024 et le décret n°2024-1748.
-          </p>
-        </div>
-        <Link href="/dashboard" className="btn btn-outline">Retour au tableau de bord</Link>
-      </div>
+    <div className="animate-fadeIn" style={{ 
+      background: 'linear-gradient(135deg, rgba(6,78,59,0.02) 0%, rgba(5,150,105,0.04) 100%)',
+      minHeight: '100vh',
+      paddingTop: '40px',
+      paddingBottom: '80px'
+    }}>
+      <div className="container">
+        {/* Hero Section - Livre Ouvert */}
+        <div style={{
+          background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)',
+          borderRadius: 'var(--radius-lg)',
+          padding: 'clamp(40px, 8vw, 80px) clamp(24px, 5vw, 60px)',
+          marginBottom: '48px',
+          boxShadow: '0 20px 60px rgba(6,78,59,0.2)',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          {/* Effet de texture livre */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 40px)',
+            pointerEvents: 'none'
+          }} />
+          
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div className="flex items-center gap-3 mb-4">
+              <BookOpen size={36} style={{ color: '#fff' }} />
+              <span style={{ 
+                background: 'rgba(255,255,255,0.2)', 
+                padding: '6px 16px', 
+                borderRadius: '50px',
+                color: '#fff',
+                fontSize: '0.8rem',
+                fontWeight: 600
+              }}>
+                📚 Livre Ouvert Interactif
+              </span>
+            </div>
+            
+            <h1 className="heading-xl" style={{ 
+              color: '#fff', 
+              marginBottom: '16px',
+              fontWeight: 800
+            }}>
+              Le Guide Complet des Marchés Publics
+            </h1>
+            
+            <p style={{ 
+              color: 'rgba(255,255,255,0.95)', 
+              fontSize: '1.1rem',
+              maxWidth: '800px',
+              lineHeight: '1.8',
+              marginBottom: '24px'
+            }}>
+              31 Chapitres organisés en 5 Tomes · Conforme aux textes 2024/2025
+              <br />
+              <span style={{ fontSize: '0.95rem', opacity: 0.9 }}>
+                Loi n°005-2024/ALT · Décret n°2024-1748 · Arrêté n°2025-0323
+              </span>
+            </p>
 
-      <SelecteurProcedure
-        nature={nature} setNature={setNature}
-        montant={montant} setMontant={setMontant}
-        autorite={autorite} setAutorite={setAutorite}
-        resultat={resultat}
-      />
-
-      <div className="grid md:grid-cols-[300px_1fr] gap-8" style={{ gridTemplateColumns: 'minmax(250px, 1fr) 2fr' }}>
-        <div className="card" style={{ padding: '16px', height: 'fit-content' }}>
-          <h3 className="heading-sm mb-4 text-primary">Les {steps.length} étapes</h3>
-          <div className="flex flex-col gap-2">
-            {steps.map((step) => (
-              <button
-                key={step.id}
-                onClick={() => setActiveStep(step.id)}
-                className="flex items-center gap-3 p-3 text-left rounded-md transition-all"
-                style={{
-                  background: activeStep === step.id ? 'var(--primary-muted)' : 'transparent',
-                  color: activeStep === step.id ? 'var(--primary-dark)' : 'var(--text-secondary)',
-                  borderLeft: `3px solid ${activeStep === step.id ? 'var(--primary)' : 'transparent'}`,
-                  fontWeight: activeStep === step.id ? '700' : '500',
+            <div className="flex flex-wrap gap-4 items-center">
+              <Link href="/" className="btn btn-outline" style={{ 
+                background: 'rgba(255,255,255,0.1)', 
+                borderColor: 'rgba(255,255,255,0.3)',
+                color: '#fff',
+                backdropFilter: 'blur(10px)'
+              }}>
+                <Home size={16} className="inline mr-2" />
+                Accueil
+              </Link>
+              
+              <button 
+                onClick={() => setShowSearch(!showSearch)}
+                className="btn btn-outline" 
+                style={{ 
+                  background: 'rgba(255,255,255,0.1)', 
+                  borderColor: 'rgba(255,255,255,0.3)',
+                  color: '#fff',
+                  backdropFilter: 'blur(10px)'
                 }}
               >
-                <div style={{ opacity: activeStep === step.id ? 1 : 0.6 }}>{step.icon}</div>
-                <span style={{ fontSize: '0.9rem', flexGrow: 1 }}>{step.id}. {step.title}</span>
-                {activeStep === step.id && <ChevronRight size={16} />}
+                <Search size={16} className="inline mr-2" />
+                Rechercher
               </button>
-            ))}
+
+              <Link href="/dashboard" className="btn" style={{ 
+                background: '#fff',
+                color: 'var(--primary)',
+                fontWeight: 700
+              }}>
+                Dashboard
+              </Link>
+            </div>
+
+            {/* Barre de recherche */}
+            {showSearch && (
+              <div style={{ 
+                marginTop: '24px',
+                animation: 'fadeIn 0.3s ease'
+              }}>
+                <input
+                  type="text"
+                  placeholder="Rechercher un chapitre (ex: RCCM, Garantie, Pièces...)"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="form-input"
+                  style={{
+                    background: 'rgba(255,255,255,0.95)',
+                    border: 'none',
+                    padding: '16px 20px',
+                    fontSize: '1rem',
+                    borderRadius: '12px',
+                    maxWidth: '600px'
+                  }}
+                  autoFocus
+                />
+                {searchQuery && filteredSteps.length === 0 && (
+                  <p className="text-sm" style={{ color: 'rgba(255,255,255,0.8)', marginTop: '8px' }}>
+                    Aucun résultat trouvé
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="card" style={{ padding: '32px' }}>
-          <div className="flex items-center gap-4 mb-6 pb-6" style={{ borderBottom: '1px solid var(--color-border)' }}>
-            <div style={{ padding: '16px', background: 'var(--success-muted)', color: 'var(--primary)', borderRadius: '12px' }}>
-              {meta?.icon}
+        {/* Calculateur de procédure */}
+        <SelecteurProcedure
+          nature={nature} setNature={setNature}
+          montant={montant} setMontant={setMontant}
+          autorite={autorite} setAutorite={setAutorite}
+          resultat={resultat}
+        />
+
+        {/* Affichage Livre Ouvert - Deux pages côte à côte */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '32px',
+          marginBottom: '48px'
+        }}>
+          {/* Page Gauche - Table des matières */}
+          <div className="card" style={{ 
+            padding: '32px',
+            background: '#fff',
+            borderRadius: 'var(--radius-lg)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+            borderLeft: '8px solid var(--primary)',
+            minHeight: '600px'
+          }}>
+            <div style={{ 
+              borderBottom: '2px solid var(--primary)', 
+              paddingBottom: '16px',
+              marginBottom: '24px'
+            }}>
+              <h3 className="heading-md" style={{ color: 'var(--primary-dark)' }}>
+                📑 Table des Matières
+              </h3>
+              <p className="text-sm text-secondary" style={{ marginTop: '8px' }}>
+                {steps.length} chapitres · Cliquez pour naviguer
+              </p>
             </div>
-            <div>
-              <span className="badge badge-green mb-2">Étape {activeStep} sur {steps.length}</span>
-              <h2 className="heading-md">{meta?.title}</h2>
+            
+            <div className="flex flex-col gap-2" style={{ maxHeight: '500px', overflowY: 'auto', paddingRight: '8px' }}>
+              {(searchQuery ? filteredSteps : steps).map((step) => (
+                <button
+                  key={step.id}
+                  onClick={() => goToStep(step.id)}
+                  className="flex items-center gap-3 p-3 text-left rounded-lg transition-all hover:shadow-md"
+                  style={{
+                    background: activeStep === step.id ? 'linear-gradient(135deg, var(--primary-muted) 0%, var(--success-muted) 100%)' : 'var(--color-bg-2)',
+                    color: activeStep === step.id ? 'var(--primary-dark)' : 'var(--text-secondary)',
+                    border: activeStep === step.id ? '2px solid var(--primary)' : '1px solid var(--color-border)',
+                    fontWeight: activeStep === step.id ? '700' : '500',
+                    transform: activeStep === step.id ? 'translateX(8px)' : 'translateX(0)',
+                  }}
+                >
+                  <div style={{ 
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '8px',
+                    background: activeStep === step.id ? 'var(--primary)' : 'var(--color-surface)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: activeStep === step.id ? '#fff' : 'var(--primary)',
+                    flexShrink: 0
+                  }}>
+                    {step.icon}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.75rem', opacity: 0.7, marginBottom: '2px' }}>
+                      Chapitre {step.id}
+                    </div>
+                    <div style={{ fontSize: '0.95rem' }}>{step.title}</div>
+                  </div>
+                  {activeStep === step.id && (
+                    <ChevronRight size={20} style={{ color: 'var(--primary)' }} />
+                  )}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className="text-base" style={{ lineHeight: '1.8' }}>{meta?.content}</div>
+          {/* Page Droite - Contenu du chapitre */}
+          <div className="card" style={{ 
+            padding: '40px',
+            background: '#fff',
+            borderRadius: 'var(--radius-lg)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+            borderRight: '8px solid var(--accent)',
+            minHeight: '600px',
+            position: 'relative'
+          }}>
+            {/* En-tête du chapitre */}
+            <div style={{ marginBottom: '32px' }}>
+              <div className="flex items-center gap-3 mb-4">
+                <div style={{ 
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '16px',
+                  background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff',
+                  fontSize: '1.8rem',
+                  boxShadow: '0 4px 16px rgba(6,78,59,0.3)'
+                }}>
+                  {meta?.icon}
+                </div>
+                <div>
+                  <span className="badge badge-green" style={{ marginBottom: '8px', display: 'inline-block' }}>
+                    Chapitre {activeStep} / {steps.length}
+                  </span>
+                  <h2 className="heading-lg" style={{ color: 'var(--primary-dark)', marginBottom: '4px' }}>
+                    {meta?.title}
+                  </h2>
+                </div>
+              </div>
+              
+              <div style={{ 
+                height: '3px',
+                background: 'linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%)',
+                borderRadius: '3px',
+                marginTop: '16px'
+              }} />
+            </div>
 
-          <div className="flex justify-between items-center mt-12 pt-6" style={{ borderTop: '1px solid var(--color-border)' }}>
-            <button className="btn btn-outline" disabled={activeStep === 1} onClick={() => setActiveStep((p) => p - 1)}>
-              Étape précédente
-            </button>
-            <button className="btn btn-primary" disabled={activeStep === steps.length} onClick={() => setActiveStep((p) => p + 1)}>
-              {activeStep === steps.length ? 'Terminé' : 'Étape suivante'}
-            </button>
+            {/* Contenu */}
+            <div className="text-base" style={{ 
+              lineHeight: '1.9',
+              color: 'var(--text-primary)',
+              minHeight: '300px'
+            }}>
+              {meta?.content}
+            </div>
+
+            {/* Checklist de conformité 2025 */}
+            {activeStep === 2 && (
+              <div style={{
+                marginTop: '32px',
+                padding: '24px',
+                background: 'linear-gradient(135deg, var(--success-muted) 0%, rgba(5,150,105,0.05) 100%)',
+                borderRadius: 'var(--radius-md)',
+                border: '2px solid var(--primary)'
+              }}>
+                <h4 className="heading-sm" style={{ marginBottom: '16px', color: 'var(--primary-dark)' }}>
+                  ✅ Checklist de Conformité Réglementaire 2025
+                </h4>
+                <div className="flex flex-col gap-3">
+                  {PIECES_ADMINISTRATIVES.slice(0, 8).map((p) => (
+                    <label key={p.id} className="flex items-start gap-3 cursor-pointer hover:opacity-80 transition-opacity">
+                      <input 
+                        type="checkbox" 
+                        style={{ 
+                          width: '20px', 
+                          height: '20px', 
+                          marginTop: '2px',
+                          cursor: 'pointer',
+                          accentColor: 'var(--primary)'
+                        }} 
+                      />
+                      <span className="text-sm">{p.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Navigation entre pages avec effet livre */}
+            <div className="flex justify-between items-center gap-4" style={{ 
+              marginTop: '40px',
+              paddingTop: '24px',
+              borderTop: '2px solid var(--color-border)'
+            }}>
+              <button 
+                className="btn btn-outline flex items-center gap-2" 
+                disabled={activeStep === 1} 
+                onClick={() => goToStep(activeStep - 1)}
+                style={{
+                  opacity: activeStep === 1 ? 0.5 : 1,
+                  cursor: activeStep === 1 ? 'not-allowed' : 'pointer'
+                }}
+              >
+                <ChevronLeft size={20} />
+                <span>Page Précédente</span>
+              </button>
+              
+              <div className="text-center">
+                <div className="text-sm text-secondary">
+                  Page {activeStep} sur {steps.length}
+                </div>
+                <div style={{
+                  display: 'flex',
+                  gap: '4px',
+                  marginTop: '8px',
+                  justifyContent: 'center'
+                }}>
+                  {steps.map((s) => (
+                    <div
+                      key={s.id}
+                      onClick={() => goToStep(s.id)}
+                      style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        background: s.id === activeStep ? 'var(--primary)' : 'var(--color-border)',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+              
+              <button 
+                className="btn btn-primary flex items-center gap-2" 
+                disabled={activeStep === steps.length} 
+                onClick={() => goToStep(activeStep + 1)}
+                style={{
+                  opacity: activeStep === steps.length ? 0.5 : 1,
+                  cursor: activeStep === steps.length ? 'not-allowed' : 'pointer'
+                }}
+              >
+                <span>{activeStep === steps.length ? 'Terminé' : 'Page Suivante'}</span>
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer du guide */}
+        <div className="card" style={{
+          padding: '32px',
+          background: 'linear-gradient(135deg, var(--primary-muted) 0%, var(--success-muted) 100%)',
+          borderRadius: 'var(--radius-lg)',
+          textAlign: 'center',
+          border: '2px solid var(--primary)'
+        }}>
+          <h3 className="heading-md" style={{ marginBottom: '16px', color: 'var(--primary-dark)' }}>
+            🚀 Prêt à soumissionner ?
+          </h3>
+          <p className="text-secondary" style={{ marginBottom: '24px', maxWidth: '600px', margin: '0 auto 24px' }}>
+            Utilisez le Studio de Candidature IA pour générer automatiquement vos dossiers conformes
+          </p>
+          <div className="flex justify-center gap-4 flex-wrap">
+            <Link href="/dashboard" className="btn btn-primary">
+              Accéder au Studio IA
+            </Link>
+            <Link href="/marches" className="btn btn-outline">
+              Explorer les marchés
+            </Link>
           </div>
         </div>
       </div>
