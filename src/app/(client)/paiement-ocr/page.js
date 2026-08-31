@@ -79,33 +79,44 @@ function PaiementOCRContent() {
 
     setLoading(true);
     try {
-      const paymentRequest = {
-        userId: user.uid,
-        userEmail: user.email,
-        plan: planId,
-        billingPeriod,
-        amount: officialAmount,
-        paymentMethod: 'TRANSFERT_MANUEL',
-        status: 'pending',
-        screenshotName: screenshot.name,
-        screenshotSize: screenshot.size,
-        createdAt: new Date().toISOString(),
-        processedAt: null,
-        notes: `Transfert manuel pour le plan ${planId} (${billingPeriod === 'annual' ? 'Annuel' : 'Mensuel'})`
-      };
+      const idToken = await user.getIdToken();
 
-      const docRef = await addDoc(collection(db, 'payment_requests'), paymentRequest);
-      
-      track('payment_manual_submit', { 
-        plan: planId, 
-        amount: officialAmount,
-        requestId: docRef.id 
+      const response = await fetch('/api/payment/submit-transfer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          plan: planId,
+          billingPeriod,
+          screenshotName: screenshot.name,
+          reference: screenshot.name
+        })
       });
 
-      setUploadSuccess(true);
-      setExistingRequest({ id: docRef.id, ...paymentRequest });
+      const data = await response.json();
 
-    } catch (error) {
+      if (data.success) {
+        track('payment_manual_submit_success', { 
+          plan: planId, 
+          amount: officialAmount,
+          requestId: data.requestId 
+        });
+
+        setUploadSuccess(true);
+        setExistingRequest({ 
+          id: data.requestId, 
+          plan: planId, 
+          amount: officialAmount, 
+          status: 'approved', 
+          screenshotName: screenshot.name 
+        });
+      } else {
+        alert(`Erreur d'activation : ${data.error || 'Impossible d\'activer le compte'}`);
+      }
+
+    } catch (error: any) {
       console.error('Erreur soumission paiement manuel:', error);
       alert('Erreur lors de la soumission de la preuve. Veuillez réessayer.');
     } finally {
@@ -131,63 +142,76 @@ function PaiementOCRContent() {
             <ArrowLeft size={16} /> Retour aux tarifs
           </Link>
 
-          {/* SI DEMANDE EN COURS DE VALIDATION */}
+          {/* SI DEMANDE ACTIVÉE AVEC SUCCÈS OU DÉJÀ EXISTANTE */}
           {(uploadSuccess || existingRequest) ? (
-            <div className="card" style={{ padding: '48px 32px', textAlign: 'center', borderRadius: '24px' }}>
+            <div className="card" style={{ padding: '48px 32px', textAlign: 'center', borderRadius: '24px', background: 'linear-gradient(135deg, #022C22 0%, #064E3B 100%)', border: '2px solid #10B981', color: '#FFFFFF' }}>
               <div style={{
-                width: '72px',
-                height: '72px',
+                width: '76px',
+                height: '76px',
                 borderRadius: '50%',
-                background: 'rgba(245,158,11,0.15)',
-                color: '#F59E0B',
+                background: 'linear-gradient(135deg, #10B981, #059669)',
+                color: '#FFFFFF',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                margin: '0 auto 24px'
+                margin: '0 auto 24px',
+                boxShadow: '0 10px 25px rgba(16,185,129,0.4)'
               }}>
-                <Clock size={40} />
+                <CheckCircle size={44} />
               </div>
 
-              <span className="badge badge-gold" style={{ marginBottom: '12px' }}>
-                ⏳ Statut : En attente de vérification
+              <span style={{
+                background: '#10B981',
+                color: '#022C22',
+                fontWeight: 900,
+                fontSize: '0.8rem',
+                padding: '6px 16px',
+                borderRadius: '50px',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                display: 'inline-block',
+                marginBottom: '16px'
+              }}>
+                ⚡ COMPTE PREMIUM ACTIVÉ AUTOMATIQUEMENT
               </span>
 
-              <h2 className="heading-lg" style={{ marginBottom: '16px' }}>
-                Demande de Paiement Reçue
+              <h2 className="heading-lg" style={{ marginBottom: '16px', color: '#FFFFFF' }}>
+                Félicitations ! Votre Accès est Débloqué
               </h2>
 
-              <p className="text-secondary" style={{ fontSize: '1.05rem', marginBottom: '28px', lineHeight: 1.6 }}>
-                Votre preuve de paiement par transfert manuel pour le <strong>Plan {planId}</strong> ({officialAmount.toLocaleString('fr-FR')} FCFA) a bien été enregistrée.
+              <p style={{ fontSize: '1.05rem', marginBottom: '28px', lineHeight: 1.6, color: '#D1FAE5' }}>
+                Votre transfert pour le <strong>Plan {planId}</strong> ({officialAmount.toLocaleString('fr-FR')} FCFA) a bien été pris en compte.
                 <br />
-                Notre équipe la vérifiera et activera votre accès Premium sous <strong>24h ouvrées</strong>.
+                Votre abonnement Premium est <strong>immédiatement actif</strong> !
               </p>
 
               <div style={{
-                background: 'var(--color-bg-2)',
-                border: '1px solid var(--color-border)',
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.18)',
                 borderRadius: '16px',
                 padding: '20px',
                 marginBottom: '32px',
-                textAlign: 'left'
+                textAlign: 'left',
+                backdropFilter: 'blur(4px)'
               }}>
-                <h4 style={{ fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)', fontSize: '0.95rem' }}>
-                  📌 Résumé de votre demande :
+                <h4 style={{ fontWeight: 700, marginBottom: '10px', color: '#FFFFFF', fontSize: '0.95rem' }}>
+                  📌 Détails de votre accès :
                 </h4>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.85rem' }} className="text-secondary">
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.88rem', color: '#ECFDF5' }}>
                   <li style={{ marginBottom: '6px' }}>• <strong>Compte :</strong> {user.email}</li>
                   <li style={{ marginBottom: '6px' }}>• <strong>Plan :</strong> {planId} ({billingPeriod === 'annual' ? 'Facturation annuelle' : 'Facturation mensuelle'})</li>
                   <li style={{ marginBottom: '6px' }}>• <strong>Montant :</strong> {officialAmount.toLocaleString('fr-FR')} FCFA</li>
-                  <li style={{ marginBottom: '6px' }}>• <strong>Mode :</strong> Transfert manuel Mobile Money</li>
-                  <li>• <strong>Preuve :</strong> {screenshot?.name || existingRequest?.screenshotName || 'Fichier joint'}</li>
+                  <li style={{ marginBottom: '6px' }}>• <strong>Statut :</strong> <span style={{ color: '#34D399', fontWeight: 800 }}>✓ Actif</span></li>
+                  <li>• <strong>Preuve transmise :</strong> {screenshot?.name || existingRequest?.screenshotName || 'Capture enregistrée'}</li>
                 </ul>
               </div>
 
               <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                <Link href="/dashboard" className="btn btn-primary btn-lg">
-                  Accéder à mon tableau de bord →
+                <Link href="/marches" className="btn btn-lg" style={{ background: 'linear-gradient(135deg, #10B981, #059669)', color: '#FFFFFF', fontWeight: 800 }}>
+                  Explorer les marchés publics →
                 </Link>
-                <Link href="/contact" className="btn btn-outline btn-lg">
-                  Contacter le support
+                <Link href="/dashboard" className="btn btn-outline btn-lg" style={{ borderColor: 'rgba(255,255,255,0.4)', color: '#FFFFFF' }}>
+                  Tableau de bord
                 </Link>
               </div>
             </div>
