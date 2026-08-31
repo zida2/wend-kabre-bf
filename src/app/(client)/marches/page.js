@@ -131,6 +131,7 @@ export default function MarchesPage() {
   const [filterRegion, setFilterRegion] = useState('Toutes');
   const [filterProcedure, setFilterProcedure] = useState('Toutes');
   const [filterUrgence, setFilterUrgence] = useState('Toutes');
+  const [filterOnlyPdf, setFilterOnlyPdf] = useState(false);
 
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -197,27 +198,39 @@ export default function MarchesPage() {
   // §6 — Termes de recherche étendus (sémantique par synonymes)
   const searchTerms = expandQuery(search); // [] si search vide
 
-  const filteredMarches = marches.filter(m => {
-    if (m.category === 'Recrutement') return false; // Ne jamais afficher les recrutements ici
+  const filteredMarches = marches
+    .filter(m => {
+      if (m.category === 'Recrutement') return false; // Ne jamais afficher les recrutements ici
 
-    // §6 — Recherche sémantique : au moins un terme étendu dans le texte du marché
-    let matchSearch = true;
-    if (searchTerms.length > 0) {
-      const haystack = normalize(
-        [m.title, m.description, m.category, m.secteur, m.region].filter(Boolean).join(' ')
-      );
-      matchSearch = searchTerms.some(term => haystack.includes(term));
-    }
+      const hasPdf = Boolean(m.pdfUrl || m.documentUrl || (m.documents && m.documents.length > 0));
+      if (filterOnlyPdf && !hasPdf) return false;
 
-    const matchCat = activeCategory === 'All' || m.category === activeCategory;
+      // §6 — Recherche sémantique : au moins un terme étendu dans le texte du marché
+      let matchSearch = true;
+      if (searchTerms.length > 0) {
+        const haystack = normalize(
+          [m.title, m.description, m.category, m.secteur, m.region].filter(Boolean).join(' ')
+        );
+        matchSearch = searchTerms.some(term => haystack.includes(term));
+      }
 
-    // §5 — Filtres avancés
-    const matchRegion = filterRegion === 'Toutes' || m.region === filterRegion;
-    const matchProcedure = filterProcedure === 'Toutes' || m.procedure === filterProcedure;
-    const matchUrgence = filterUrgence === 'Toutes' || m.urgence === filterUrgence;
+      const matchCat = activeCategory === 'All' || m.category === activeCategory;
 
-    return matchSearch && matchCat && matchRegion && matchProcedure && matchUrgence;
-  });
+      // §5 — Filtres avancés
+      const matchRegion = filterRegion === 'Toutes' || m.region === filterRegion;
+      const matchProcedure = filterProcedure === 'Toutes' || m.procedure === filterProcedure;
+      const matchUrgence = filterUrgence === 'Toutes' || m.urgence === filterUrgence;
+
+      return matchSearch && matchCat && matchRegion && matchProcedure && matchUrgence;
+    })
+    .sort((a, b) => {
+      // Priorité d'affichage : les marchés disposant d'un document PDF officiel sont placés en premier
+      const hasPdfA = Boolean(a.pdfUrl || a.documentUrl || (a.documents && a.documents.length > 0));
+      const hasPdfB = Boolean(b.pdfUrl || b.documentUrl || (b.documents && b.documents.length > 0));
+      if (hasPdfA && !hasPdfB) return -1;
+      if (!hasPdfA && hasPdfB) return 1;
+      return 0;
+    });
 
   const getCategoryCount = (cat) =>
     cat === 'All'
@@ -355,12 +368,24 @@ export default function MarchesPage() {
             </select>
           </div>
 
-          {(filterRegion !== 'Toutes' || filterProcedure !== 'Toutes' || filterUrgence !== 'Toutes') && (
+          <div className="form-group" style={{ margin: 0, flex: '1 1 180px', minWidth: '160px' }}>
+            <label className="form-label">📄 Type de Document</label>
+            <button
+              type="button"
+              onClick={() => setFilterOnlyPdf(!filterOnlyPdf)}
+              className={`btn btn-sm ${filterOnlyPdf ? 'btn-primary' : 'btn-outline'}`}
+              style={{ width: '100%', justifyContent: 'center', height: '42px', gap: '6px', fontWeight: 700 }}
+            >
+              <span>{filterOnlyPdf ? '✓ PDF Uniquement' : 'Tous (PDF & Textes)'}</span>
+            </button>
+          </div>
+
+          {(filterRegion !== 'Toutes' || filterProcedure !== 'Toutes' || filterUrgence !== 'Toutes' || filterOnlyPdf) && (
             <button
               type="button"
               className="btn btn-outline btn-sm"
-              onClick={() => { setFilterRegion('Toutes'); setFilterProcedure('Toutes'); setFilterUrgence('Toutes'); }}
-              style={{ flex: '0 0 auto' }}
+              onClick={() => { setFilterRegion('Toutes'); setFilterProcedure('Toutes'); setFilterUrgence('Toutes'); setFilterOnlyPdf(false); }}
+              style={{ flex: '0 0 auto', height: '42px' }}
             >
               ✕ Réinitialiser
             </button>
@@ -395,6 +420,7 @@ export default function MarchesPage() {
         <div className="grid grid-2 gap-6">
           {filteredMarches.map((m) => {
             const isLocked = !isSubscribed;
+            const hasPdf = Boolean(m.pdfUrl || m.documentUrl || (m.documents && m.documents.length > 0));
 
             return (
               <div
@@ -419,8 +445,19 @@ export default function MarchesPage() {
                 )}
 
                 <div>
-                  <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
-                    <span className="badge badge-green">{m.category || 'Général'}</span>
+                  <div className="flex justify-between items-center" style={{ marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <span className="badge badge-green">{m.category || 'Général'}</span>
+                      {hasPdf ? (
+                        <span className="badge" style={{ background: '#059669', color: '#ffffff', fontWeight: 800, fontSize: '0.68rem', padding: '3px 9px' }}>
+                          📄 PDF Officiel
+                        </span>
+                      ) : (
+                        <span className="badge badge-gray" style={{ fontSize: '0.68rem', opacity: 0.8 }}>
+                          📰 Extrait Quotidien
+                        </span>
+                      )}
+                    </div>
                     <span className="text-muted text-xs">
                       {m.publishedAt ? new Date(m.publishedAt).toLocaleDateString('fr-FR') : 'Récent'}
                     </span>
