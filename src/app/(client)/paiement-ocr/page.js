@@ -116,7 +116,7 @@ function PaiementOCRContent() {
         alert(`Erreur d'activation : ${data.error || 'Impossible d\'activer le compte'}`);
       }
 
-    } catch (error: any) {
+    } catch (error) {
       console.error('Erreur soumission paiement manuel:', error);
       alert('Erreur lors de la soumission de la preuve. Veuillez réessayer.');
     } finally {
