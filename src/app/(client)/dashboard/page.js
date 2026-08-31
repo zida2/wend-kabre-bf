@@ -333,14 +333,14 @@ export default function DashboardPage() {
         <div style={{ background: 'var(--accent-muted)', borderLeft: '4px solid var(--accent)', padding: '16px 24px', borderRadius: 'var(--radius-sm)', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', boxShadow: 'var(--shadow-gold)' }}>
           <div>
             <h4 style={{ color: 'var(--accent)', fontWeight: 800, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Star size={20} /> Offre de Bienvenue : Pass Essai à 2 500 FCFA
+              <Star size={20} /> Passez au Plan Premium — 15 000 FCFA / mois
             </h4>
             <p className="text-sm" style={{ color: 'var(--text-primary)' }}>
-              Débloquez l'assistant IA et maximisez vos chances de remporter vos premiers marchés.
+              Débloquez l'assistant IA, le Studio de Candidature et maximisez vos chances de remporter vos marchés.
             </p>
           </div>
           <Link href="/tarifs" className="btn btn-accent" style={{ whiteSpace: 'nowrap' }}>
-            Activer mon Pass 🚀
+            Découvrir les offres 🚀
           </Link>
         </div>
       )}

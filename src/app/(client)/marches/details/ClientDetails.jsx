@@ -766,9 +766,9 @@ function DetailsContent() {
                     Accédez aux détails complets et laissez l'IA générer votre offre technique sur-mesure dans notre Studio de Candidature.
                   </p>
                   <div style={{ background: 'var(--color-bg-2)', padding: '12px', borderRadius: 'var(--radius-sm)', marginTop: '16px' }}>
-                    <p className="text-sm font-bold text-primary">Testez l'outil complet</p>
+                    <p className="text-sm font-bold text-primary">Abonnement Premium</p>
                     <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', margin: '4px 0' }}>
-                      2 500 FCFA <span style={{ fontSize: '0.8rem', fontWeight: 400, color: 'var(--text-muted)' }}>/ 7 Jours</span>
+                      15 000 FCFA <span style={{ fontSize: '0.8rem', fontWeight: 400, color: 'var(--text-muted)' }}>/ Mois</span>
                     </h2>
                   </div>
                 </div>
