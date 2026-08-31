@@ -324,7 +324,7 @@ export default function TarifsPage() {
         </section>
       </main>
 
-      {/* MODAL CHOIX DU MODE DE PAIEMENT — ULTRA PRO */}
+      {/* MODAL CHOIX DU MODE DE PAIEMENT — COMPACT & 100% RESPONSIVE */}
       {showPayModal && selectedPlan && (
         <div 
           style={{
@@ -338,8 +338,7 @@ export default function TarifsPage() {
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center', 
-            padding: '20px',
-            overflowY: 'auto',
+            padding: '16px',
             backdropFilter: 'blur(10px)'
           }}
           onClick={() => {
@@ -352,39 +351,41 @@ export default function TarifsPage() {
             onClick={(e) => e.stopPropagation()}
             style={{ 
               width: '100%', 
-              maxWidth: '600px',
+              maxWidth: '480px',
+              maxHeight: '90vh',
+              overflowY: 'auto',
               background: 'var(--color-bg-1)',
               border: `2px solid var(--primary)`,
-              boxShadow: `0 25px 70px rgba(0,0,0,0.5), 0 0 30px rgba(5,150,105,0.2)`,
-              borderRadius: '24px',
+              boxShadow: `0 25px 70px rgba(0,0,0,0.6), 0 0 25px rgba(5,150,105,0.25)`,
+              borderRadius: '20px',
               position: 'relative',
-              overflow: 'hidden',
-              padding: '32px'
+              padding: '24px 20px'
             }}
           >
             {/* Header modal */}
-            <div className="flex justify-between items-center" style={{ marginBottom: '28px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '14px',
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '10px',
                   background: 'linear-gradient(135deg, #059669, #047857)',
                   color: '#ffffff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '24px',
-                  boxShadow: '0 6px 16px rgba(5,150,105,0.35)'
+                  fontSize: '20px',
+                  flexShrink: 0,
+                  boxShadow: '0 4px 12px rgba(5,150,105,0.35)'
                 }}>
                   ⚡
                 </div>
                 <div>
-                  <h2 className="heading-md" style={{ color: 'var(--text-primary)', marginBottom: '4px', fontSize: '1.25rem', fontWeight: 800 }}>
+                  <h2 className="heading-sm" style={{ color: 'var(--text-primary)', marginBottom: '2px', fontSize: '1.1rem', fontWeight: 800 }}>
                     Mode de Paiement & Activation
                   </h2>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0, fontWeight: 500 }}>
-                    Souscription au <strong style={{ color: 'var(--primary)' }}>{selectedPlan.name}</strong> ({formatPrice(parseInt(getPrice(selectedPlan).replace(/\s/g, ''), 10))} FCFA)
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0, fontWeight: 500 }}>
+                    Plan <strong style={{ color: 'var(--primary)' }}>{selectedPlan.name}</strong> ({formatPrice(parseInt(getPrice(selectedPlan).replace(/\s/g, ''), 10))} FCFA)
                   </p>
                 </div>
               </div>
@@ -395,19 +396,19 @@ export default function TarifsPage() {
                 }} 
                 aria-label="Fermer" 
                 style={{ 
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '12px',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '8px',
                   background: 'var(--color-surface-2)',
                   border: '1px solid var(--color-border)',
                   color: 'var(--text-primary)', 
-                  fontSize: '18px', 
+                  fontSize: '16px', 
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 700,
-                  transition: 'all 0.2s'
+                  flexShrink: 0
                 }}
               >
                 ✕
@@ -415,59 +416,57 @@ export default function TarifsPage() {
             </div>
 
             {/* Grille des 2 options de paiement */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '20px' }}>
               
               {/* OPTION 1 : PAIEMENT PAR TRANSFERT MANUEL (ACTIF & ACTIVATION INSTANTANÉE) */}
               <div style={{
                 background: 'linear-gradient(135deg, #022C22 0%, #064E3B 50%, #047857 100%)',
                 border: '2px solid #10B981',
-                borderRadius: '20px',
-                padding: '24px',
+                borderRadius: '16px',
+                padding: '18px 16px',
                 color: '#FFFFFF',
-                boxShadow: '0 12px 30px rgba(4,120,87,0.3)',
+                boxShadow: '0 8px 24px rgba(4,120,87,0.3)',
                 position: 'relative'
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div style={{
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '10px',
+                      width: '34px',
+                      height: '34px',
+                      borderRadius: '8px',
                       background: 'rgba(255,255,255,0.15)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '20px',
-                      backdropFilter: 'blur(4px)'
+                      fontSize: '18px',
+                      flexShrink: 0
                     }}>
                       📱
                     </div>
                     <div>
-                      <h4 style={{ fontWeight: 800, color: '#FFFFFF', margin: 0, fontSize: '1.15rem', letterSpacing: '-0.3px' }}>
+                      <h4 style={{ fontWeight: 800, color: '#FFFFFF', margin: 0, fontSize: '1.05rem', letterSpacing: '-0.3px' }}>
                         Transfert Mobile Money
                       </h4>
-                      <div style={{ display: 'flex', gap: '8px', marginTop: '6px', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', gap: '6px', marginTop: '4px', flexWrap: 'wrap' }}>
                         <span style={{
                           background: '#10B981',
                           color: '#022C22',
                           fontWeight: 800,
-                          fontSize: '0.7rem',
-                          padding: '3px 10px',
+                          fontSize: '0.65rem',
+                          padding: '2px 8px',
                           borderRadius: '50px',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.5px'
+                          textTransform: 'uppercase'
                         }}>
-                          🟢 Disponible maintenant
+                          🟢 Disponible
                         </span>
                         <span style={{
                           background: '#F59E0B',
                           color: '#78350F',
                           fontWeight: 800,
-                          fontSize: '0.7rem',
-                          padding: '3px 10px',
+                          fontSize: '0.65rem',
+                          padding: '2px 8px',
                           borderRadius: '50px',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.5px'
+                          textTransform: 'uppercase'
                         }}>
                           ⚡ Activation Automatique
                         </span>
@@ -476,8 +475,8 @@ export default function TarifsPage() {
                   </div>
                 </div>
 
-                <p style={{ color: '#D1FAE5', fontSize: '0.92rem', marginBottom: '20px', lineHeight: 1.6, fontWeight: 400 }}>
-                  Effectuez le transfert vers nos numéros officiels Orange Money ou Moov Money. Transmettez ensuite votre référence et <strong>votre compte Premium est activé automatiquement</strong>.
+                <p style={{ color: '#D1FAE5', fontSize: '0.85rem', marginBottom: '16px', lineHeight: 1.5, fontWeight: 400 }}>
+                  Faites le transfert Orange/Moov Money et validez. <strong>Votre compte Premium est activé automatiquement</strong>.
                 </p>
 
                 <button
@@ -488,64 +487,63 @@ export default function TarifsPage() {
                     background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
                     color: '#FFFFFF',
                     fontWeight: 800,
-                    padding: '14px 24px',
-                    fontSize: '1rem',
-                    borderRadius: '14px',
+                    padding: '12px 18px',
+                    fontSize: '0.92rem',
+                    borderRadius: '12px',
                     border: '1px solid rgba(255,255,255,0.25)',
-                    boxShadow: '0 8px 25px rgba(16,185,129,0.4)',
+                    boxShadow: '0 6px 20px rgba(16,185,129,0.4)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '10px',
-                    transition: 'all 0.2s'
+                    gap: '8px'
                   }}
                 >
-                  <span>Effectuer le transfert (Activation instantanée)</span>
-                  <span style={{ fontSize: '18px' }}>→</span>
+                  <span>Payer par transfert (Activation instantanée)</span>
+                  <span style={{ fontSize: '16px' }}>→</span>
                 </button>
               </div>
 
-              {/* OPTION 2 : PAIEMENT D'UN CLIC SANS QUITTER LE SITE (GUICHET API) */}
+              {/* OPTION 2 : PAIEMENT AUTOMATIQUE PAR GUICHET API */}
               <div style={{
                 background: 'var(--color-surface-2)',
                 border: '1px solid var(--color-border)',
-                borderRadius: '20px',
-                padding: '22px',
+                borderRadius: '16px',
+                padding: '16px',
                 opacity: 0.9
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div style={{
-                      width: '38px',
-                      height: '38px',
-                      borderRadius: '10px',
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '8px',
                       background: 'var(--color-surface-3)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '18px'
+                      fontSize: '16px',
+                      flexShrink: 0
                     }}>
                       💳
                     </div>
                     <div>
-                      <h4 style={{ fontWeight: 700, color: 'var(--text-primary)', margin: 0, fontSize: '1.05rem' }}>
-                        Paiement par Guichet Automatique
+                      <h4 style={{ fontWeight: 700, color: 'var(--text-primary)', margin: 0, fontSize: '0.95rem' }}>
+                        Guichet Direct API
                       </h4>
-                      <span className="badge badge-gold" style={{ fontSize: '0.7rem', marginTop: '4px', fontWeight: 700 }}>
-                        🟡 Prochainement disponible
+                      <span className="badge badge-gold" style={{ fontSize: '0.65rem', marginTop: '2px', fontWeight: 700 }}>
+                        🟡 Prochainement
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-                  <span className="badge badge-gray" style={{ fontSize: '0.7rem', fontWeight: 600 }}>Orange Money API</span>
-                  <span className="badge badge-gray" style={{ fontSize: '0.7rem', fontWeight: 600 }}>Moov Money API</span>
-                  <span className="badge badge-gray" style={{ fontSize: '0.7rem', fontWeight: 600 }}>Carte CB</span>
+                <div style={{ display: 'flex', gap: '6px', marginBottom: '10px', flexWrap: 'wrap' }}>
+                  <span className="badge badge-gray" style={{ fontSize: '0.65rem', fontWeight: 600 }}>Orange Money API</span>
+                  <span className="badge badge-gray" style={{ fontSize: '0.65rem', fontWeight: 600 }}>Moov Money API</span>
                 </div>
 
-                <p className="text-sm text-secondary" style={{ marginBottom: '16px', lineHeight: 1.5, fontSize: '0.88rem' }}>
-                  Le guichet direct sera bientôt disponible. Vous pourrez saisir votre code secret directement sur l'écran pour un prélèvement automatique.
+                <p className="text-xs text-secondary" style={{ marginBottom: '12px', lineHeight: 1.4 }}>
+                  Prélèvement direct sans quitter le site en cours d'intégration.
                 </p>
 
                 <button
@@ -559,11 +557,11 @@ export default function TarifsPage() {
                     border: '1px solid var(--color-border)',
                     cursor: 'not-allowed',
                     fontWeight: 700,
-                    padding: '12px 20px',
-                    fontSize: '0.9rem'
+                    padding: '10px 16px',
+                    fontSize: '0.85rem'
                   }}
                 >
-                  🔒 En cours de raccordement API
+                  🔒 Bientôt disponible
                 </button>
               </div>
 
@@ -571,14 +569,14 @@ export default function TarifsPage() {
 
             {/* Footer modal */}
             <div style={{
-              padding: '12px 16px',
+              padding: '10px 14px',
               background: 'var(--color-surface-2)',
-              borderRadius: '14px',
+              borderRadius: '12px',
               border: '1px solid var(--color-border)',
               textAlign: 'center'
             }}>
-              <p className="text-xs text-secondary" style={{ margin: 0, fontWeight: 500 }}>
-                🔒 Assistance immédiate : Si vous rencontrez la moindre difficulté lors du transfert, contactez-nous au <strong>+226 62 20 28 77</strong>.
+              <p className="text-xs text-secondary" style={{ margin: 0, fontWeight: 500, fontSize: '0.75rem' }}>
+                🔒 Support rapide : <strong>+226 62 20 28 77</strong>
               </p>
             </div>
 
