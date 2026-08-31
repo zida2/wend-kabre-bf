@@ -114,7 +114,7 @@ export async function POST(req) {
   try {
     const google = createGoogleGenerativeAI({ apiKey });
     const { object } = await generateObject({
-      model: google('gemini-2.5-flash'),
+      model: google('gemini-1.5-flash'),
       schema: analysisSchema,
       system:
         "Tu es un expert de la passation des marchés publics au Burkina Faso. Tu lis intégralement un Dossier d'Appel d'Offres (DAO) ou un avis officiel et tu en extrais des informations FIDÈLES au document. N'invente jamais une information absente : mets 'Non spécifié'. Les listes de pièces doivent être précises et exhaustives.",
