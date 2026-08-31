@@ -1,543 +1,590 @@
 'use client';
-import { useState, useMemo } from 'react';
+
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import { BookOpen, CheckCircle, AlertTriangle, FileText, Briefcase, ChevronRight, PackageOpen, HelpCircle, Scale, Gavel } from 'lucide-react';
-import {
-  NATURES,
-  AUTORITES,
-  resolveProcedure,
-  regleEnveloppe,
-  estimerGarantieSoumission,
-  formatFCFA,
-  PIECES_ADMINISTRATIVES,
-  VALIDITE_PIECES_MOIS,
-  GARANTIE_SOUMISSION,
-  OUVERTURE_PLIS,
-  SINCERITE,
-  CHECKLIST_DEPOT,
-  DELAIS_OFFRES,
-  ECLAIRCISSEMENTS,
-  DELAIS_PAIEMENT,
-  RECOURS,
-  RECOURS_EXECUTION,
-  REGIME_PIECES,
-  PREFERENCES,
-  OFFRE_ANORMALEMENT_BASSE,
-  GARANTIE_BONNE_EXECUTION_MAJOREE,
-  PENALITES_RETARD,
-  RESILIATION_PAR_LE_TITULAIRE,
-} from '@/lib/arcop';
+import { 
+  BookOpen, ChevronLeft, ChevronRight, Search, CheckSquare, 
+  Sparkles, CheckCircle, AlertTriangle, ShieldCheck, Scale, 
+  FileText, Award, Layers, Bookmark, ArrowRight, RefreshCw, Star
+} from 'lucide-react';
 
-/** Encart signalant une information non encore recoupée sur les textes 2024. */
-function AVerifier({ children }) {
+// Structure des 31 Parties regroupées en 5 Tomes pour l'Expérience Livre Ouvert
+const BOOK_VOLUMES = [
+  {
+    id: 1,
+    title: "Tome I — Fondements & Acteurs de la Commande Publique",
+    icon: "📜",
+    color: "#059669",
+    chapters: [
+      {
+        id: "p1",
+        number: "01",
+        title: "Qu'est-ce que la commande publique ?",
+        content: `La commande publique désigne le système par lequel les personnes et organismes publics acquièrent des travaux, fournitures, services ou prestations auprès d'opérateurs économiques.\n\nUne structure publique a un besoin ➔ Elle organise une procédure ➔ Des entreprises proposent leurs solutions ➔ Les offres sont évaluées ➔ Un titulaire est choisi ➔ Le marché est exécuté.`
+      },
+      {
+        id: "p2",
+        number: "02",
+        title: "Qu'est-ce qu'un marché public ?",
+        content: `Un marché public est un contrat conclu entre une autorité contractante et un opérateur économique pour satisfaire un besoin déterminé (Travaux, Fournitures, Services, Prestations intellectuelles).\n\nLe marché définit le cahier des charges, les quantités, le prix, le délai, les garanties et les conditions de paiement.`
+      },
+      {
+        id: "p3",
+        number: "03",
+        title: "Pourquoi l'État lance-t-il des marchés publics ?",
+        content: `L'État et ses démembrements ont des besoins permanents :\n• Construction : Routes, écoles, hôpitaux, forages, ponts.\n• Fournitures : Ordinateurs, véhicules, médicaments, mobiliers.\n• Services : Nettoyage, gardiennage, maintenance, transport.\n• Prestations intellectuelles : Études, audits, conseil, architecture, logiciels.`
+      },
+      {
+        id: "p4",
+        number: "04",
+        title: "Qui peut participer à un marché public ?",
+        content: `Toute entreprise individuelle, société, PME, grande entreprise, consultant ou groupement remplissant les conditions d'éligibilité peut soumissionner.\n\nAttention : Avoir une entreprise ne signifie pas être qualifié pour tous les marchés. Chaque consultation impose ses propres critères de qualification.`
+      },
+      {
+        id: "p5",
+        number: "05",
+        title: "Les Acteurs Clés (Autorité, Soumissionnaire, ARCOP)",
+        content: `• Autorité contractante : Ministère, commune, établissement public qui lance le marché.\n• Soumissionnaire : L'entreprise qui dépose une offre.\n• Attributaire : L'entreprise retenue à l'issue de l'évaluation.\n• Titulaire : L'entreprise ayant signé le contrat exécutable.\n• ARCOP : L'Autorité de Régulation de la Commande Publique (Régulation, contrôle, recours).`
+      }
+    ]
+  },
+  {
+    id: 2,
+    title: "Tome II — Typologie & Méthodologie d'Analyse du DAO",
+    icon: "🔍",
+    color: "#2563EB",
+    chapters: [
+      {
+        id: "p6",
+        number: "06",
+        title: "Les Procédures de Passation (Appel d'Offres, Demande de Prix)",
+        content: `Tous les marchés ne sont pas des appels d'offres publics.\n• Appel d'offres : Mise en concurrence ouverte ou restreinte pour marchés importants.\n• Demande de prix / Cotation : Procédure simplifiée pour montants sous les seuils réglementaires.\n• Procédures particulières : Urgence impérieuse ou prestations spécifiques encadrées par la loi.`
+      },
+      {
+        id: "p7",
+        number: "07",
+        title: "Où trouver les opportunités & Décoder l'Avis",
+        content: `Les avis sont publiés sur le Quotidien des marchés publics de la DGCMEF, les portails officiels et centralisés sur Wend-Kabré.\nNe lisez pas seulement le titre. Vérifiez les lots, les garanties exigées, le délai, le lieu de livraison et les critères d'éligibilité.`
+      },
+      {
+        id: "p8",
+        number: "08",
+        title: "Le DAO : Le Manuel de Soumission Indispensable",
+        content: `DAO = Dossier d'Appel d'Offres. C'est le document sacré. L'avis vous informe que le marché existe ; le DAO vous explique exactement comment le gagner.\nL'ARCOP publie des Dossiers Standards Nationaux d'Acquisition (DSNA) obligatoires.`
+      },
+      {
+        id: "p9",
+        number: "09",
+        title: "La Méthode des 10 Questions pour analyser un DAO",
+        content: `1. Qui lance le marché ?\n2. Qu'est-ce qui est demandé exactement ?\n3. Quel est le montant prévisionnel ?\n4. Qui a le droit de participer ?\n5. Quelles pièces administratives sont obligatoires ?\n6. Quelles qualifications techniques sont requises ?\n7. Quelles sont les caractéristiques des produits/travaux ?\n8. Quel est le modèle d'offre financière ?\n9. Quand et où déposer le pli ?\n10. Quels sont les motifs d'élimination immédiate ?`
+      }
+    ]
+  },
+  {
+    id: 3,
+    title: "Tome III — Réglementation 2024/2025 & Pièces Exigées",
+    icon: "⚖️",
+    color: "#D97706",
+    chapters: [
+      {
+        id: "p10",
+        number: "10",
+        title: "Nouveau Cadre Réglementaire (Loi 005-2024 & Décret 2024-1748)",
+        content: `Le Burkina Faso a rénové son cadre juridique de la commande publique :\n• Loi n°005-2024/ALT du 20 avril 2024\n• Décret n°2024-1748/PRES/PM/MEF du 31 décembre 2024\n• Arrêté n°2025-0323/MEF/CAB du 09 juillet 2025 (Pièces administratives).\nTous les dossiers doivent être analysés au crible de cette réglementation actuelle.`
+      },
+      {
+        id: "p11",
+        number: "11",
+        title: "Le Référentiel des 7 Pièces Administratives (Arrêté 2025-0323)",
+        content: `1. RCCM : Registre du Commerce (CEFORE/Greffe).\n2. IFU : Identifiant Financier Unique (DGI Impôts).\n3. ASF : Attestation de Situation Fiscale (valide 3 mois).\n4. CNSS : Attestation de Situation Cotisante CNSS.\n5. AJE : Attestation de Jouissance d'Équipement.\n6. DRTSS : Attestation Régionale du Travail et de la Sécurité Sociale.\n7. CNF : Certificat de Non-Faillite (valide 3 mois).\n\n⚠️ Régularisation : Les pièces manquantes peuvent être régularisées dans le délai légal accordé par la commission. En revanche, une pièce falsifiée entraîne l'élimination immédiate et des poursuites.`
+      },
+      {
+        id: "p12",
+        number: "12",
+        title: "La Garantie de Soumission (Caution Bancaire - Art. 100)",
+        content: `Exigée pour sécuriser l'engagement du soumissionnaire (généralement 1% à 3% du montant prévisionnel selon l'Art. 100 du Décret 2024-1748).\n\n🚨 ATTENTION CRITIQUE : Une garantie manquante, insuffisante d'un seul franc ou expirée entraîne le REJET IMMÉDIAT ET NON RÉGULARISABLE à l'ouverture des plis.`
+      }
+    ]
+  },
+  {
+    id: 4,
+    title: "Tome IV — Construction de l'Offre & Montage du Pli",
+    icon: "📦",
+    color: "#DC2626",
+    chapters: [
+      {
+        id: "p13",
+        number: "13",
+        title: "L'Offre Technique (Méthodologie, Personnel, Références)",
+        content: `L'offre technique démontre votre capacité à exécuter le marché :\n• Lettre de soumission signée par le gérant ou mandataire habilité.\n• Références similaires (Contrats, Attestations de Bonne Exécution, PV de réception).\n• Personnel clé (CV signés, Diplômes, Attestations).\n• Matériel mobilisé (Cartes grises, factures, contrats de location).\n• Méthodologie & Planning d'exécution.`
+      },
+      {
+        id: "p14",
+        number: "14",
+        title: "L'Offre Financière & Calculs Rigoureux",
+        content: `Comprend le Bordereau des Prix Unitaires (BPU) et le Devis Quantitatif Estimatif (DQE).\n\n⚠️ Erreurs Fatales : Les discordances entre le prix en chiffres et le prix en lettres ou les fautes de calcul (Quantité × PU) peuvent vous faire perdre le marché. Vérifiez chaque ligne.`
+      },
+      {
+        id: "p15",
+        number: "15",
+        title: "Montage de l'Enveloppe & Dépôt dans les Délais",
+        content: `Avec le cadre 2024, la règle de l'enveloppe unique s'applique aux fournitures et services courants.\n• Dépôt avant l'heure pile indiquée sur l'avis. Aucun dépôt tardif n'est accepté.\n• Conservez impérativement votre récépissé de dépôt horodaté.`
+      },
+      {
+        id: "p16",
+        number: "16",
+        title: "Les 10 Erreurs qui font Éliminer une Entreprise",
+        content: `1. Offre déposée en retard.\n2. Garantie de soumission absente ou insuffisante.\n3. Pièces administratives non régularisées à temps.\n4. Utilisation d'un formulaire personnel au lieu du modèle DAO.\n5. Prix en chiffres ≠ Prix en lettres.\n6. Erreur de multiplication dans le devis.\n7. Spécifications techniques non conformes au cahier des charges.\n8. Références fictives sans justificatif officiel.\n9. Absence de pouvoir pour le signataire de l'offre.\n10. Non-respect du délai d'exécution imposé.`
+      }
+    ]
+  },
+  {
+    id: 5,
+    title: "Tome V — Exécution, Recours & Intégration Wend-Kabré",
+    icon: "💡",
+    color: "#7C3AED",
+    chapters: [
+      {
+        id: "p17",
+        number: "17",
+        title: "Évaluation, Attribution & Voies de Recours (ARCOP)",
+        content: `Les plis sont ouverts publiquement ➔ La commission évalue la conformité administrative, technique puis financière.\nSi vous estimez qu'une décision vous fait grief, vous disposez d'un droit de recours devant l'Organe de Règlement des Différends (ORD) de l'ARCOP dans les délais stricts fixés par la loi.`
+      },
+      {
+        id: "p18",
+        number: "18",
+        title: "Groupement, Sous-traitance & Préférences PME",
+        content: `• Groupement d'entreprises : Deux entreprises peuvent associer leurs compétences pour atteindre la qualification requise.\n• Sous-traitance : Encadrée par la loi pour favoriser l'écosystème local.\n• Marge de préférence PME : Majoration préférentielle jusqu'à 15%-20% selon les textes applicables aux entreprises locales.`
+      },
+      {
+        id: "p19",
+        number: "19",
+        title: "Comment Wend-Kabré Automatise votre Confort",
+        content: `Wend-Kabré ne se contente pas de lister les marchés :\n1. Analyse IA instantanée de votre DAO (Loi 005-2024 & Arrêté 2025).\n2. Génération de la fiche de synthèse et de la checklist sur-mesure.\n3. Calcul du score de compatibilité de votre profil d'entreprise.\n4. Rédaction automatique de l'offre technique dans le Studio de Candidature.`
+      }
+    ]
+  }
+];
+
+export default function GuideSoumissionInteractiveBook() {
+  const [currentVolumeIndex, setCurrentVolumeIndex] = useState(0);
+  const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isFlipping, setIsFlipping] = useState(false);
+  const [checkedItems, setCheckedItems] = useState({});
+
+  const currentVolume = BOOK_VOLUMES[currentVolumeIndex];
+  const currentChapter = currentVolume.chapters[currentChapterIndex];
+
+  // Navigation dans le Livre
+  const goToNextChapter = () => {
+    setIsFlipping(true);
+    setTimeout(() => {
+      if (currentChapterIndex < currentVolume.chapters.length - 1) {
+        setCurrentChapterIndex(currentChapterIndex + 1);
+      } else if (currentVolumeIndex < BOOK_VOLUMES.length - 1) {
+        setCurrentVolumeIndex(currentVolumeIndex + 1);
+        setCurrentChapterIndex(0);
+      }
+      setIsFlipping(false);
+    }, 250);
+  };
+
+  const goToPrevChapter = () => {
+    setIsFlipping(true);
+    setTimeout(() => {
+      if (currentChapterIndex > 0) {
+        setCurrentChapterIndex(currentChapterIndex - 1);
+      } else if (currentVolumeIndex > 0) {
+        setCurrentVolumeIndex(currentVolumeIndex - 1);
+        setCurrentChapterIndex(BOOK_VOLUMES[currentVolumeIndex - 1].chapters.length - 1);
+      }
+      setIsFlipping(false);
+    }, 250);
+  };
+
+  const selectChapter = (volIdx, chapIdx) => {
+    setIsFlipping(true);
+    setTimeout(() => {
+      setCurrentVolumeIndex(volIdx);
+      setCurrentChapterIndex(chapIdx);
+      setIsFlipping(false);
+    }, 250);
+  };
+
+  // Résultats de recherche
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    const results = [];
+    BOOK_VOLUMES.forEach((vol, vIdx) => {
+      vol.chapters.forEach((chap, cIdx) => {
+        if (chap.title.toLowerCase().includes(q) || chap.content.toLowerCase().includes(q)) {
+          results.push({ vIdx, cIdx, volTitle: vol.title, chapTitle: chap.title });
+        }
+      });
+    });
+    return results;
+  }, [searchQuery]);
+
+  const toggleCheck = (id) => {
+    setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
   return (
-    <p className="text-xs" style={{ color: 'var(--text-muted)', marginTop: '8px', fontStyle: 'italic' }}>
-      <AlertTriangle size={13} className="inline mr-1" />
-      {children}
-    </p>
-  );
-}
-
-/** Calculateur : quelle procédure s'applique à ce marché ? */
-function SelecteurProcedure({ nature, setNature, montant, setMontant, autorite, setAutorite, resultat }) {
-  return (
-    <div className="card" style={{ padding: '20px', marginBottom: '24px', borderLeft: '4px solid var(--primary)' }}>
-      <div className="flex items-center gap-2 mb-3">
-        <Scale size={18} />
-        <h3 className="heading-sm" style={{ margin: 0 }}>Quelle procédure s'applique à votre marché ?</h3>
-      </div>
-      <p className="text-sm text-secondary" style={{ marginBottom: '14px' }}>
-        Les règles de montage du dossier changent selon la procédure. Renseignez le marché
-        visé — les étapes ci-dessous s'adaptent.
-      </p>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
-        <label className="flex flex-col gap-1">
-          <span className="text-xs text-muted" style={{ fontWeight: 700 }}>Nature</span>
-          <select className="form-input" value={nature} onChange={(e) => setNature(e.target.value)}>
-            {Object.entries(NATURES).map(([k, label]) => (
-              <option key={k} value={k}>{label}</option>
-            ))}
-          </select>
-        </label>
-
-        <label className="flex flex-col gap-1">
-          <span className="text-xs text-muted" style={{ fontWeight: 700 }}>Montant prévisionnel TTC</span>
-          <input
-            className="form-input"
-            type="number"
-            min="0"
-            step="100000"
-            value={montant}
-            onChange={(e) => setMontant(e.target.value)}
-            placeholder="ex : 45000000"
-          />
-        </label>
-
-        <label className="flex flex-col gap-1">
-          <span className="text-xs text-muted" style={{ fontWeight: 700 }}>Autorité contractante</span>
-          <select className="form-input" value={autorite} onChange={(e) => setAutorite(e.target.value)}>
-            {Object.entries(AUTORITES).map(([k, v]) => (
-              <option key={k} value={k}>{v.label}</option>
-            ))}
-          </select>
-        </label>
-      </div>
-
-      <div style={{ marginTop: '16px', padding: '14px', background: 'var(--color-surface-2)', borderRadius: '8px' }}>
-        {resultat ? (
-          <>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="badge badge-green">{resultat.procedure.label}</span>
-              <span className="text-xs text-muted">{resultat.seuil} · {resultat.procedure.article} du décret n°2024-1748</span>
-            </div>
-            {Number(montant) > 0 && (
-              <p className="text-sm text-secondary" style={{ marginTop: '10px' }}>
-                Garantie de soumission si elle est exigée :{' '}
-                <strong>
-                  {formatFCFA(estimerGarantieSoumission(Number(montant)).min)} à{' '}
-                  {formatFCFA(estimerGarantieSoumission(Number(montant)).max)}
-                </strong>{' '}
-                (1 % à 3 %, art. 100). Le montant exact figure au dossier.
-              </p>
-            )}
-          </>
-        ) : (
-          <p className="text-sm text-muted">
-            Aucune procédure déterminée automatiquement pour ce montant. Le dossier d'appel
-            à concurrence fait foi.
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-export default function GuideSoumissionPage() {
-  const [activeStep, setActiveStep] = useState(1);
-  const [nature, setNature] = useState('TRAVAUX');
-  const [montant, setMontant] = useState('');
-  const [autorite, setAutorite] = useState('ETAT');
-
-  const resultat = useMemo(
-    () => resolveProcedure({ nature, montantTTC: Number(montant), autorite }),
-    [nature, montant, autorite]
-  );
-  const enveloppe = useMemo(() => regleEnveloppe(nature), [nature]);
-
-  const steps = [
-    {
-      id: 1,
-      title: "L'avis et l'acquisition du dossier",
-      icon: <BookOpen size={24} />,
-      content: (
-        <div className="flex flex-col gap-4">
-          <p className="text-secondary">
-            Tout commence par la publication de l'avis d'appel à concurrence. Une fois le marché
-            identifié, vous devez acquérir le dossier correspondant à la procédure retenue par
-            l'autorité contractante.
-          </p>
-          <ul className="list-disc pl-5 text-secondary flex flex-col gap-2">
-            <li>Vérifiez que vous remplissez les <strong>critères d'éligibilité</strong> annoncés (capacités techniques et financières, agrément le cas échéant).</li>
-            <li>Notez le prix du dossier et le lieu de paiement indiqués dans l'avis.</li>
-            <li>Conservez le <strong>reçu d'achat</strong> du dossier.</li>
-            <li>Le dossier peut désormais être mis à disposition <strong>par voie électronique</strong> (art. 225 du décret n°2024-1748).</li>
-          </ul>
-
-          <div style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px' }}>
-            <h5 className="font-bold mb-2">Vous avez le droit de poser des questions ({ECLAIRCISSEMENTS.article})</h5>
-            <p className="text-sm text-secondary">
-              Adressez vos demandes d'éclaircissements par écrit à l'autorité contractante
-              au plus tard <strong>{ECLAIRCISSEMENTS.delaiDemandeJours} jours avant la date limite de dépôt</strong>.
-              Elle dispose de <strong>{ECLAIRCISSEMENTS.delaiReponseJours} jours</strong> pour répondre.
-            </p>
-            <p className="text-sm text-secondary" style={{ marginTop: '6px' }}>{ECLAIRCISSEMENTS.diffusion}</p>
-          </div>
-
-          <div style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px' }}>
-            <h5 className="font-bold mb-2">Combien de temps avez-vous ? ({DELAIS_OFFRES.article})</h5>
-            <ul className="list-disc pl-5 text-sm text-secondary flex flex-col gap-1">
-              <li><strong>{DELAIS_OFFRES.minimumJours.seuilNational} jours minimum</strong> pour un appel d'offres ou une demande de propositions au seuil national.</li>
-              <li><strong>{DELAIS_OFFRES.minimumJours.seuilCommunautaire} jours minimum</strong> au seuil communautaire.</li>
-              <li><strong>{DELAIS_OFFRES.minimumJours.concoursArchitectural} jours</strong> pour les concours architecturaux.</li>
-              <li>Le délai court à compter de la première parution de l'avis dans la revue des marchés publics.</li>
-              <li>Il peut être raccourci de {DELAIS_OFFRES.reductionElectroniqueJours} jours si l'avis et le dossier circulent au format électronique UEMOA, et ramené à {DELAIS_OFFRES.urgence.seuilNational.min}–{DELAIS_OFFRES.urgence.seuilNational.max} jours en cas d'urgence motivée (art. 97).</li>
-            </ul>
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: 2,
-      title: 'Pièces administratives',
-      icon: <CheckCircle size={24} />,
-      content: (
-        <div className="flex flex-col gap-4">
-          <div style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
-            <h5 className="font-bold mb-2">Les pièces exigées des candidats burkinabè</h5>
-            <ul className="flex flex-col gap-2 text-sm text-secondary">
-              {PIECES_ADMINISTRATIVES.map((p) => (
-                <li key={p.id} className="flex items-start gap-2">
-                  <div style={{ width: '16px', height: '16px', border: '1px solid #ccc', borderRadius: '4px', flexShrink: 0, marginTop: '3px' }} />
-                  <span>{p.label} <span className="text-muted">— {p.emetteur}</span></span>
-                </li>
-              ))}
-            </ul>
-            <p className="text-sm mt-3" style={{ fontWeight: 700, color: 'var(--primary-dark)' }}>
-              Toutes ces pièces doivent dater de moins de {VALIDITE_PIECES_MOIS} mois.
-            </p>
-          </div>
-
-          <div style={{ background: 'var(--success-muted)', padding: '14px', borderRadius: '8px', borderLeft: '4px solid var(--primary)' }}>
-            <p className="text-sm">
-              <strong>Une pièce manquante ne vous élimine pas d'office.</strong> {REGIME_PIECES.auDepot}
-            </p>
-            <p className="text-sm" style={{ marginTop: '8px' }}>
-              {REGIME_PIECES.aLAttribution} <span className="text-muted">({REGIME_PIECES.article})</span>
-            </p>
-          </div>
-
-          <div style={{ background: 'var(--danger-muted)', padding: '14px', borderRadius: '8px', borderLeft: '4px solid var(--danger)' }}>
-            <p className="text-sm">
-              <strong>En revanche, une pièce non sincère fait rejeter l'offre.</strong> {SINCERITE.regle}
-              <span className="text-muted"> ({SINCERITE.article})</span>
-            </p>
-          </div>
-
-          <AVerifier>
-            La liste ci-dessus provient du Guide du soumissionnaire ARCOP (2018).
-            L'article 109 du décret n°2024-1748 renvoie désormais sa composition à un
-            arrêté du ministre chargé du budget. La liste figurant dans votre dossier
-            d'appel à concurrence fait foi.
-          </AVerifier>
-
-          <p className="text-xs text-muted">
-            {REGIME_PIECES.dispenses}
-          </p>
-        </div>
-      ),
-    },
-    {
-      id: 3,
-      title: 'Contenu technique de l\'offre',
-      icon: <Briefcase size={24} />,
-      content: (
-        <div className="flex flex-col gap-4">
-          <p className="text-secondary">
-            C'est ici que vous démontrez votre capacité à exécuter le marché.
-          </p>
-          <ul className="list-disc pl-5 text-secondary flex flex-col gap-2">
-            <li><strong>Références similaires</strong> : copies de contrats exécutés et attestations de bonne fin.</li>
-            <li><strong>Personnel</strong> : CV signés et diplômes de l'équipe proposée.</li>
-            <li><strong>Matériel</strong> : justificatifs de propriété ou de mise à disposition.</li>
-            <li><strong>Méthodologie</strong> : plan d'exécution détaillé.</li>
-            <li><strong>Groupement</strong> : accord de groupement signé de toutes les parties, ou lettre d'intention accompagnée du projet d'accord.</li>
-          </ul>
-          <div style={{ background: 'var(--success-muted)', padding: '14px', borderRadius: '8px', borderLeft: '4px solid var(--primary)' }}>
-            <p className="text-sm">
-              <strong>Nouveauté du cadre 2024 :</strong> l'exigence de marchés similaires a été
-              supprimée pour les marchés dont le montant prévisionnel est inférieur à 300 000 000 FCFA.
-              Une entreprise sans référence peut donc concourir sur ces marchés.
-            </p>
-            <AVerifier>
-              Mesure annoncée avec le décret d'application de décembre 2024 ; à confirmer sur
-              le texte avant de s'en prévaloir dans une offre.
-            </AVerifier>
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: 4,
-      title: 'Contenu financier et garantie',
-      icon: <FileText size={24} />,
-      content: (
-        <div className="flex flex-col gap-4">
-          <ul className="list-disc pl-5 text-secondary flex flex-col gap-2">
-            <li><strong>Lettre de soumission</strong> datée et signée par vous-même ou votre représentant dûment habilité (art. 99).</li>
-            <li><strong>Bordereau des prix unitaires</strong> et <strong>devis quantitatif et estimatif</strong>, remplis, datés et signés.</li>
-            <li><strong>Calendrier d'exécution</strong>.</li>
-            <li><strong>Garantie de soumission</strong> lorsque la nature des prestations le requiert.</li>
-          </ul>
-
-          <div style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px' }}>
-            <h5 className="font-bold mb-2">La garantie de soumission (art. 100)</h5>
-            <p className="text-sm text-secondary">
-              Son montant est fixé par l'autorité contractante et figure au dossier. Il est
-              compris entre <strong>1 % et 3 % du montant prévisionnel</strong> du marché.
-            </p>
-            <p className="text-sm text-secondary" style={{ marginTop: '8px' }}>Elle peut prendre l'une de ces formes :</p>
-            <ul className="list-disc pl-5 text-sm text-secondary" style={{ marginTop: '4px' }}>
-              {GARANTIE_SOUMISSION.formes.map((f) => <li key={f}>{f}</li>)}
-            </ul>
-            <p className="text-sm text-secondary" style={{ marginTop: '8px' }}>{GARANTIE_SOUMISSION.restitution}</p>
-          </div>
-
-          <div style={{ background: 'var(--success-muted)', padding: '16px', borderRadius: '8px', borderLeft: '4px solid var(--primary)' }}>
-            <h5 className="font-bold mb-2">Les marges de préférence qui vous sont dues (art. 119 à 123)</h5>
-            <p className="text-sm" style={{ marginBottom: '10px' }}>
-              Toute préférence doit être prévue au dossier et quantifiée en pourcentage de
-              votre offre. Plusieurs se cumulent — une PME locale sur un marché de travaux
-              communautaire peut atteindre 20 %.
-            </p>
-            <ul className="flex flex-col gap-2">
-              {PREFERENCES.map((p) => (
-                <li key={p.id} className="text-sm">
-                  <strong>{Math.round(p.taux * 100)} %</strong> — {p.label}
-                  {p.cumulable && <span className="badge badge-green" style={{ marginLeft: '6px', fontSize: '0.65rem' }}>cumulable</span>}
-                  <div className="text-xs text-muted">{p.condition} · {p.article}</div>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div style={{ background: 'var(--accent-muted)', padding: '14px', borderRadius: '8px', borderLeft: '4px solid var(--accent)' }}>
-            <p className="text-sm">
-              <strong>Attention au prix trop agressif ({OFFRE_ANORMALEMENT_BASSE.article}).</strong>{' '}
-              {OFFRE_ANORMALEMENT_BASSE.definition} {OFFRE_ANORMALEMENT_BASSE.procedure}
-            </p>
-            <p className="text-sm" style={{ marginTop: '8px' }}>
-              Si votre offre est confirmée dans cette zone, votre garantie de bonne exécution
-              passe entre <strong>{Math.round(GARANTIE_BONNE_EXECUTION_MAJOREE.tauxMin * 100)} % et {Math.round(GARANTIE_BONNE_EXECUTION_MAJOREE.tauxMax * 100)} %</strong> du prix
-              de base — une immobilisation de trésorerie à anticiper avant de casser vos prix.
-            </p>
-            <AVerifier>{GARANTIE_BONNE_EXECUTION_MAJOREE.tauxDeDroitCommunNote}</AVerifier>
-          </div>
-
-          <Link href="/modeles-arcop" className="btn btn-outline btn-sm w-max">Modèles de documents</Link>
-        </div>
-      ),
-    },
-    {
-      id: 5,
-      title: 'Montage et cachetage du pli',
-      icon: <PackageOpen size={24} />,
-      content: (
-        <div className="flex flex-col gap-4">
-          <div style={{ background: 'var(--accent-muted)', padding: '16px', borderRadius: '8px', borderLeft: '4px solid var(--accent)' }}>
-            <p className="text-sm" style={{ fontWeight: 700, marginBottom: '6px' }}>
-              Ce point a changé avec le cadre 2024.
-            </p>
-            <p className="text-sm">
-              L'ancienne règle de la double enveloppe « offre technique / offre financière »
-              ne s'applique plus aux travaux, fournitures et services courants.
-            </p>
-          </div>
-
-          <div style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
-            <div className="flex items-center gap-2 mb-2">
-              <span className={`badge ${enveloppe.type === 'UNIQUE' ? 'badge-green' : 'badge-accent'}`}>
-                {enveloppe.type === 'UNIQUE' ? 'Enveloppe unique' : 'Double enveloppe'}
+    <main className="animate-fadeIn" style={{ background: 'var(--color-bg-0)', minHeight: '100vh', padding: '32px 16px' }}>
+      <div className="container" style={{ maxWidth: '1100px' }}>
+        
+        {/* EN-TÊTE DU GUIDE */}
+        <div style={{
+          background: 'linear-gradient(135deg, #022C22 0%, #064E3B 60%, #047857 100%)',
+          borderRadius: '24px',
+          padding: '36px 28px',
+          color: '#FFFFFF',
+          boxShadow: '0 20px 50px rgba(4,120,87,0.3)',
+          marginBottom: '32px',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+            <div style={{ maxWidth: '680px' }}>
+              <span style={{
+                background: '#10B981',
+                color: '#022C22',
+                fontWeight: 900,
+                fontSize: '0.75rem',
+                padding: '4px 12px',
+                borderRadius: '50px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                display: 'inline-block',
+                marginBottom: '12px'
+              }}>
+                📖 GUIDE OFFICIEL COMPLET & INTERACTIF
               </span>
-              <span className="text-xs text-muted">{NATURES[nature]} · {enveloppe.article}</span>
+              <h1 className="heading-lg" style={{ color: '#FFFFFF', margin: '0 0 10px 0', fontSize: '1.8rem', fontWeight: 800 }}>
+                Marchés Publics au Burkina Faso
+              </h1>
+              <p style={{ color: '#D1FAE5', fontSize: '0.95rem', margin: 0, lineHeight: 1.6 }}>
+                Comprendre, rechercher, analyser et soumissionner selon la <strong>Loi n°005-2024/ALT</strong>, le <strong>Décret n°2024-1748</strong> et l'<strong>Arrêté n°2025-0323</strong>.
+              </p>
             </div>
-            <p className="text-sm text-secondary" style={{ marginBottom: '8px' }}>{enveloppe.resume}</p>
-            <ul className="list-disc pl-5 text-sm text-secondary flex flex-col gap-1">
-              {enveloppe.details.map((d, i) => <li key={i}>{d}</li>)}
-            </ul>
+            
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <Link href="/marches" className="btn" style={{ background: '#FFFFFF', color: '#064E3B', fontWeight: 800, padding: '12px 20px', borderRadius: '12px' }}>
+                Explorer les marchés →
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* BARRE DE RECHERCHE DANS LE LIVRE */}
+        <div style={{ marginBottom: '28px', position: 'relative' }}>
+          <div style={{ position: 'relative' }}>
+            <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <input 
+              type="text"
+              placeholder="Rechercher un chapitre, une pièce (ex: RCCM, IFU, Garantie, Décret 2024)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '14px 16px 14px 48px',
+                borderRadius: '16px',
+                border: '2px solid var(--color-border)',
+                background: 'var(--color-bg-1)',
+                color: 'var(--text-primary)',
+                fontSize: '0.95rem',
+                fontWeight: 500
+              }}
+            />
           </div>
 
-          <p className="text-sm text-secondary">
-            L'offre est accompagnée d'une lettre de soumission signée, et transmise par tout
-            moyen permettant d'établir avec certitude la date et l'heure de réception tout en
-            garantissant la confidentialité (art. 99).
-          </p>
-        </div>
-      ),
-    },
-    {
-      id: 6,
-      title: 'Dépôt et ouverture des plis',
-      icon: <HelpCircle size={24} />,
-      content: (
-        <div className="flex flex-col gap-4">
-          <div style={{ background: 'var(--color-surface-2)', padding: '16px', borderRadius: '8px' }}>
-            <h5 className="font-bold mb-2">Vérification avant dépôt</h5>
-            <ul className="flex flex-col gap-3">
-              {CHECKLIST_DEPOT.map((b) => (
-                <li key={b.id}>
-                  <div className="text-sm" style={{ fontWeight: 700 }}>{b.titre}</div>
-                  <div className="text-sm text-secondary">{b.controle}</div>
-                </li>
+          {/* Résultats instantanés de recherche */}
+          {searchResults.length > 0 && (
+            <div style={{
+              position: 'absolute',
+              top: '110%',
+              left: 0,
+              width: '100%',
+              background: 'var(--color-bg-1)',
+              border: '2px solid var(--primary)',
+              borderRadius: '16px',
+              padding: '12px',
+              zIndex: 90,
+              boxShadow: '0 15px 40px rgba(0,0,0,0.3)',
+              maxHeight: '300px',
+              overflowY: 'auto'
+            }}>
+              <p style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px', paddingLeft: '8px' }}>
+                {searchResults.length} CHAPITRES TROUVÉS :
+              </p>
+              {searchResults.map((res, i) => (
+                <div 
+                  key={i}
+                  onClick={() => {
+                    selectChapter(res.vIdx, res.cIdx);
+                    setSearchQuery('');
+                  }}
+                  style={{
+                    padding: '10px 12px',
+                    borderRadius: '10px',
+                    cursor: 'pointer',
+                    background: 'var(--color-surface-2)',
+                    marginBottom: '6px',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <span style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 700 }}>{res.volTitle}</span>
+                  <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>{res.chapTitle}</p>
+                </div>
               ))}
-            </ul>
-          </div>
-
-          <div>
-            <h5 className="font-bold mb-2">Le jour du dépôt ({OUVERTURE_PLIS.article})</h5>
-            <ul className="list-disc pl-5 text-secondary flex flex-col gap-2">
-              {OUVERTURE_PLIS.regles.map((r, i) => <li key={i}>{r}</li>)}
-            </ul>
-          </div>
-
-          <p className="text-sm" style={{ color: 'var(--danger)', fontWeight: 600 }}>
-            Le dépôt anticipé est permis et fortement recommandé : l'ouverture intervient
-            immédiatement après l'heure limite, et les plis hors délai sont écartés.
-          </p>
+            </div>
+          )}
         </div>
-      ),
-    },
-    {
-      id: 7,
-      title: 'Contester, et se faire payer',
-      icon: <Gavel size={24} />,
-      content: (
-        <div className="flex flex-col gap-5">
-          <div>
-            <h5 className="font-bold mb-2">Si une décision vous fait grief</h5>
-            <p className="text-sm text-secondary" style={{ marginBottom: '10px' }}>
-              Candidats, soumissionnaires, attributaires et titulaires peuvent contester le
-              dossier d'appel à concurrence comme les décisions prises pendant la passation,
-              l'exécution ou le règlement (loi n°005-2024, art. 44).
-            </p>
-            <ol className="flex flex-col gap-3" style={{ paddingLeft: 0, listStyle: 'none' }}>
-              {RECOURS.map((r, i) => (
-                <li key={i} style={{ borderLeft: '3px solid var(--color-border-strong)', paddingLeft: '12px' }}>
-                  <div className="text-sm" style={{ fontWeight: 700 }}>{r.etape}</div>
-                  <div className="text-sm text-secondary">{r.objet}</div>
-                  <div className="text-xs text-muted" style={{ marginTop: '4px' }}>
-                    {r.delai
-                      ? `Délai : ${r.delai.valeur} ${r.delai.unite}${r.delaiPourStatuer ? ` · décision sous ${r.delaiPourStatuer.valeur} ${r.delaiPourStatuer.unite}` : ''}`
-                      : r.delaiInconnu
-                        ? '⚠️ Délai non publié dans les textes — voir ci-dessous'
-                        : ''}
-                    {' · '}{r.fondement}
+
+        {/* INTERFACE LIVRE OUVERT INTERACTIF */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 320px) 1fr', gap: '24px', alignItems: 'start' }}>
+          
+          {/* COLONNE GAUCHE : SOMMAIRE PAR TOMES */}
+          <div className="card" style={{ padding: '20px', borderRadius: '20px', background: 'var(--color-bg-1)', border: '1px solid var(--color-border)' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <BookOpen size={18} color="var(--primary)" /> Sommaire du Livre ({BOOK_VOLUMES.reduce((acc, v) => acc + v.chapters.length, 0)} Chapitres)
+            </h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {BOOK_VOLUMES.map((vol, vIdx) => {
+                const isSelectedVol = currentVolumeIndex === vIdx;
+                return (
+                  <div key={vol.id} style={{ borderRadius: '14px', overflow: 'hidden', border: isSelectedVol ? `2px solid ${vol.color}` : '1px solid var(--color-border)' }}>
+                    {/* En-tête Tome */}
+                    <div 
+                      onClick={() => {
+                        setCurrentVolumeIndex(vIdx);
+                        setCurrentChapterIndex(0);
+                      }}
+                      style={{
+                        padding: '12px 14px',
+                        background: isSelectedVol ? `${vol.color}15` : 'var(--color-surface-2)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                      }}
+                    >
+                      <span style={{ fontSize: '0.82rem', fontWeight: 800, color: isSelectedVol ? vol.color : 'var(--text-primary)' }}>
+                        {vol.icon} {vol.title}
+                      </span>
+                    </div>
+
+                    {/* Liste des Chapitres du Tome */}
+                    {isSelectedVol && (
+                      <div style={{ padding: '8px', background: 'var(--color-bg-1)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        {vol.chapters.map((chap, cIdx) => {
+                          const isSelectedChap = currentChapterIndex === cIdx;
+                          return (
+                            <button
+                              key={chap.id}
+                              onClick={() => selectChapter(vIdx, cIdx)}
+                              style={{
+                                width: '100%',
+                                textAlign: 'left',
+                                padding: '8px 12px',
+                                borderRadius: '8px',
+                                border: 'none',
+                                background: isSelectedChap ? vol.color : 'transparent',
+                                color: isSelectedChap ? '#FFFFFF' : 'var(--text-secondary)',
+                                fontWeight: isSelectedChap ? 700 : 500,
+                                fontSize: '0.82rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.15s'
+                              }}
+                            >
+                              {chap.number}. {chap.title}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
-                  {r.pointDeDepart && (
-                    <div className="text-xs text-muted" style={{ fontStyle: 'italic' }}>{r.pointDeDepart}</div>
-                  )}
-                </li>
-              ))}
-            </ol>
+                );
+              })}
+            </div>
+          </div>
 
-            <div style={{ background: 'var(--accent-muted)', padding: '14px', borderRadius: '8px', marginTop: '14px', borderLeft: '4px solid var(--accent)' }}>
-              <p className="text-sm">
-                <strong>Point à vérifier auprès de l'ARCOP.</strong> {RECOURS[0].note} Ne
-                tardez pas à saisir l'ORD : rater ce délai peut rendre tout le reste
-                irrecevable.
-              </p>
+          {/* COLONNE DROITE : LE LIVRE OUVERT (PAGE FLIP ANIMÉE) */}
+          <div 
+            className="card" 
+            style={{
+              padding: '36px 32px',
+              borderRadius: '24px',
+              background: 'var(--color-bg-1)',
+              border: `2px solid ${currentVolume.color}`,
+              boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+              minHeight: '520px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              position: 'relative',
+              transition: 'opacity 0.25s, transform 0.25s',
+              opacity: isFlipping ? 0.3 : 1,
+              transform: isFlipping ? 'rotateY(10deg)' : 'rotateY(0deg)'
+            }}
+          >
+            {/* Ruban Marque-Page Haut */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              right: '32px',
+              background: currentVolume.color,
+              color: '#FFFFFF',
+              padding: '8px 14px',
+              borderRadius: '0 0 10px 10px',
+              fontSize: '0.72rem',
+              fontWeight: 800,
+              boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
+            }}>
+              {currentVolume.icon} {currentVolume.title.split('—')[0]}
             </div>
 
-            <p className="text-sm text-secondary" style={{ marginTop: '12px' }}>
-              Litige né pendant l'exécution après non-conciliation : {RECOURS_EXECUTION.delai.valeur} jours
-              à compter de la notification du procès-verbal, {RECOURS_EXECUTION.sanction.toLowerCase()}
-              {' '}({RECOURS_EXECUTION.fondement}).
-            </p>
-          </div>
+            <div>
+              {/* Entête Chapitre */}
+              <div style={{ marginBottom: '24px' }}>
+                <span className="badge" style={{ background: `${currentVolume.color}20`, color: currentVolume.color, fontWeight: 800, fontSize: '0.75rem', marginBottom: '8px' }}>
+                  CHAPITRE {currentChapter.number}
+                </span>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', margin: '8px 0 0 0', lineHeight: 1.3 }}>
+                  {currentChapter.title}
+                </h2>
+              </div>
 
-          <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '16px' }}>
-            <h5 className="font-bold mb-2">Se faire payer dans les délais ({DELAIS_PAIEMENT.article})</h5>
-            <ul className="list-disc pl-5 text-sm text-secondary flex flex-col gap-1">
-              <li>Avance : <strong>{DELAIS_PAIEMENT.plafondsJours.avance} jours</strong> maximum.</li>
-              <li>Acompte : <strong>{DELAIS_PAIEMENT.plafondsJours.acompte} jours</strong> maximum.</li>
-              <li>Solde : <strong>{DELAIS_PAIEMENT.plafondsJours.solde} jours</strong> maximum.</li>
-            </ul>
-            <p className="text-xs text-muted" style={{ marginTop: '6px' }}>{DELAIS_PAIEMENT.pointDeDepart}</p>
+              {/* Contenu textuel du chapitre */}
+              <div style={{
+                fontSize: '0.98rem',
+                color: 'var(--text-primary)',
+                lineHeight: 1.8,
+                whiteSpace: 'pre-line',
+                marginBottom: '32px'
+              }}>
+                {currentChapter.content}
+              </div>
 
-            <div style={{ background: 'var(--success-muted)', padding: '14px', borderRadius: '8px', marginTop: '12px', borderLeft: '4px solid var(--primary)' }}>
-              <p className="text-sm">
-                <strong>Au-delà, l'administration vous doit des intérêts moratoires.</strong>{' '}
-                {DELAIS_PAIEMENT.interetsMoratoires.declencheur} Taux : {DELAIS_PAIEMENT.interetsMoratoires.taux}
-              </p>
-              <p className="text-sm" style={{ marginTop: '6px' }}>
-                Ils sont <strong>calculés sur demande</strong> : sans réclamation écrite de
-                votre part, ils ne vous seront pas versés.
-              </p>
+              {/* CHECKLIST INTERACTIVE SPÉCIALE SUR LE TOME III (RÉGLEMENTATION PIÈCES 2025) */}
+              {currentVolume.id === 3 && (
+                <div style={{
+                  background: 'var(--color-surface-2)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  marginBottom: '24px'
+                }}>
+                  <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <ShieldCheck size={18} /> Checklist de Conformité Réglementaire 2025
+                  </h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
+                    {[
+                      { id: 'rccm', label: '1. RCCM (CEFORE/Greffe)' },
+                      { id: 'ifu', label: '2. IFU (Attestation Impôts)' },
+                      { id: 'asf', label: '3. ASF (Moins de 3 mois)' },
+                      { id: 'cnss', label: '4. Attestation CNSS' },
+                      { id: 'aje', label: '5. Attestation AJE' },
+                      { id: 'drtss', label: '6. Attestation DRTSS' },
+                      { id: 'cnf', label: '7. Certificat Non-Faillite' },
+                      { id: 'garantie', label: '⚡ Garantie de Soumission (Art. 100)' }
+                    ].map((item) => (
+                      <label key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', cursor: 'pointer', color: 'var(--text-primary)' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={Boolean(checkedItems[item.id])} 
+                          onChange={() => toggleCheck(item.id)}
+                          style={{ width: '16px', height: '16px', accentColor: 'var(--primary)' }}
+                        />
+                        <span style={{ fontWeight: checkedItems[item.id] ? 700 : 500, textDecoration: checkedItems[item.id] ? 'line-through' : 'none' }}>
+                          {item.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            <p className="text-sm text-secondary" style={{ marginTop: '12px' }}>
-              Si le défaut de paiement rend l'exécution impossible et que votre requête
-              reste sans effet pendant <strong>trois mois</strong>, vous pouvez demander la
-              résiliation et prétendre à une indemnité sur les prestations restant à
-              exécuter ({RESILIATION_PAR_LE_TITULAIRE.article}).
-            </p>
-          </div>
-
-          <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '16px' }}>
-            <h5 className="font-bold mb-2">Vos pénalités sont plafonnées ({PENALITES_RETARD.article})</h5>
-            <ul className="list-disc pl-5 text-sm text-secondary flex flex-col gap-1">
-              <li>Travaux : de 1/5000 à 1/2000 du montant HT par jour calendaire de retard.</li>
-              <li>Fournitures, services courants et prestations intellectuelles : de 1/2000 à 1/1000 par jour.</li>
-              <li><strong>Plafond : {Math.round(PENALITES_RETARD.plafond * 100)} % du montant hors taxes</strong> du marché, quel que soit le retard.</li>
-              <li>Elles s'appliquent sans mise en demeure préalable.</li>
-            </ul>
-            <p className="text-sm text-secondary" style={{ marginTop: '8px' }}>
-              {PENALITES_RETARD.forceMajeure}
-            </p>
-          </div>
-        </div>
-      ),
-    },
-  ];
-
-  const meta = steps.find((s) => s.id === activeStep);
-
-  return (
-    <div className="container section animate-fadeIn">
-      <div className="flex justify-between items-center flex-wrap gap-4" style={{ marginBottom: '24px' }}>
-        <div>
-          <h1 className="heading-lg">Guide de soumission</h1>
-          <p className="text-secondary mt-2">
-            Aligné sur la loi n°005-2024/ALT du 20 avril 2024 et le décret n°2024-1748.
-          </p>
-        </div>
-        <Link href="/dashboard" className="btn btn-outline">Retour au tableau de bord</Link>
-      </div>
-
-      <SelecteurProcedure
-        nature={nature} setNature={setNature}
-        montant={montant} setMontant={setMontant}
-        autorite={autorite} setAutorite={setAutorite}
-        resultat={resultat}
-      />
-
-      <div className="grid md:grid-cols-[300px_1fr] gap-8" style={{ gridTemplateColumns: 'minmax(250px, 1fr) 2fr' }}>
-        <div className="card" style={{ padding: '16px', height: 'fit-content' }}>
-          <h3 className="heading-sm mb-4 text-primary">Les {steps.length} étapes</h3>
-          <div className="flex flex-col gap-2">
-            {steps.map((step) => (
+            {/* COMMANDES DETOURNAGE DE PAGE (PRÉCÉDENT / SUIVANT) */}
+            <div style={{
+              display: 'flex',
+              justify: 'space-between',
+              alignItems: 'center',
+              paddingTop: '20px',
+              borderTop: '1px solid var(--color-border)',
+              marginTop: 'auto'
+            }}>
               <button
-                key={step.id}
-                onClick={() => setActiveStep(step.id)}
-                className="flex items-center gap-3 p-3 text-left rounded-md transition-all"
+                onClick={goToPrevChapter}
+                disabled={currentVolumeIndex === 0 && currentChapterIndex === 0}
+                className="btn btn-outline"
                 style={{
-                  background: activeStep === step.id ? 'var(--primary-muted)' : 'transparent',
-                  color: activeStep === step.id ? 'var(--primary-dark)' : 'var(--text-secondary)',
-                  borderLeft: `3px solid ${activeStep === step.id ? 'var(--primary)' : 'transparent'}`,
-                  fontWeight: activeStep === step.id ? '700' : '500',
+                  opacity: (currentVolumeIndex === 0 && currentChapterIndex === 0) ? 0.4 : 1,
+                  cursor: (currentVolumeIndex === 0 && currentChapterIndex === 0) ? 'not-allowed' : 'pointer',
+                  fontSize: '0.88rem',
+                  gap: '6px'
                 }}
               >
-                <div style={{ opacity: activeStep === step.id ? 1 : 0.6 }}>{step.icon}</div>
-                <span style={{ fontSize: '0.9rem', flexGrow: 1 }}>{step.id}. {step.title}</span>
-                {activeStep === step.id && <ChevronRight size={16} />}
+                <ChevronLeft size={16} />
+                <span>Page Précédente</span>
               </button>
-            ))}
+
+              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                Tome {currentVolumeIndex + 1} / {BOOK_VOLUMES.length} • Chapitre {currentChapterIndex + 1} / {currentVolume.chapters.length}
+              </span>
+
+              <button
+                onClick={goToNextChapter}
+                disabled={currentVolumeIndex === BOOK_VOLUMES.length - 1 && currentChapterIndex === currentVolume.chapters.length - 1}
+                className="btn"
+                style={{
+                  background: currentVolume.color,
+                  color: '#FFFFFF',
+                  fontWeight: 800,
+                  fontSize: '0.88rem',
+                  gap: '6px',
+                  opacity: (currentVolumeIndex === BOOK_VOLUMES.length - 1 && currentChapterIndex === currentVolume.chapters.length - 1) ? 0.4 : 1
+                }}
+              >
+                <span>Page Suivante</span>
+                <ChevronRight size={16} />
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* SECTION FOOTER APPEL À L'ACTION POUR WEND-KABRÉ */}
+        <div style={{
+          marginTop: '40px',
+          background: 'var(--color-surface-2)',
+          border: '2px solid var(--color-border)',
+          borderRadius: '20px',
+          padding: '28px',
+          textAlign: 'center'
+        }}>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>
+            Prêt à appliquer cette méthode à votre prochain marché ?
+          </h3>
+          <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '20px', maxWidth: '600px', margin: '0 auto 20px' }}>
+            Laissez l'intelligence artificielle de Wend-Kabré vérifier automatiquement la conformité de vos pièces administratives et vous guider pas-à-pas.
+          </p>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link href="/marches" className="btn btn-primary btn-lg" style={{ fontWeight: 800 }}>
+              Consulter les marchés disponibles →
+            </Link>
+            <Link href="/dashboard" className="btn btn-outline btn-lg">
+              Mon Tableau de Bord
+            </Link>
           </div>
         </div>
 
-        <div className="card" style={{ padding: '32px' }}>
-          <div className="flex items-center gap-4 mb-6 pb-6" style={{ borderBottom: '1px solid var(--color-border)' }}>
-            <div style={{ padding: '16px', background: 'var(--success-muted)', color: 'var(--primary)', borderRadius: '12px' }}>
-              {meta?.icon}
-            </div>
-            <div>
-              <span className="badge badge-green mb-2">Étape {activeStep} sur {steps.length}</span>
-              <h2 className="heading-md">{meta?.title}</h2>
-            </div>
-          </div>
-
-          <div className="text-base" style={{ lineHeight: '1.8' }}>{meta?.content}</div>
-
-          <div className="flex justify-between items-center mt-12 pt-6" style={{ borderTop: '1px solid var(--color-border)' }}>
-            <button className="btn btn-outline" disabled={activeStep === 1} onClick={() => setActiveStep((p) => p - 1)}>
-              Étape précédente
-            </button>
-            <button className="btn btn-primary" disabled={activeStep === steps.length} onClick={() => setActiveStep((p) => p + 1)}>
-              {activeStep === steps.length ? 'Terminé' : 'Étape suivante'}
-            </button>
-          </div>
-        </div>
       </div>
-    </div>
+    </main>
   );
 }
