@@ -92,8 +92,10 @@ export default function AdminPage() {
       const requestsArray = [];
       requestsSnap.forEach((d) => requestsArray.push({ id: d.id, ...d.data() }));
       requestsArray.sort((a, b) => {
-        if (a.status === 'pending' && b.status !== 'pending') return -1;
-        if (a.status !== 'pending' && b.status === 'pending') return 1;
+        const isAPending = (a.status || '').toLowerCase() === 'pending';
+        const isBPending = (b.status || '').toLowerCase() === 'pending';
+        if (isAPending && !isBPending) return -1;
+        if (!isAPending && isBPending) return 1;
         return new Date(b.createdAt) - new Date(a.createdAt);
       });
 

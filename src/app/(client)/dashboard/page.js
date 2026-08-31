@@ -313,6 +313,22 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {pendingPayment && (
+        <div style={{ background: 'linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.05))', borderLeft: '4px solid #F59E0B', padding: '16px 24px', borderRadius: 'var(--radius-sm)', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+          <div>
+            <h4 style={{ color: '#F59E0B', fontWeight: 800, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Clock size={20} /> Paiement par transfert en cours de validation
+            </h4>
+            <p className="text-sm" style={{ color: 'var(--text-primary)' }}>
+              Votre preuve de paiement a bien été reçue. Notre équipe valide les transferts sous 24h ouvrées.
+            </p>
+          </div>
+          <Link href="/paiement-ocr" className="btn btn-outline btn-sm">
+            Voir ma demande →
+          </Link>
+        </div>
+      )}
+
       {(!isSubscriptionActive(userData) && !pendingPayment) && (
         <div style={{ background: 'var(--accent-muted)', borderLeft: '4px solid var(--accent)', padding: '16px 24px', borderRadius: 'var(--radius-sm)', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', boxShadow: 'var(--shadow-gold)' }}>
           <div>

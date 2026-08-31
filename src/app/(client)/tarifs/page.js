@@ -130,57 +130,12 @@ export default function TarifsPage() {
     setShowPayModal(true);
   };
 
-  const handleMoneyFusionPayment = async () => {
-    if (!selectedPlan || !user) return;
-
-    setPaymentLoading(true);
-    setErrorMessage('');
-
-    try {
-      const phone = user.phoneNumber || '+22670000000';
-
-      // L'identité et le montant sont déterminés côté serveur à partir de ce
-      // jeton et du planId ; les envoyer depuis le navigateur n'aurait aucune
-      // valeur de preuve.
-      const idToken = await user.getIdToken();
-
-      const response = await fetch('/api/subscription/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${idToken}`,
-        },
-        body: JSON.stringify({
-          phone: phone,
-          planId: selectedPlan.id,
-        })
-      });
-
-      const data = await response.json();
-
-      if (data.success && data.paymentUrl) {
-        track('payment_redirect', { planId: selectedPlan.id, reference: data.reference });
-        
-        // Redirection vers Money Fusion
-        window.location.href = data.paymentUrl;
-      } else {
-        // FALLBACK: Rediriger vers ancien système OCR en attendant credentials Money Fusion
-        console.warn('Money Fusion indisponible, fallback vers ancien système:', data.error);
-        track('payment_fallback_ocr', { planId: selectedPlan.id, reason: data.error });
-        
-        // Fermer le modal et rediriger vers page de paiement OCR
-        setShowPayModal(false);
-        router.push(`/paiement-ocr?plan=${selectedPlan.id.toLowerCase()}&amount=${finalPrice}`);
-      }
-    } catch (error) {
-      console.error('Erreur paiement:', error);
-      // FALLBACK: En cas d'erreur réseau, utiliser aussi l'ancien système
-      track('payment_error_fallback', { planId: selectedPlan.id, error: error.message });
-      setShowPayModal(false);
-      router.push(`/paiement-ocr?plan=${selectedPlan.id.toLowerCase()}&amount=${parseInt(getPrice(selectedPlan).replace(/\s/g, ''), 10)}`);
-    } finally {
-      setPaymentLoading(false);
-    }
+  const handleManualTransferRedirect = () => {
+    if (!selectedPlan) return;
+    track('payment_manual_chosen', { planId: selectedPlan.id });
+    setShowPayModal(false);
+    const billingParam = billingAnnual ? 'annual' : 'monthly';
+    router.push(`/paiement-ocr?plan=${selectedPlan.id.toLowerCase()}&billing=${billingParam}`);
   };
 
   return (
@@ -320,8 +275,8 @@ export default function TarifsPage() {
               <div className="grid grid-2 gap-6">
                 {[
                   {
-                    q: 'Comment fonctionne le paiement ?',
-                    a: 'Paiement sécurisé via Money Fusion avec Orange Money, Moov Money ou carte bancaire. Activation instantanée après paiement.',
+                    q: 'Comment fonctionne le paiement par transfert ?',
+                    a: 'Vous effectuez le transfert vers nos numéros officiels Orange Money ou Moov Money, puis vous soumettez le reçu dans votre espace. Validation et activation sous 24h ouvrées.',
                   },
                   {
                     q: 'Puis-je annuler mon abonnement ?',
@@ -369,7 +324,7 @@ export default function TarifsPage() {
         </section>
       </main>
 
-      {/* MODAL DE PAIEMENT MONEY FUSION */}
+      {/* MODAL CHOIX DU MODE DE PAIEMENT */}
       {showPayModal && selectedPlan && (
         <div 
           style={{
@@ -397,48 +352,38 @@ export default function TarifsPage() {
             onClick={(e) => e.stopPropagation()}
             style={{ 
               width: '100%', 
-              maxWidth: '520px',
+              maxWidth: '580px',
               background: 'var(--color-bg-1)',
               border: `3px solid ${selectedPlan.borderColor}`,
               boxShadow: `0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px ${selectedPlan.borderColor}20`,
               borderRadius: '24px',
               position: 'relative',
-              overflow: 'hidden'
+              overflow: 'hidden',
+              padding: '32px'
             }}
           >
-            {/* Gradient overlay animé */}
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '200px',
-              background: `linear-gradient(180deg, ${selectedPlan.borderColor}08, transparent)`,
-              pointerEvents: 'none'
-            }} />
-
-            {/* Header avec close button élégant */}
-            <div className="flex justify-between items-center" style={{ marginBottom: '32px', position: 'relative', zIndex: 1 }}>
+            {/* Header avec close button */}
+            <div className="flex justify-between items-center" style={{ marginBottom: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{
-                  width: '48px',
-                  height: '48px',
+                  width: '44px',
+                  height: '44px',
                   borderRadius: '12px',
                   background: `linear-gradient(135deg, ${selectedPlan.borderColor}20, ${selectedPlan.borderColor}10)`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '24px',
+                  fontSize: '22px',
                   border: `2px solid ${selectedPlan.borderColor}40`
                 }}>
                   💳
                 </div>
                 <div>
                   <h2 className="heading-md" style={{ color: selectedPlan.color, marginBottom: '2px' }}>
-                    Paiement Sécurisé
+                    Choix du Mode de Paiement
                   </h2>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
-                    Propulsé par Money Fusion
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0 }}>
+                    Souscription au {selectedPlan.name} ({formatPrice(parseInt(getPrice(selectedPlan).replace(/\s/g, ''), 10))} FCFA)
                   </p>
                 </div>
               </div>
@@ -449,298 +394,134 @@ export default function TarifsPage() {
                 }} 
                 aria-label="Fermer" 
                 style={{ 
-                  width: '40px',
-                  height: '40px',
+                  width: '36px',
+                  height: '36px',
                   borderRadius: '10px',
                   background: 'var(--color-surface-2)',
                   border: '1px solid var(--color-border)',
                   color: 'var(--text-secondary)', 
-                  fontSize: '20px', 
+                  fontSize: '18px', 
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.background = 'rgba(239,68,68,0.1)';
-                  e.target.style.borderColor = '#ef4444';
-                  e.target.style.color = '#ef4444';
-                  e.target.style.transform = 'scale(1.05)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = 'var(--color-surface-2)';
-                  e.target.style.borderColor = 'var(--color-border)';
-                  e.target.style.color = 'var(--text-secondary)';
-                  e.target.style.transform = 'scale(1)';
                 }}
               >
                 ✕
               </button>
             </div>
 
-            {/* Plan card avec effet glassmorphism */}
-            <div style={{ 
-              background: `linear-gradient(135deg, ${selectedPlan.borderColor}12, ${selectedPlan.borderColor}05)`,
-              border: `2px solid ${selectedPlan.borderColor}30`, 
-              padding: '28px', 
-              borderRadius: '20px', 
-              marginBottom: '32px', 
-              textAlign: 'center',
-              position: 'relative',
-              overflow: 'hidden',
-              boxShadow: `0 4px 20px ${selectedPlan.borderColor}10`
-            }}>
+            {/* Grille des 2 options de paiement */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '24px' }}>
               
-              <div style={{ fontSize: '3rem', marginBottom: '12px' }}>
-                {selectedPlan.icon}
-              </div>
-              <p className="text-xs" style={{ color: selectedPlan.color, marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>
-                Vous souscrivez au
-              </p>
-              <h3 className="heading-lg" style={{ color: selectedPlan.color, marginBottom: '16px' }}>
-                {selectedPlan.name}
-              </h3>
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'baseline', 
-                justifyContent: 'center', 
-                gap: '8px',
-                marginBottom: '8px' 
-              }}>
-                <span style={{ 
-                  fontSize: '3rem', 
-                  fontWeight: 900, 
-                  color: selectedPlan.color
-                }}>
-                  {formatPrice(parseInt(getPrice(selectedPlan).replace(/\s/g, ''), 10))}
-                </span>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                  <span className="text-sm" style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>FCFA</span>
-                  <span className="text-xs text-muted">/ mois</span>
-                </div>
-              </div>
-              <p className="text-xs text-muted" style={{ margin: '8px 0 0 0' }}>
-                {billingAnnual ? '💎 Facturé annuellement (économisez 20%)' : '📅 Facturation mensuelle'}
-              </p>
-            </div>
-
-            {/* Money Fusion features card */}
-            <div style={{
-              background: 'var(--color-surface-2)',
-              border: '2px solid var(--color-border)',
-              borderRadius: '16px',
-              padding: '24px',
-              marginBottom: '24px',
-              position: 'relative'
-            }}>
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '12px', 
-                marginBottom: '16px',
-                paddingBottom: '16px',
-                borderBottom: '1px solid var(--color-border)'
-              }}>
-                <div style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #10b981, #059669)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '18px',
-                  boxShadow: '0 4px 12px rgba(16,185,129,0.3)'
-                }}>
-                  🔒
-                </div>
-                <div style={{ flex: 1 }}>
-                  <strong style={{ color: 'var(--text-primary)', display: 'block', marginBottom: '2px', fontSize: '1rem' }}>
-                    Paiement sécurisé Money Fusion
-                  </strong>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0 }}>
-                    Orange Money • Moov Money • Carte bancaire
-                  </p>
-                </div>
-              </div>
-              
-              <div style={{ 
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '12px'
-              }}>
-                {[
-                  { icon: '⚡', text: 'Activation instantanée' },
-                  { icon: '🛡️', text: 'Cryptage SSL/TLS' },
-                  { icon: '✓', text: 'Transaction sécurisée' },
-                  { icon: '🔐', text: 'Données protégées' }
-                ].map((item, i) => (
-                  <div key={i} style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '10px 12px',
-                    background: 'var(--color-bg-2)',
-                    borderRadius: '10px',
-                    border: '1px solid var(--color-border)'
-                  }}>
-                    <span style={{ fontSize: '16px' }}>{item.icon}</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                      {item.text}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Message d'erreur moderne */}
-            {errorMessage && (
+              {/* OPTION 1 : TRANSFERT MANUEL (DISPONIBLE MAINTENANT) */}
               <div style={{
-                background: 'rgba(239,68,68,0.1)',
-                border: '2px solid rgba(239,68,68,0.3)',
-                color: '#dc2626',
-                padding: '16px 20px',
-                borderRadius: '14px',
-                marginBottom: '24px',
-                fontSize: '0.9rem',
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '12px',
-                animation: 'shake 0.5s ease'
+                background: 'linear-gradient(135deg, rgba(5,150,105,0.08), rgba(16,185,129,0.03))',
+                border: '2px solid var(--primary)',
+                borderRadius: '16px',
+                padding: '20px',
+                position: 'relative'
               }}>
-                <span style={{ fontSize: '20px', flexShrink: 0 }}>⚠️</span>
-                <div style={{ flex: 1 }}>
-                  <strong style={{ display: 'block', marginBottom: '4px', color: '#dc2626' }}>
-                    Erreur de paiement
-                  </strong>
-                  <span style={{ color: '#ef4444' }}>{errorMessage}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontSize: '24px' }}>📱</span>
+                    <div>
+                      <h4 style={{ fontWeight: 700, color: 'var(--primary)', margin: 0, fontSize: '1.05rem' }}>
+                        Transfert Manuel
+                      </h4>
+                      <span className="badge badge-green" style={{ fontSize: '0.7rem', marginTop: '4px' }}>
+                        🟢 Disponible maintenant
+                      </span>
+                    </div>
+                  </div>
                 </div>
+
+                <p className="text-sm text-secondary" style={{ marginBottom: '16px', lineHeight: 1.5 }}>
+                  Effectuez le transfert vers notre numéro Orange Money ou Moov Money, puis transmettez votre reçu. Activation validée sous 24h ouvrées.
+                </p>
+
+                <button
+                  onClick={handleManualTransferRedirect}
+                  className="btn btn-primary"
+                  style={{
+                    width: '100%',
+                    justifyContent: 'center',
+                    fontWeight: 700,
+                    padding: '12px 20px',
+                    fontSize: '0.95rem'
+                  }}
+                >
+                  Continuer avec le transfert manuel →
+                </button>
               </div>
-            )}
 
-            {/* Bouton de paiement avec effet premium */}
-            <button 
-              onClick={handleMoneyFusionPayment}
-              disabled={paymentLoading}
-              className="btn btn-primary btn-lg"
-              style={{
-                width: '100%',
-                background: paymentLoading 
-                  ? 'linear-gradient(135deg, #374151, #1f2937)' 
-                  : `linear-gradient(135deg, ${selectedPlan.borderColor}, ${selectedPlan.color})`,
-                cursor: paymentLoading ? 'not-allowed' : 'pointer',
-                opacity: paymentLoading ? 0.7 : 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '12px',
-                marginBottom: '20px',
-                fontSize: '1.05rem',
-                fontWeight: 700,
-                padding: '18px 32px',
-                borderRadius: '14px',
-                border: 'none',
-                color: '#fff',
-                boxShadow: paymentLoading 
-                  ? 'none' 
-                  : `0 8px 30px ${selectedPlan.borderColor}50, inset 0 1px 1px rgba(255,255,255,0.2)`,
-                transition: 'all 0.3s ease',
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-              onMouseEnter={(e) => {
-                if (!paymentLoading) {
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = `0 12px 40px ${selectedPlan.borderColor}60, inset 0 1px 1px rgba(255,255,255,0.3)`;
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!paymentLoading) {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = `0 8px 30px ${selectedPlan.borderColor}50, inset 0 1px 1px rgba(255,255,255,0.2)`;
-                }
-              }}
-            >
-              {/* Effet de brillance au hover */}
-              {!paymentLoading && (
-                <div style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: '-100%',
-                  width: '100%',
-                  height: '100%',
-                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                  transition: 'left 0.6s ease'
-                }} className="shine-effect" />
-              )}
-              
-              {paymentLoading ? (
-                <>
-                  <div className="loader" style={{ 
-                    width: '20px', 
-                    height: '20px',
-                    border: '3px solid rgba(255,255,255,0.2)',
-                    borderTopColor: '#fff',
-                    borderRadius: '50%',
-                    animation: 'spin 0.8s linear infinite'
-                  }}></div>
-                  <span>Connexion sécurisée en cours...</span>
-                </>
-              ) : (
-                <>
-                  <span>Procéder au paiement sécurisé</span>
-                  <span style={{ 
-                    fontSize: '20px',
-                    transition: 'transform 0.3s ease'
-                  }} className="arrow-icon">→</span>
-                </>
-              )}
-            </button>
+              {/* OPTION 2 : PAIEMENT AUTOMATIQUE MOBILE MONEY (BIENTÔT DISPONIBLE) */}
+              <div style={{
+                background: 'var(--color-surface-2)',
+                border: '2px solid var(--color-border)',
+                borderRadius: '16px',
+                padding: '20px',
+                opacity: 0.85
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontSize: '24px' }}>⚡</span>
+                    <div>
+                      <h4 style={{ fontWeight: 700, color: 'var(--text-primary)', margin: 0, fontSize: '1.05rem' }}>
+                        Paiement Mobile Money automatique
+                      </h4>
+                      <span className="badge badge-gold" style={{ fontSize: '0.7rem', marginTop: '4px' }}>
+                        🟡 Bientôt disponible
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
-            {/* Footer avec mentions légales */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                  <span className="badge badge-gray" style={{ fontSize: '0.7rem' }}>Orange Money</span>
+                  <span className="badge badge-gray" style={{ fontSize: '0.7rem' }}>Moov Money</span>
+                  <span className="badge badge-gray" style={{ fontSize: '0.7rem' }}>Carte bancaire</span>
+                </div>
+
+                <p className="text-sm text-secondary" style={{ marginBottom: '16px', lineHeight: 1.5 }}>
+                  Le paiement automatique sera bientôt disponible. Vous pourrez payer directement depuis votre téléphone avec activation instantanée.
+                </p>
+
+                <button
+                  disabled
+                  className="btn"
+                  style={{
+                    width: '100%',
+                    justifyContent: 'center',
+                    background: 'var(--color-surface-3)',
+                    color: 'var(--text-muted)',
+                    border: '1px solid var(--color-border)',
+                    cursor: 'not-allowed',
+                    fontWeight: 600,
+                    padding: '12px 20px',
+                    fontSize: '0.95rem'
+                  }}
+                >
+                  🔒 Bientôt disponible
+                </button>
+              </div>
+
+            </div>
+
+            {/* Footer modal */}
             <div style={{
-              padding: '16px',
+              padding: '12px 16px',
               background: 'var(--color-surface-2)',
               borderRadius: '12px',
-              border: '1px solid var(--color-border)'
+              border: '1px solid var(--color-border)',
+              textAlign: 'center'
             }}>
-              <p style={{ 
-                fontSize: '0.7rem', 
-                color: 'var(--text-muted)', 
-                textAlign: 'center',
-                lineHeight: 1.6,
-                margin: 0
-              }}>
-                🔒 Connexion sécurisée SSL/TLS • En procédant au paiement, vous acceptez nos{' '}
-                <Link href="/conditions" style={{ color: selectedPlan.color, textDecoration: 'none', fontWeight: 600 }}>
-                  CGV
-                </Link>
-                {' '}et notre{' '}
-                <Link href="/confidentialite" style={{ color: selectedPlan.color, textDecoration: 'none', fontWeight: 600 }}>
-                  politique de confidentialité
-                </Link>.
+              <p className="text-xs text-muted" style={{ margin: 0 }}>
+                🔒 Vos informations sont traitées en toute confidentialité. Pour toute question, contactez notre support.
               </p>
             </div>
-          </div>
 
-          {/* Animations CSS */}
-          <style jsx>{`
-            @keyframes shake {
-              0%, 100% { transform: translateX(0); }
-              25% { transform: translateX(-10px); }
-              75% { transform: translateX(10px); }
-            }
-            @keyframes spin {
-              to { transform: rotate(360deg); }
-            }
-            button:hover .shine-effect {
-              left: 100%;
-            }
-            button:hover .arrow-icon {
-              transform: translateX(4px);
-            }
-          `}</style>
+          </div>
         </div>
       )}
     </>
