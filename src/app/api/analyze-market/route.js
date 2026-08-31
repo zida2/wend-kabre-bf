@@ -8,6 +8,8 @@ import { z } from 'zod';
 import { getAdminDb } from '@/lib/firebaseAdmin';
 import { verifyFirebaseToken } from '@/lib/authGuard';
 
+import { BURKINA_SYSTEM_PROMPT_ANALYZE_MARKET } from '@/lib/burkinaProcurement2025';
+
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
@@ -116,8 +118,7 @@ export async function POST(req) {
     const { object } = await generateObject({
       model: google('gemini-1.5-flash'),
       schema: analysisSchema,
-      system:
-        "Tu es un expert de la passation des marchés publics au Burkina Faso. Tu lis intégralement un Dossier d'Appel d'Offres (DAO) ou un avis officiel et tu en extrais des informations FIDÈLES au document. N'invente jamais une information absente : mets 'Non spécifié'. Les listes de pièces doivent être précises et exhaustives.",
+      system: BURKINA_SYSTEM_PROMPT_ANALYZE_MARKET,
       messages: [
         {
           role: 'user',
