@@ -6,15 +6,19 @@ export const maxDuration = 30;
 export const runtime = 'nodejs';
 
 export async function POST(req) {
+  console.log('[Chat API] Request reçue');
+  
   try {
     // Accès réservé aux utilisateurs connectés
     const authResult = await verifyFirebaseToken(req);
     if (!authResult.ok) {
+      console.log('[Chat API] Auth failed');
       return new Response(JSON.stringify({ error: 'Connexion requise' }), {
         status: 401,
         headers: { 'Content-Type': 'application/json' },
       });
     }
+    console.log('[Chat API] Auth OK:', authResult.uid);
 
     // Vérification Premium
     try {
@@ -28,10 +32,12 @@ export async function POST(req) {
         if (userResponse.ok) {
           const userData = await userResponse.json();
           const isSubscribed = userData?.fields?.isSubscribed?.booleanValue;
+          console.log('[Chat API] isSubscribed:', isSubscribed);
           
           if (!isSubscribed) {
+            console.log('[Chat API] Premium check FAILED');
             return new Response(JSON.stringify({ 
-              error: 'Premium requis. Consultez /tarifs.' 
+              error: 'Premium requis' 
             }), {
               status: 403,
               headers: { 'Content-Type': 'application/json' },
@@ -40,104 +46,58 @@ export async function POST(req) {
         }
       }
     } catch (premiumError) {
-      console.error('Premium check error:', premiumError);
+      console.error('[Chat API] Premium check error:', premiumError);
+      // Continue anyway
     }
 
-    const { messages } = await req.json();
-    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
+    const body = await req.json();
+    const { messages } = body;
+    
+    console.log('[Chat API] Messages count:', messages?.length);
 
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: 'API indisponible' }), { status: 503 });
+    const geminiApiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
+    
+    if (!geminiApiKey) {
+      console.error('[Chat API] GEMINI_API_KEY missing');
+      return new Response(JSON.stringify({ error: 'API key missing' }), { status: 503 });
     }
 
-    const google = createGoogleGenerativeAI({ apiKey });
+    console.log('[Chat API] Creating Google AI client...');
+    const google = createGoogleGenerativeAI({ apiKey: geminiApiKey });
 
-    const systemPrompt = `Tu es l'Assistant IA officiel de Wend-Kabré pour les marchés publics au Burkina Faso.
+    const systemPrompt = 'Tu es un expert en marchés publics au Burkina Faso. Aide à rédiger des offres conformes aux normes ARCOP 2024-2025. Cite toujours les articles de loi pertinents. Renvoie au /guide-soumission pour plus de détails. Sois professionnel, précis et en français.';
 
-RÈGLE ABSOLUE : Toutes tes réponses doivent s'appuyer sur le Guide de Soumission officiel. Cite toujours les articles de loi.
-
-CADRE RÉGLEMENTAIRE :
-- Loi n°005-2024/ALT (20 avril 2024)
-- Décret n°2024-1748 (31 décembre 2024)
-- Arrêté n°2025-0323 (9 juillet 2025)
-- Arrêté n°2025/349 (28 juillet 2025)
-
-PIÈCES OBLIGATOIRES (< 3 mois) :
-1. Attestation fiscale (DGI)
-2. Attestation CNSS
-3. Attestation AJE
-4. Attestation DRTSS
-5. Attestation RCCM
-6. Certificat non-faillite
-
-SEUILS (Art. 6) :
-État/EPE/Sociétés d'État ont seuils différents
-< 1M : Cotation non formelle
-1M-20M : Cotation formelle
-20M-150M travaux / 100M fournitures : Demande prix
-≥150M travaux / 100M fournitures : Appel d'offres
-
-OFFRE TECHNIQUE (12 sections) :
-1. Garde + Matières
-2. Lettre (datée, signée)
-3. Présentation
-4. Compréhension besoin
-5. Méthodologie ⭐ CRUCIAL
-6. Moyens humains
-7. Moyens matériels
-8. Qualité & Risques
-9. Planning (Gantt)
-10. Références
-11. Annexes
-12. Engagements
-
-TAILLE : Petit 20-30p / Moyen 35-60p / Grand 60-120p
-
-DÉLAIS :
-Offres : 30j national / 45j communautaire
-Éclaircissements : Demande 14j avant, réponse 7j
-Paiements : Avance 45j / Acompte 60j / Solde 90j
-Pénalités : 5% max montant HT
-
-GARANTIES :
-Soumission : 1-3% montant
-Bonne exécution : Normal + majoré 30-40% si offre basse
-
-PRÉFÉRENCES CUMULABLES :
-PME burkinabè : +5%
-Communautaire : +10%
-Produits UEMOA : +15%
-Ancrage local : +5%
-Sous-traitance 30% : +5%
-Max : 20%
-
-ENVELOPPES (2024) :
-Travaux/Fournitures/Services : UNIQUE
-Prestations intellect : DOUBLE
-
-TON RÔLE :
-- Citations articles obligatoires
-- Renvoyer /guide-soumission
-- Montants/délais/pièces précis
-- Expert, pédagogue, poli
-- Français obligatoire
-
-Réponds en mettant le contexte du Guide de Soumission. Ne donne jamais de conseils génériques.`;
-
+    console.log('[Chat API] Calling streamText...');
     const result = await streamText({
       model: google('gemini-1.5-flash'),
       system: systemPrompt,
-      messages,
+      messages: messages || [],
     });
 
+    console.log('[Chat API] Stream OK, converting to UI response...');
     return result.toUIMessageStreamResponse({
-      getErrorMessage: (error) => String(error?.message || error),
+      getErrorMessage: (error) => {
+        console.error('[Chat API] Stream error:', error);
+        return String(error?.message || 'Une erreur est survenue');
+      }
     });
+    
   } catch (error) {
-    console.error('Chat API error:', error);
+    console.error('[Chat API] Fatal error:', {
+      message: error?.message,
+      stack: error?.stack,
+      name: error?.name,
+    });
+    
     return new Response(
-      JSON.stringify({ error: error?.message || 'Erreur serveur' }), 
-      { status: 500 }
+      JSON.stringify({ 
+        error: `Erreur: ${error?.message || 'Unknown error'}`,
+        details: error?.name || 'Unknown'
+      }), 
+      { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
     );
   }
 }
