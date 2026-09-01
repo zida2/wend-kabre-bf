@@ -60,21 +60,26 @@ const PLANS = [
     price: '55000',
     currency: 'FCFA',
     period: '/ mois',
+    savings: 'Économisez 63% vs 10×Premium',
+    pricePerUser: '5 500 FCFA/utilisateur',
     icon: '🏢',
     color: '#F59E0B',
     borderColor: '#F59E0B',
-    badge: 'Équipes',
+    badge: 'Pour les équipes · Meilleure valeur',
     badgeColor: 'badge-gold',
     features: [
-      { text: 'Tout du plan Premium inclus', ok: true },
-      { text: 'Jusqu\'à 10 collaborateurs', ok: true },
+      { text: 'Toutes les fonctionnalités Premium', ok: true, highlight: true },
+      { text: 'Jusqu\'à 10 collaborateurs inclus', ok: true, highlight: true },
+      { text: 'Tableau de bord équipe centralisé', ok: true },
       { text: 'Statistiques et analyses avancées', ok: true },
       { text: 'Support prioritaire 24h/24', ok: true },
-      { text: 'API personnalisée', ok: true },
-      { text: 'Formation de l\'équipe offerte', ok: true },
+      { text: 'API d\'intégration personnalisée', ok: true },
+      { text: 'Formation complète de l\'équipe', ok: true },
+      { text: 'Gestionnaire de compte dédié', ok: true },
     ],
-    cta: 'Contacter les ventes',
+    cta: 'Demander une démo',
     ctaStyle: { background: 'linear-gradient(135deg, #F59E0B, #D97706)', color: '#fff', border: 'none', fontWeight: 700, boxShadow: '0 4px 20px rgba(245,158,11,0.3)' },
+    enterprise: true,
   }
 ];
 
@@ -227,6 +232,29 @@ export default function TarifsPage() {
                         Facturé annuellement (économisez 20%)
                       </p>
                     )}
+                    {plan.enterprise && (
+                      <>
+                        <div style={{ 
+                          marginTop: '12px', 
+                          padding: '8px 12px', 
+                          background: 'linear-gradient(135deg, rgba(245,158,11,0.1), rgba(217,119,6,0.05))',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(245,158,11,0.2)'
+                        }}>
+                          <p className="text-xs" style={{ 
+                            color: '#B45309', 
+                            fontWeight: 700,
+                            margin: 0,
+                            lineHeight: 1.4
+                          }}>
+                            💰 {plan.pricePerUser}/mois
+                          </p>
+                          <p className="text-xs text-muted" style={{ margin: '4px 0 0 0' }}>
+                            {plan.savings}
+                          </p>
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   {/* Liste des fonctionnalités */}
@@ -235,8 +263,8 @@ export default function TarifsPage() {
                       <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <span style={{
                           width: '20px', height: '20px', borderRadius: '50%',
-                          background: f.ok ? 'var(--success-muted)' : 'var(--color-surface-3)',
-                          color: f.ok ? 'var(--primary)' : 'var(--text-muted)',
+                          background: f.ok ? (f.highlight ? 'linear-gradient(135deg, #F59E0B, #D97706)' : 'var(--success-muted)') : 'var(--color-surface-3)',
+                          color: f.ok ? (f.highlight ? '#fff' : 'var(--primary)') : 'var(--text-muted)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           fontSize: '0.75rem', fontWeight: 700, flexShrink: 0,
                         }}>
@@ -244,7 +272,11 @@ export default function TarifsPage() {
                         </span>
                         <span
                           className="text-sm"
-                          style={{ color: f.ok ? 'var(--text-secondary)' : 'var(--text-muted)', textDecoration: f.ok ? 'none' : 'line-through' }}
+                          style={{ 
+                            color: f.ok ? 'var(--text-secondary)' : 'var(--text-muted)', 
+                            textDecoration: f.ok ? 'none' : 'line-through',
+                            fontWeight: f.highlight ? 700 : 400
+                          }}
                         >
                           {f.text}
                         </span>
@@ -269,11 +301,144 @@ export default function TarifsPage() {
               ))}
             </div>
 
+            {/* Comparaison Entreprise vs Premium (Nouvelle section) */}
+            <div style={{ 
+              marginTop: '80px',
+              padding: '48px 32px',
+              background: 'linear-gradient(135deg, rgba(245,158,11,0.05), rgba(217,119,6,0.02))',
+              borderRadius: 'var(--radius-lg)',
+              border: '2px solid rgba(245,158,11,0.2)'
+            }}>
+              <div className="text-center" style={{ marginBottom: '40px' }}>
+                <span className="badge badge-gold" style={{ marginBottom: '16px', fontSize: '0.8rem' }}>
+                  💡 Comparaison Intelligente
+                </span>
+                <h2 className="heading-lg" style={{ marginBottom: '16px' }}>
+                  Plan Entreprise : L'investissement qui compte
+                </h2>
+                <p className="text-secondary" style={{ maxWidth: '680px', margin: '0 auto' }}>
+                  Découvrez pourquoi les entreprises avec équipes choisissent le Plan Entreprise
+                </p>
+              </div>
+
+              <div className="grid grid-2 gap-6" style={{ maxWidth: '900px', margin: '0 auto' }}>
+                {/* Colonne Premium */}
+                <div className="card" style={{ 
+                  padding: '32px',
+                  background: 'var(--color-bg-1)',
+                  border: '2px solid var(--color-border)'
+                }}>
+                  <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                    <div style={{ fontSize: '2rem', marginBottom: '8px' }}>⚡</div>
+                    <h3 className="heading-sm" style={{ marginBottom: '8px' }}>10 Comptes Premium</h3>
+                    <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                      150 000
+                    </div>
+                    <p className="text-sm text-secondary">FCFA / mois</p>
+                  </div>
+                  <ul style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <li className="flex items-center gap-2 text-sm text-secondary">
+                      <span>❌</span> Pas de gestion d'équipe
+                    </li>
+                    <li className="flex items-center gap-2 text-sm text-secondary">
+                      <span>❌</span> Pas d'analytics centralisées
+                    </li>
+                    <li className="flex items-center gap-2 text-sm text-secondary">
+                      <span>❌</span> Pas d'API d'intégration
+                    </li>
+                    <li className="flex items-center gap-2 text-sm text-secondary">
+                      <span>❌</span> Pas de support prioritaire
+                    </li>
+                    <li className="flex items-center gap-2 text-sm text-secondary">
+                      <span>❌</span> Pas de formation équipe
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Colonne Entreprise */}
+                <div className="card" style={{ 
+                  padding: '32px',
+                  background: 'linear-gradient(135deg, rgba(245,158,11,0.08), rgba(217,119,6,0.04))',
+                  border: '2px solid #F59E0B',
+                  position: 'relative'
+                }}>
+                  <div style={{ 
+                    position: 'absolute', 
+                    top: '-14px', 
+                    right: '20px',
+                    background: '#10B981',
+                    color: '#fff',
+                    padding: '4px 12px',
+                    borderRadius: '50px',
+                    fontSize: '0.7rem',
+                    fontWeight: 800
+                  }}>
+                    ÉCONOMIE : 95 000 FCFA/mois
+                  </div>
+                  
+                  <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                    <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🏢</div>
+                    <h3 className="heading-sm" style={{ marginBottom: '8px', color: '#F59E0B' }}>
+                      1 Compte Entreprise
+                    </h3>
+                    <div style={{ fontSize: '2rem', fontWeight: 800, color: '#F59E0B' }}>
+                      55 000
+                    </div>
+                    <p className="text-sm" style={{ color: '#B45309' }}>FCFA / mois</p>
+                    <p className="text-xs text-muted" style={{ marginTop: '4px' }}>
+                      soit 5 500 FCFA/utilisateur
+                    </p>
+                  </div>
+                  <ul style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <li className="flex items-center gap-2 text-sm" style={{ fontWeight: 600 }}>
+                      <span>✅</span> 10 collaborateurs inclus
+                    </li>
+                    <li className="flex items-center gap-2 text-sm" style={{ fontWeight: 600 }}>
+                      <span>✅</span> Dashboard équipe centralisé
+                    </li>
+                    <li className="flex items-center gap-2 text-sm" style={{ fontWeight: 600 }}>
+                      <span>✅</span> API d'intégration
+                    </li>
+                    <li className="flex items-center gap-2 text-sm" style={{ fontWeight: 600 }}>
+                      <span>✅</span> Support prioritaire 24/7
+                    </li>
+                    <li className="flex items-center gap-2 text-sm" style={{ fontWeight: 600 }}>
+                      <span>✅</span> Formation complète
+                    </li>
+                  </ul>
+
+                  <div style={{ 
+                    marginTop: '20px', 
+                    padding: '12px', 
+                    background: 'rgba(16,185,129,0.1)',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(16,185,129,0.3)'
+                  }}>
+                    <p className="text-xs text-center" style={{ 
+                      color: '#047857', 
+                      fontWeight: 700,
+                      margin: 0
+                    }}>
+                      💰 Vous économisez 63% avec le Plan Entreprise
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* FAQ */}
             <div style={{ marginTop: '80px' }}>
               <h2 className="heading-lg text-center" style={{ marginBottom: '40px' }}>Questions fréquentes</h2>
               <div className="grid grid-2 gap-6">
                 {[
+                  {
+                    q: 'Combien d\'utilisateurs sont inclus dans le Plan Entreprise ?',
+                    a: 'Le Plan Entreprise inclut jusqu\'à 10 collaborateurs. Chaque membre de l\'équipe dispose de son propre compte avec accès complet aux fonctionnalités Premium, plus les outils de collaboration d\'équipe.',
+                  },
+                  {
+                    q: 'Quelle est la différence entre Premium et Entreprise ?',
+                    a: 'Le Plan Entreprise inclut tout le Premium, plus : 10 comptes utilisateurs, dashboard équipe centralisé, API d\'intégration, support prioritaire 24/7, formation complète et gestionnaire de compte dédié. C\'est 63% moins cher que 10 comptes Premium séparés.',
+                  },
                   {
                     q: 'Comment fonctionne le paiement par transfert ?',
                     a: 'Vous effectuez le transfert vers nos numéros officiels Orange Money ou Moov Money, puis vous soumettez le reçu dans votre espace. Validation et activation sous 24h ouvrées.',
@@ -315,9 +480,31 @@ export default function TarifsPage() {
                 <button onClick={() => handleCTA(PLANS[1])} className="btn btn-gold btn-lg">
                   Démarrer avec Premium ⚡
                 </button>
+                <button onClick={() => handleCTA(PLANS[2])} className="btn" style={{
+                  background: 'linear-gradient(135deg, #F59E0B, #D97706)',
+                  color: '#fff',
+                  border: 'none'
+                }}>
+                  Plan Entreprise 🏢
+                </button>
                 <Link href="/marches" className="btn btn-outline btn-lg">
                   Voir les marchés d'abord
                 </Link>
+              </div>
+              
+              {/* Nouveau : Témoignage ou stat */}
+              <div style={{ 
+                marginTop: '32px', 
+                paddingTop: '24px', 
+                borderTop: '1px solid var(--color-border)' 
+              }}>
+                <p className="text-sm text-secondary" style={{ fontStyle: 'italic' }}>
+                  "Avec le Plan Entreprise, notre équipe de 8 personnes collabore efficacement.<br />
+                  Nous économisons 95 000 FCFA/mois vs des comptes séparés."
+                </p>
+                <p className="text-xs text-muted" style={{ marginTop: '8px' }}>
+                  — Cabinet d'études SARL, Ouagadougou
+                </p>
               </div>
             </div>
           </div>
