@@ -3,60 +3,183 @@ import { verifyFirebaseToken } from '@/lib/authGuard';
 export const maxDuration = 30;
 export const runtime = 'nodejs';
 
+// Liste de modèles Hugging Face gratuits à essayer (du meilleur au fallback)
+const HF_MODELS = [
+  'mistralai/Mistral-7B-Instruct-v0.2',
+  'microsoft/DialoGPT-medium',
+  'facebook/blenderbot-400M-distill',
+];
+
 // Utilisation de l'API Hugging Face (gratuite, open source)
-// Pas besoin de clé API pour le mode inference gratuit
 async function callHuggingFaceAPI(messages, systemPrompt) {
-  // Préparer le prompt complet
-  const conversation = messages.map(m => {
-    return `${m.role === 'user' ? 'Utilisateur' : 'Assistant'}: ${m.content}`;
-  }).join('\n\n');
+  // Préparer le prompt simplifié pour éviter les problèmes
+  const lastMessage = messages[messages.length - 1];
+  const userQuestion = lastMessage?.content || '';
   
-  const fullPrompt = `${systemPrompt}\n\n${conversation}\n\nAssistant:`;
+  const fullPrompt = `${systemPrompt}\n\nQuestion: ${userQuestion}\n\nRéponse:`;
   
-  // Appel à l'API Hugging Face en mode inference gratuit (sans clé API requise)
-  // Utilise un modèle plus petit et rapide pour éviter les timeouts
-  const response = await fetch(
-    'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        inputs: fullPrompt,
-        parameters: {
-          max_length: 500,
-          temperature: 0.8,
-          top_p: 0.9,
-          return_full_text: false,
-        },
-        options: {
-          wait_for_model: true,
-        },
-      }),
-    }
-  );
+  let lastError = null;
+  
+  // Essayer chaque modèle jusqu'à ce qu'un fonctionne
+  for (const modelName of HF_MODELS) {
+    try {
+      console.log(`[HF API] Trying model: ${modelName}`);
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 25000); // 25s timeout
+      
+      const response = await fetch(
+        `https://api-inference.huggingface.co/models/${modelName}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            inputs: fullPrompt,
+            parameters: {
+              max_new_tokens: 300,
+              temperature: 0.7,
+              top_p: 0.9,
+              return_full_text: false,
+            },
+            options: {
+              wait_for_model: true,
+              use_cache: false,
+            },
+          }),
+          signal: controller.signal,
+        }
+      );
+      
+      clearTimeout(timeoutId);
 
-  if (!response.ok) {
-    const error = await response.text();
-    console.error('[HF API] Error:', error);
-    
-    // Si le modèle est en cours de chargement, retourner un message informatif
-    if (response.status === 503) {
-      return "Je suis en train de me réveiller... Cela prend environ 20 secondes. Veuillez réessayer dans un instant. 🤖";
-    }
-    
-    throw new Error(`HuggingFace API error: ${response.status}`);
-  }
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`[HF API] ${modelName} error:`, errorText);
+        
+        if (response.status === 503) {
+          lastError = new Error('LOADING');
+          continue; // Essayer le prochain modèle
+        }
+        
+        lastError = new Error(`HTTP ${response.status}: ${errorText}`);
+        continue;
+      }
 
-  const data = await response.json();
-  
-  // Vérifier si le modèle est en cours de chargement
-  if (data.error && data.error.includes('loading')) {
-    return "Modèle en cours de chargement... Cela prend environ 20 secondes. Veuillez patienter et réessayer. ⏳";
+      const data = await response.json();
+      
+      // Vérifier si le modèle est en cours de chargement
+      if (data.error) {
+        console.error(`[HF API] ${modelName} data error:`, data.error);
+        if (data.error.includes('loading') || data.error.includes('currently loading')) {
+          lastError = new Error('LOADING');
+          continue;
+        }
+        lastError = new Error(data.error);
+        continue;
+      }
+      
+      // Extraire la réponse
+      const generatedText = data[0]?.generated_text || data.generated_text;
+      
+      if (generatedText && generatedText.trim()) {
+        console.log(`[HF API] Success with ${modelName}`);
+        return generatedText.trim();
+      }
+      
+      console.warn(`[HF API] ${modelName} returned empty response`);
+      lastError = new Error('Empty response');
+      continue;
+      
+    } catch (err) {
+      console.error(`[HF API] ${modelName} failed:`, err.message);
+      lastError = err;
+      
+      // Si c'est un timeout ou abort, essayer le prochain
+      if (err.name === 'AbortError') {
+        continue;
+      }
+      
+      // Si c'est une erreur réseau, essayer le prochain
+      continue;
+    }
   }
   
-  return data[0]?.generated_text || data.generated_text || 'Erreur lors de la génération de la réponse.';
+  // Si tous les modèles ont échoué, retourner un message approprié
+  if (lastError?.message === 'LOADING') {
+    return "🤖 Les modèles IA sont en cours de chargement (environ 20 secondes). Veuillez réessayer dans un instant.";
+  }
+  
+  // Fallback : réponse générique basée sur le contexte
+  return generateFallbackResponse(userQuestion);
+}
+
+// Génère une réponse de base si toutes les APIs échouent
+function generateFallbackResponse(question) {
+  const q = question.toLowerCase();
+  
+  if (q.includes('document') || q.includes('pièce') || q.includes('fournir')) {
+    return `📋 **Pièces obligatoires** (validité < 3 mois) :
+
+1. Attestation fiscale (DGI)
+2. Attestation CNSS
+3. Attestation AJE (Agrément Judiciaire des Entreprises)
+4. Attestation DRTSS
+5. Attestation RCCM
+6. Certificat de non-faillite
+
+Pour plus de détails, consultez le [Guide de Soumission](/guide-soumission).
+
+⚠️ Note : L'IA est temporairement indisponible. Cette réponse est basée sur les règles ARCOP 2024-2025.`;
+  }
+  
+  if (q.includes('seuil') || q.includes('montant') || q.includes('million')) {
+    return `💰 **Seuils des marchés publics** (Art. 6 ARCOP) :
+
+• **< 1 million FCFA** : Cotation non formelle
+• **1M - 20M FCFA** : Cotation formelle  
+• **20M - 150M FCFA** (travaux) : Demande de prix
+• **≥ 150M FCFA** (travaux) : Appel d'offres
+
+Pour fournitures et services, les seuils diffèrent légèrement.
+
+Pour plus de détails, consultez le [Guide de Soumission](/guide-soumission).
+
+⚠️ Note : L'IA est temporairement indisponible. Cette réponse est basée sur les règles ARCOP 2024-2025.`;
+  }
+  
+  if (q.includes('préférence') || q.includes('pme') || q.includes('%')) {
+    return `🇧🇫 **Préférences nationales** :
+
+• PME burkinabè : **+5%**
+• Entreprise communautaire : **+10%**
+• Produits UEMOA : **+15%**
+• **Maximum cumulé : 20%**
+
+Ces préférences s'appliquent lors de la comparaison des offres.
+
+Pour plus de détails, consultez le [Guide de Soumission](/guide-soumission).
+
+⚠️ Note : L'IA est temporairement indisponible. Cette réponse est basée sur les règles ARCOP 2024-2025.`;
+  }
+  
+  // Réponse générique
+  return `🤖 **Service temporairement indisponible**
+
+Les modèles d'IA sont actuellement inaccessibles. En attendant, je vous recommande de :
+
+1. 📖 Consulter le [Guide de Soumission complet](/guide-soumission)
+2. 📋 Parcourir les [marchés disponibles](/marches)
+3. 💎 Découvrir les [offres Premium](/tarifs)
+
+**Informations clés ARCOP 2024-2025** :
+• Cadre légal : Loi n°005-2024/ALT (20 avril 2024)
+• 6 pièces obligatoires (< 3 mois de validité)
+• Seuils : 1M, 20M, 150M FCFA
+• Préférences PME : jusqu'à 20%
+
+Veuillez réessayer dans quelques instants, le service devrait être rétabli.`;
 }
 
 export async function POST(req) {
