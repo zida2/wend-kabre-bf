@@ -1,7 +1,5 @@
 'use client';
 
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { auth, db } from '@/lib/firebase';
@@ -10,12 +8,19 @@ import { doc, getDoc } from 'firebase/firestore';
 import styles from './assistant.module.css';
 
 export default function AssistantPage() {
-  // Suivi de l'état d'authentification : le chat IA est réservé aux
-  // utilisateurs connectés (protection de la route /api/chat).
+  // Suivi de l'état d'authentification
   const [authUser, setAuthUser] = useState(null);
   const [userData, setUserData] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
+  
+  // État du chat
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -33,44 +38,18 @@ export default function AssistantPage() {
     return () => unsubscribe();
   }, []);
 
-  // Transport qui joint le token Firebase à chaque requête vers /api/chat.
-  // Le token est récupéré au moment de l'envoi (headers est une fonction async),
-  // ce qui garantit un token frais et valide.
-  const transport = useMemo(
-    () =>
-      new DefaultChatTransport({
-        api: '/api/chat',
-        headers: async () => {
-          const token = await auth.currentUser?.getIdToken();
-          return token ? { Authorization: `Bearer ${token}` } : {};
-        },
-      }),
-    []
-  );
-
-  const chat = useChat({ transport });
-  const messages = chat.messages || [];
-  const status = chat.status || (chat.isLoading ? 'streaming' : 'ready');
-  const isLoading = status === 'submitted' || status === 'streaming';
-  
-  const [input, setInput] = useState('');
-  const messagesEndRef = useRef(null);
-
   const handleInputChange = (e) => {
     setInput(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
     
-    // Debug : Afficher les données utilisateur
-    // Utiliser isSubscribed (champ officiel du système de paiement)
     const isSubscribed = userData?.isSubscribed;
     console.log('👤 User data:', userData);
     console.log('💎 isSubscribed:', isSubscribed);
     
-    // Blocage pour les utilisateurs gratuits
     if (!isSubscribed) {
       console.warn('❌ Accès refusé : utilisateur non abonné');
       setShowPremiumModal(true);
@@ -78,13 +57,43 @@ export default function AssistantPage() {
     }
     
     console.log('✅ Utilisateur Premium - Envoi du message');
-    const sendFn = chat.sendMessage || chat.append;
-    if (sendFn) {
-      sendFn({ role: 'user', content: input });
-    } else {
-      console.error("No sendMessage or append function found in useChat", chat);
-    }
+    
+    // Ajouter le message utilisateur
+    const userMessage = { role: 'user', content: input, id: Date.now().toString() };
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
     setInput('');
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const token = await auth.currentUser?.getIdToken();
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : '',
+        },
+        body: JSON.stringify({
+          messages: newMessages,
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.content) {
+        // Ajouter la réponse de l'assistant
+        const assistantMessage = { role: 'assistant', content: data.content, id: (Date.now() + 1).toString() };
+        setMessages([...newMessages, assistantMessage]);
+      } else {
+        setError(data.error || 'Une erreur est survenue');
+      }
+    } catch (err) {
+      console.error('Erreur appel API:', err);
+      setError(err.message || 'Erreur de connexion');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Auto-scroll vers le bas quand un nouveau message arrive
@@ -167,10 +176,10 @@ export default function AssistantPage() {
             )}
 
             {/* État d'erreur */}
-            {chat.error && !isLoading && (
+            {error && !isLoading && (
               <div role="alert" style={{ alignSelf: 'center', textAlign: 'center', background: 'var(--danger-muted)', border: '1px solid rgba(220,38,38,0.25)', color: 'var(--danger)', borderRadius: 'var(--radius-md)', padding: '12px 16px', fontSize: '0.88rem' }}>
                 ⚠️ Une erreur est survenue. Vérifiez votre connexion et réessayez.<br/>
-                <span style={{ fontSize: '0.75rem', opacity: 0.8, marginTop: '8px', display: 'block', wordBreak: 'break-word' }}>Détail technique : {chat.error.message || chat.error.toString()}</span>
+                <span style={{ fontSize: '0.75rem', opacity: 0.8, marginTop: '8px', display: 'block', wordBreak: 'break-word' }}>Détail technique : {error}</span>
               </div>
             )}
             <div ref={messagesEndRef} />
