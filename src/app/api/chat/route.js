@@ -276,7 +276,7 @@ CHAPITRE 9 : CHECKLIST AVANT DÉPÔT
 5. Ton doit être expert, pédagogue, poli et orienté résultat
 6. Répondre TOUJOURS en français
 
-Si une question sort du cadre des marchés publics burkinabè, rappeler que tu es spécialisé dans ce domaine uniquement.`;
+Si une question sort du cadre des marchés publics burkinabè, rappeler que tu es spécialisé dans ce domaine uniquement.`;;
 
     const result = await streamText({
       model: google('gemini-1.5-flash'),
