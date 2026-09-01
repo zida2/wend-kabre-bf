@@ -542,68 +542,73 @@ export default function MarchesPage() {
                   height: '100%',
                   position: 'relative',
                   border: isLocked ? '1px solid rgba(217,119,6,0.28)' : '1px solid var(--color-border)',
+                  paddingTop: '16px'
                 }}
               >
-                {isLocked && (
-                  <div style={{
-                    position: 'absolute', top: '12px', right: '12px',
-                    background: 'var(--grad-accent)',
-                    color: '#fff', fontSize: '0.65rem', fontWeight: 800,
-                    padding: '3px 10px', borderRadius: '50px', letterSpacing: '0.05em',
-                    zIndex: 2,
-                  }}>
-                    PREMIUM
-                  </div>
-                )}
-
-                {/* Badge de statut temporel */}
-                {!isLocked && (() => {
-                  const statut = getStatutTemporel(m);
-                  const badges = {
-                    'en-cours': { icon: '🟢', label: 'En cours', color: '#059669' },
-                    'a-venir': { icon: '🔵', label: 'À venir', color: '#3B82F6' },
-                    'expire': { icon: '🔴', label: 'Expiré', color: '#DC2626' }
-                  };
-                  const badge = badges[statut];
-                  return (
-                    <div style={{
-                      position: 'absolute', 
-                      top: '12px', 
-                      left: '12px',
-                      background: badge.color,
-                      color: '#fff', 
-                      fontSize: '0.65rem', 
-                      fontWeight: 800,
-                      padding: '4px 10px', 
-                      borderRadius: '50px',
-                      zIndex: 2,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}>
-                      <span>{badge.icon}</span>
-                      <span>{badge.label}</span>
-                    </div>
-                  );
-                })()}
-
                 <div>
-                  <div className="flex justify-between items-center" style={{ marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
-                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <div className="flex justify-between items-start" style={{ marginBottom: '16px', gap: '8px' }}>
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap', flex: 1 }}>
+                      {/* Badge Catégorie */}
                       <span className="badge badge-green">{m.category || 'Général'}</span>
+                      
+                      {/* Badge PDF */}
                       {hasPdf ? (
                         <span className="badge" style={{ background: '#059669', color: '#ffffff', fontWeight: 800, fontSize: '0.68rem', padding: '3px 9px' }}>
-                          📄 PDF Officiel
+                          📄 PDF
                         </span>
                       ) : (
                         <span className="badge badge-gray" style={{ fontSize: '0.68rem', opacity: 0.8 }}>
-                          📰 Extrait Quotidien
+                          📰 Extrait
+                        </span>
+                      )}
+                      
+                      {/* Badge Statut Temporel - Intégré dans la ligne */}
+                      {!isLocked && (() => {
+                        const statut = getStatutTemporel(m);
+                        const badges = {
+                          'en-cours': { icon: '🟢', label: 'En cours', color: '#059669' },
+                          'a-venir': { icon: '🔵', label: 'À venir', color: '#3B82F6' },
+                          'expire': { icon: '🔴', label: 'Expiré', color: '#DC2626' }
+                        };
+                        const badge = badges[statut];
+                        return (
+                          <span style={{
+                            background: badge.color,
+                            color: '#fff', 
+                            fontSize: '0.65rem', 
+                            fontWeight: 800,
+                            padding: '3px 9px', 
+                            borderRadius: '50px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '3px'
+                          }}>
+                            <span style={{ fontSize: '0.7rem' }}>{badge.icon}</span>
+                            <span>{badge.label}</span>
+                          </span>
+                        );
+                      })()}
+                    </div>
+                    
+                    {/* Date + Badge Premium */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                      <span className="text-muted text-xs">
+                        {m.publishedAt ? new Date(m.publishedAt).toLocaleDateString('fr-FR') : 'Récent'}
+                      </span>
+                      {isLocked && (
+                        <span style={{
+                          background: 'var(--grad-accent)',
+                          color: '#fff', 
+                          fontSize: '0.65rem', 
+                          fontWeight: 800,
+                          padding: '3px 10px', 
+                          borderRadius: '50px',
+                          letterSpacing: '0.05em',
+                        }}>
+                          PREMIUM
                         </span>
                       )}
                     </div>
-                    <span className="text-muted text-xs">
-                      {m.publishedAt ? new Date(m.publishedAt).toLocaleDateString('fr-FR') : 'Récent'}
-                    </span>
                   </div>
 
                   {/* Titre : toujours en clair (teaser gratuit, cohérent avec la bannière) */}
