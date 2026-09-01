@@ -86,11 +86,20 @@ export default function AssistantPage() {
         const assistantMessage = { role: 'assistant', content: data.content, id: (Date.now() + 1).toString() };
         setMessages([...newMessages, assistantMessage]);
       } else {
-        setError(data.error || 'Une erreur est survenue');
+        // Messages d'erreur personnalisés
+        let errorMsg = data.error || 'Une erreur est survenue';
+        
+        // Si c'est un message de chargement du modèle, l'afficher tel quel
+        if (errorMsg.includes('réveiller') || errorMsg.includes('chargement')) {
+          const loadingMessage = { role: 'assistant', content: errorMsg, id: (Date.now() + 1).toString() };
+          setMessages([...newMessages, loadingMessage]);
+        } else {
+          setError(errorMsg);
+        }
       }
     } catch (err) {
       console.error('Erreur appel API:', err);
-      setError(err.message || 'Erreur de connexion');
+      setError(err.message || 'Erreur de connexion au serveur');
     } finally {
       setIsLoading(false);
     }
@@ -141,6 +150,9 @@ export default function AssistantPage() {
                   Posez des questions comme : <br/>
                   <i>"Quels documents fournir pour un marché de 50 millions ?"</i> ou <br/>
                   <i>"Comment structurer la partie méthodologie ?"</i>
+                </p>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '16px', opacity: 0.7 }}>
+                  💡 Première utilisation : le modèle peut prendre ~20 secondes à se réveiller
                 </p>
               </div>
             ) : (
