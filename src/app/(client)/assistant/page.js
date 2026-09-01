@@ -65,12 +65,14 @@ export default function AssistantPage() {
     if (!input.trim() || isLoading) return;
     
     // Debug : Afficher les données utilisateur
+    // Utiliser isSubscribed (champ officiel du système de paiement)
+    const isSubscribed = userData?.isSubscribed;
     console.log('👤 User data:', userData);
-    console.log('💎 isPremium:', userData?.isPremium);
+    console.log('💎 isSubscribed:', isSubscribed);
     
     // Blocage pour les utilisateurs gratuits
-    if (!userData?.isPremium) {
-      console.warn('❌ Accès refusé : utilisateur non-Premium');
+    if (!isSubscribed) {
+      console.warn('❌ Accès refusé : utilisateur non abonné');
       setShowPremiumModal(true);
       return;
     }

@@ -15,6 +15,7 @@ export async function POST(req) {
   }
 
   // Vérification du statut Premium côté serveur via API Firestore REST
+  // Utilise le champ `isSubscribed` (pas `isPremium`) qui est le champ officiel du système
   try {
     const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
     const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
@@ -29,9 +30,10 @@ export async function POST(req) {
       
       if (userResponse.ok) {
         const userData = await userResponse.json();
-        const isPremium = userData?.fields?.isPremium?.booleanValue;
+        // Utiliser le champ officiel : isSubscribed (pas isPremium)
+        const isSubscribed = userData?.fields?.isSubscribed?.booleanValue;
         
-        if (!isPremium) {
+        if (!isSubscribed) {
           return new Response(JSON.stringify({ 
             error: 'L\'Assistant IA est réservé aux abonnés Premium. Consultez /tarifs pour découvrir nos offres.' 
           }), {
