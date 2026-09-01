@@ -21,6 +21,14 @@ export default function AssistantPage() {
   const [error, setError] = useState(null);
   
   const messagesEndRef = useRef(null);
+  
+  // Questions suggérées
+  const suggestedQuestions = [
+    "📋 Quels documents fournir pour un marché de 50 millions ?",
+    "💰 Quels sont les seuils des marchés publics ?",
+    "📝 Comment structurer une offre technique ?",
+    "🇧🇫 Comment fonctionne la préférence nationale PME ?",
+  ];
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -40,6 +48,12 @@ export default function AssistantPage() {
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
+  };
+  
+  const handleSuggestedQuestion = (question) => {
+    // Retirer l'emoji du début
+    const cleanQuestion = question.replace(/^[^\s]+\s/, '');
+    setInput(cleanQuestion);
   };
 
   const handleSubmit = async (e) => {
@@ -111,30 +125,47 @@ export default function AssistantPage() {
   }, [messages]);
 
   return (
-    <main style={{ backgroundColor: 'var(--color-bg)', minHeight: '100vh' }}>
+    <main className={styles.pageWrapper}>
       <div className={styles.container}>
         
-        {/* Header */}
+        {/* Header avec avatar bot */}
         <div className={styles.header}>
-          <h1 className={styles.title}>
-            Assistant IA <span className={styles.highlight}>Wend-Kabré</span>
-          </h1>
-          <p className={styles.subtitle}>
-            Votre expert dédié en marchés publics au Burkina Faso. Posez-moi vos questions sur la rédaction de vos offres techniques ou administratives.
-          </p>
+          <div className={styles.headerContent}>
+            <div className={styles.botAvatar}>
+              <div className={styles.botAvatarIcon}>🤖</div>
+              <div className={styles.botAvatarPulse}></div>
+            </div>
+            <div>
+              <h1 className={styles.title}>
+                Assistant IA <span className={styles.highlight}>Wend-Kabré</span>
+              </h1>
+              <p className={styles.subtitle}>
+                Expert en marchés publics ARCOP • Disponible 24/7
+              </p>
+            </div>
+          </div>
+          <div className={styles.headerBadge}>
+            <span className={styles.statusDot}></span>
+            En ligne
+          </div>
         </div>
 
         {/* Accès réservé aux membres connectés */}
         {authReady && !authUser ? (
-          <div className={styles.chatContainer} style={{ alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '48px 24px' }}>
-            <div className={styles.botIcon}>🔒</div>
-            <h3 className={styles.emptyTitle}>Connexion requise</h3>
-            <p className={styles.emptyDesc} style={{ marginBottom: '24px' }}>
-              L'Assistant IA est réservé aux membres. Connectez-vous pour discuter avec votre expert en marchés publics.
-            </p>
-            <Link href="/connexion" className="btn btn-primary">
-              Se connecter →
-            </Link>
+          <div className={styles.chatContainer}>
+            <div className={styles.lockedState}>
+              <div className={styles.lockedIcon}>🔒</div>
+              <h3 className={styles.lockedTitle}>Connexion requise</h3>
+              <p className={styles.lockedDesc}>
+                L'Assistant IA est réservé aux membres. Connectez-vous pour discuter avec votre expert en marchés publics.
+              </p>
+              <Link href="/connexion" className={styles.connectButton}>
+                <span>Se connecter</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </Link>
+            </div>
           </div>
         ) : (
         /* Fenêtre de Chat */
@@ -144,20 +175,48 @@ export default function AssistantPage() {
           <div className={styles.messagesArea}>
             {messages.length === 0 ? (
               <div className={styles.emptyState}>
-                <div className={styles.botIcon}>🤖</div>
-                <h3 className={styles.emptyTitle}>Comment puis-je vous aider aujourd'hui ?</h3>
-                <p className={styles.emptyDesc}>
-                  Posez des questions comme : <br/>
-                  <i>"Quels documents fournir pour un marché de 50 millions ?"</i> ou <br/>
-                  <i>"Comment structurer la partie méthodologie ?"</i>
-                </p>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '16px', opacity: 0.7 }}>
-                  💡 Première utilisation : le modèle peut prendre ~20 secondes à se réveiller
+                <div className={styles.welcomeCard}>
+                  <div className={styles.welcomeIcon}>👋</div>
+                  <h3 className={styles.welcomeTitle}>Bienvenue !</h3>
+                  <p className={styles.welcomeDesc}>
+                    Je suis votre assistant expert en marchés publics burkinabè. Je peux vous aider avec :
+                  </p>
+                  <ul className={styles.featuresList}>
+                    <li>📋 Les documents et pièces obligatoires</li>
+                    <li>💰 Les seuils et procédures de passation</li>
+                    <li>📝 La rédaction d'offres techniques et administratives</li>
+                    <li>🇧🇫 Les préférences nationales et avantages PME</li>
+                  </ul>
+                </div>
+                
+                <div className={styles.suggestionsSection}>
+                  <p className={styles.suggestionsTitle}>Questions fréquentes :</p>
+                  <div className={styles.suggestionsGrid}>
+                    {suggestedQuestions.map((q, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handleSuggestedQuestion(q)}
+                        className={styles.suggestionButton}
+                        type="button"
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                <p className={styles.tipText}>
+                  💡 <strong>Astuce :</strong> Le modèle peut prendre ~20 secondes à répondre lors de la première utilisation
                 </p>
               </div>
             ) : (
               messages.map(m => (
                 <div key={m.id} className={`${styles.messageWrapper} ${m.role === 'user' ? styles.userMessage : styles.botMessage}`}>
+                  {m.role === 'assistant' && (
+                    <div className={styles.messageAvatar}>
+                      <div className={styles.messageAvatarIcon}>🤖</div>
+                    </div>
+                  )}
                   <div className={`${styles.messageBubble} ${m.role === 'user' ? styles.userBubble : styles.botBubble}`}>
                     {/* Affichage du texte en conservant les sauts de ligne */}
                     {m.content.split('\n').map((line, i) => (
@@ -172,26 +231,39 @@ export default function AssistantPage() {
                       </p>
                     ))}
                   </div>
+                  {m.role === 'user' && (
+                    <div className={styles.messageAvatar}>
+                      <div className={styles.messageAvatarIcon}>👤</div>
+                    </div>
+                  )}
                 </div>
               ))
             )}
             
             {/* Indicateur de chargement */}
             {isLoading && (
-              <div className={styles.loadingWrapper}>
+              <div className={`${styles.messageWrapper} ${styles.botMessage}`}>
+                <div className={styles.messageAvatar}>
+                  <div className={styles.messageAvatarIcon}>🤖</div>
+                </div>
                 <div className={styles.loadingBubble}>
                   <div className={styles.dot}></div>
                   <div className={styles.dot}></div>
                   <div className={styles.dot}></div>
+                  <span className={styles.loadingText}>En train d'écrire...</span>
                 </div>
               </div>
             )}
 
             {/* État d'erreur */}
             {error && !isLoading && (
-              <div role="alert" style={{ alignSelf: 'center', textAlign: 'center', background: 'var(--danger-muted)', border: '1px solid rgba(220,38,38,0.25)', color: 'var(--danger)', borderRadius: 'var(--radius-md)', padding: '12px 16px', fontSize: '0.88rem' }}>
-                ⚠️ Une erreur est survenue. Vérifiez votre connexion et réessayez.<br/>
-                <span style={{ fontSize: '0.75rem', opacity: 0.8, marginTop: '8px', display: 'block', wordBreak: 'break-word' }}>Détail technique : {error}</span>
+              <div className={styles.errorMessage}>
+                <div className={styles.errorIcon}>⚠️</div>
+                <div className={styles.errorContent}>
+                  <p className={styles.errorTitle}>Une erreur est survenue</p>
+                  <p className={styles.errorDesc}>Vérifiez votre connexion et réessayez.</p>
+                  <p className={styles.errorDetail}>{error}</p>
+                </div>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -200,23 +272,32 @@ export default function AssistantPage() {
           {/* Zone de saisie */}
           <div className={styles.inputArea}>
             <form onSubmit={handleSubmit} className={styles.form}>
-              <input
-                className={styles.input}
-                value={input}
-                placeholder="Posez votre question à l'expert..."
-                onChange={handleInputChange}
-                disabled={isLoading}
-              />
-              <button
-                type="submit"
-                disabled={isLoading}
-                aria-label="Envoyer le message"
-                className={styles.sendButton}
-              >
-                <svg className={styles.sendIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                </svg>
-              </button>
+              <div className={styles.inputWrapper}>
+                <input
+                  className={styles.input}
+                  value={input}
+                  placeholder="Posez votre question à l'expert ARCOP..."
+                  onChange={handleInputChange}
+                  disabled={isLoading}
+                />
+                <button
+                  type="submit"
+                  disabled={isLoading || !input.trim()}
+                  aria-label="Envoyer le message"
+                  className={styles.sendButton}
+                >
+                  {isLoading ? (
+                    <div className={styles.sendButtonLoader}></div>
+                  ) : (
+                    <svg className={styles.sendIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+              <p className={styles.inputHint}>
+                💬 Basé sur le Guide de Soumission ARCOP 2024-2025
+              </p>
             </form>
           </div>
         </div>
