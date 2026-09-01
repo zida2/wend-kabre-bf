@@ -131,6 +131,7 @@ export default function MarchesPage() {
   const [filterRegion, setFilterRegion] = useState('Toutes');
   const [filterProcedure, setFilterProcedure] = useState('Toutes');
   const [filterUrgence, setFilterUrgence] = useState('Toutes');
+  const [filterStatut, setFilterStatut] = useState('En cours'); // NOUVEAU : filtre par statut temporel
   const [filterOnlyPdf, setFilterOnlyPdf] = useState(false);
 
   const [user, setUser] = useState(null);
@@ -198,6 +199,28 @@ export default function MarchesPage() {
   // §6 — Termes de recherche étendus (sémantique par synonymes)
   const searchTerms = expandQuery(search); // [] si search vide
 
+  // Fonction helper pour déterminer le statut temporel d'un marché
+  const getStatutTemporel = (marche) => {
+    const now = new Date();
+    const dateLimite = marche.dateLimite ? new Date(marche.dateLimite) : null;
+    const publishedAt = marche.publishedAt ? new Date(marche.publishedAt) : null;
+
+    // Si pas de date limite, on considère selon la date de publication
+    if (!dateLimite) {
+      if (!publishedAt) return 'en-cours'; // Par défaut si aucune date
+      const ageJours = (now - publishedAt) / (1000 * 60 * 60 * 24);
+      if (ageJours > 90) return 'expire'; // Plus de 3 mois = expiré
+      return 'en-cours';
+    }
+
+    // Avec date limite
+    const delaiJours = (dateLimite - now) / (1000 * 60 * 60 * 24);
+    
+    if (delaiJours < 0) return 'expire'; // Date passée
+    if (delaiJours > 7) return 'a-venir'; // Plus de 7 jours
+    return 'en-cours'; // 0-7 jours = en cours
+  };
+
   const filteredMarches = marches
     .filter(m => {
       if (m.category === 'Recrutement') return false; // Ne jamais afficher les recrutements ici
@@ -220,8 +243,15 @@ export default function MarchesPage() {
       const matchRegion = filterRegion === 'Toutes' || m.region === filterRegion;
       const matchProcedure = filterProcedure === 'Toutes' || m.procedure === filterProcedure;
       const matchUrgence = filterUrgence === 'Toutes' || m.urgence === filterUrgence;
+      
+      // NOUVEAU : Filtre par statut temporel
+      const statutTemporel = getStatutTemporel(m);
+      const matchStatut = filterStatut === 'Tous' || 
+        (filterStatut === 'En cours' && statutTemporel === 'en-cours') ||
+        (filterStatut === 'À venir' && statutTemporel === 'a-venir') ||
+        (filterStatut === 'Expirés' && statutTemporel === 'expire');
 
-      return matchSearch && matchCat && matchRegion && matchProcedure && matchUrgence;
+      return matchSearch && matchCat && matchRegion && matchProcedure && matchUrgence && matchStatut;
     })
     .sort((a, b) => {
       // Priorité d'affichage : les marchés disposant d'un document PDF officiel sont placés en premier
@@ -236,6 +266,19 @@ export default function MarchesPage() {
     cat === 'All'
       ? marches.filter(m => m.category !== 'Recrutement').length
       : marches.filter(m => m.category === cat).length;
+
+  // NOUVEAU : Compter les marchés par statut temporel
+  const getStatutCount = (statut) => {
+    const visibles = marches.filter(m => m.category !== 'Recrutement');
+    if (statut === 'Tous') return visibles.length;
+    return visibles.filter(m => {
+      const s = getStatutTemporel(m);
+      if (statut === 'En cours') return s === 'en-cours';
+      if (statut === 'À venir') return s === 'a-venir';
+      if (statut === 'Expirés') return s === 'expire';
+      return false;
+    }).length;
+  };
 
   // Analytics : recherche (debounce ~600ms, uniquement si la requête est non vide)
   useEffect(() => {
@@ -293,7 +336,7 @@ export default function MarchesPage() {
       {/* Onglets catégories */}
       <div style={{
         display: 'flex', gap: '10px', overflowX: 'auto',
-        paddingBottom: '16px', marginBottom: '40px',
+        paddingBottom: '16px', marginBottom: '24px',
         borderBottom: '1px solid var(--color-border)',
       }}>
         {categoriesList.map(cat => (
@@ -319,6 +362,70 @@ export default function MarchesPage() {
               fontSize: '0.75rem', fontWeight: '700',
             }}>
               {getCategoryCount(cat.id)}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* NOUVEAU : Onglets de statut temporel */}
+      <div style={{
+        display: 'flex', 
+        gap: '10px', 
+        overflowX: 'auto',
+        paddingBottom: '16px', 
+        marginBottom: '32px',
+      }}>
+        {[
+          { id: 'En cours', label: 'En cours', icon: '🟢', desc: 'Dépôt sous 7 jours' },
+          { id: 'À venir', label: 'À venir', icon: '🔵', desc: 'Plus de 7 jours' },
+          { id: 'Expirés', label: 'Expirés', icon: '🔴', desc: 'Date limite passée' },
+          { id: 'Tous', label: 'Tous les statuts', icon: '📋', desc: '' },
+        ].map(statut => (
+          <button
+            key={statut.id}
+            onClick={() => {
+              setFilterStatut(statut.id);
+              track('filter', { key: 'statut', value: statut.id, context: 'marches' });
+            }}
+            className="btn btn-sm"
+            style={{
+              background: filterStatut === statut.id ? 'var(--grad-accent)' : 'var(--color-surface-2)',
+              color: filterStatut === statut.id ? '#fff' : 'var(--text-secondary)',
+              border: filterStatut === statut.id ? 'none' : '1px solid var(--color-border)',
+              boxShadow: filterStatut === statut.id ? '0 4px 16px rgba(217,119,6,0.25)' : 'none',
+              display: 'flex', 
+              flexDirection: 'column',
+              alignItems: 'center', 
+              gap: '4px',
+              borderRadius: '12px', 
+              whiteSpace: 'nowrap',
+              padding: '12px 16px',
+              minWidth: '120px'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '1.2rem' }}>{statut.icon}</span>
+              <span style={{ fontWeight: 700 }}>{statut.label}</span>
+            </div>
+            {statut.desc && (
+              <span style={{ 
+                fontSize: '0.65rem', 
+                opacity: filterStatut === statut.id ? 0.9 : 0.7,
+                fontWeight: 400
+              }}>
+                {statut.desc}
+              </span>
+            )}
+            <span style={{
+              background: filterStatut === statut.id ? 'rgba(255,255,255,0.25)' : 'var(--success-muted)',
+              color: filterStatut === statut.id ? '#fff' : 'var(--primary-dark)',
+              padding: '2px 8px', 
+              borderRadius: '50px',
+              fontSize: '0.7rem', 
+              fontWeight: '800',
+              marginTop: '4px'
+            }}>
+              {getStatutCount(statut.id)}
             </span>
           </button>
         ))}
@@ -380,11 +487,17 @@ export default function MarchesPage() {
             </button>
           </div>
 
-          {(filterRegion !== 'Toutes' || filterProcedure !== 'Toutes' || filterUrgence !== 'Toutes' || filterOnlyPdf) && (
+          {(filterRegion !== 'Toutes' || filterProcedure !== 'Toutes' || filterUrgence !== 'Toutes' || filterStatut !== 'En cours' || filterOnlyPdf) && (
             <button
               type="button"
               className="btn btn-outline btn-sm"
-              onClick={() => { setFilterRegion('Toutes'); setFilterProcedure('Toutes'); setFilterUrgence('Toutes'); setFilterOnlyPdf(false); }}
+              onClick={() => { 
+                setFilterRegion('Toutes'); 
+                setFilterProcedure('Toutes'); 
+                setFilterUrgence('Toutes'); 
+                setFilterStatut('En cours'); 
+                setFilterOnlyPdf(false); 
+              }}
               style={{ flex: '0 0 auto', height: '42px' }}
             >
               ✕ Réinitialiser
@@ -423,8 +536,7 @@ export default function MarchesPage() {
             const hasPdf = Boolean(m.pdfUrl || m.documentUrl || (m.documents && m.documents.length > 0));
 
             return (
-              <div
-                key={m.id}
+              <div key={m.id}
                 className="card flex flex-col justify-between"
                 style={{
                   height: '100%',
@@ -443,6 +555,37 @@ export default function MarchesPage() {
                     PREMIUM
                   </div>
                 )}
+
+                {/* Badge de statut temporel */}
+                {!isLocked && (() => {
+                  const statut = getStatutTemporel(m);
+                  const badges = {
+                    'en-cours': { icon: '🟢', label: 'En cours', color: '#059669' },
+                    'a-venir': { icon: '🔵', label: 'À venir', color: '#3B82F6' },
+                    'expire': { icon: '🔴', label: 'Expiré', color: '#DC2626' }
+                  };
+                  const badge = badges[statut];
+                  return (
+                    <div style={{
+                      position: 'absolute', 
+                      top: '12px', 
+                      left: '12px',
+                      background: badge.color,
+                      color: '#fff', 
+                      fontSize: '0.65rem', 
+                      fontWeight: 800,
+                      padding: '4px 10px', 
+                      borderRadius: '50px',
+                      zIndex: 2,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}>
+                      <span>{badge.icon}</span>
+                      <span>{badge.label}</span>
+                    </div>
+                  );
+                })()}
 
                 <div>
                   <div className="flex justify-between items-center" style={{ marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
