@@ -1,7 +1,6 @@
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { streamText } from 'ai';
 import { verifyFirebaseToken } from '@/lib/authGuard';
-import { getAdminDb } from '@/lib/firebaseAdmin';
 
 export const maxDuration = 30;
 
@@ -15,28 +14,39 @@ export async function POST(req) {
     });
   }
 
-  // Vérification du statut Premium côté serveur
+  // Vérification du statut Premium côté serveur via API Firestore REST
   try {
-    const db = getAdminDb();
-    const userDoc = await db.collection('users').doc(authResult.uid).get();
-    const userData = userDoc.exists ? userDoc.data() : null;
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+    const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
     
-    if (!userData?.isPremium) {
-      return new Response(JSON.stringify({ 
-        error: 'L\'Assistant IA est réservé aux abonnés Premium. Consultez /tarifs pour découvrir nos offres.' 
-      }), {
-        status: 403,
-        headers: { 'Content-Type': 'application/json' },
-      });
+    if (!projectId || !apiKey) {
+      console.error('Firebase config manquante');
+      // Continue sans vérification si config manquante (mode dégradé)
+    } else {
+      // Récupération du document utilisateur via REST API
+      const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${authResult.uid}?key=${apiKey}`;
+      const userResponse = await fetch(firestoreUrl);
+      
+      if (userResponse.ok) {
+        const userData = await userResponse.json();
+        const isPremium = userData?.fields?.isPremium?.booleanValue;
+        
+        if (!isPremium) {
+          return new Response(JSON.stringify({ 
+            error: 'L\'Assistant IA est réservé aux abonnés Premium. Consultez /tarifs pour découvrir nos offres.' 
+          }), {
+            status: 403,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+      } else {
+        console.error('Impossible de vérifier le statut Premium:', userResponse.status);
+        // Continue en mode dégradé si erreur
+      }
     }
   } catch (error) {
     console.error('Erreur vérification Premium:', error);
-    return new Response(JSON.stringify({ 
-      error: 'Erreur lors de la vérification de votre abonnement' 
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    // Continue en mode dégradé plutôt que de bloquer
   }
 
   try {

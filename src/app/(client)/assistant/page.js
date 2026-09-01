@@ -64,12 +64,18 @@ export default function AssistantPage() {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
     
+    // Debug : Afficher les données utilisateur
+    console.log('👤 User data:', userData);
+    console.log('💎 isPremium:', userData?.isPremium);
+    
     // Blocage pour les utilisateurs gratuits
     if (!userData?.isPremium) {
+      console.warn('❌ Accès refusé : utilisateur non-Premium');
       setShowPremiumModal(true);
       return;
     }
     
+    console.log('✅ Utilisateur Premium - Envoi du message');
     const sendFn = chat.sendMessage || chat.append;
     if (sendFn) {
       sendFn({ role: 'user', content: input });
