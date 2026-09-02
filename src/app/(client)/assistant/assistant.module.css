@@ -394,6 +394,43 @@
   margin-bottom: 0;
 }
 
+.messageTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: inherit;
+  border-bottom: 2px solid currentColor;
+  padding-bottom: 6px;
+  opacity: 0.9;
+}
+
+.messageListItem {
+  margin: 6px 0 6px 20px;
+  line-height: 1.5;
+}
+
+.messageLink {
+  color: #2563eb;
+  text-decoration: underline;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.messageLink:hover {
+  color: #1d4ed8;
+  text-decoration: none;
+}
+
+.userBubble .messageLink {
+  color: white;
+  text-decoration: underline;
+  opacity: 0.95;
+}
+
+.userBubble .messageLink:hover {
+  opacity: 1;
+}
+
 /* Loading State */
 .loadingBubble {
   background: #f8fafc;

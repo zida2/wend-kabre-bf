@@ -218,18 +218,69 @@ export default function AssistantPage() {
                     </div>
                   )}
                   <div className={`${styles.messageBubble} ${m.role === 'user' ? styles.userBubble : styles.botBubble}`}>
-                    {/* Affichage du texte en conservant les sauts de ligne */}
-                    {m.content.split('\n').map((line, i) => (
-                      <p key={i} className={styles.messageParagraph}>
-                        {/* Mise en gras rudimentaire pour les textes entre étoiles */}
-                        {line.split(/(\*\*.*?\*\*)/).map((part, j) => {
-                          if (part.startsWith('**') && part.endsWith('**')) {
-                            return <strong key={j}>{part.slice(2, -2)}</strong>;
-                          }
-                          return part;
-                        })}
-                      </p>
-                    ))}
+                    {/* Affichage du texte avec support markdown basique */}
+                    {m.content.split('\n').map((line, i) => {
+                      // Détection de titres avec **
+                      if (line.match(/^\*\*(.+?)\*\*$/)) {
+                        const title = line.replace(/^\*\*(.+?)\*\*$/, '$1');
+                        return <h4 key={i} className={styles.messageTitle}>{title}</h4>;
+                      }
+                      
+                      // Détection de listes avec • ou -
+                      if (line.match(/^[•\-]\s/)) {
+                        return (
+                          <li key={i} className={styles.messageListItem}>
+                            {line.replace(/^[•\-]\s/, '')}
+                          </li>
+                        );
+                      }
+                      
+                      // Détection de listes numérotées
+                      if (line.match(/^\d+[.)]\s/)) {
+                        return (
+                          <li key={i} className={styles.messageListItem}>
+                            {line.replace(/^\d+[.)]\s/, '')}
+                          </li>
+                        );
+                      }
+                      
+                      // Détection de liens [texte](url)
+                      const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+                      if (linkRegex.test(line)) {
+                        const parts = line.split(linkRegex);
+                        return (
+                          <p key={i} className={styles.messageParagraph}>
+                            {parts.map((part, j) => {
+                              if (j % 3 === 1) {
+                                const url = parts[j + 1];
+                                return <a key={j} href={url} className={styles.messageLink}>{part}</a>;
+                              } else if (j % 3 === 0) {
+                                // Traiter le gras dans le texte normal
+                                return part.split(/(\*\*.*?\*\*)/).map((subpart, k) => {
+                                  if (subpart.startsWith('**') && subpart.endsWith('**')) {
+                                    return <strong key={k}>{subpart.slice(2, -2)}</strong>;
+                                  }
+                                  return subpart;
+                                });
+                              }
+                              return null;
+                            })}
+                          </p>
+                        );
+                      }
+                      
+                      // Paragraphe normal avec gras
+                      return (
+                        <p key={i} className={styles.messageParagraph}>
+                          {line.split(/(\*\*.*?\*\*)/).map((part, j) => {
+                            if (part.startsWith('**') && part.endsWith('**')) {
+                              return <strong key={j}>{part.slice(2, -2)}</strong>;
+                            }
+                            return part;
+                          })}
+                        </p>
+                      );
+                    })}
                   </div>
                   {m.role === 'user' && (
                     <div className={styles.messageAvatar}>
