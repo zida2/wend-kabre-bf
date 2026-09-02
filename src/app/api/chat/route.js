@@ -16,6 +16,12 @@ function generateIntelligentResponse(messages, question) {
     case 'GREETING':
       return handleGreeting(q, hasContext);
     
+    case 'THANKS':
+      return handleThanks(q, hasContext);
+    
+    case 'GOODBYE':
+      return handleGoodbye(q);
+    
     case 'DOCUMENTS':
       return handleDocuments(q);
     
@@ -40,6 +46,21 @@ function generateIntelligentResponse(messages, question) {
     case 'ARCOP':
       return handleARCOP(q);
     
+    case 'SOUMISSION':
+      return handleSoumission(q);
+    
+    case 'GARANTIES':
+      return handleGaranties(q);
+    
+    case 'EVALUATION':
+      return handleEvaluation(q);
+    
+    case 'RESULTATS':
+      return handleResultats(q);
+    
+    case 'RECLAMATIONS':
+      return handleReclamations(q);
+    
     case 'AIDE':
       return handleAide(q);
     
@@ -49,56 +70,93 @@ function generateIntelligentResponse(messages, question) {
 }
 
 function detectIntent(question) {
-  const q = question.toLowerCase();
+  const q = question.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Enlever les accents
+    .replace(/['']/g, "'"); // Normaliser apostrophes
   
-  // Salutations
-  if (/^(bonjour|salut|hello|hi|bonsoir|hey|coucou)\b/i.test(q)) {
+  // Salutations et politesse (nombreuses variations)
+  if (/^(bonjour|salut|hello|hi|bonsoir|hey|coucou|cc|slt|bjr|bsr|yo|wesh|comment|ca va|ça va|bonne journee|bon matin)/i.test(q)) {
     return 'GREETING';
   }
   
-  // Documents
-  if (/(document|pièce|attestation|fournir|fourniture|certificat|dossier)/i.test(q)) {
+  // Remerciements
+  if (/(merci|thank|remerci|cool|super|parfait|genial|ok merci|d'accord|compris)/i.test(q)) {
+    return 'THANKS';
+  }
+  
+  // Documents - Variations très étendues
+  if (/(document|piece|attestation|papier|fournir|fourni|fourniture|certificat|dossier|justificatif|preuve|qu[\'e]?est[- ]?ce qu[\'e]? il faut|il me faut|besoin de|doit donner|doit presenter|presenter quoi|a preparer|a fournir|liste des|fichier|joindre|envoyer|remettre)/i.test(q)) {
     return 'DOCUMENTS';
   }
   
-  // Seuils
-  if (/(seuil|montant|million|prix|coût|valeur|combien)/i.test(q)) {
+  // Seuils - Toutes les façons de demander les montants
+  if (/(seuil|montant|million|prix|cout|valeur|combien|ca coute|c[\'e]? combien|tarif|budget|enveloppe|de quel ordre|categorie de marche|type de marche|quelle procedure|cotation|demande de prix|appel d[\'']offre|ao|dp)/i.test(q)) {
     return 'SEUILS';
   }
   
-  // Préférences
-  if (/(préférence|pme|national|burkinabè|avantage|%|pourcent)/i.test(q)) {
+  // Préférences nationales - Toutes variations
+  if (/(preference|pme|national|burkinabe|burkinabais|local|avantage|benefice|%|pourcent|marge|majoration|bonification|priorite|favoris|entreprise locale|soumissionnaire national|quota)/i.test(q)) {
     return 'PREFERENCES';
   }
   
-  // Méthodologie
-  if (/(méthod|structur|organis|planif|approche|comment faire)/i.test(q)) {
+  // Méthodologie - Approches variées
+  if (/(method|structur|organis|planif|plan|approche|comment faire|comment proceder|demarche|etape|phase|process|strategie|technique a utiliser|facon de|maniere de)/i.test(q)) {
     return 'METHODOLOGIE';
   }
   
-  // Offre technique
-  if (/(offre technique|technique|méthodologie|équipe|moyens|matériel)/i.test(q)) {
+  // Offre technique - Synonymes multiples
+  if (/(offre technique|partie technique|volet technique|technique|methodologie|equipe|moyen|materiel|personnel|ressource|competence|experience|reference|cv|qualification)/i.test(q)) {
     return 'OFFRE_TECHNIQUE';
   }
   
-  // Offre financière
-  if (/(offre financière|prix|devis|bordereau|quantit)/i.test(q)) {
+  // Offre financière - Vocabulaire financier
+  if (/(offre financiere|partie financiere|volet financier|offre de prix|proposition financiere|prix|devis|bordereau|quantite|dpgf|bpu|estimation|coutant|facturation|chiffrage)/i.test(q)) {
     return 'OFFRE_FINANCIERE';
   }
   
-  // Délais
-  if (/(délai|date|quand|durée|temps|calendrier)/i.test(q)) {
+  // Délais - Tout ce qui concerne le temps
+  if (/(delai|date|quand|duree|temps|calendrier|echeance|limite|jusqu[\'a]? quand|combien de temps|periode|jour|mois|annee|validite|expiration)/i.test(q)) {
     return 'DELAIS';
   }
   
-  // ARCOP
-  if (/(arcop|loi|décret|réglementation|légal|juridique)/i.test(q)) {
+  // ARCOP et réglementation - Juridique
+  if (/(arcop|loi|decret|arrete|reglementation|legal|juridique|code|texte|article|procedure|regle|norme|conforme|conformite)/i.test(q)) {
     return 'ARCOP';
   }
   
-  // Aide
-  if (/(aide|aider|expliqu|comprend|besoin)/i.test(q)) {
+  // Soumission et dépôt - Processus
+  if (/(soumission|soumissionner|deposer|depot|comment soumettre|ou deposer|comment participer|candidater|postuler|se porter candidat)/i.test(q)) {
+    return 'SOUMISSION';
+  }
+  
+  // Garanties et cautions
+  if (/(garantie|caution|cautionnement|aval|assurance|bancaire|garantie bancaire|caution de soumission|caution provisoire|caution definitive)/i.test(q)) {
+    return 'GARANTIES';
+  }
+  
+  // Critères d'évaluation et notation
+  if (/(critere|evaluation|notation|note|point|bareme|grille|ponderation|comment sont[- ]evalues|comment sont[- ]notes|comment sont[- ]juges)/i.test(q)) {
+    return 'EVALUATION';
+  }
+  
+  // Résultats et attribution
+  if (/(resultat|attribution|gagnant|retenu|adjudicataire|notification|qui a gagne|proclamation|publication)/i.test(q)) {
+    return 'RESULTATS';
+  }
+  
+  // Réclamations et recours
+  if (/(reclamation|recours|contester|contestation|plainte|litige|desaccord|probleme|injustice)/i.test(q)) {
+    return 'RECLAMATIONS';
+  }
+  
+  // Aide - Expressions variées
+  if (/(aide|aider|aides[- ]moi|expliqu|explique|comprend|comprends pas|je ne sais pas|besoin|assistance|soutien|conseil|guide|peut[stu][- ]m[\'e]?|pouvez[- ]vous|peux[- ]tu)/i.test(q)) {
     return 'AIDE';
+  }
+  
+  // Au revoir
+  if (/(au revoir|bye|salut|a bientot|a plus|ciao|merci bye|ok bye)/i.test(q)) {
+    return 'GOODBYE';
   }
   
   return 'GENERAL';
@@ -116,6 +174,202 @@ function handleGreeting(q, hasContext) {
   }
   
   return responses[Math.floor(Math.random() * responses.length)];
+}
+
+function handleThanks(q, hasContext) {
+  const responses = [
+    "De rien ! 😊 Je suis là pour ça. N'hésitez pas si vous avez d'autres questions sur les marchés publics !",
+    "Avec plaisir ! 🤝 Si vous avez besoin d'autre chose, je reste à votre disposition.",
+    "Content d'avoir pu vous aider ! 🎯 Revenez quand vous voulez pour d'autres questions.",
+    "C'est mon rôle ! 💼 Bonne chance avec votre dossier de soumission !",
+  ];
+  
+  return responses[Math.floor(Math.random() * responses.length)];
+}
+
+function handleGoodbye(q) {
+  const responses = [
+    "Au revoir ! 👋 Bonne chance avec vos marchés publics. Revenez quand vous voulez !",
+    "À bientôt ! 🤖 N'hésitez pas à revenir si vous avez d'autres questions.",
+    "Salut ! 😊 Bon succès dans vos soumissions !",
+  ];
+  
+  return responses[Math.floor(Math.random() * responses.length)];
+}
+
+function handleSoumission(q) {
+  let response = `📤 **Comment soumettre votre dossier** :\n\n`;
+  response += `**OÙ DÉPOSER ?** 📍\n`;
+  response += `• Au secrétariat de l'entité contractante (adresse dans le DAO)\n`;
+  response += `• Par voie électronique si prévu (plateforme e-procurement)\n`;
+  response += `• Dans l'urne ou boîte prévue à cet effet\n\n`;
+  
+  response += `**QUAND DÉPOSER ?** ⏰\n`;
+  response += `• Avant la date et heure limite indiquée dans l'avis\n`;
+  response += `• Même 1 minute de retard = disqualification automatique !\n`;
+  response += `• Conseil : déposez 24h à l'avance par sécurité\n\n`;
+  
+  response += `**COMMENT PRÉSENTER ?** 📦\n`;
+  response += `• Enveloppe fermée et scellée\n`;
+  response += `• Mention "À ne pas ouvrir avant la séance d'ouverture"\n`;
+  response += `• Références du marché (numéro, objet)\n`;
+  response += `• Nom et adresse du soumissionnaire\n\n`;
+  
+  response += `**CONTENU** 📋\n`;
+  response += `• Dossier administratif (pièces obligatoires)\n`;
+  response += `• Offre technique\n`;
+  response += `• Offre financière (souvent en enveloppe séparée)\n`;
+  response += `• En nombre d'exemplaires requis (original + copies)\n\n`;
+  
+  response += `💡 **Astuce** : Faites une checklist complète avant de sceller l'enveloppe. Aucune modification ne sera acceptée après dépôt !`;
+  
+  return response;
+}
+
+function handleGaranties(q) {
+  let response = `🏦 **Garanties et cautions dans les marchés publics** :\n\n`;
+  response += `**1. CAUTION DE SOUMISSION** 💰\n`;
+  response += `• **Montant** : 1% à 3% du montant de l'offre\n`;
+  response += `• **Quand** : À joindre obligatoirement avec l'offre\n`;
+  response += `• **Forme** : Garantie bancaire ou caution d'assurance\n`;
+  response += `• **Validité** : 30 jours après validité de l'offre\n`;
+  response += `• **But** : Preuve de sérieux du soumissionnaire\n\n`;
+  
+  response += `**2. CAUTION DE BONNE EXÉCUTION** ✅\n`;
+  response += `• **Montant** : 5% à 10% du montant du marché\n`;
+  response += `• **Quand** : Avant signature du contrat\n`;
+  response += `• **Validité** : Pendant toute l'exécution + garantie\n`;
+  response += `• **Restitution** : Après réception définitive\n`;
+  response += `• **But** : Garantie de bonne exécution des travaux\n\n`;
+  
+  response += `**QUI PEUT DÉLIVRER ?** 🏢\n`;
+  response += `• Banques agréées au Burkina Faso\n`;
+  response += `• Compagnies d'assurance agréées\n`;
+  response += `• Institutions financières reconnues\n\n`;
+  
+  response += `**FORME ACCEPTÉE** 📄\n`;
+  response += `• Attestation originale (pas de photocopie)\n`;
+  response += `• Référence au marché spécifique\n`;
+  response += `• Signature et cachet de l'institution\n`;
+  response += `• Caution à première demande (sans condition)\n\n`;
+  
+  response += `⚠️ **Important** : Sans caution valide, votre offre sera rejetée automatiquement !`;
+  
+  return response;
+}
+
+function handleEvaluation(q) {
+  let response = `📊 **Critères d'évaluation des offres** :\n\n`;
+  response += `**ÉTAPE 1 : ÉVALUATION ADMINISTRATIVE** 📋\n`;
+  response += `• Conformité des pièces obligatoires\n`;
+  response += `• Validité des attestations (< 3 mois)\n`;
+  response += `• Présence de la caution de soumission\n`;
+  response += `• **Si non conforme → Élimination directe**\n\n`;
+  
+  response += `**ÉTAPE 2 : ÉVALUATION TECHNIQUE** 🔧\n`;
+  response += `• Compréhension du projet : 20-30 points\n`;
+  response += `• Méthodologie : 25-35 points\n`;
+  response += `• Planning : 10-15 points\n`;
+  response += `• Équipe et moyens : 15-25 points\n`;
+  response += `• Références similaires : 10-20 points\n`;
+  response += `• **Note minimale requise : 70/100 généralement**\n\n`;
+  
+  response += `**ÉTAPE 3 : ÉVALUATION FINANCIÈRE** 💵\n`;
+  response += `• Ouverture uniquement des offres qualifiées techniquement\n`;
+  response += `• Vérification des calculs (erreurs = ajustement)\n`;
+  response += `• Application des préférences nationales\n`;
+  response += `• Prix anormalement bas → enquête\n`;
+  response += `• Prix anormalement élevé → exclusion\n\n`;
+  
+  response += `**MÉTHODE DE SÉLECTION** 🎯\n`;
+  response += `**Pour travaux complexes :**\n`;
+  response += `• Note technique × 0.8 + Note financière × 0.2\n\n`;
+  
+  response += `**Pour fournitures simples :**\n`;
+  response += `• Moins-disant qualifié (prix le plus bas)\n\n`;
+  
+  response += `💡 **Conseil** : Soignez autant le technique que le financier. Un prix bas ne suffit pas si la note technique est faible !`;
+  
+  return response;
+}
+
+function handleResultats(q) {
+  let response = `🏆 **Résultats et attribution des marchés** :\n\n`;
+  response += `**PUBLICATION DES RÉSULTATS** 📢\n`;
+  response += `• Affichage au siège de l'entité contractante\n`;
+  response += `• Publication sur le site web (si existant)\n`;
+  response += `• Notification individuelle au(x) gagnant(s)\n`;
+  response += `• Délai : Généralement 30 à 60 jours après ouverture\n\n`;
+  
+  response += `**CONTENU DE LA NOTIFICATION** 📄\n`;
+  response += `• Nom de l'attributaire\n`;
+  response += `• Montant du marché attribué\n`;
+  response += `• Délai d'exécution\n`;
+  response += `• Classement des soumissionnaires (parfois)\n\n`;
+  
+  response += `**SI VOUS ÊTES RETENU** ✅\n`;
+  response += `1. Réception de la lettre de notification\n`;
+  response += `2. Dépôt de la caution de bonne exécution\n`;
+  response += `3. Signature du contrat (sous 15 jours)\n`;
+  response += `4. Ordre de service de démarrage\n`;
+  response += `5. Début des travaux/fournitures\n\n`;
+  
+  response += `**SI VOUS N'ÊTES PAS RETENU** ❌\n`;
+  response += `• Demandez les résultats détaillés (débrief)\n`;
+  response += `• Analysez vos points faibles\n`;
+  response += `• Améliorez pour la prochaine fois\n`;
+  response += `• Possibilité de recours (voir délais)\n\n`;
+  
+  response += `**RESTITUTION CAUTION** 💰\n`;
+  response += `• Pour les non-retenus : sous 30 jours\n`;
+  response += `• Pour l'attributaire : après signature du contrat\n\n`;
+  
+  response += `💡 **Astuce** : Même si vous ne gagnez pas, demandez toujours un retour pour vous améliorer !`;
+  
+  return response;
+}
+
+function handleReclamations(q) {
+  let response = `⚖️ **Réclamations et recours** :\n\n`;
+  response += `**DÉLAIS DE RECOURS** ⏰\n`;
+  response += `• **10 jours** après publication des résultats provisoires\n`;
+  response += `• Ou **15 jours** après notification individuelle\n`;
+  response += `• Passé ce délai = recours irrecevable\n\n`;
+  
+  response += `**MOTIFS VALABLES** 📋\n`;
+  response += `• Non-respect de la procédure réglementaire\n`;
+  response += `• Erreur manifeste dans l'évaluation\n`;
+  response += `• Discrimination ou favoritisme\n`;
+  response += `• Vice de forme dans l'appel d'offres\n`;
+  response += `• Non-application des critères annoncés\n\n`;
+  
+  response += `**PROCÉDURE** 📝\n`;
+  response += `**1. Recours administratif préalable**\n`;
+  response += `• Lettre recommandée à l'autorité contractante\n`;
+  response += `• Exposé détaillé des griefs\n`;
+  response += `• Preuves et documents à l'appui\n`;
+  response += `• Réponse sous 15 jours\n\n`;
+  
+  response += `**2. Saisine de l'ARCOP**\n`;
+  response += `• Si recours administratif insatisfaisant\n`;
+  response += `• Dossier complet + chronologie\n`;
+  response += `• Décision de l'ARCOP sous 30 jours\n\n`;
+  
+  response += `**3. Recours juridictionnel**\n`;
+  response += `• En dernier recours\n`;
+  response += `• Tribunal administratif compétent\n`;
+  response += `• Assistance d'un avocat conseillée\n\n`;
+  
+  response += `**CONSEILS PRATIQUES** 💡\n`;
+  response += `• Rassemblez toutes les preuves\n`;
+  response += `• Restez factuel et professionnel\n`;
+  response += `• Évitez les attaques personnelles\n`;
+  response += `• Concentrez-vous sur la procédure\n`;
+  response += `• Faites-vous assister si possible\n\n`;
+  
+  response += `⚠️ **Important** : Un recours abusif peut vous porter préjudice. Assurez-vous d'avoir des motifs solides !`;
+  
+  return response;
 }
 
 function handleDocuments(q) {
@@ -311,27 +565,51 @@ function handleAide(q) {
 }
 
 function handleGeneral(question, previousMessages) {
-  // Essayer de donner une réponse contextuelle même pour question générale
-  let response = `Je suis votre assistant spécialisé en **marchés publics au Burkina Faso** 🇧🇫.\n\n`;
+  // Analyse sémantique plus poussée
+  const q = question.toLowerCase();
   
-  // Analyser si la question contient des mots-clés partiels
-  if (/comment|pourquoi|quoi|quel/i.test(question)) {
-    response += `Je peux vous aider avec :\n`;
-    response += `• 📋 Les **documents** à fournir\n`;
-    response += `• 💰 Les **seuils** et procédures\n`;
-    response += `• 📝 La rédaction de vos **offres**\n`;
-    response += `• 🇧🇫 Les **préférences nationales**\n\n`;
-    response += `Reformulez votre question pour que je puisse mieux vous aider ! 😊`;
-  } else {
-    response += `Je n'ai pas bien compris votre question. Pouvez-vous la reformuler ?\n\n`;
-    response += `**Suggestions** :\n`;
-    response += `• "Quels documents fournir ?"\n`;
-    response += `• "Quels sont les seuils ?"\n`;
-    response += `• "Comment faire une offre technique ?"\n\n`;
-    response += `Ou tapez "aide" pour voir tout ce que je peux faire ! 💡`;
+  // Questions partielles ou mal formées
+  if (q.length < 3) {
+    return "🤔 Votre question est un peu courte. Pourriez-vous développer un peu ? Je suis là pour vous aider sur les marchés publics !";
   }
   
-  return response;
+  // Détection de confusion ou incompréhension
+  if (/(sais pas|connais pas|comprend pas|c[\'e]?est quoi|qu[\'e]?est[- ]?ce|confus|perdu)/i.test(q)) {
+    return `Je sens que vous avez besoin d'orientation ! 🧭 Pas de souci, je suis là pour ça.\n\n**Voici ce que je peux vous expliquer** :\n\n📋 **Documents** : "Quels papiers fournir ?"\n💰 **Seuils** : "C'est quoi cotation, demande de prix, appel d'offres ?"\n🇧🇫 **Préférences PME** : "Quel avantage pour les entreprises locales ?"\n📝 **Rédaction offres** : "Comment faire une bonne offre technique ?"\n📤 **Soumission** : "Comment et où déposer mon dossier ?"\n🏦 **Cautions** : "C'est quoi une caution de soumission ?"\n📊 **Évaluation** : "Comment les offres sont notées ?"\n\nChoisissez un sujet et posez votre question, même de manière simple ! 😊`;
+  }
+  
+  // Questions sur la difficulté ou complexité
+  if (/(difficile|compliqu|dur|complexe|galere|chiant)/i.test(q)) {
+    return `Je comprends que ça peut sembler compliqué au début ! 😅 Mais pas de panique, c'est mon rôle de simplifier tout ça.\n\n**Décomposons ensemble** :\n\n1️⃣ **Identifiez votre marché** : Quel est son montant ?\n2️⃣ **Connaissez la procédure** : Cotation, demande de prix, ou appel d'offres ?\n3️⃣ **Rassemblez les documents** : Je vous donne la liste exacte\n4️⃣ **Rédigez votre offre** : Je vous guide étape par étape\n5️⃣ **Déposez dans les délais** : Je vous explique comment\n\n💡 **Commençons par le début** : De quel montant de marché parlez-vous approximativement ?`;
+  }
+  
+  // Référence à un marché spécifique
+  if (/(un marche|ce marche|le marche|mon marche|ma soumission)/i.test(q)) {
+    return `Vous parlez d'un marché spécifique ! 📋 Super, je peux vous aider de manière précise.\n\n**Pour vous guider au mieux, dites-moi** :\n\n1. **Le montant** : environ combien de millions de FCFA ?\n2. **Le type** : travaux, fournitures, ou services ?\n3. **Votre besoin** : documents, rédaction offre, délais... ?\n\n**Exemples de questions précises** :\n• "Quels documents pour un marché de travaux de 80M ?"\n• "Comment structurer une offre technique pour des fournitures de 25M ?"\n• "Quels délais pour soumettre sur un marché de 150M ?"`;
+  }
+  
+  // Questions sur le "comment gagner"
+  if (/(gagner|remporter|reussir|chance|probabilite|tips|astuce|secret)/i.test(q)) {
+    return `Excellente question ! 🎯 Voici mes **meilleurs conseils** pour maximiser vos chances :\n\n**1. DOSSIER IMPECCABLE** 📋\n• Toutes les pièces valides (< 3 mois)\n• Aucun document manquant\n• Caution de soumission conforme\n\n**2. OFFRE TECHNIQUE SOLIDE** 📝\n• Compréhension parfaite du besoin\n• Méthodologie détaillée et réaliste\n• Équipe et moyens adaptés\n• Références pertinentes\n\n**3. PRIX COMPÉTITIF MAIS RÉALISTE** 💰\n• Ni trop bas (suspicion), ni trop haut\n• Calculs exacts (vérifiez 3 fois !)\n• Profitez des préférences PME si applicable\n\n**4. PRÉSENTATION PROFESSIONNELLE** 🎨\n• Dossier bien organisé\n• Sommaire clair\n• Documents lisibles\n• Respect des formats demandés\n\n**5. ANTICIPATION** ⏰\n• Déposez 24h avant la limite\n• Vérifiez tout avant de sceller\n• Gardez des copies\n\nQuelle partie voulez-vous approfondir ?`;
+  }
+  
+  // Expression de frustration ou échec
+  if (/(perdu|rate|refuse|rejete|elimine|pas retenu)/i.test(q)) {
+    return `Je sens une frustration... 😔 C'est normal, la compétition est rude. Mais chaque échec est une leçon !\n\n**Pourquoi les offres sont refusées** :\n\n❌ **Raisons administratives** (60% des cas)\n• Document manquant ou périmé\n• Caution absente ou non conforme\n• Erreur de signature\n\n❌ **Raisons techniques** (30%)\n• Méthodologie faible ou générique\n• Moyens insuffisants\n• Note < 70/100\n\n❌ **Raisons financières** (10%)\n• Prix anormalement bas\n• Erreurs de calcul importantes\n• Prix hors budget\n\n**ACTIONS À MENER** 💪\n1. Demandez le rapport d'évaluation détaillé\n2. Identifiez vos points faibles\n3. Améliorez votre dossier pour la prochaine fois\n4. N'hésitez pas à demander conseil (je suis là !)\n\nQue voulez-vous améliorer pour votre prochaine soumission ?`;
+  }
+  
+  // Questions sur les coûts ou frais
+  if (/(ca coute|frais|payer|payant|gratuit|argent a debourser)/i.test(q)) {
+    return `💵 **Les frais dans les marchés publics** :\n\n**FRAIS OBLIGATOIRES** 💳\n• **Dossier d'Appel d'Offres (DAO)** : Généralement gratuit ou frais minimes (5 000 à 50 000 FCFA)\n• **Caution de soumission** : 1-3% du montant (ex: 500 000 FCFA pour un marché de 50M)\n• **Timbre fiscal** : Variable selon documents\n\n**FRAIS FACULTATIFS** 📋\n• Assistance d'un consultant : Variable (100 000 à plusieurs millions selon complexité)\n• Traductions certifiées : Si documents étrangers\n• Frais bancaires : Pour cautions et garanties\n\n**GRATUIT** ✅\n• Consultation des avis de marchés\n• Dépôt du dossier\n• Assistance ARCOP (conseil réglementaire)\n• Mon assistance ici ! 🤖\n\n💡 **Conseil** : Le coût principal est votre temps. Prévoyez 1 à 3 semaines pour un dossier complet de qualité.\n\nD'autres questions sur les aspects financiers ?`;
+  }
+  
+  // Analyse de mots-clés résiduels
+  if (/comment|pourquoi|quoi|quel/i.test(q)) {
+    return `Je détecte une question, mais je n'ai pas saisi exactement ce que vous cherchez. 🤔\n\n**Pour mieux vous aider, reformulez en mentionnant** :\n\n• 📋 **Documents** → "Quels papiers fournir ?"\n• 💰 **Montants** → "Quels sont les seuils ?"\n• 📝 **Rédaction** → "Comment faire une offre technique ?"\n• 🇧🇫 **Avantages PME** → "Quelle préférence nationale ?"\n• 📤 **Dépôt** → "Comment soumettre ?"\n• 🏦 **Cautions** → "C'est quoi les garanties ?"\n• ⏰ **Délais** → "Combien de temps ?"\n\nOu tapez simplement "**aide**" pour voir tout ce que je peux faire ! 😊`;
+  }
+  
+  // Réponse par défaut plus engageante
+  return `🤖 Je suis votre assistant spécialisé en **marchés publics burkinabè** !\n\n**Je n'ai pas bien compris votre question**, mais ne partez pas ! 😊\n\n**Essayez de poser votre question autrement**, par exemple :\n• "Je veux soumissionner, comment faire ?"\n• "C'est quoi les papiers obligatoires ?"\n• "Combien coûte un marché de 30 millions ?"\n• "Comment avoir l'avantage PME ?"\n\n**Ou choisissez un thème** :\n📋 Documents • 💰 Seuils • 📝 Offres • 🇧🇫 Préférences • 📤 Soumission • 🏦 Cautions • 📊 Évaluation\n\nTapez "**aide**" pour voir absolument tout ce que je peux faire pour vous ! 💪`;
 }
 
 export async function POST(req) {
