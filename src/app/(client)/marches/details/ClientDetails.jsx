@@ -145,22 +145,49 @@ function AnalysisView({ analysis, onRerun, analyzing }) {
         </div>
       )}
 
-      {/* Champs clés */}
-      <div className="grid grid-3 gap-4" style={{ marginBottom: '18px' }}>
-        <AnalysisField label="N° du marché" value={analysis.numeroMarche} />
-        <AnalysisField label="Type de procédure" value={analysis.typeProcedure} />
-        <AnalysisField label="Autorité contractante" value={analysis.autoriteContractante} />
-        <AnalysisField label="Ministère" value={analysis.ministere} />
-        <AnalysisField label="Région" value={analysis.region} />
-        <AnalysisField label="Commune" value={analysis.commune} />
-        <AnalysisField label="Budget estimatif" value={analysis.budget} />
-        <AnalysisField label="Financement" value={analysis.financement} />
-        <AnalysisField label="Durée d'exécution" value={analysis.dureeExecution} />
-        <AnalysisField label="Date limite" value={analysis.dateLimite} />
-        <AnalysisField label="Heure limite" value={analysis.heureLimite} />
-        <AnalysisField label="Lieu d'exécution" value={analysis.lieuExecution} />
-        <AnalysisField label="Email" value={analysis.contactEmail} />
-        <AnalysisField label="Téléphone" value={analysis.contactTelephone} />
+      {/* Champs clés - Identification du marché */}
+      <div style={{ marginBottom: '18px' }}>
+        <p className="text-xs text-muted" style={{ fontWeight: 700, letterSpacing: '0.04em', marginBottom: '10px', textTransform: 'uppercase' }}>Identification du marché</p>
+        <div className="grid grid-3 gap-4">
+          <AnalysisField label="N° du marché" value={analysis.numeroMarche} />
+          <AnalysisField label="Type de procédure" value={analysis.typeProcedure} />
+          <AnalysisField label="Autorité contractante" value={analysis.autoriteContractante} />
+          <AnalysisField label="Ministère" value={analysis.ministere} />
+          <AnalysisField label="Région" value={analysis.region} />
+          <AnalysisField label="Commune" value={analysis.commune} />
+        </div>
+      </div>
+
+      {/* Champs clés - Financement et Budget */}
+      <div style={{ marginBottom: '18px' }}>
+        <p className="text-xs text-muted" style={{ fontWeight: 700, letterSpacing: '0.04em', marginBottom: '10px', textTransform: 'uppercase' }}>Financement et budget</p>
+        <div className="grid grid-3 gap-4">
+          <AnalysisField label="Budget estimatif" value={analysis.budget} />
+          <AnalysisField label="Financement" value={analysis.financement} />
+          <AnalysisField label="Garantie de soumission" value={analysis.garantieSubmission} />
+          <AnalysisField label="Validité garantie" value={analysis.dureeValiditeGarantie} />
+        </div>
+      </div>
+
+      {/* Champs clés - Calendrier et Exécution */}
+      <div style={{ marginBottom: '18px' }}>
+        <p className="text-xs text-muted" style={{ fontWeight: 700, letterSpacing: '0.04em', marginBottom: '10px', textTransform: 'uppercase' }}>Calendrier et exécution</p>
+        <div className="grid grid-3 gap-4">
+          <AnalysisField label="Date limite de dépôt" value={analysis.dateLimite} />
+          <AnalysisField label="Heure limite" value={analysis.heureLimite} />
+          <AnalysisField label="Durée d'exécution" value={analysis.dureeExecution} />
+          <AnalysisField label="Lieu d'exécution" value={analysis.lieuExecution} />
+        </div>
+      </div>
+
+      {/* Champs clés - Contacts */}
+      <div style={{ marginBottom: '18px' }}>
+        <p className="text-xs text-muted" style={{ fontWeight: 700, letterSpacing: '0.04em', marginBottom: '10px', textTransform: 'uppercase' }}>Contacts</p>
+        <div className="grid grid-3 gap-4">
+          <AnalysisField label="Email" value={analysis.contactEmail} />
+          <AnalysisField label="Téléphone" value={analysis.contactTelephone} />
+          <AnalysisField label="Adresse de remise" value={analysis.contactAdresse} />
+        </div>
       </div>
 
       {/* Pièces à fournir */}

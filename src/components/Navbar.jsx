@@ -51,7 +51,7 @@ export default function Navbar() {
 
   return (
     <nav className={styles.navbar}>
-      <div className={`container ${styles.inner}`}>
+      <div className={styles.inner}>
         {/* Logo */}
         <Link href="/" className={styles.logo} onClick={closeMenu}>
           <Logo size={28} className={styles.logoIcon} />
@@ -79,6 +79,9 @@ export default function Navbar() {
         <div className={styles.navCta}>
           {user ? (
             <>
+              <Link href="/profil-entreprise" className={styles.btnNavGhost} style={{ fontSize: '0.85rem' }}>
+                🏢 Profil
+              </Link>
               {!isPremium && (
                 <Link href="/tarifs" className={styles.btnNavPrimary}>Premium 🔐</Link>
               )}
@@ -126,6 +129,9 @@ export default function Navbar() {
           <div className={styles.mobileCta}>
             {user ? (
               <>
+                <Link href="/profil-entreprise" className={styles.btnNavGhost} onClick={closeMenu} style={{ justifyContent: 'center' }}>
+                  🏢 Profil Entreprise
+                </Link>
                 {!isPremium && (
                   <Link href="/tarifs" className={styles.btnNavPrimary} onClick={closeMenu}>Accès Premium 🔐</Link>
                 )}
