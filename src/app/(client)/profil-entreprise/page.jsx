@@ -211,12 +211,12 @@ function CompanyProfileContent() {
 
     const loadCompany = async () => {
       try {
-        let docId = companyId || user.uid;
-        const companyRef = doc(db, 'companies', docId);
-        const snap = await getDoc(companyRef);
+        // Load from user's companyProfile sub-collection
+        const userRef = doc(db, 'users', user.uid);
+        const userSnap = await getDoc(userRef);
 
-        if (snap.exists()) {
-          setCompanyData({ id: snap.id, ...snap.data() });
+        if (userSnap.exists() && userSnap.data().companyProfile) {
+          setCompanyData({ id: user.uid, ...userSnap.data().companyProfile });
         } else {
           const defaultCompany = {
             userId: user.uid,
@@ -240,10 +240,34 @@ function CompanyProfileContent() {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           };
-          setCompanyData({ id: docId, ...defaultCompany });
+          setCompanyData({ id: user.uid, ...defaultCompany });
         }
       } catch (e) {
         console.error('Error loading company:', e);
+        // Still show default even on error
+        const defaultCompany = {
+          userId: user.uid,
+          name: '',
+          rccm: '',
+          ifu: '',
+          email: user.email,
+          phone: '',
+          address: '',
+          city: '',
+          website: '',
+          sector: '',
+          employees: '',
+          yearsInBusiness: '',
+          description: '',
+          references: [],
+          certifications: [],
+          capabilities: [],
+          equipment: [],
+          team: [],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        setCompanyData({ id: user.uid, ...defaultCompany });
       } finally {
         setLoading(false);
       }
@@ -262,8 +286,9 @@ function CompanyProfileContent() {
       const { id, ...dataToSave } = companyData;
       dataToSave.updatedAt = new Date().toISOString();
 
-      const companyRef = doc(db, 'companies', companyData.id);
-      await setDoc(companyRef, dataToSave, { merge: true });
+      // Save to user's companyProfile field
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(userRef, { companyProfile: dataToSave }, { merge: true });
 
       setIsEditing(false);
     } catch (e) {
