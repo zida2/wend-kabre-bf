@@ -6,22 +6,55 @@ export const maxDuration = 60; // Timeout de 60s sur Vercel pour l'analyse de do
 
 export async function POST(req) {
   try {
+    // Vérifier si la clé API Gemini est configurée
+    const geminiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+    
+    if (!geminiKey) {
+      console.error('[Analyze Documents] Aucune clé API Gemini configurée');
+      return new Response(JSON.stringify({ 
+        error: 'Configuration manquante',
+        message: 'La clé API Google Gemini n\'est pas configurée. Cette fonctionnalité nécessite une clé API Gemini pour analyser les documents PDF.',
+        solution: 'Ajoutez GEMINI_API_KEY dans votre fichier .env.local'
+      }), { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     const { market, files } = await req.json();
 
+    console.log('[Analyze Documents] Début analyse:', { 
+      marketTitle: market?.title,
+      filesCount: files?.length 
+    });
+
+    if (!files || files.length === 0) {
+      return new Response(JSON.stringify({ 
+        error: 'Aucun fichier fourni',
+        message: 'Veuillez uploader au moins un document (PDF, image) pour l\'analyse.'
+      }), { 
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Préparer les fichiers pour Gemini
     const parts = files.map(f => {
       if (f.mimeType === 'application/pdf') {
         return {
           type: 'file',
           data: f.data,
-          mediaType: f.mimeType
+          mimeType: f.mimeType
         };
       }
       return {
         type: 'image',
         image: f.data,
-        mediaType: f.mimeType
+        mimeType: f.mimeType
       };
     });
+
+    console.log('[Analyze Documents] Appel à Gemini avec', parts.length, 'fichiers');
 
     const result = await generateObject({
       model: google('gemini-1.5-flash'),
@@ -157,12 +190,37 @@ L'offre générée doit être prête à être déposée sans modification.`,
       }),
     });
 
+    console.log('[Analyze Documents] Analyse réussie, score:', result.object.concordanceScore);
+
     return new Response(JSON.stringify(result.object), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Erreur Analyse Document:', error);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    console.error('[Analyze Documents] Erreur:', error);
+    
+    // Messages d'erreur plus clairs
+    let errorMessage = error.message || 'Une erreur est survenue lors de l\'analyse';
+    let errorDetails = '';
+    
+    if (error.message?.includes('API key')) {
+      errorMessage = 'Clé API invalide ou expirée';
+      errorDetails = 'Veuillez vérifier votre clé API Google Gemini dans les variables d\'environnement.';
+    } else if (error.message?.includes('quota')) {
+      errorMessage = 'Quota API dépassé';
+      errorDetails = 'La limite d\'utilisation de l\'API Gemini a été atteinte. Réessayez plus tard ou vérifiez votre compte Google Cloud.';
+    } else if (error.message?.includes('timeout')) {
+      errorMessage = 'Délai d\'attente dépassé';
+      errorDetails = 'L\'analyse a pris trop de temps. Essayez avec des fichiers plus petits ou moins nombreux.';
+    }
+    
+    return new Response(JSON.stringify({ 
+      error: errorMessage,
+      details: errorDetails,
+      technical: error.message 
+    }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }
