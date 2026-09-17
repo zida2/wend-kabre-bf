@@ -1,0 +1,231 @@
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  z-index: 1;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.headline {
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #1f2937;
+  margin: 0;
+}
+
+.subheadline {
+  font-size: 1.25rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.ctaGroup {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  white-space: nowrap;
+  min-height: 44px;
+}
+
+.cta.primary {
+  background-color: #d97706;
+  color: white;
+}
+
+.cta.primary:hover {
+  background-color: #b45309;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(217, 119, 6, 0.3);
+}
+
+.cta.primary:active {
+  transform: translateY(0);
+}
+
+.cta.secondary {
+  background-color: transparent;
+  color: #059669;
+  border: 2px solid #059669;
+  font-weight: 600;
+}
+
+.cta.secondary:hover {
+  background-color: #f0fdf4;
+  transform: translateY(-2px);
+}
+
+.cta.secondary:active {
+  transform: translateY(0);
+}
+
+.trustBadges {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin-top: 1rem;
+}
+
+.trustBadges span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.backgroundImage {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 50%, #6ee7b7 100%);
+  border-radius: 1rem;
+  animation: slideInRight 0.8s ease-out 0.4s both;
+  box-shadow: 0 20px 60px rgba(5, 150, 105, 0.15);
+}
+
+.backgroundImage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><path fill="%23ffffff" fill-opacity="0.1" d="M0,150 Q100,100 200,150 T400,150 L400,300 L0,300 Z"/><circle cx="80" cy="100" r="60" fill="%23ffffff" fill-opacity="0.05"/><circle cx="320" cy="200" r="80" fill="%23ffffff" fill-opacity="0.05"/></svg>') no-repeat center;
+  background-size: cover;
+  border-radius: 1rem;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.hero.loaded .backgroundImage {
+  animation: slideInRight 0.8s ease-out 0.4s both;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2rem var(--gutter);
+  }
+
+  .headline {
+    font-size: 2rem;
+  }
+
+  .subheadline {
+    font-size: 1.1rem;
+  }
+
+  .ctaGroup {
+    gap: 0.75rem;
+  }
+
+  .cta {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .trustBadges {
+    gap: 1rem;
+    font-size: 0.85rem;
+  }
+
+  .backgroundImage {
+    height: 350px;
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    min-height: auto;
+    padding: 3rem 0;
+  }
+
+  .container {
+    padding: 2rem var(--gutter);
+  }
+
+  .content {
+    gap: 1.5rem;
+  }
+
+  .headline {
+    font-size: 1.5rem;
+  }
+
+  .subheadline {
+    font-size: 1rem;
+  }
+
+  .ctaGroup {
+    flex-direction: column;
+  }
+
+  .cta {
+    width: 100%;
+  }
+
+  .trustBadges {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}

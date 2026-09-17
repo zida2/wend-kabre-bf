@@ -1,0 +1,148 @@
+.section {
+  padding: 4rem var(--gutter);
+  background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+  text-align: center;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.headline {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.subheadline {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.cta {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  color: white;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(217, 119, 6, 0.2);
+}
+
+.cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(217, 119, 6, 0.3);
+}
+
+.cta:active {
+  transform: translateY(0);
+}
+
+.trustBadges {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: #047857;
+  font-weight: 500;
+}
+
+.icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  background: #d1fae5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #047857;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .section {
+    padding: 3rem var(--gutter);
+  }
+
+  .headline {
+    font-size: 1.5rem;
+  }
+
+  .subheadline {
+    font-size: 1rem;
+  }
+
+  .cta {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+  }
+
+  .trustBadges {
+    gap: 1.5rem;
+  }
+
+  .badge {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 2rem var(--gutter);
+  }
+
+  .headline {
+    font-size: 1.25rem;
+  }
+
+  .subheadline {
+    font-size: 0.95rem;
+  }
+
+  .container {
+    gap: 1rem;
+  }
+
+  .cta {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    width: 100%;
+  }
+
+  .trustBadges {
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 0;
+  }
+
+  .badge {
+    justify-content: center;
+  }
+}
