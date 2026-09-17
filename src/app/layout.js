@@ -100,6 +100,30 @@ const websiteJsonLd = {
 export default function RootLayout({ children }) {
   return (
     <html lang="fr">
+      <head>
+        {/* Suppression des erreurs d'extensions browser */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Supprimer l'erreur "message channel closed" causée par les extensions browser
+              window.addEventListener('error', function(e) {
+                if (e.message && e.message.includes('message channel closed')) {
+                  e.preventDefault();
+                  return true;
+                }
+              });
+              
+              // Supprimer également les promesses rejetées liées aux extensions
+              window.addEventListener('unhandledrejection', function(e) {
+                if (e.reason && e.reason.message && e.reason.message.includes('message channel closed')) {
+                  e.preventDefault();
+                  return true;
+                }
+              });
+            `,
+          }}
+        />
+      </head>
       <body>
         <script
           type="application/ld+json"

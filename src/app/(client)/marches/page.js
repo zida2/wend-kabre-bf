@@ -434,8 +434,11 @@ export default function MarchesPage() {
       {/* §5 — Filtres avancés (région / procédure / urgence) */}
       {!loading && !authLoading && !loadError && visibleMarches.length > 0 && (
         <div style={{
-          display: 'flex', flexWrap: 'wrap', gap: '12px',
-          alignItems: 'flex-end', marginBottom: '32px',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+          gap: '12px',
+          alignItems: 'flex-end', 
+          marginBottom: '32px',
         }}>
           <div className="form-group" style={{ margin: 0, flex: '1 1 180px', minWidth: '160px' }}>
             <label className="form-label">📍 Région</label>
