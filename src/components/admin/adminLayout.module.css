@@ -89,7 +89,7 @@
 /* ── Main ── */
 .main {
   margin-left: 260px;
-  padding: 100px 40px 60px;
+  padding: clamp(80px, 12vw, 100px) clamp(20px, 4vw, 40px) clamp(40px, 6vw, 60px);
   min-height: 100vh;
   background: var(--color-bg);
 }
@@ -127,8 +127,8 @@
 
 /* ── Responsive : sidebar devient une barre horizontale ── */
 @media (max-width: 900px) {
-  .main { margin-left: 0; padding: 140px 20px 60px; }
-  .pageHead { left: 0; padding: 14px 20px; }
+  .main { margin-left: 0; padding: clamp(100px, 15vw, 140px) clamp(16px, 3vw, 20px) clamp(30px, 5vw, 60px); }
+  .pageHead { left: 0; padding: clamp(12px, 2vw, 14px) clamp(16px, 3vw, 20px); }
   .sidebar {
     position: fixed;
     top: 80px;
@@ -148,5 +148,25 @@
   .brand { display: none; }
   .navItem { flex-direction: row; white-space: nowrap; width: auto; padding: 9px 14px; margin: 0 4px; }
   .navLabel { flex: none; }
-  .sidebarFoot { display: none; }
+}
+
+@media (max-width: 768px) {
+  .main { 
+    padding: clamp(90px, 12vw, 120px) clamp(12px, 2.5vw, 16px) clamp(24px, 4vw, 40px);
+  }
+  .pageHead { 
+    padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 16px);
+  }
+}
+
+@media (max-width: 480px) {
+  .main { 
+    padding: clamp(80px, 10vw, 100px) 12px 20px;
+  }
+  .pageHead { 
+    padding: 10px 12px;
+  }
+  .pageTitle {
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+  }
 }

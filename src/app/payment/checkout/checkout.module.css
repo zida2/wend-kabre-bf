@@ -3,7 +3,7 @@
 .container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  padding: 40px 20px;
+  padding: clamp(20px, 4vw, 40px) var(--gutter);
 }
 
 .wrapper {
@@ -11,7 +11,35 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: clamp(24px, 5vw, 40px);
+}
+
+@media (max-width: 1024px) {
+  .wrapper {
+    grid-template-columns: 1fr;
+    gap: clamp(16px, 3vw, 24px);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: clamp(16px, 3vw, 24px) var(--gutter);
+  }
+  
+  .wrapper {
+    gap: clamp(12px, 2vw, 16px);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px var(--gutter);
+    min-height: auto;
+  }
+  
+  .wrapper {
+    gap: 12px;
+  }
 }
 
 .loading {
@@ -30,7 +58,7 @@
 }
 
 .summaryTitle {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 800;
   margin: 0;
   color: #1a202c;

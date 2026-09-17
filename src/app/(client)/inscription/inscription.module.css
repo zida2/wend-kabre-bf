@@ -4,7 +4,7 @@
 .heroBanner {
   background: linear-gradient(135deg, var(--primary-light) 0%, var(--forest-light) 100%);
   color: white;
-  padding: 80px 40px;
+  padding: clamp(40px, 8vw, 80px) var(--gutter);
   text-align: center;
   animation: fadeIn 0.4s ease-in;
 }
@@ -27,7 +27,7 @@
 }
 
 .heroTitle {
-  font-size: 2.8rem;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
   font-weight: 800;
   line-height: 1.2;
   margin: 0;
@@ -36,7 +36,7 @@
 }
 
 .heroSubtitle {
-  font-size: 1.2rem;
+  font-size: clamp(0.95rem, 3vw, 1.2rem);
   font-weight: 500;
   opacity: 0.95;
   margin: 0;
@@ -94,7 +94,7 @@
 
 /* MAIN CONTENT */
 .mainContent {
-  padding: 60px 40px;
+  padding: clamp(30px, 6vw, 60px) var(--gutter);
   background: var(--color-background);
 }
 
@@ -233,7 +233,7 @@
 .formCard {
   background: var(--color-surface);
   border-radius: 16px;
-  padding: 48px;
+  padding: clamp(24px, 6vw, 48px);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
   border: 1px solid var(--color-border);
 }

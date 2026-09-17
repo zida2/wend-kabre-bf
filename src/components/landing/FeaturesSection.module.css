@@ -1,5 +1,5 @@
 .section {
-  padding: 6rem var(--gutter);
+  padding: clamp(3rem, 6vw, 6rem) var(--gutter);
   background: white;
 }
 
@@ -9,18 +9,18 @@
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 700;
   text-align: center;
   color: #1f2937;
-  margin: 0 0 1rem;
+  margin: 0 0 clamp(0.75rem, 2vw, 1rem);
 }
 
 .subtitle {
-  font-size: 1.1rem;
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
   text-align: center;
   color: #6b7280;
-  margin: 0 0 3rem;
+  margin: 0 0 clamp(2rem, 4vw, 3rem);
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
@@ -30,16 +30,16 @@
 .featuresGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
-  margin-bottom: 4rem;
+  gap: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: clamp(2rem, 4vw, 4rem);
 }
 
 .featureCard {
   position: relative;
   background: white;
   border: 2px solid #e5e7eb;
-  border-radius: 1rem;
-  padding: 2rem;
+  border-radius: clamp(0.75rem, 1.5vw, 1rem);
+  padding: clamp(1.5rem, 3vw, 2rem);
   transition: all 0.3s ease;
   opacity: 0;
   transform: translateY(20px);
@@ -97,34 +97,34 @@
 .stepsSection {
   background: linear-gradient(135deg, #f0fdf4 0%, #f0fdf4 100%);
   border: 2px solid #bbf7d0;
-  border-radius: 1.5rem;
-  padding: 3rem;
-  margin-top: 3rem;
+  border-radius: clamp(1rem, 2vw, 1.5rem);
+  padding: clamp(2rem, 4vw, 3rem);
+  margin-top: clamp(2rem, 4vw, 3rem);
 }
 
 .stepsTitle {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 700;
   text-align: center;
   color: #1f2937;
-  margin: 0 0 2rem;
+  margin: 0 0 clamp(1.5rem, 3vw, 2rem);
 }
 
 .stepsContainer {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem;
+  gap: clamp(1rem, 2vw, 1.5rem);
   flex-wrap: wrap;
 }
 
 .step {
   display: flex;
   align-items: flex-start;
-  gap: 1rem;
+  gap: clamp(0.75rem, 1.5vw, 1rem);
   background: white;
-  padding: 2rem;
-  border-radius: 1rem;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  border-radius: clamp(0.75rem, 1.5vw, 1rem);
   border-left: 4px solid #10b981;
   min-width: 250px;
   flex: 1;

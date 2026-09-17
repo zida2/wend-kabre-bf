@@ -10,9 +10,9 @@
 .hero {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 80px 40px;
+  padding: clamp(40px, 8vw, 80px) clamp(20px, 4vw, 40px);
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: clamp(40px, 6vw, 60px);
 }
 
 .heroContent {
@@ -21,21 +21,21 @@
 }
 
 .title {
-  font-size: 3.5rem;
+  font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 800;
-  margin: 0 0 20px 0;
+  margin: 0 0 clamp(12px, 2vw, 20px) 0;
   letter-spacing: -1px;
 }
 
 .subtitle {
-  font-size: 1.5rem;
-  margin: 0 0 15px 0;
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  margin: 0 0 clamp(10px, 2vw, 15px) 0;
   opacity: 0.95;
   font-weight: 500;
 }
 
 .description {
-  font-size: 1.1rem;
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
   margin: 0;
   opacity: 0.9;
 }
@@ -44,21 +44,21 @@
 .pricingSection {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px 80px 20px;
+  padding: 0 clamp(16px, 3vw, 20px) clamp(40px, 8vw, 80px) clamp(16px, 3vw, 20px);
 }
 
 .cardsContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 30px;
-  margin-bottom: 80px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(20px, 3vw, 30px);
+  margin-bottom: clamp(40px, 8vw, 80px);
 }
 
 /* Pricing Card */
 .card {
   background: white;
-  border-radius: 12px;
-  padding: 40px 30px;
+  border-radius: clamp(10px, 2vw, 12px);
+  padding: clamp(24px, 4vw, 40px) clamp(20px, 3vw, 30px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   position: relative;
@@ -95,16 +95,16 @@
 
 /* Card Header */
 .cardHeader {
-  margin-bottom: 30px;
+  margin-bottom: clamp(20px, 3vw, 30px);
   text-align: center;
   border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 30px;
+  padding-bottom: clamp(20px, 3vw, 30px);
 }
 
 .planName {
-  font-size: 1.8rem;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
   font-weight: 700;
-  margin: 0 0 15px 0;
+  margin: 0 0 clamp(10px, 2vw, 15px) 0;
   color: #1a202c;
 }
 
@@ -117,7 +117,7 @@
 }
 
 .price {
-  font-size: 2.8rem;
+  font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 800;
   color: #667eea;
 }

@@ -13,7 +13,7 @@
 }
 
 .inner {
-  height: 70px;
+  height: clamp(60px, 10vw, 70px);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -208,4 +208,59 @@
 @media (max-width: 1024px) {
   .navLinks, .navCta { display: none; }
   .burger { display: flex; }
+}
+
+@media (max-width: 768px) {
+  .logo {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    gap: 6px;
+  }
+  
+  .logoIcon {
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
+  }
+  
+  .mobileMenu {
+    padding: 16px var(--gutter) 24px;
+  }
+  
+  .mobileLink {
+    font-size: 0.95rem;
+    padding: 12px 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .inner {
+    gap: 12px;
+  }
+  
+  .logo {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    gap: 4px;
+  }
+  
+  .logoIcon {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+  
+  .mobileMenu {
+    padding: 12px var(--gutter) 16px;
+    gap: 2px;
+  }
+  
+  .mobileLink {
+    font-size: 0.9rem;
+    padding: 10px 4px;
+  }
+  
+  .mobileCta .btnNavGhost,
+  .mobileCta .btnNavPrimary {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
 }
