@@ -648,89 +648,102 @@ export default function GuideSoumissionPage() {
           resultat={resultat}
         />
 
-        {/* Affichage Livre Ouvert - Deux pages côte à côte */}
+        {/* Carousel Horizontal - Table des matières */}
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: 'clamp(20px, 5vw, 32px)',
-          marginBottom: '48px'
+          marginBottom: 'clamp(32px, 6vw, 48px)',
+          scrollBehavior: 'smooth'
         }}>
-          {/* Page Gauche - Table des matières */}
-          <div className="card" style={{ 
-            padding: 'clamp(20px, 4vw, 32px)',
-            background: '#fff',
-            borderRadius: 'var(--radius-lg)',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
-            borderLeft: '8px solid var(--primary)',
-            minHeight: 'clamp(400px, 60vh, 600px)'
+          <div style={{ 
+            marginBottom: 'clamp(16px, 3vw, 24px)'
           }}>
-            <div style={{ 
-              borderBottom: '2px solid var(--primary)', 
-              paddingBottom: 'clamp(12px, 2vw, 16px)',
-              marginBottom: 'clamp(16px, 3vw, 24px)'
-            }}>
-              <h3 className="heading-md" style={{ color: 'var(--primary-dark)', fontSize: 'clamp(1.3rem, 4vw, 1.5rem)' }}>
-                📑 Table des Matières
-              </h3>
-              <p className="text-sm text-secondary" style={{ marginTop: 'clamp(6px, 1.5vw, 8px)', fontSize: 'clamp(0.8rem, 2vw, 0.875rem)' }}>
-                {steps.length} chapitres · Cliquez pour naviguer
-              </p>
-            </div>
-            
-            <div className="flex flex-col gap-2" style={{ maxHeight: '500px', overflowY: 'auto', paddingRight: '8px' }}>
-              {(searchQuery ? filteredSteps : steps).map((step) => (
-                <button
-                  key={step.id}
-                  onClick={() => goToStep(step.id)}
-                  className="flex items-center gap-3 p-3 text-left rounded-lg transition-all hover:shadow-md"
-                  style={{
-                    background: activeStep === step.id ? 'linear-gradient(135deg, var(--primary-muted) 0%, var(--success-muted) 100%)' : 'var(--color-bg-2)',
-                    color: activeStep === step.id ? 'var(--primary-dark)' : 'var(--text-secondary)',
-                    border: activeStep === step.id ? '2px solid var(--primary)' : '1px solid var(--color-border)',
-                    fontWeight: activeStep === step.id ? '700' : '500',
-                    transform: activeStep === step.id ? 'translateX(8px)' : 'translateX(0)',
-                    fontSize: 'clamp(0.85rem, 2vw, 0.95rem)',
-                    padding: 'clamp(8px, 2vw, 12px)'
-                  }}
-                >
-                  <div style={{ 
-                    width: 'clamp(32px, 5vw, 40px)',
-                    height: 'clamp(32px, 5vw, 40px)',
-                    borderRadius: '8px',
-                    background: activeStep === step.id ? 'var(--primary)' : 'var(--color-surface)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: activeStep === step.id ? '#fff' : 'var(--primary)',
-                    flexShrink: 0,
-                    fontSize: 'clamp(0.9rem, 2vw, 1rem)'
-                  }}>
-                    {step.icon}
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 'clamp(0.65rem, 1.5vw, 0.75rem)', opacity: 0.7, marginBottom: '2px' }}>
-                      Chapitre {step.id}
-                    </div>
-                    <div style={{ fontSize: 'clamp(0.8rem, 2vw, 0.95rem)', wordBreak: 'break-word' }}>{step.title}</div>
-                  </div>
-                  {activeStep === step.id && (
-                    <ChevronRight size={20} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-                  )}
-                </button>
-              ))}
-            </div>
+            <h3 className="heading-md" style={{ color: 'var(--primary-dark)', fontSize: 'clamp(1.3rem, 4vw, 1.5rem)', marginBottom: 'clamp(8px, 1.5vw, 12px)' }}>
+              📑 Table des Matières
+            </h3>
+            <p className="text-sm text-secondary" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.875rem)' }}>
+              {steps.length} chapitres · Défilez ou cliquez pour naviguer
+            </p>
           </div>
 
-          {/* Page Droite - Contenu du chapitre */}
-          <div className="card" style={{ 
-            padding: 'clamp(24px, 4vw, 40px)',
-            background: '#fff',
-            borderRadius: 'var(--radius-lg)',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
-            borderRight: '8px solid var(--accent)',
-            minHeight: 'clamp(400px, 60vh, 600px)',
-            position: 'relative'
+          {/* Carousel container */}
+          <div style={{
+            display: 'flex',
+            gap: 'clamp(12px, 2vw, 16px)',
+            overflowX: 'auto',
+            overflowY: 'hidden',
+            paddingBottom: 'clamp(8px, 1.5vw, 12px)',
+            scrollBehavior: 'smooth',
+            WebkitOverflowScrolling: 'touch',
+            // Smooth scrollbar styling
+            scrollbarWidth: 'thin',
+            scrollbarColor: 'var(--color-border) transparent'
           }}>
+            {(searchQuery ? filteredSteps : steps).map((step) => (
+              <button
+                key={step.id}
+                onClick={() => goToStep(step.id)}
+                style={{
+                  flex: '0 0 clamp(160px, 25vw, 220px)',
+                  padding: 'clamp(16px, 2.5vw, 20px)',
+                  background: activeStep === step.id ? 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)' : '#fff',
+                  border: activeStep === step.id ? 'none' : '2px solid var(--color-border)',
+                  borderRadius: 'var(--radius-md)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: activeStep === step.id ? '0 8px 24px rgba(6,78,59,0.25)' : '0 2px 8px rgba(0,0,0,0.05)',
+                  transform: activeStep === step.id ? 'translateY(-4px)' : 'translateY(0)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 'clamp(8px, 1.5vw, 12px)',
+                  textAlign: 'center',
+                  whiteSpace: 'normal',
+                  color: activeStep === step.id ? '#fff' : 'var(--text-primary)',
+                  minWidth: 0
+                }}
+              >
+                <div style={{ 
+                  width: 'clamp(40px, 6vw, 48px)',
+                  height: 'clamp(40px, 6vw, 48px)',
+                  borderRadius: '12px',
+                  background: activeStep === step.id ? 'rgba(255,255,255,0.2)' : 'linear-gradient(135deg, var(--primary-muted) 0%, var(--success-muted) 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: activeStep === step.id ? '#fff' : 'var(--primary)',
+                  fontSize: 'clamp(1rem, 2.5vw, 1.4rem)',
+                  flexShrink: 0
+                }}>
+                  {step.icon}
+                </div>
+                
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ fontSize: 'clamp(0.65rem, 1.5vw, 0.75rem)', opacity: activeStep === step.id ? 0.9 : 0.6, marginBottom: '2px', fontWeight: 600 }}>
+                    CH. {step.id}
+                  </div>
+                  <div style={{ 
+                    fontSize: 'clamp(0.75rem, 2vw, 0.85rem)', 
+                    wordBreak: 'break-word',
+                    fontWeight: activeStep === step.id ? '700' : '600',
+                    lineHeight: '1.2'
+                  }}>
+                    {step.title}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Contenu du chapitre - Pleine largeur */}
+        <div className="card" style={{ 
+          padding: 'clamp(24px, 4vw, 40px)',
+          background: '#fff',
+          borderRadius: 'var(--radius-lg)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+          borderRight: '8px solid var(--accent)',
+          minHeight: 'clamp(400px, 60vh, 600px)',
+          position: 'relative'
+        }}>
             {/* En-tête du chapitre */}
             <div style={{ marginBottom: 'clamp(20px, 4vw, 32px)' }}>
               <div className="flex items-start gap-3 mb-4" style={{ flexWrap: 'wrap' }}>
@@ -882,7 +895,6 @@ export default function GuideSoumissionPage() {
               </button>
             </div>
           </div>
-        </div>
 
         {/* Footer du guide */}
         <div className="card" style={{

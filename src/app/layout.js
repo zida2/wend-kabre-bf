@@ -120,6 +120,19 @@ export default function RootLayout({ children }) {
                   return true;
                 }
               });
+              
+              // Supprimer l'avertissement CSS preload non utilisé (Next.js optimization)
+              window.addEventListener('DOMContentLoaded', function() {
+                // Mark preloaded stylesheets as used to suppress console warnings
+                const links = document.querySelectorAll('link[rel="preload"][as="style"]');
+                links.forEach(link => {
+                  // Convert preload to stylesheet after page load
+                  if (!link.dataset.loaded) {
+                    link.rel = 'stylesheet';
+                    link.dataset.loaded = 'true';
+                  }
+                });
+              });
             `,
           }}
         />
