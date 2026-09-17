@@ -6,14 +6,13 @@ import { auth, db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { track } from '@/lib/track';
+import styles from './profil.module.css';
 
 export const dynamic = 'force-dynamic';
 
-function CompanyInfoCard({ label, value, icon = '📋', editable = false, onEdit = null }) {
+function CompanyInfoField({ label, value, icon = '📋', editable = false, onEdit = null, type = 'text', placeholder = '' }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value || '');
-
-  if (!value && !editable) return null;
 
   const handleSave = async () => {
     if (onEdit) {
@@ -23,76 +22,93 @@ function CompanyInfoCard({ label, value, icon = '📋', editable = false, onEdit
   };
 
   return (
-    <div style={{ 
-      background: 'var(--color-surface)', 
-      border: '1px solid var(--color-border)', 
-      borderRadius: 'var(--radius-sm)', 
-      padding: '16px',
-      display: 'flex',
-      alignItems: 'flex-start',
-      gap: '12px'
-    }}>
-      <span style={{ fontSize: '1.4rem', flexShrink: 0 }}>{icon}</span>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <p className="text-xs text-muted" style={{ marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-          {label}
-        </p>
-        {isEditing ? (
-          <div className="flex gap-2">
-            <input 
-              type="text"
-              value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
-              className="text-sm"
-              style={{
-                flex: 1,
-                padding: '8px 12px',
-                border: '1px solid var(--primary)',
-                borderRadius: 'var(--radius-sm)',
-                background: 'var(--color-bg)',
-                color: 'var(--text-primary)'
-              }}
-            />
-            <button
-              onClick={handleSave}
-              className="btn btn-primary btn-sm"
-              style={{ padding: '8px 12px', fontSize: '0.8rem' }}
-            >
-              ✓
-            </button>
-            <button
+    <div className={styles.infoField}>
+      <label className={styles.fieldLabel}>
+        <span className={styles.fieldIcon}>{icon}</span>
+        {label}
+      </label>
+      {isEditing ? (
+        <div className={styles.editMode}>
+          <input 
+            type={type}
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            placeholder={placeholder}
+            className={styles.fieldInput}
+          />
+          <div className={styles.editActions}>
+            <button onClick={handleSave} className="btn btn-primary btn-sm">✓</button>
+            <button 
               onClick={() => {
                 setEditValue(value || '');
                 setIsEditing(false);
-              }}
+              }} 
               className="btn btn-outline btn-sm"
-              style={{ padding: '8px 12px', fontSize: '0.8rem' }}
-            >
-              ✕
-            </button>
+            >✕</button>
           </div>
-        ) : (
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-sm text-primary" style={{ fontWeight: 600, wordBreak: 'break-word' }}>
-              {value || 'Non renseigné'}
-            </p>
-            {editable && (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="btn btn-ghost btn-sm"
-                style={{ padding: '4px 8px', fontSize: '0.75rem', flexShrink: 0 }}
-              >
-                ✎
-              </button>
-            )}
-          </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className={styles.viewMode}>
+          <p className={styles.fieldValue}>{value || 'Non renseigné'}</p>
+          {editable && (
+            <button onClick={() => setIsEditing(true)} className={styles.editBtn}>✎</button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-function DocumentSection({ title, icon, items, onAddItem }) {
+function CompanyTextArea({ label, value, icon = '📋', editable = false, onEdit = null, placeholder = '', rows = 4 }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(value || '');
+
+  const handleSave = async () => {
+    if (onEdit) {
+      await onEdit(editValue);
+      setIsEditing(false);
+    }
+  };
+
+  return (
+    <div className={styles.textareaField}>
+      <label className={styles.fieldLabel}>
+        <span className={styles.fieldIcon}>{icon}</span>
+        {label}
+      </label>
+      {isEditing ? (
+        <div className={styles.editMode}>
+          <textarea
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            placeholder={placeholder}
+            rows={rows}
+            className={styles.fieldTextarea}
+          />
+          <div className={styles.editActions}>
+            <button onClick={handleSave} className="btn btn-primary btn-sm">✓ Enregistrer</button>
+            <button 
+              onClick={() => {
+                setEditValue(value || '');
+                setIsEditing(false);
+              }} 
+              className="btn btn-outline btn-sm"
+            >✕ Annuler</button>
+          </div>
+        </div>
+      ) : (
+        <div className={styles.viewMode}>
+          <p className={styles.fieldTextValue}>{value || 'Non renseigné'}</p>
+          {editable && (
+            <button onClick={() => setIsEditing(true)} className={styles.editBtn}>✎ Modifier</button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DocumentSection({ title, icon, items, onAddItem, editable, placeholder }) {
   const [newItem, setNewItem] = useState('');
 
   const handleAdd = () => {
@@ -103,85 +119,47 @@ function DocumentSection({ title, icon, items, onAddItem }) {
   };
 
   return (
-    <div style={{ 
-      background: 'var(--color-surface-2)',
-      border: '1px solid var(--color-border)',
-      borderRadius: 'var(--radius-md)',
-      padding: '20px'
-    }}>
-      <h3 className="heading-sm" style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div className={styles.documentSection}>
+      <h4 className={styles.sectionTitle}>
         <span style={{ fontSize: '1.4rem' }}>{icon}</span>
         {title}
-      </h3>
+      </h4>
 
       {items && items.length > 0 ? (
-        <ul style={{ 
-          listStyle: 'none',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: '12px',
-          marginBottom: '16px'
-        }}>
+        <ul className={styles.itemsList}>
           {items.map((item, i) => (
-            <li 
-              key={i}
-              style={{
-                background: 'var(--color-surface)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-sm)',
-                padding: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '8px'
-              }}
-            >
-              <span className="text-sm text-primary" style={{ fontWeight: 500, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item}>
-                ✓ {item}
-              </span>
-              <button
-                onClick={() => onAddItem(null, i)}
-                className="btn btn-ghost btn-sm"
-                style={{ padding: '4px 8px', fontSize: '0.75rem', color: 'var(--danger)', flexShrink: 0 }}
-              >
-                ✕
-              </button>
+            <li key={i} className={styles.item}>
+              <span className={styles.itemText}>✓ {item}</span>
+              {editable && (
+                <button
+                  onClick={() => onAddItem(null, i)}
+                  className={styles.removeBtn}
+                >
+                  ✕
+                </button>
+              )}
             </li>
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-secondary" style={{ marginBottom: '16px', fontStyle: 'italic' }}>
-          Aucun élément pour le moment
-        </p>
+        <p className={styles.emptyText}>Aucun élément pour le moment</p>
       )}
 
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={newItem}
-          onChange={(e) => setNewItem(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') handleAdd();
-          }}
-          placeholder={`Ajouter un élément à ${title.toLowerCase()}`}
-          className="text-sm"
-          style={{
-            flex: 1,
-            padding: '8px 12px',
-            border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-sm)',
-            background: 'var(--color-bg)',
-            color: 'var(--text-primary)'
-          }}
-        />
-        <button
-          onClick={handleAdd}
-          className="btn btn-primary btn-sm"
-          style={{ padding: '8px 16px', fontSize: '0.8rem', flexShrink: 0 }}
-        >
-          + Ajouter
-        </button>
-      </div>
+      {editable && (
+        <div className={styles.addItem}>
+          <input
+            type="text"
+            value={newItem}
+            onChange={(e) => setNewItem(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') handleAdd();
+            }}
+            placeholder={placeholder || `Ajouter un élément`}
+            className={styles.addInput}
+          />
+          <button onClick={handleAdd} className="btn btn-primary btn-sm">+ Ajouter</button>
+        </div>
+      )}
     </div>
   );
 }
@@ -195,6 +173,7 @@ function CompanyProfileContent() {
   const [companyData, setCompanyData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState('identity');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -211,7 +190,6 @@ function CompanyProfileContent() {
 
     const loadCompany = async () => {
       try {
-        // Load from user's companyProfile sub-collection
         const userRef = doc(db, 'users', user.uid);
         const userSnap = await getDoc(userRef);
 
@@ -220,23 +198,77 @@ function CompanyProfileContent() {
         } else {
           const defaultCompany = {
             userId: user.uid,
+            // Identification
             name: '',
             rccm: '',
             ifu: '',
+            legalForm: '',
+            creationDate: '',
+            
+            // Contacts
             email: user.email,
             phone: '',
+            phone2: '',
+            fax: '',
             address: '',
             city: '',
+            postalCode: '',
+            country: 'Burkina Faso',
             website: '',
+            
+            // Activité
             sector: '',
+            mainActivity: '',
+            secondaryActivities: [],
+            specializations: [],
+            serviceCategories: [],
+            
+            // Capacités
             employees: '',
             yearsInBusiness: '',
             description: '',
-            references: [],
+            vision: '',
+            mission: '',
+            values: [],
+            
+            // Financier
+            capitalSocial: '',
+            annualRevenue: '',
+            revenueYear: '',
+            
+            // Certifications & Agréments
             certifications: [],
-            capabilities: [],
+            accreditations: [],
+            insurances: [],
+            bankReferences: [],
+            
+            // Expérience
+            references: [],
+            majorProjects: [],
+            notableClients: [],
+            awardsAndRecognitions: [],
+            
+            // Ressources
             equipment: [],
-            team: [],
+            facilities: [],
+            softwareTools: [],
+            capabilities: [],
+            
+            // Équipe
+            keyPersonnel: [],
+            technicalStaff: [],
+            qualifications: [],
+            
+            // Documents
+            documents: [],
+            
+            // Zones d'intervention
+            interventionZones: [],
+            
+            // Partenariats
+            partnerships: [],
+            suppliers: [],
+            
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           };
@@ -244,17 +276,16 @@ function CompanyProfileContent() {
         }
       } catch (e) {
         console.error('Error loading company:', e);
-        // Still show default even on error
         const defaultCompany = {
           userId: user.uid,
           name: '',
           rccm: '',
           ifu: '',
+          legalForm: '',
           email: user.email,
           phone: '',
           address: '',
           city: '',
-          website: '',
           sector: '',
           employees: '',
           yearsInBusiness: '',
@@ -263,7 +294,6 @@ function CompanyProfileContent() {
           certifications: [],
           capabilities: [],
           equipment: [],
-          team: [],
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
@@ -286,14 +316,14 @@ function CompanyProfileContent() {
       const { id, ...dataToSave } = companyData;
       dataToSave.updatedAt = new Date().toISOString();
 
-      // Save to user's companyProfile field
       const userRef = doc(db, 'users', user.uid);
       await setDoc(userRef, { companyProfile: dataToSave }, { merge: true });
 
       setIsEditing(false);
+      alert('✅ Profil enregistré avec succès!');
     } catch (e) {
       console.error('Error saving company:', e);
-      alert('Erreur lors de la sauvegarde');
+      alert('❌ Erreur lors de la sauvegarde');
     } finally {
       setSaving(false);
     }
@@ -317,18 +347,18 @@ function CompanyProfileContent() {
 
   if (loading) {
     return (
-      <div className="text-center" style={{ padding: '80px 20px', paddingTop: '150px' }}>
-        <span className="loader" style={{ width: '40px', height: '40px' }}></span>
-        <p className="text-secondary" style={{ marginTop: '16px' }}>Chargement du profil d'entreprise...</p>
+      <div className={styles.loadingContainer}>
+        <span className="loader"></span>
+        <p>Chargement du profil d'entreprise...</p>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="text-center" style={{ padding: '80px 20px', paddingTop: '150px' }}>
-        <h2 className="heading-md">Accès réservé</h2>
-        <p className="text-secondary" style={{ marginBottom: '24px' }}>Connectez-vous pour accéder à votre profil d'entreprise.</p>
+      <div className={styles.authContainer}>
+        <h2>🔒 Accès réservé</h2>
+        <p>Connectez-vous pour accéder à votre profil d'entreprise.</p>
         <Link href="/connexion" className="btn btn-primary">Se connecter</Link>
       </div>
     );
@@ -336,24 +366,40 @@ function CompanyProfileContent() {
 
   if (!companyData) {
     return (
-      <div className="text-center" style={{ padding: '80px 20px', paddingTop: '150px' }}>
-        <h2 className="heading-md">Erreur</h2>
-        <p className="text-secondary">Impossible de charger le profil.</p>
+      <div className={styles.errorContainer}>
+        <h2>❌ Erreur</h2>
+        <p>Impossible de charger le profil.</p>
       </div>
     );
   }
 
+  const tabs = [
+    { id: 'identity', label: '🏢 Identification', icon: '🏢' },
+    { id: 'contacts', label: '📞 Contacts', icon: '📞' },
+    { id: 'activity', label: '💼 Activité', icon: '💼' },
+    { id: 'financial', label: '💰 Financier', icon: '💰' },
+    { id: 'certifications', label: '🏆 Certifications', icon: '🏆' },
+    { id: 'experience', label: '⭐ Expérience', icon: '⭐' },
+    { id: 'resources', label: '🔧 Ressources', icon: '🔧' },
+    { id: 'team', label: '👥 Équipe', icon: '👥' },
+    { id: 'zones', label: '🌍 Zones', icon: '🌍' },
+    { id: 'partnerships', label: '🤝 Partenariats', icon: '🤝' },
+  ];
+
   return (
-    <div style={{ paddingTop: '90px', paddingBottom: '60px' }}>
-      <div className="container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
-        <div className="flex justify-between items-start" style={{ marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
-          <div>
-            <h1 className="heading-lg" style={{ marginBottom: '8px' }}>
+    <div className={styles.pageWrapper}>
+      <div className={styles.container}>
+        {/* Header */}
+        <div className={styles.header}>
+          <div className={styles.headerLeft}>
+            <h1 className={styles.pageTitle}>
               {companyData.name || 'Mon Profil Entreprise'}
             </h1>
-            <p className="text-secondary">Gérez les informations de votre entreprise pour l'IA</p>
+            <p className={styles.pageSubtitle}>
+              Complétez votre profil pour que l'IA puisse mieux vous assister dans vos candidatures
+            </p>
           </div>
-          <div className="flex gap-2" style={{ flexShrink: 0 }}>
+          <div className={styles.headerRight}>
             {isEditing ? (
               <>
                 <button
@@ -381,188 +427,531 @@ function CompanyProfileContent() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
-          <div className="card">
-            <h2 className="heading-md" style={{ marginBottom: '16px' }}>🏢 Identification</h2>
-            <div className="flex flex-col gap-3">
-              <CompanyInfoCard
-                label="Raison Sociale / Dénomination"
-                value={companyData.name}
-                icon="🏛️"
-                editable={isEditing}
-                onEdit={(val) => updateField('name', val)}
-              />
-              <CompanyInfoCard
-                label="RCCM (Registre du Commerce)"
-                value={companyData.rccm}
-                icon="📜"
-                editable={isEditing}
-                onEdit={(val) => updateField('rccm', val)}
-              />
-              <CompanyInfoCard
-                label="IFU (Identifiant Financier Unique)"
-                value={companyData.ifu}
-                icon="💳"
-                editable={isEditing}
-                onEdit={(val) => updateField('ifu', val)}
-              />
-              <CompanyInfoCard
-                label="Secteur d'activité"
-                value={companyData.sector}
-                icon="🏭"
-                editable={isEditing}
-                onEdit={(val) => updateField('sector', val)}
-              />
-            </div>
+        {/* Completion Progress */}
+        <div className={styles.progressCard}>
+          <div className={styles.progressHeader}>
+            <h3>📊 Complétude du profil</h3>
+            <span className={styles.progressPercent}>
+              {Math.round(
+                (Object.values(companyData).filter(v => 
+                  v && (typeof v !== 'object' || (Array.isArray(v) && v.length > 0))
+                ).length / Object.keys(companyData).length) * 100
+              )}%
+            </span>
           </div>
-
-          <div className="card">
-            <h2 className="heading-md" style={{ marginBottom: '16px' }}>📍 Contacts & Localisation</h2>
-            <div className="flex flex-col gap-3">
-              <CompanyInfoCard
-                label="Email"
-                value={companyData.email}
-                icon="📧"
-                editable={isEditing}
-                onEdit={(val) => updateField('email', val)}
-              />
-              <CompanyInfoCard
-                label="Téléphone"
-                value={companyData.phone}
-                icon="☎️"
-                editable={isEditing}
-                onEdit={(val) => updateField('phone', val)}
-              />
-              <CompanyInfoCard
-                label="Adresse"
-                value={companyData.address}
-                icon="📌"
-                editable={isEditing}
-                onEdit={(val) => updateField('address', val)}
-              />
-              <CompanyInfoCard
-                label="Ville / Région"
-                value={companyData.city}
-                icon="🌍"
-                editable={isEditing}
-                onEdit={(val) => updateField('city', val)}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="card" style={{ marginBottom: '24px' }}>
-          <h2 className="heading-md" style={{ marginBottom: '16px' }}>📝 À Propos</h2>
-          <div className="grid grid-2 gap-4" style={{ marginBottom: '16px' }}>
-            <CompanyInfoCard
-              label="Nombre d'Employés"
-              value={companyData.employees}
-              icon="👥"
-              editable={isEditing}
-              onEdit={(val) => updateField('employees', val)}
-            />
-            <CompanyInfoCard
-              label="Années d'Expérience"
-              value={companyData.yearsInBusiness}
-              icon="⏳"
-              editable={isEditing}
-              onEdit={(val) => updateField('yearsInBusiness', val)}
+          <div className={styles.progressBar}>
+            <div 
+              className={styles.progressFill} 
+              style={{ 
+                width: `${Math.round(
+                  (Object.values(companyData).filter(v => 
+                    v && (typeof v !== 'object' || (Array.isArray(v) && v.length > 0))
+                  ).length / Object.keys(companyData).length) * 100
+                )}%` 
+              }}
             />
           </div>
-          <div>
-            <p className="text-xs text-muted" style={{ marginBottom: '8px', fontWeight: 600, textTransform: 'uppercase' }}>
-              Description / Présentation
-            </p>
-            {isEditing ? (
-              <textarea
-                value={companyData.description || ''}
-                onChange={(e) => updateField('description', e.target.value)}
-                placeholder="Décrivez votre entreprise, ses forces et son positionnement..."
-                className="text-sm"
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  minHeight: '120px',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-sm)',
-                  background: 'var(--color-bg)',
-                  color: 'var(--text-primary)',
-                  fontFamily: 'inherit',
-                  resize: 'vertical'
-                }}
-              />
-            ) : (
-              <p className="text-sm text-primary" style={{ lineHeight: 1.6 }}>
-                {companyData.description || 'Aucune description renseignée'}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {isEditing && (
-          <div className="grid grid-2 gap-4" style={{ marginBottom: '24px' }}>
-            <DocumentSection
-              title="Certifications & Agréments"
-              icon="🏆"
-              items={companyData.certifications}
-              onAddItem={(item, idx) => updateArrayField('certifications', item, idx)}
-            />
-            <DocumentSection
-              title="Références de Projets"
-              icon="⭐"
-              items={companyData.references}
-              onAddItem={(item, idx) => updateArrayField('references', item, idx)}
-            />
-            <DocumentSection
-              title="Équipements & Ressources"
-              icon="🔧"
-              items={companyData.equipment}
-              onAddItem={(item, idx) => updateArrayField('equipment', item, idx)}
-            />
-            <DocumentSection
-              title="Compétences Clés"
-              icon="💡"
-              items={companyData.capabilities}
-              onAddItem={(item, idx) => updateArrayField('capabilities', item, idx)}
-            />
-          </div>
-        )}
-
-        {!isEditing && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-            <DocumentSection
-              title="Certifications & Agréments"
-              icon="🏆"
-              items={companyData.certifications}
-              onAddItem={() => {}}
-            />
-            <DocumentSection
-              title="Références de Projets"
-              icon="⭐"
-              items={companyData.references}
-              onAddItem={() => {}}
-            />
-            <DocumentSection
-              title="Équipements & Ressources"
-              icon="🔧"
-              items={companyData.equipment}
-              onAddItem={() => {}}
-            />
-            <DocumentSection
-              title="Compétences Clés"
-              icon="💡"
-              items={companyData.capabilities}
-              onAddItem={() => {}}
-            />
-          </div>
-        )}
-
-        <div style={{ marginTop: '32px', textAlign: 'center', paddingTop: '24px', borderTop: '1px solid var(--color-border)' }}>
-          <p className="text-xs text-muted">
-            Dernier mise à jour : {new Date(companyData.updatedAt).toLocaleDateString('fr-FR')}
+          <p className={styles.progressHint}>
+            💡 Plus votre profil est complet, plus l'IA pourra générer des offres techniques pertinentes et personnalisées
           </p>
-          <p className="text-xs text-secondary" style={{ marginTop: '8px' }}>
-            Ces informations seront utilisées par l'IA pour générer vos offres techniques avec plus de précision.
+        </div>
+
+        {/* Tabs Navigation */}
+        <div className={styles.tabs}>
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''}`}
+            >
+              <span className={styles.tabIcon}>{tab.icon}</span>
+              <span className={styles.tabLabel}>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <div className={styles.tabContent}>
+          {/* IDENTIFICATION */}
+          {activeTab === 'identity' && (
+            <div className={styles.section}>
+              <h2 className={styles.sectionHeading}>🏢 Identification de l'entreprise</h2>
+              <div className={styles.grid2}>
+                <CompanyInfoField
+                  label="Raison Sociale / Dénomination"
+                  value={companyData.name}
+                  icon="🏛️"
+                  editable={isEditing}
+                  onEdit={(val) => updateField('name', val)}
+                  placeholder="Ex: BURKINA CONSTRUCTION SARL"
+                />
+                <CompanyInfoField
+                  label="Forme Juridique"
+                  value={companyData.legalForm}
+                  icon="⚖️"
+                  editable={isEditing}
+                  onEdit={(val) => updateField('legalForm', val)}
+                  placeholder="Ex: SARL, SA, SAS, SARLU"
+                />
+                <CompanyInfoField
+                  label="RCCM (Registre du Commerce)"
+                  value={companyData.rccm}
+                  icon="📜"
+                  editable={isEditing}
+                  onEdit={(val) => updateField('rccm', val)}
+                  placeholder="Ex: BF OUA 2023 B 1234"
+                />
+                <CompanyInfoField
+                  label="IFU (Identifiant Financier Unique)"
+                  value={companyData.ifu}
+                  icon="💳"
+                  editable={isEditing}
+                  onEdit={(val) => updateField('ifu', val)}
+                  placeholder="Ex: 00012345Z"
+                />
+                <CompanyInfoField
+                  label="Date de Création"
+                  value={companyData.creationDate}
+                  icon="📅"
+                  editable={isEditing}
+                  type="date"
+                  onEdit={(val) => updateField('creationDate', val)}
+                />
+                <CompanyInfoField
+                  label="Années d'Expérience"
+                  value={companyData.yearsInBusiness}
+                  icon="⏳"
+                  editable={isEditing}
+                  type="number"
+                  onEdit={(val) => updateField('yearsInBusiness', val)}
+                  placeholder="Ex: 15"
+                />
+              </div>
+              <CompanyTextArea
+                label="Description de l'entreprise"
+                value={companyData.description}
+                icon="📝"
+                editable={isEditing}
+                onEdit={(val) => updateField('description', val)}
+                placeholder="Présentez votre entreprise, ses forces et son positionnement sur le marché..."
+                rows={5}
+              />
+              <div className={styles.grid2}>
+                <CompanyTextArea
+                  label="Vision"
+                  value={companyData.vision}
+                  icon="🎯"
+                  editable={isEditing}
+                  onEdit={(val) => updateField('vision', val)}
+                  placeholder="Quelle est votre vision à long terme?"
+                  rows={3}
+                />
+                <CompanyTextArea
+                  label="Mission"
+                  value={companyData.mission}
+                  icon="🚀"
+                  editable={isEditing}
+                  onEdit={(val) => updateField('mission', val)}
+                  placeholder="Quelle est votre mission principale?"
+                  rows={3}
+                />
+              </div>
+              <DocumentSection
+                title="Valeurs de l'entreprise"
+                icon="💎"
+                items={companyData.values}
+                onAddItem={(item, idx) => updateArrayField('values', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: Intégrité, Excellence, Innovation"
+              />
+            </div>
+          )}
+
+          {/* CONTACTS */}
+          {activeTab === 'contacts' && (
+            <div className={styles.section}>
+              <h2 className={styles.sectionHeading}>📞 Informations de Contact</h2>
+              <div className={styles.grid2}>
+                <CompanyInfoField
+                  label="Email Principal"
+                  value={companyData.email}
+                  icon="📧"
+                  editable={isEditing}
+                  type="email"
+                  onEdit={(val) => updateField('email', val)}
+                  placeholder="contact@entreprise.bf"
+                />
+                <CompanyInfoField
+                  label="Site Web"
+                  value={companyData.website}
+                  icon="🌐"
+                  editable={isEditing}
+                  type="url"
+                  onEdit={(val) => updateField('website', val)}
+                  placeholder="https://www.entreprise.bf"
+                />
+                <CompanyInfoField
+                  label="Téléphone Principal"
+                  value={companyData.phone}
+                  icon="☎️"
+                  editable={isEditing}
+                  type="tel"
+                  onEdit={(val) => updateField('phone', val)}
+                  placeholder="+226 XX XX XX XX"
+                />
+                <CompanyInfoField
+                  label="Téléphone Secondaire"
+                  value={companyData.phone2}
+                  icon="📱"
+                  editable={isEditing}
+                  type="tel"
+                  onEdit={(val) => updateField('phone2', val)}
+                  placeholder="+226 XX XX XX XX"
+                />
+                <CompanyInfoField
+                  label="Fax"
+                  value={companyData.fax}
+                  icon="📠"
+                  editable={isEditing}
+                  type="tel"
+                  onEdit={(val) => updateField('fax', val)}
+                  placeholder="+226 XX XX XX XX"
+                />
+              </div>
+              <h3 className={styles.subheading}>📍 Adresse</h3>
+              <div className={styles.grid2}>
+                <CompanyInfoField
+                  label="Adresse Complète"
+                  value={companyData.address}
+                  icon="📌"
+                  editable={isEditing}
+                  onEdit={(val) => updateField('address', val)}
+                  placeholder="Ex: Secteur 15, Avenue Kwame N'Krumah"
+                />
+                <CompanyInfoField
+                  label="Ville / Commune"
+                  value={companyData.city}
+                  icon="🏙️"
+                  editable={isEditing}
+                  onEdit={(val) => updateField('city', val)}
+                  placeholder="Ex: Ouagadougou"
+                />
+                <CompanyInfoField
+                  label="Code Postal"
+                  value={companyData.postalCode}
+                  icon="📮"
+                  editable={isEditing}
+                  onEdit={(val) => updateField('postalCode', val)}
+                  placeholder="Ex: 01 BP 1234"
+                />
+                <CompanyInfoField
+                  label="Pays"
+                  value={companyData.country}
+                  icon="🌍"
+                  editable={isEditing}
+                  onEdit={(val) => updateField('country', val)}
+                  placeholder="Burkina Faso"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* ACTIVITÉ */}
+          {activeTab === 'activity' && (
+            <div className={styles.section}>
+              <h2 className={styles.sectionHeading}>💼 Domaine d'Activité</h2>
+              <div className={styles.grid2}>
+                <CompanyInfoField
+                  label="Secteur Principal"
+                  value={companyData.sector}
+                  icon="🏭"
+                  editable={isEditing}
+                  onEdit={(val) => updateField('sector', val)}
+                  placeholder="Ex: BTP, Informatique, Consulting"
+                />
+                <CompanyInfoField
+                  label="Activité Principale"
+                  value={companyData.mainActivity}
+                  icon="🎯"
+                  editable={isEditing}
+                  onEdit={(val) => updateField('mainActivity', val)}
+                  placeholder="Ex: Construction de bâtiments"
+                />
+              </div>
+              <DocumentSection
+                title="Activités Secondaires"
+                icon="📋"
+                items={companyData.secondaryActivities}
+                onAddItem={(item, idx) => updateArrayField('secondaryActivities', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: Travaux publics, Réhabilitation"
+              />
+              <DocumentSection
+                title="Spécialisations"
+                icon="⚡"
+                items={companyData.specializations}
+                onAddItem={(item, idx) => updateArrayField('specializations', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: Génie civil, Électricité industrielle"
+              />
+              <DocumentSection
+                title="Catégories de Services"
+                icon="🛠️"
+                items={companyData.serviceCategories}
+                onAddItem={(item, idx) => updateArrayField('serviceCategories', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: Études techniques, Maîtrise d'œuvre"
+              />
+            </div>
+          )}
+
+          {/* FINANCIER */}
+          {activeTab === 'financial' && (
+            <div className={styles.section}>
+              <h2 className={styles.sectionHeading}>💰 Informations Financières</h2>
+              <div className={styles.grid3}>
+                <CompanyInfoField
+                  label="Capital Social"
+                  value={companyData.capitalSocial}
+                  icon="💵"
+                  editable={isEditing}
+                  onEdit={(val) => updateField('capitalSocial', val)}
+                  placeholder="Ex: 10 000 000 FCFA"
+                />
+                <CompanyInfoField
+                  label="Chiffre d'Affaires Annuel"
+                  value={companyData.annualRevenue}
+                  icon="📊"
+                  editable={isEditing}
+                  onEdit={(val) => updateField('annualRevenue', val)}
+                  placeholder="Ex: 500 000 000 FCFA"
+                />
+                <CompanyInfoField
+                  label="Année de Référence"
+                  value={companyData.revenueYear}
+                  icon="📅"
+                  editable={isEditing}
+                  type="number"
+                  onEdit={(val) => updateField('revenueYear', val)}
+                  placeholder="Ex: 2023"
+                />
+                <CompanyInfoField
+                  label="Nombre d'Employés"
+                  value={companyData.employees}
+                  icon="👥"
+                  editable={isEditing}
+                  type="number"
+                  onEdit={(val) => updateField('employees', val)}
+                  placeholder="Ex: 50"
+                />
+              </div>
+              <DocumentSection
+                title="Références Bancaires"
+                icon="🏦"
+                items={companyData.bankReferences}
+                onAddItem={(item, idx) => updateArrayField('bankReferences', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: Ecobank Burkina - Compte N° 12345678"
+              />
+              <DocumentSection
+                title="Assurances"
+                icon="🛡️"
+                items={companyData.insurances}
+                onAddItem={(item, idx) => updateArrayField('insurances', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: RC Professionnelle - NSIA Assurances"
+              />
+            </div>
+          )}
+
+          {/* CERTIFICATIONS */}
+          {activeTab === 'certifications' && (
+            <div className={styles.section}>
+              <h2 className={styles.sectionHeading}>🏆 Certifications & Agréments</h2>
+              <DocumentSection
+                title="Certifications ISO / Qualité"
+                icon="✅"
+                items={companyData.certifications}
+                onAddItem={(item, idx) => updateArrayField('certifications', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: ISO 9001:2015, ISO 14001"
+              />
+              <DocumentSection
+                title="Agréments Techniques"
+                icon="📜"
+                items={companyData.accreditations}
+                onAddItem={(item, idx) => updateArrayField('accreditations', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: Agrément Catégorie B1 - Ministère des Infrastructures"
+              />
+              <DocumentSection
+                title="Distinctions & Récompenses"
+                icon="🏅"
+                items={companyData.awardsAndRecognitions}
+                onAddItem={(item, idx) => updateArrayField('awardsAndRecognitions', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: Prix de l'Excellence 2022 - CNPB"
+              />
+            </div>
+          )}
+
+          {/* EXPÉRIENCE */}
+          {activeTab === 'experience' && (
+            <div className={styles.section}>
+              <h2 className={styles.sectionHeading}>⭐ Expérience & Références</h2>
+              <DocumentSection
+                title="Projets Majeurs Réalisés"
+                icon="🏗️"
+                items={companyData.majorProjects}
+                onAddItem={(item, idx) => updateArrayField('majorProjects', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: Construction du Centre Commercial XYZ - 2021 (500M FCFA)"
+              />
+              <DocumentSection
+                title="Clients Notables"
+                icon="🌟"
+                items={companyData.notableClients}
+                onAddItem={(item, idx) => updateArrayField('notableClients', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: Ministère de l'Éducation Nationale"
+              />
+              <DocumentSection
+                title="Références de Projets"
+                icon="📋"
+                items={companyData.references}
+                onAddItem={(item, idx) => updateArrayField('references', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: Réhabilitation Route Nationale - 2020"
+              />
+            </div>
+          )}
+
+          {/* RESSOURCES */}
+          {activeTab === 'resources' && (
+            <div className={styles.section}>
+              <h2 className={styles.sectionHeading}>🔧 Ressources & Équipements</h2>
+              <DocumentSection
+                title="Équipements & Matériels"
+                icon="🚜"
+                items={companyData.equipment}
+                onAddItem={(item, idx) => updateArrayField('equipment', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: 3 Camions bennes 10T, 2 Bulldozers CAT D6"
+              />
+              <DocumentSection
+                title="Infrastructures & Locaux"
+                icon="🏭"
+                items={companyData.facilities}
+                onAddItem={(item, idx) => updateArrayField('facilities', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: Atelier de 500m² à la Zone Industrielle"
+              />
+              <DocumentSection
+                title="Logiciels & Outils Techniques"
+                icon="💻"
+                items={companyData.softwareTools}
+                onAddItem={(item, idx) => updateArrayField('softwareTools', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: AutoCAD, MS Project, SAP"
+              />
+              <DocumentSection
+                title="Capacités Techniques"
+                icon="⚙️"
+                items={companyData.capabilities}
+                onAddItem={(item, idx) => updateArrayField('capabilities', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: Capacité de production: 1000 m³/jour"
+              />
+            </div>
+          )}
+
+          {/* ÉQUIPE */}
+          {activeTab === 'team' && (
+            <div className={styles.section}>
+              <h2 className={styles.sectionHeading}>👥 Équipe & Personnel</h2>
+              <DocumentSection
+                title="Personnel Clé / Direction"
+                icon="👔"
+                items={companyData.keyPersonnel}
+                onAddItem={(item, idx) => updateArrayField('keyPersonnel', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: DG: John DOE - Ingénieur Civil (20 ans d'exp.)"
+              />
+              <DocumentSection
+                title="Personnel Technique"
+                icon="👷"
+                items={companyData.technicalStaff}
+                onAddItem={(item, idx) => updateArrayField('technicalStaff', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: 5 Ingénieurs BTP, 10 Techniciens spécialisés"
+              />
+              <DocumentSection
+                title="Qualifications de l'Équipe"
+                icon="🎓"
+                items={companyData.qualifications}
+                onAddItem={(item, idx) => updateArrayField('qualifications', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: 3 Ingénieurs certifiés PMP"
+              />
+            </div>
+          )}
+
+          {/* ZONES */}
+          {activeTab === 'zones' && (
+            <div className={styles.section}>
+              <h2 className={styles.sectionHeading}>🌍 Zones d'Intervention</h2>
+              <DocumentSection
+                title="Zones Géographiques"
+                icon="📍"
+                items={companyData.interventionZones}
+                onAddItem={(item, idx) => updateArrayField('interventionZones', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: Ouagadougou, Bobo-Dioulasso, Koudougou"
+              />
+              <p className={styles.hintText}>
+                💡 Précisez les villes, régions ou pays où votre entreprise peut intervenir
+              </p>
+            </div>
+          )}
+
+          {/* PARTENARIATS */}
+          {activeTab === 'partnerships' && (
+            <div className={styles.section}>
+              <h2 className={styles.sectionHeading}>🤝 Partenariats & Fournisseurs</h2>
+              <DocumentSection
+                title="Partenaires Stratégiques"
+                icon="🤝"
+                items={companyData.partnerships}
+                onAddItem={(item, idx) => updateArrayField('partnerships', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: Partenariat avec ABC Engineering (France)"
+              />
+              <DocumentSection
+                title="Fournisseurs Principaux"
+                icon="🏭"
+                items={companyData.suppliers}
+                onAddItem={(item, idx) => updateArrayField('suppliers', item, idx)}
+                editable={isEditing}
+                placeholder="Ex: CIMBURKINA pour ciments et matériaux"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Footer Info */}
+        <div className={styles.footer}>
+          <p className={styles.footerDate}>
+            📅 Dernière mise à jour : {new Date(companyData.updatedAt).toLocaleDateString('fr-FR', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
+          </p>
+          <p className={styles.footerHint}>
+            💡 <strong>Astuce IA :</strong> Plus votre profil est détaillé, plus l'assistant IA pourra générer des offres techniques
+            précises et adaptées à vos capacités réelles. Pensez à mentionner vos projets récents et vos équipements disponibles.
           </p>
         </div>
       </div>
@@ -572,9 +961,16 @@ function CompanyProfileContent() {
 
 function CompanyProfileLoading() {
   return (
-    <div className="text-center" style={{ padding: '80px 20px', paddingTop: '150px' }}>
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      minHeight: '100vh',
+      gap: '16px'
+    }}>
       <span className="loader" style={{ width: '40px', height: '40px' }}></span>
-      <p className="text-secondary" style={{ marginTop: '16px' }}>Chargement du profil d'entreprise...</p>
+      <p style={{ color: 'var(--text-secondary)' }}>Chargement du profil d'entreprise...</p>
     </div>
   );
 }
