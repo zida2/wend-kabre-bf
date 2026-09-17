@@ -5,7 +5,18 @@ import { AiTutorialEmail } from './emails/ai-tutorial';
 import { PremiumOfferEmail } from './emails/premium-offer';
 import { WeeklyCheckinEmail } from './emails/weekly-checkin';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy-initialize Resend to avoid build-time errors when API key is missing
+let resendClient = null;
+function getResendClient() {
+  if (!resendClient) {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      throw new Error('RESEND_API_KEY is not set');
+    }
+    resendClient = new Resend(apiKey);
+  }
+  return resendClient;
+}
 
 const FROM_EMAIL = 'noreply@wend-kabre.bf';
 const FROM_NAME = 'Wend-Kabré';
@@ -15,6 +26,7 @@ const FROM_NAME = 'Wend-Kabré';
  */
 export async function sendWelcomeEmail(userEmail, userName) {
   try {
+    const resend = getResendClient();
     const result = await resend.emails.send({
       from: `${FROM_NAME} <${FROM_EMAIL}>`,
       to: userEmail,
@@ -36,6 +48,7 @@ export async function sendWelcomeEmail(userEmail, userName) {
  */
 export async function sendMarketsEmail(userEmail, userName, marketCount = 10) {
   try {
+    const resend = getResendClient();
     const result = await resend.emails.send({
       from: `${FROM_NAME} <${FROM_EMAIL}>`,
       to: userEmail,
@@ -57,6 +70,7 @@ export async function sendMarketsEmail(userEmail, userName, marketCount = 10) {
  */
 export async function sendAiTutorialEmail(userEmail, userName) {
   try {
+    const resend = getResendClient();
     const result = await resend.emails.send({
       from: `${FROM_NAME} <${FROM_EMAIL}>`,
       to: userEmail,
@@ -78,6 +92,7 @@ export async function sendAiTutorialEmail(userEmail, userName) {
  */
 export async function sendPremiumOfferEmail(userEmail, userName) {
   try {
+    const resend = getResendClient();
     const result = await resend.emails.send({
       from: `${FROM_NAME} <${FROM_EMAIL}>`,
       to: userEmail,
@@ -99,6 +114,7 @@ export async function sendPremiumOfferEmail(userEmail, userName) {
  */
 export async function sendWeeklyCheckinEmail(userEmail, userName) {
   try {
+    const resend = getResendClient();
     const result = await resend.emails.send({
       from: `${FROM_NAME} <${FROM_EMAIL}>`,
       to: userEmail,
@@ -120,6 +136,7 @@ export async function sendWeeklyCheckinEmail(userEmail, userName) {
  */
 export async function sendLeadEmail(email) {
   try {
+    const resend = getResendClient();
     const result = await resend.emails.send({
       from: `${FROM_NAME} <${FROM_EMAIL}>`,
       to: email,
