@@ -4,6 +4,7 @@ import FeaturesSection from '@/components/landing/FeaturesSection';
 import PricingSection from '@/components/landing/PricingSection';
 import FAQSection from '@/components/landing/FAQSection';
 import CTASection from '@/components/landing/CTASection';
+import ExitIntentPopup from '@/components/landing/ExitIntentPopup';
 
 export const metadata = {
   title: 'Wend-Kabré - Trouvez les Meilleurs Marchés Publics',
@@ -24,6 +25,7 @@ export default function VentePage() {
       <CTASection />
       <PricingSection />
       <FAQSection />
+      <ExitIntentPopup />
     </main>
   );
 }

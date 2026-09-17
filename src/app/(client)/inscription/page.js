@@ -4,25 +4,31 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { auth, db, analytics } from '@/lib/firebase';
 import { createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { logEvent } from 'firebase/analytics';
 import { track } from '@/lib/track';
 import styles from './inscription.module.css';
 
 export default function InscriptionPage() {
   const [name, setName] = useState('');
-  const [rccm, setRccm] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordStrength, setPasswordStrength] = useState('');
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [source, setSource] = useState('direct'); // Track where they came from
 
   const router = useRouter();
+  const plan = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('plan') || 'gratuit' : 'gratuit';
 
+  // Get signup source from URL params or session
   useEffect(() => {
-    track('signup_start', {});
+    const params = new URLSearchParams(window.location.search);
+    const src = params.get('source') || sessionStorage.getItem('signup_source') || 'landing';
+    setSource(src);
+    
+    track('signup_start', { source: src, form_type: 'optimized_3_fields' });
     
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -32,17 +38,34 @@ export default function InscriptionPage() {
     return () => unsubscribe();
   }, [router]);
 
+  // Password strength indicator
+  const handlePasswordChange = (pwd) => {
+    setPassword(pwd);
+    if (pwd.length < 6) setPasswordStrength('weak');
+    else if (pwd.length < 10) setPasswordStrength('medium');
+    else setPasswordStrength('strong');
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    if (!agreedToTerms) {
+      setError('Veuillez accepter les conditions d\'utilisation');
+      setLoading(false);
+      return;
+    }
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
       if (analytics) {
-        logEvent(analytics, 'sign_up', { method: 'email' });
+        logEvent(analytics, 'sign_up', { 
+          method: 'email',
+          source: source
+        });
       }
 
       try {
@@ -52,22 +75,42 @@ export default function InscriptionPage() {
       }
 
       const userDocRef = doc(db, 'users', user.uid);
+      
+      // Check if lead exists (from popup/email capture)
+      let leadData = {};
+      const userRef = await getDoc(userDocRef);
+      if (userRef.exists()) {
+        leadData = userRef.data();
+      }
+
       await setDoc(userDocRef, {
-        name,
-        rccm: rccm || '',
-        phone: phone || '',
+        name: name || email.split('@')[0],
         email,
         isSubscribed: false,
-        plan: 'gratuit',
+        plan: plan || 'gratuit',
         hasSeenUpdateModal: true,
-        createdAt: new Date().toISOString()
-      });
+        signup_source: source,
+        signup_date: new Date().toISOString(),
+        email_verified: false,
+        onboarding_step: 0,
+        lifecycle_stage: 'lead',
+        form_fields_count: 3, // Track form optimization
+        ...leadData
+      }, { merge: true });
 
-      track('signup_complete', {});
-      window.location.href = '/marches';
+      track('signup_complete', { source });
+      
+      // Redirect to success page instead of dashboard
+      router.push(`/inscription/success?email=${encodeURIComponent(email)}`);
     } catch (err) {
       console.error(err);
-      setError(err.message || 'Une erreur est survenue lors de la création du compte.');
+      if (err.code === 'auth/email-already-in-use') {
+        setError('Cette adresse email est déjà utilisée.');
+      } else if (err.code === 'auth/weak-password') {
+        setError('Le mot de passe doit contenir au moins 6 caractères.');
+      } else {
+        setError(err.message || 'Une erreur est survenue lors de la création du compte.');
+      }
     } finally {
       setLoading(false);
     }
@@ -194,7 +237,7 @@ export default function InscriptionPage() {
               )}
 
               <form onSubmit={handleRegister} className={styles.form}>
-                {/* MAIN FIELDS */}
+                {/* 3 SIMPLE FIELDS */}
                 <div className={styles.mainFields}>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Nom de l'Entreprise *</label>
@@ -205,6 +248,7 @@ export default function InscriptionPage() {
                       required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      autoComplete="organization"
                     />
                   </div>
 
@@ -217,6 +261,7 @@ export default function InscriptionPage() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      autoComplete="email"
                     />
                   </div>
 
@@ -229,54 +274,34 @@ export default function InscriptionPage() {
                       required
                       minLength="6"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => handlePasswordChange(e.target.value)}
+                      autoComplete="new-password"
                     />
+                    {passwordStrength && (
+                      <div className={`${styles.passwordStrength} ${styles[`strength-${passwordStrength}`]}`}>
+                        Force du mot de passe: <strong>{passwordStrength === 'weak' ? 'Faible' : passwordStrength === 'medium' ? 'Moyen' : 'Fort'}</strong>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* ADVANCED FIELDS (COLLAPSIBLE) */}
-                <div className={styles.advancedSection}>
-                  <button
-                    type="button"
-                    className={styles.advancedToggle}
-                    onClick={() => setShowAdvanced(!showAdvanced)}
-                  >
-                    {showAdvanced ? '▼' : '▶'} Informations complémentaires
-                  </button>
-
-                  {showAdvanced && (
-                    <div className={styles.advancedFields}>
-                      <div className={styles.formGroup}>
-                        <label className={styles.formLabel}>Téléphone WhatsApp</label>
-                        <input 
-                          type="tel" 
-                          className={styles.formInput} 
-                          placeholder="+226 70 00 00 00"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                        />
-                      </div>
-
-                      <div className={styles.formGroup}>
-                        <label className={styles.formLabel}>Numéro RCCM</label>
-                        <input 
-                          type="text" 
-                          className={styles.formInput} 
-                          placeholder="Ex: BF-OUA-2026-B-0000"
-                          value={rccm}
-                          onChange={(e) => setRccm(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                  )}
+                {/* TERMS CHECKBOX */}
+                <div className={styles.termsGroup}>
+                  <label className={styles.checkboxLabel}>
+                    <input 
+                      type="checkbox"
+                      checked={agreedToTerms}
+                      onChange={(e) => setAgreedToTerms(e.target.checked)}
+                      required
+                    />
+                    <span>
+                      J'accepte les <Link href="/conditions" target="_blank">conditions d'utilisation</Link> *
+                    </span>
+                  </label>
                 </div>
 
                 <button type="submit" className={styles.submitButton} disabled={loading}>
-                  {loading ? (
-                    <span className="loader"></span>
-                  ) : (
-                    'Démarrer maintenant'
-                  )}
+                  {loading ? 'Création en cours...' : 'Créer mon compte'}
                 </button>
               </form>
 
