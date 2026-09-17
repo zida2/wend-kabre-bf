@@ -1,0 +1,342 @@
+/* Marchés Page - Mobile Responsive */
+
+/* Conteneurs principaux */
+.pageContainer {
+  padding: clamp(80px, 10vh, 120px) 0 clamp(40px, 6vh, 60px);
+}
+
+/* Barre de recherche responsive */
+.searchBar {
+  margin-bottom: clamp(20px, 3vw, 30px);
+  background: var(--color-bg-2);
+  padding: clamp(16px, 3vw, 20px);
+  border-radius: var(--radius-lg);
+}
+
+/* Onglets catégories - scroll horizontal sur mobile */
+.categoriesTab {
+  display: flex;
+  gap: clamp(8px, 1.5vw, 10px);
+  overflow-x: auto;
+  padding-bottom: 16px;
+  margin-bottom: clamp(20px, 3vw, 24px);
+  border-bottom: 1px solid var(--color-border);
+  scrollbar-width: thin;
+}
+
+.categoriesTab::-webkit-scrollbar {
+  height: 6px;
+}
+
+.categoriesTab::-webkit-scrollbar-track {
+  background: var(--color-surface-2);
+  border-radius: 10px;
+}
+
+.categoriesTab::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 10px;
+}
+
+.categoryBtn {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 1vw, 6px);
+  padding: clamp(8px, 2vw, 10px) clamp(12px, 2.5vw, 16px);
+  border-radius: 50px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.categoryBtn.active {
+  background: var(--grad-primary);
+  color: #fff;
+  box-shadow: var(--shadow-primary);
+}
+
+.categoryBtn.inactive {
+  background: var(--primary-muted);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+/* Onglets de statut */
+.statusTabs {
+  display: flex;
+  gap: clamp(8px, 1.5vw, 10px);
+  overflow-x: auto;
+  padding-bottom: 16px;
+  margin-bottom: clamp(24px, 4vw, 32px);
+  scrollbar-width: thin;
+}
+
+.statusBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(2px, 0.5vw, 4px);
+  padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 16px);
+  border-radius: 12px;
+  white-space: nowrap;
+  min-width: clamp(100px, 20vw, 120px);
+  flex-shrink: 0;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.statusBtn.active {
+  background: var(--grad-accent);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(217,119,6,0.25);
+}
+
+.statusBtn.inactive {
+  background: var(--color-surface-2);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+/* Filtres avancés */
+.filtersContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: clamp(10px, 2vw, 12px);
+  align-items: flex-end;
+  margin-bottom: clamp(24px, 4vw, 32px);
+}
+
+@media (max-width: 768px) {
+  .filtersContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .filtersContainer {
+    gap: 8px;
+  }
+}
+
+/* Grille des marchés */
+.marchesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(16px, 3vw, 24px);
+}
+
+@media (max-width: 1024px) {
+  .marchesGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Carte de marché */
+.marcheCard {
+  height: 100%;
+  position: relative;
+  border: 1px solid var(--color-border);
+  padding-top: clamp(12px, 2vw, 16px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: var(--radius-md);
+  transition: all 0.3s ease;
+}
+
+.marcheCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.marcheCard.locked {
+  border: 1px solid rgba(217,119,6,0.28);
+}
+
+/* Header de la carte */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: clamp(12px, 2vw, 16px);
+  gap: clamp(6px, 1vw, 8px);
+  flex-wrap: wrap;
+}
+
+.badgesGroup {
+  display: flex;
+  gap: clamp(4px, 1vw, 6px);
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.badge {
+  padding: clamp(3px, 0.5vw, 4px) clamp(8px, 1.5vw, 10px);
+  border-radius: 50px;
+  font-size: clamp(0.65rem, 1.2vw, 0.75rem);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dateGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: clamp(2px, 0.5vw, 4px);
+}
+
+/* Titre de la carte */
+.cardTitle {
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  line-height: 1.5;
+  margin-bottom: clamp(10px, 2vw, 12px);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* Description */
+.cardDescription {
+  font-size: clamp(0.85rem, 1.5vw, 0.9rem);
+  line-height: 1.7;
+  margin-bottom: clamp(16px, 3vw, 20px);
+  color: var(--text-secondary);
+}
+
+/* Footer de la carte */
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: clamp(10px, 2vw, 12px);
+  padding-top: clamp(12px, 2vw, 16px);
+  border-top: 1px solid var(--color-border);
+  margin-top: auto;
+}
+
+.emitterInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.emitterLabel {
+  font-size: clamp(0.65rem, 1.2vw, 0.75rem);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+
+.emitterName {
+  font-size: clamp(0.75rem, 1.3vw, 0.85rem);
+  font-weight: 600;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Bannières */
+.welcomeBanner {
+  background: linear-gradient(135deg, rgba(5,150,105,0.07) 0%, rgba(6,78,59,0.04) 100%);
+  border: 1px solid var(--color-border-hover);
+  border-radius: var(--radius-lg);
+  padding: clamp(24px, 4vw, 32px);
+  margin-bottom: clamp(30px, 5vw, 40px);
+  text-align: center;
+}
+
+.bannerIcon {
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  margin-bottom: clamp(8px, 2vw, 12px);
+}
+
+.bannerTitle {
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 700;
+  margin-bottom: clamp(8px, 2vw, 12px);
+  color: var(--text-primary);
+}
+
+.bannerText {
+  font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+  color: var(--text-secondary);
+  max-width: 520px;
+  margin: 0 auto clamp(16px, 3vw, 24px);
+  line-height: 1.6;
+}
+
+.bannerButtons {
+  display: flex;
+  gap: clamp(10px, 2vw, 12px);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* État vide */
+.emptyState {
+  text-align: center;
+  padding: clamp(60px, 10vw, 80px) clamp(20px, 4vw, 40px);
+}
+
+.emptyIcon {
+  font-size: clamp(2.5rem, 6vw, 3rem);
+  margin-bottom: clamp(16px, 3vw, 20px);
+}
+
+.emptyTitle {
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 700;
+  margin-bottom: clamp(8px, 2vw, 12px);
+  color: var(--text-primary);
+}
+
+.emptyText {
+  font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+  color: var(--text-secondary);
+  margin-top: clamp(8px, 2vw, 12px);
+}
+
+/* Loading */
+.loadingContainer {
+  text-align: center;
+  padding: clamp(60px, 10vw, 80px) 0;
+}
+
+.loadingText {
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  color: var(--text-secondary);
+  margin-top: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .categoryBtn,
+  .statusBtn {
+    font-size: 0.75rem;
+    padding: 8px 12px;
+  }
+  
+  .cardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .dateGroup {
+    align-items: flex-start;
+  }
+  
+  .cardFooter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .cardFooter .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
