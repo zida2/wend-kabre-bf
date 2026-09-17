@@ -10,9 +10,13 @@ import styles from './profil.module.css';
 
 export const dynamic = 'force-dynamic';
 
-function CompanyInfoField({ label, value, icon = '📋', editable = false, onEdit = null, type = 'text', placeholder = '' }) {
+function CompanyInfoField({ label, value, icon = '📋', onEdit = null, type = 'text', placeholder = '' }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value || '');
+
+  useEffect(() => {
+    setEditValue(value || '');
+  }, [value]);
 
   const handleSave = async () => {
     if (onEdit) {
@@ -35,6 +39,7 @@ function CompanyInfoField({ label, value, icon = '📋', editable = false, onEdi
             onChange={(e) => setEditValue(e.target.value)}
             placeholder={placeholder}
             className={styles.fieldInput}
+            autoFocus
           />
           <div className={styles.editActions}>
             <button onClick={handleSave} className="btn btn-primary btn-sm">✓</button>
@@ -50,18 +55,20 @@ function CompanyInfoField({ label, value, icon = '📋', editable = false, onEdi
       ) : (
         <div className={styles.viewMode}>
           <p className={styles.fieldValue}>{value || 'Non renseigné'}</p>
-          {editable && (
-            <button onClick={() => setIsEditing(true)} className={styles.editBtn}>✎</button>
-          )}
+          <button onClick={() => setIsEditing(true)} className={styles.editBtn}>✎</button>
         </div>
       )}
     </div>
   );
 }
 
-function CompanyTextArea({ label, value, icon = '📋', editable = false, onEdit = null, placeholder = '', rows = 4 }) {
+function CompanyTextArea({ label, value, icon = '📋', onEdit = null, placeholder = '', rows = 4 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value || '');
+
+  useEffect(() => {
+    setEditValue(value || '');
+  }, [value]);
 
   const handleSave = async () => {
     if (onEdit) {
@@ -84,6 +91,7 @@ function CompanyTextArea({ label, value, icon = '📋', editable = false, onEdit
             placeholder={placeholder}
             rows={rows}
             className={styles.fieldTextarea}
+            autoFocus
           />
           <div className={styles.editActions}>
             <button onClick={handleSave} className="btn btn-primary btn-sm">✓ Enregistrer</button>
@@ -99,16 +107,14 @@ function CompanyTextArea({ label, value, icon = '📋', editable = false, onEdit
       ) : (
         <div className={styles.viewMode}>
           <p className={styles.fieldTextValue}>{value || 'Non renseigné'}</p>
-          {editable && (
-            <button onClick={() => setIsEditing(true)} className={styles.editBtn}>✎ Modifier</button>
-          )}
+          <button onClick={() => setIsEditing(true)} className={styles.editBtn}>✎ Modifier</button>
         </div>
       )}
     </div>
   );
 }
 
-function DocumentSection({ title, icon, items, onAddItem, editable, placeholder }) {
+function DocumentSection({ title, icon, items, onAddItem, placeholder }) {
   const [newItem, setNewItem] = useState('');
 
   const handleAdd = () => {
@@ -130,14 +136,12 @@ function DocumentSection({ title, icon, items, onAddItem, editable, placeholder 
           {items.map((item, i) => (
             <li key={i} className={styles.item}>
               <span className={styles.itemText}>✓ {item}</span>
-              {editable && (
-                <button
-                  onClick={() => onAddItem(null, i)}
-                  className={styles.removeBtn}
-                >
-                  ✕
-                </button>
-              )}
+              <button
+                onClick={() => onAddItem(null, i)}
+                className={styles.removeBtn}
+              >
+                ✕
+              </button>
             </li>
           ))}
         </ul>
@@ -145,21 +149,19 @@ function DocumentSection({ title, icon, items, onAddItem, editable, placeholder 
         <p className={styles.emptyText}>Aucun élément pour le moment</p>
       )}
 
-      {editable && (
-        <div className={styles.addItem}>
-          <input
-            type="text"
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') handleAdd();
-            }}
-            placeholder={placeholder || `Ajouter un élément`}
-            className={styles.addInput}
-          />
-          <button onClick={handleAdd} className="btn btn-primary btn-sm">+ Ajouter</button>
-        </div>
-      )}
+      <div className={styles.addItem}>
+        <input
+          type="text"
+          value={newItem}
+          onChange={(e) => setNewItem(e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') handleAdd();
+          }}
+          placeholder={placeholder || `Ajouter un élément`}
+          className={styles.addInput}
+        />
+        <button onClick={handleAdd} className="btn btn-primary btn-sm">+ Ajouter</button>
+      </div>
     </div>
   );
 }
@@ -481,7 +483,6 @@ function CompanyProfileContent() {
                   label="Raison Sociale / Dénomination"
                   value={companyData.name}
                   icon="🏛️"
-                  editable={isEditing}
                   onEdit={(val) => updateField('name', val)}
                   placeholder="Ex: BURKINA CONSTRUCTION SARL"
                 />
@@ -489,7 +490,6 @@ function CompanyProfileContent() {
                   label="Forme Juridique"
                   value={companyData.legalForm}
                   icon="⚖️"
-                  editable={isEditing}
                   onEdit={(val) => updateField('legalForm', val)}
                   placeholder="Ex: SARL, SA, SAS, SARLU"
                 />
@@ -497,7 +497,6 @@ function CompanyProfileContent() {
                   label="RCCM (Registre du Commerce)"
                   value={companyData.rccm}
                   icon="📜"
-                  editable={isEditing}
                   onEdit={(val) => updateField('rccm', val)}
                   placeholder="Ex: BF OUA 2023 B 1234"
                 />
@@ -505,7 +504,6 @@ function CompanyProfileContent() {
                   label="IFU (Identifiant Financier Unique)"
                   value={companyData.ifu}
                   icon="💳"
-                  editable={isEditing}
                   onEdit={(val) => updateField('ifu', val)}
                   placeholder="Ex: 00012345Z"
                 />
@@ -513,7 +511,6 @@ function CompanyProfileContent() {
                   label="Date de Création"
                   value={companyData.creationDate}
                   icon="📅"
-                  editable={isEditing}
                   type="date"
                   onEdit={(val) => updateField('creationDate', val)}
                 />
@@ -521,7 +518,6 @@ function CompanyProfileContent() {
                   label="Années d'Expérience"
                   value={companyData.yearsInBusiness}
                   icon="⏳"
-                  editable={isEditing}
                   type="number"
                   onEdit={(val) => updateField('yearsInBusiness', val)}
                   placeholder="Ex: 15"
@@ -531,7 +527,6 @@ function CompanyProfileContent() {
                 label="Description de l'entreprise"
                 value={companyData.description}
                 icon="📝"
-                editable={isEditing}
                 onEdit={(val) => updateField('description', val)}
                 placeholder="Présentez votre entreprise, ses forces et son positionnement sur le marché..."
                 rows={5}
@@ -541,7 +536,6 @@ function CompanyProfileContent() {
                   label="Vision"
                   value={companyData.vision}
                   icon="🎯"
-                  editable={isEditing}
                   onEdit={(val) => updateField('vision', val)}
                   placeholder="Quelle est votre vision à long terme?"
                   rows={3}
@@ -550,7 +544,6 @@ function CompanyProfileContent() {
                   label="Mission"
                   value={companyData.mission}
                   icon="🚀"
-                  editable={isEditing}
                   onEdit={(val) => updateField('mission', val)}
                   placeholder="Quelle est votre mission principale?"
                   rows={3}
@@ -561,7 +554,6 @@ function CompanyProfileContent() {
                 icon="💎"
                 items={companyData.values}
                 onAddItem={(item, idx) => updateArrayField('values', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: Intégrité, Excellence, Innovation"
               />
             </div>
@@ -576,7 +568,6 @@ function CompanyProfileContent() {
                   label="Email Principal"
                   value={companyData.email}
                   icon="📧"
-                  editable={isEditing}
                   type="email"
                   onEdit={(val) => updateField('email', val)}
                   placeholder="contact@entreprise.bf"
@@ -585,7 +576,6 @@ function CompanyProfileContent() {
                   label="Site Web"
                   value={companyData.website}
                   icon="🌐"
-                  editable={isEditing}
                   type="url"
                   onEdit={(val) => updateField('website', val)}
                   placeholder="https://www.entreprise.bf"
@@ -594,7 +584,6 @@ function CompanyProfileContent() {
                   label="Téléphone Principal"
                   value={companyData.phone}
                   icon="☎️"
-                  editable={isEditing}
                   type="tel"
                   onEdit={(val) => updateField('phone', val)}
                   placeholder="+226 XX XX XX XX"
@@ -603,7 +592,6 @@ function CompanyProfileContent() {
                   label="Téléphone Secondaire"
                   value={companyData.phone2}
                   icon="📱"
-                  editable={isEditing}
                   type="tel"
                   onEdit={(val) => updateField('phone2', val)}
                   placeholder="+226 XX XX XX XX"
@@ -612,7 +600,6 @@ function CompanyProfileContent() {
                   label="Fax"
                   value={companyData.fax}
                   icon="📠"
-                  editable={isEditing}
                   type="tel"
                   onEdit={(val) => updateField('fax', val)}
                   placeholder="+226 XX XX XX XX"
@@ -624,7 +611,6 @@ function CompanyProfileContent() {
                   label="Adresse Complète"
                   value={companyData.address}
                   icon="📌"
-                  editable={isEditing}
                   onEdit={(val) => updateField('address', val)}
                   placeholder="Ex: Secteur 15, Avenue Kwame N'Krumah"
                 />
@@ -632,7 +618,6 @@ function CompanyProfileContent() {
                   label="Ville / Commune"
                   value={companyData.city}
                   icon="🏙️"
-                  editable={isEditing}
                   onEdit={(val) => updateField('city', val)}
                   placeholder="Ex: Ouagadougou"
                 />
@@ -640,7 +625,6 @@ function CompanyProfileContent() {
                   label="Code Postal"
                   value={companyData.postalCode}
                   icon="📮"
-                  editable={isEditing}
                   onEdit={(val) => updateField('postalCode', val)}
                   placeholder="Ex: 01 BP 1234"
                 />
@@ -648,7 +632,6 @@ function CompanyProfileContent() {
                   label="Pays"
                   value={companyData.country}
                   icon="🌍"
-                  editable={isEditing}
                   onEdit={(val) => updateField('country', val)}
                   placeholder="Burkina Faso"
                 />
@@ -665,7 +648,6 @@ function CompanyProfileContent() {
                   label="Secteur Principal"
                   value={companyData.sector}
                   icon="🏭"
-                  editable={isEditing}
                   onEdit={(val) => updateField('sector', val)}
                   placeholder="Ex: BTP, Informatique, Consulting"
                 />
@@ -673,7 +655,6 @@ function CompanyProfileContent() {
                   label="Activité Principale"
                   value={companyData.mainActivity}
                   icon="🎯"
-                  editable={isEditing}
                   onEdit={(val) => updateField('mainActivity', val)}
                   placeholder="Ex: Construction de bâtiments"
                 />
@@ -683,7 +664,6 @@ function CompanyProfileContent() {
                 icon="📋"
                 items={companyData.secondaryActivities}
                 onAddItem={(item, idx) => updateArrayField('secondaryActivities', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: Travaux publics, Réhabilitation"
               />
               <DocumentSection
@@ -691,7 +671,6 @@ function CompanyProfileContent() {
                 icon="⚡"
                 items={companyData.specializations}
                 onAddItem={(item, idx) => updateArrayField('specializations', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: Génie civil, Électricité industrielle"
               />
               <DocumentSection
@@ -699,7 +678,6 @@ function CompanyProfileContent() {
                 icon="🛠️"
                 items={companyData.serviceCategories}
                 onAddItem={(item, idx) => updateArrayField('serviceCategories', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: Études techniques, Maîtrise d'œuvre"
               />
             </div>
@@ -714,7 +692,6 @@ function CompanyProfileContent() {
                   label="Capital Social"
                   value={companyData.capitalSocial}
                   icon="💵"
-                  editable={isEditing}
                   onEdit={(val) => updateField('capitalSocial', val)}
                   placeholder="Ex: 10 000 000 FCFA"
                 />
@@ -722,7 +699,6 @@ function CompanyProfileContent() {
                   label="Chiffre d'Affaires Annuel"
                   value={companyData.annualRevenue}
                   icon="📊"
-                  editable={isEditing}
                   onEdit={(val) => updateField('annualRevenue', val)}
                   placeholder="Ex: 500 000 000 FCFA"
                 />
@@ -730,7 +706,6 @@ function CompanyProfileContent() {
                   label="Année de Référence"
                   value={companyData.revenueYear}
                   icon="📅"
-                  editable={isEditing}
                   type="number"
                   onEdit={(val) => updateField('revenueYear', val)}
                   placeholder="Ex: 2023"
@@ -739,7 +714,6 @@ function CompanyProfileContent() {
                   label="Nombre d'Employés"
                   value={companyData.employees}
                   icon="👥"
-                  editable={isEditing}
                   type="number"
                   onEdit={(val) => updateField('employees', val)}
                   placeholder="Ex: 50"
@@ -750,7 +724,6 @@ function CompanyProfileContent() {
                 icon="🏦"
                 items={companyData.bankReferences}
                 onAddItem={(item, idx) => updateArrayField('bankReferences', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: Ecobank Burkina - Compte N° 12345678"
               />
               <DocumentSection
@@ -758,7 +731,6 @@ function CompanyProfileContent() {
                 icon="🛡️"
                 items={companyData.insurances}
                 onAddItem={(item, idx) => updateArrayField('insurances', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: RC Professionnelle - NSIA Assurances"
               />
             </div>
@@ -773,7 +745,6 @@ function CompanyProfileContent() {
                 icon="✅"
                 items={companyData.certifications}
                 onAddItem={(item, idx) => updateArrayField('certifications', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: ISO 9001:2015, ISO 14001"
               />
               <DocumentSection
@@ -781,7 +752,6 @@ function CompanyProfileContent() {
                 icon="📜"
                 items={companyData.accreditations}
                 onAddItem={(item, idx) => updateArrayField('accreditations', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: Agrément Catégorie B1 - Ministère des Infrastructures"
               />
               <DocumentSection
@@ -789,7 +759,6 @@ function CompanyProfileContent() {
                 icon="🏅"
                 items={companyData.awardsAndRecognitions}
                 onAddItem={(item, idx) => updateArrayField('awardsAndRecognitions', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: Prix de l'Excellence 2022 - CNPB"
               />
             </div>
@@ -804,7 +773,6 @@ function CompanyProfileContent() {
                 icon="🏗️"
                 items={companyData.majorProjects}
                 onAddItem={(item, idx) => updateArrayField('majorProjects', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: Construction du Centre Commercial XYZ - 2021 (500M FCFA)"
               />
               <DocumentSection
@@ -812,7 +780,6 @@ function CompanyProfileContent() {
                 icon="🌟"
                 items={companyData.notableClients}
                 onAddItem={(item, idx) => updateArrayField('notableClients', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: Ministère de l'Éducation Nationale"
               />
               <DocumentSection
@@ -820,7 +787,6 @@ function CompanyProfileContent() {
                 icon="📋"
                 items={companyData.references}
                 onAddItem={(item, idx) => updateArrayField('references', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: Réhabilitation Route Nationale - 2020"
               />
             </div>
@@ -835,7 +801,6 @@ function CompanyProfileContent() {
                 icon="🚜"
                 items={companyData.equipment}
                 onAddItem={(item, idx) => updateArrayField('equipment', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: 3 Camions bennes 10T, 2 Bulldozers CAT D6"
               />
               <DocumentSection
@@ -843,7 +808,6 @@ function CompanyProfileContent() {
                 icon="🏭"
                 items={companyData.facilities}
                 onAddItem={(item, idx) => updateArrayField('facilities', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: Atelier de 500m² à la Zone Industrielle"
               />
               <DocumentSection
@@ -851,7 +815,6 @@ function CompanyProfileContent() {
                 icon="💻"
                 items={companyData.softwareTools}
                 onAddItem={(item, idx) => updateArrayField('softwareTools', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: AutoCAD, MS Project, SAP"
               />
               <DocumentSection
@@ -859,7 +822,6 @@ function CompanyProfileContent() {
                 icon="⚙️"
                 items={companyData.capabilities}
                 onAddItem={(item, idx) => updateArrayField('capabilities', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: Capacité de production: 1000 m³/jour"
               />
             </div>
@@ -874,7 +836,6 @@ function CompanyProfileContent() {
                 icon="👔"
                 items={companyData.keyPersonnel}
                 onAddItem={(item, idx) => updateArrayField('keyPersonnel', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: DG: John DOE - Ingénieur Civil (20 ans d'exp.)"
               />
               <DocumentSection
@@ -882,7 +843,6 @@ function CompanyProfileContent() {
                 icon="👷"
                 items={companyData.technicalStaff}
                 onAddItem={(item, idx) => updateArrayField('technicalStaff', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: 5 Ingénieurs BTP, 10 Techniciens spécialisés"
               />
               <DocumentSection
@@ -890,7 +850,6 @@ function CompanyProfileContent() {
                 icon="🎓"
                 items={companyData.qualifications}
                 onAddItem={(item, idx) => updateArrayField('qualifications', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: 3 Ingénieurs certifiés PMP"
               />
             </div>
@@ -905,7 +864,6 @@ function CompanyProfileContent() {
                 icon="📍"
                 items={companyData.interventionZones}
                 onAddItem={(item, idx) => updateArrayField('interventionZones', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: Ouagadougou, Bobo-Dioulasso, Koudougou"
               />
               <p className={styles.hintText}>
@@ -923,7 +881,6 @@ function CompanyProfileContent() {
                 icon="🤝"
                 items={companyData.partnerships}
                 onAddItem={(item, idx) => updateArrayField('partnerships', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: Partenariat avec ABC Engineering (France)"
               />
               <DocumentSection
@@ -931,7 +888,6 @@ function CompanyProfileContent() {
                 icon="🏭"
                 items={companyData.suppliers}
                 onAddItem={(item, idx) => updateArrayField('suppliers', item, idx)}
-                editable={isEditing}
                 placeholder="Ex: CIMBURKINA pour ciments et matériaux"
               />
             </div>
@@ -982,3 +938,4 @@ export default function CompanyProfilePage() {
     </Suspense>
   );
 }
+
