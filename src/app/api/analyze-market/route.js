@@ -22,90 +22,262 @@ function isAllowedHost(host) {
   return h === 'reliefweb.int' || h.endsWith('.reliefweb.int') || h.endsWith('.bf') || h === 'bf';
 }
 
-// Offline fallback: Generate market analysis without Gemini
+// Offline fallback: Generate market analysis from available market data
 function generateOfflineMarketAnalysis(market, marketId) {
-  console.log('[analyze-market] Utilisation de l\'analyse hors-ligne');
+  console.log('[analyze-market] Utilisation de l\'analyse intelligente (données du marché)');
   
-  const budget = market.montant ? `${(market.montant / 1000000).toFixed(0)} millions FCFA` : 'Non communiqué';
-  const region = market.source?.includes('Ouagadougou') ? 'Kadiogo' : 'À déterminer';
+  // ═══════════════════════════════════════════════════════════════════════════
+  // EXTRACTION INTELLIGENTE DES DONNÉES RÉELLES DU MARCHÉ
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  const description = market.description || '';
+  const title = market.title || '';
+  const source = market.source || '';
+  const fullText = `${title} ${description} ${source}`.toLowerCase();
+  
+  // Budget
+  const budget = market.montantEstime || market.montant 
+    ? `${market.montantEstime || ((market.montant / 1000000).toFixed(0) + ' millions FCFA')}`
+    : 'Non communiqué dans l\'avis';
+  
+  // Région (extraction intelligente)
+  let region = market.region || 'Non spécifié';
+  if (region === 'Non spécifié') {
+    const regions = ['Kadiogo', 'Boucle du Mouhoun', 'Cascades', 'Centre', 'Centre-Est', 'Centre-Nord', 'Centre-Ouest', 'Centre-Sud', 'Est', 'Hauts-Bassins', 'Nord', 'Plateau-Central', 'Sahel', 'Sud-Ouest'];
+    for (const r of regions) {
+      if (fullText.includes(r.toLowerCase()) || source.includes(r)) {
+        region = r;
+        break;
+      }
+    }
+  }
+  
+  // Commune
+  let commune = 'Non spécifié';
+  if (fullText.includes('ouagadougou') || source.includes('Ouagadougou')) commune = 'Ouagadougou';
+  else if (fullText.includes('bobo-dioulasso') || source.includes('Bobo')) commune = 'Bobo-Dioulasso';
+  else if (fullText.includes('koudougou')) commune = 'Koudougou';
+  else if (fullText.includes('ouahigouya')) commune = 'Ouahigouya';
+  
+  // Type de procédure (extraction depuis procedure ou montant)
+  let typeProcedure = market.procedure || 'Non spécifié';
+  if (typeProcedure === 'Non spécifié') {
+    if (market.montant >= 150000000) typeProcedure = 'Appel d\'offres ouvert international';
+    else if (market.montant >= 50000000) typeProcedure = 'Appel d\'offres ouvert';
+    else if (market.montant >= 10000000) typeProcedure = 'Appel d\'offres restreint';
+    else typeProcedure = 'Demande de cotation';
+  }
+  
+  // Dates
+  const datePublication = market.publishedAt 
+    ? new Date(market.publishedAt).toLocaleDateString('fr-FR')
+    : 'Non spécifié';
+  
+  const dateLimite = market.dateLimite || market.deadline
+    ? new Date(market.dateLimite || market.deadline).toLocaleDateString('fr-FR')
+    : 'À consulter le document officiel';
+  
+  const heureLimite = market.heureLimite || (fullText.match(/(\d{1,2})[h:](\d{2})/)?.[0]) || '10h00 (standard)';
+  
+  // Durée d'exécution (extraction intelligente)
+  let dureeExecution = market.dureeExecution || 'Non spécifié';
+  if (dureeExecution === 'Non spécifié') {
+    const dureMatch = description.match(/(\d+)\s*(mois|jours|semaines)/i);
+    if (dureMatch) {
+      dureeExecution = `${dureMatch[1]} ${dureMatch[2]}`;
+    }
+  }
+  
+  // Financement (extraction intelligente)
+  let financement = market.financement || 'Non spécifié';
+  if (financement === 'Non spécifié') {
+    if (fullText.includes('budget national') || fullText.includes('état burkinabè')) {
+      financement = 'Budget national du Burkina Faso';
+    } else if (fullText.includes('banque mondiale') || fullText.includes('world bank')) {
+      financement = 'Banque Mondiale';
+    } else if (fullText.includes('bad') || fullText.includes('banque africaine')) {
+      financement = 'Banque Africaine de Développement (BAD)';
+    } else if (fullText.includes('ue') || fullText.includes('union européenne')) {
+      financement = 'Union Européenne';
+    } else if (fullText.includes('france') || fullText.includes('afd')) {
+      financement = 'AFD / Coopération française';
+    } else if (fullText.includes('pnud') || fullText.includes('nations unies')) {
+      financement = 'PNUD / Nations Unies';
+    }
+  }
+  
+  // Autorité contractante
+  const autoriteContractante = market.source || 'Autorité contractante du Burkina Faso';
+  
+  // Ministère (extraction intelligente)
+  let ministere = market.ministere || 'Non spécifié';
+  if (ministere === 'Non spécifié') {
+    if (fullText.includes('santé')) ministere = 'Ministère de la Santé';
+    else if (fullText.includes('éducation') || fullText.includes('education')) ministere = 'Ministère de l\'Éducation';
+    else if (fullText.includes('infrastructure') || fullText.includes('travaux publics')) ministere = 'Ministère des Infrastructures';
+    else if (fullText.includes('agriculture')) ministere = 'Ministère de l\'Agriculture';
+    else if (fullText.includes('eau') || fullText.includes('assainissement')) ministere = 'Ministère de l\'Eau et de l\'Assainissement';
+  }
+  
+  // Garantie de soumission (règles ARCOP)
+  let garantieSubmission = market.garantieSubmission || 'Non spécifié';
+  if (garantieSubmission === 'Non spécifié') {
+    if (market.montant >= 10000000) {
+      const pourcentage = market.montant >= 100000000 ? '1-2%' : '2-3%';
+      garantieSubmission = `${pourcentage} du montant de l'offre - Caution bancaire ou chèque certifié`;
+    } else {
+      garantieSubmission = 'Non exigée (marché < 10 millions FCFA)';
+    }
+  }
+  
+  // Pièces spécifiques selon la catégorie
+  let piecesAdministrativesBase = [
+    'Attestation de situation fiscale (DGI) - validité < 3 mois',
+    'Attestation de situation cotisante (CNSS) - validité < 3 mois',
+    'Attestation de non engagement (ANE/AJE)',
+    'RCCM (Registre du Commerce) - copie certifiée',
+  ];
+  
+  let piecesTechniquesBase = [
+    'Lettre de soumission signée et datée',
+    'Présentation de l\'entreprise (historique, activités)',
+    'Note de compréhension du projet et du contexte',
+  ];
+  
+  let piecesFinancieresBase = [
+    'Bordereau des prix unitaires (BPU)',
+    'Devis quantitatif et estimatif (DQE)',
+    'Montant total de l\'offre (en chiffres et en lettres)',
+  ];
+  
+  // Adaptation selon la catégorie
+  if (market.category === 'Construction' || market.category === 'BTP') {
+    piecesAdministrativesBase.push('Agrément technique BTP (catégorie adaptée)');
+    piecesTechniquesBase.push(
+      'Planning détaillé d\'exécution (Gantt)',
+      'Liste du matériel de chantier disponible',
+      'Équipe technique (chef de chantier, conducteurs de travaux)',
+      'Attestations de bonne exécution de marchés similaires'
+    );
+  } else if (market.category === 'Informatique' || title.includes('informatique') || title.includes('logiciel')) {
+    piecesAdministrativesBase.push('Agrément ou certification informatique (si requis)');
+    piecesTechniquesBase.push(
+      'Architecture technique proposée',
+      'CVs des développeurs/techniciens',
+      'Planning de développement/déploiement',
+      'Support et maintenance proposés'
+    );
+  } else if (market.category === 'Prestation' || market.category === 'Services') {
+    piecesTechniquesBase.push(
+      'Méthodologie détaillée d\'intervention',
+      'CVs et diplômes de l\'équipe d\'experts',
+      'Chronogramme des activités',
+      'Livrables attendus à chaque étape'
+    );
+  } else if (market.category === 'Fourniture') {
+    piecesTechniquesBase.push(
+      'Fiches techniques des produits proposés',
+      'Certificats de conformité (normes internationales)',
+      'Conditions de livraison et de garantie',
+      'Preuves de capacité d\'approvisionnement'
+    );
+  }
+  
+  // Conditions de participation (extraction intelligente)
+  const conditionsParticipation = [
+    'Être une personne physique ou morale légalement constituée',
+    'Ne pas être en liquidation judiciaire ou en cessation d\'activité',
+    'Situation fiscale à jour (DGI)',
+    'Cotisations sociales à jour (CNSS)',
+    'Ne pas avoir été sanctionné ou radié des marchés publics',
+  ];
+  
+  if (market.category === 'Construction') {
+    conditionsParticipation.push('Disposer d\'un agrément technique BTP valide');
+  }
+  
+  if (market.montant >= 50000000) {
+    conditionsParticipation.push('Chiffre d\'affaires moyen des 3 dernières années ≥ montant du marché');
+    conditionsParticipation.push('Expérience sur au moins 2 marchés similaires');
+  }
+  
+  // Critères de sélection
+  const criteresSelection = [
+    'Conformité administrative : dossier complet et pièces valides',
+    'Score technique : 40-60 points (méthodologie, planning, équipe, références)',
+    'Score financier : 40-60 points (offre la plus basse économiquement avantageuse)',
+  ];
+  
+  if (fullText.includes('pme') || fullText.includes('préférence nationale')) {
+    criteresSelection.push('Préférence nationale PME : +5 à +10% de bonification');
+  }
+  
+  criteresSelection.push('Élimination des offres anormalement basses (< 15-20% de la moyenne)');
+  
+  // Risques de disqualification
+  const risques = [
+    '⚠️ Pièces administratives périmées (DGI/CNSS > 3 mois)',
+    '⚠️ Caution de soumission manquante ou non conforme',
+    '⚠️ Retard de dépôt même d\'1 minute = disqualification automatique',
+    '⚠️ Dossier incomplet ou pièces manquantes',
+    '⚠️ Erreurs arithmétiques dans l\'offre financière',
+  ];
+  
+  if (market.category === 'Construction') {
+    risques.push('⚠️ Agrément BTP inadapté ou expiré');
+    risques.push('⚠️ Absence de planning réaliste d\'exécution');
+  }
+  
+  if (market.montant >= 50000000) {
+    risques.push('⚠️ Chiffre d\'affaires insuffisant par rapport au montant');
+    risques.push('⚠️ Manque de références de marchés similaires');
+  }
+  
+  risques.push('⚠️ Offre anormalement basse (pénalité de 30-40%)');
+  risques.push('⚠️ Non-respect des spécifications techniques');
+  
+  // Contacts (extraction intelligente)
+  const emailMatch = fullText.match(/[\w\.-]+@[\w\.-]+\.\w+/);
+  const contactEmail = emailMatch ? emailMatch[0] : 'Voir le document officiel';
+  
+  const telMatch = fullText.match(/(\+226\s?)?\d{2}\s?\d{2}\s?\d{2}\s?\d{2}/);
+  const contactTelephone = telMatch ? telMatch[0] : 'Voir le document officiel';
+  
+  const contactAdresse = market.contactAdresse || (source.includes('Ouagadougou') ? 'Ouagadougou' : 'Voir le document officiel');
+  
+  // Résumé intelligent
+  const urgenceInfo = market.urgence === 'Urgent' ? ' ⚠️ Date limite PROCHE !' : '';
+  const resume = `Marché ${market.category || 'public'} au Burkina Faso : ${title}.${urgenceInfo} Autorité contractante : ${autoriteContractante}. Budget estimatif : ${budget}. Procédure : ${typeProcedure}. Date limite de dépôt : ${dateLimite} à ${heureLimite}. Région : ${region}. Documents obligatoires ARCOP 2024-2025 : ${piecesAdministrativesBase.length} pièces administratives + offre technique + offre financière détaillée. ${market.montant >= 10000000 ? 'Caution de soumission exigée.' : ''} Consultez le document officiel complet pour les spécifications techniques précises.`;
   
   return {
     numeroMarche: marketId || 'Non spécifié',
-    objet: market.title || 'Marché public',
-    autoriteContractante: market.source || 'Autorité contractante du Burkina Faso',
-    ministere: 'Non spécifié (visible dans le document officiel)',
-    region: region,
-    commune: market.source?.includes('Ouagadougou') ? 'Ouagadougou' : 'À déterminer',
-    budget: budget,
-    financement: 'À déterminer (visible dans le document)',
-    typeProcedure: market.montant >= 150000000 ? 'Appel d\'offres ouvert' : 'Demande de cotation ou appel d\'offres',
-    datePublication: market.dateCreated ? new Date(market.dateCreated).toLocaleDateString('fr-BF') : 'Non spécifié',
-    dateLimite: market.dateLimite ? new Date(market.dateLimite).toLocaleDateString('fr-BF') : 'À consulter le document',
-    heureLimite: '10:00 (heure de Ouagadougou - standard)',
-    dureeExecution: '1 à 12 mois selon le type de marché',
-    lieuExecution: region,
-    contactEmail: 'À consulter le document officiel',
-    contactTelephone: 'À consulter le document officiel',
-    contactAdresse: 'Ministère ou institution concernée (Ouagadougou)',
-    garantieSubmission: market.montant >= 10000000 ? '1-3% du montant de l\'offre - Caution bancaire' : 'Non exigée pour petits marchés',
-    dureeValiditeGarantie: '90 jours',
-    conditionsParticipation: [
-      'Entreprise agréée au Burkina Faso',
-      'Pas de retard de paiement antérieur',
-      'Non en liquidation judiciaire',
-      'Capable de mobiliser les ressources nécessaires',
-      'Situation fiscale à jour',
-      'Affiliation CNSS à jour'
-    ],
-    piecesAdministratives: [
-      'Attestation de situation fiscale (DGI) - validité < 3 mois',
-      'Attestation de situation cotisante (CNSS) - validité < 3 mois',
-      'Attestation de non engagement AJE',
-      'Attestation DRTSS',
-      'Attestation RCCM',
-      'Certificat de non-faillite',
-      'RCCM original ou copie certifiée'
-    ],
-    piecesTechniques: [
-      'Lettre de soumission (signée)',
-      'Présentation de l\'entreprise',
-      'Compréhension du marché et contexte',
-      'Méthodologie détaillée',
-      'Planning d\'exécution (Gantt ou chronogramme)',
-      'Moyens humains (organigramme, CVs)',
-      'Moyens matériels',
-      'Approche qualité',
-      'Gestion des risques',
-      'Références de marchés similaires'
-    ],
-    piecesFinancieres: [
-      'Bordereau des prix unitaires',
-      'Devis quantitatif et estimatif',
-      'Détail des coûts (main d\'œuvre, matériaux, frais généraux)',
-      'Montant total TTC (chiffres et lettres)',
-      'TVA applicable',
-      'Validité de l\'offre (généralement 90 jours)'
-    ],
-    criteresSelection: [
-      'Conformité administrative (dossier complet)',
-      'Score technique (30-50%)',
-      'Score financier (30-50%)',
-      'Application des préférences nationales PME (+5%)',
-      'Offre non anormalement basse (< 15% moyenne)'
-    ],
-    risques: [
-      'Pièces administratives périmées (> 3 mois)',
-      'Caution de soumission manquante ou invalide',
-      'Offre anormalement basse (30-40% de pénalité)',
-      'Non-conformité technique majeure',
-      'Erreurs de calcul dans l\'offre financière',
-      'Retard de dépôt (même 1 minute = disqualification)',
-      'Méthodologie peu convaincante ou générique',
-      'Équipe insuffisamment qualifiée'
-    ],
-    resume: `Marché public au Burkina Faso pour ${market.title?.toLowerCase() || 'travaux/fournitures/services'}. Montant estimatif : ${budget}. Procédure : ${market.montant >= 150000000 ? 'appel d\'offres ouvert' : 'demande de cotation'}. Délai de dépôt : à consulter le document officiel. Documents obligatoires ARCOP 2024-2025 : 6 pièces administratives + offre technique + offre financière. Consultez le Guide de Soumission complet sur /guide-soumission pour tous les détails.`,
-    _source: 'offline',
-    _note: 'Analyse générée sans accès au document PDF. Pour une analyse IA complète du contenu du document, configurez GEMINI_API_KEY.',
+    objet: title,
+    autoriteContractante,
+    ministere,
+    region,
+    commune,
+    budget,
+    financement,
+    typeProcedure,
+    datePublication,
+    dateLimite,
+    heureLimite,
+    dureeExecution,
+    lieuExecution: region !== 'Non spécifié' ? region : commune,
+    contactEmail,
+    contactTelephone,
+    contactAdresse,
+    garantieSubmission,
+    dureeValiditeGarantie: '90 jours (standard ARCOP)',
+    conditionsParticipation,
+    piecesAdministratives: piecesAdministrativesBase,
+    piecesTechniques: piecesTechniquesBase,
+    piecesFinancieres: piecesFinancieresBase,
+    criteresSelection,
+    risques,
+    resume,
+    _source: 'intelligent_extraction',
+    _note: 'Analyse générée à partir des données disponibles du marché. Pour une analyse IA complète du document PDF officiel, configurez GEMINI_API_KEY.',
   };
 }
 
