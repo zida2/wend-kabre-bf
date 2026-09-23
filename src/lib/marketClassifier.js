@@ -62,22 +62,45 @@ const MINISTERES = [
   [/communication|numerique|telecom|digital|informatique d\'etat/, 'Ministère de la Transition numérique'],
 ];
 
-// ── Vocabulaire « vrai marché public » ──
+// ── Vocabulaire « vrai marché public » (strict) ──
 const TENDER_VOCAB = [
   'appel d\'offres', 'appel d offres', 'demande de cotation', 'demande de prix',
   'demande de proposition', 'manifestation d\'interet', 'manifestation d interet',
   'avis d\'appel', 'avis de recrutement', 'avis a manifestation', 'consultation restreinte',
   'dossier d\'appel', 'autorite contractante', 'soumission', 'cahier des charges',
   'dao', 'appel a candidature', 'avis general de passation', 'passation de marche',
-  'ouverture des plis', 'caution', 'attributaire', 'marche public',
+  'ouverture des plis', 'caution', 'attributaire', 'marche public', 'acquisition de',
+  'fourniture de', 'prestation de service', 'travaux de construction', 'recrutement',
 ];
 
-// ── Vocabulaire à exclure (bruit : pas un marché) ──
+// ── Vocabulaire à exclure ABSOLUMENT (bruit : pas un marché) ──
 const EXCLUDE_VOCAB = [
   'nomination', 'nomme', 'decret n', 'arrete n', 'communique', 'communique de presse',
   'felicitation', 'deces', 'condoleance', 'necrologie', 'in memoriam',
   'compte rendu du conseil', 'conseil des ministres', 'remaniement', 'discours',
   'ceremonie', 'inauguration', 'visite officielle', 'declaration de politique',
+  'soutenance', 'these', 'memoire', 'master', 'doctorat', 'diplome', 'formation academique',
+  'universite', 'etudiant', 'recherche academique', 'publication', 'article scientifique',
+  'conference', 'seminaire', 'atelier de formation', 'session de formation',
+  'actualite', 'nouvelle', 'information', 'breve', 'flash info', 'mise a jour',
+  'analyse', 'etude de cas', 'rapport d\'etude', 'evaluation', 'bilan',
+];
+
+// ── Indicateurs forts de NON-marché ──
+const ACADEMIC_INDICATORS = [
+  'soutenance de', 'memoire de', 'these de', 'master en', 'doctorat en',
+  'recherche sur', 'analyse des', 'etude des pratiques', 'evaluation de',
+  'universite', 'faculte', 'institut', 'ecole superieure', 'campus',
+  'article de', 'publication de', 'revue scientifique',
+];
+
+// ── Indicateurs forts de marché public ──
+const STRONG_TENDER_INDICATORS = [
+  'appel d\'offres', 'demande de cotation', 'avis de recrutement',
+  'acquisition de', 'fourniture de', 'prestation de service',
+  'travaux de construction', 'marche public', 'dao',
+  'autorite contractante', 'soumission', 'caution',
+  'ouverture des plis', 'date limite', 'depot des offres',
 ];
 
 // ── Types de procédure ──
@@ -193,18 +216,70 @@ export function normalizeTitle(title) {
     .slice(0, 120);
 }
 
-// ── Détection « vrai marché public » ──
+// ── Détection « vrai marché public » (VERSION STRICTE) ──
 export function isRealTender(title, description, source) {
-  const t = norm(`${title} ${description}`);
-  const src = norm(source);
-  // Sources déjà spécialisées marchés/emploi → on garde par défaut.
-  const trustedSource = /arcop|dgcmef|reliefweb/.test(src);
-  const hasTenderVocab = TENDER_VOCAB.some((v) => t.includes(norm(v)));
-  const hasExclude = EXCLUDE_VOCAB.some((v) => t.includes(norm(v)));
-  // Rejet clair : bruit sans aucun vocabulaire de marché.
-  if (hasExclude && !hasTenderVocab) return false;
-  if (trustedSource) return true;
-  return hasTenderVocab;
+  const fullText = `${title} ${description}`.toLowerCase();
+  const t = norm(fullText);
+  const src = norm(source || '');
+  
+  // ÉTAPE 1: Exclusion immédiate des contenus académiques/actualités
+  const hasAcademicIndicators = ACADEMIC_INDICATORS.some(indicator => t.includes(norm(indicator)));
+  if (hasAcademicIndicators) {
+    console.log(`[REJECT ACADEMIC] ${title} - Contient: ${ACADEMIC_INDICATORS.find(i => t.includes(norm(i)))}`);
+    return false;
+  }
+  
+  // ÉTAPE 2: Exclusion du bruit général
+  const hasExcludeVocab = EXCLUDE_VOCAB.some(exclude => t.includes(norm(exclude)));
+  if (hasExcludeVocab) {
+    console.log(`[REJECT NOISE] ${title} - Contient: ${EXCLUDE_VOCAB.find(e => t.includes(norm(e)))}`);
+    return false;
+  }
+  
+  // ÉTAPE 3: Sources de confiance (mais on vérifie quand même le contenu)
+  const trustedSource = /arcop|dgcmef|reliefweb|marches-publics/.test(src);
+  
+  // ÉTAPE 4: Vérification des indicateurs forts de marché public
+  const hasStrongIndicators = STRONG_TENDER_INDICATORS.some(indicator => t.includes(norm(indicator)));
+  const hasTenderVocab = TENDER_VOCAB.some(vocab => t.includes(norm(vocab)));
+  
+  // ÉTAPE 5: Règles de décision strictes
+  if (hasStrongIndicators) {
+    console.log(`[ACCEPT STRONG] ${title} - Indicateur fort trouvé`);
+    return true;
+  }
+  
+  if (trustedSource && hasTenderVocab) {
+    console.log(`[ACCEPT TRUSTED] ${title} - Source fiable + vocabulaire marché`);
+    return true;
+  }
+  
+  // ÉTAPE 6: Vérifications supplémentaires pour éviter les faux positifs
+  
+  // Rejeter si c'est clairement une actualité/nouvelle
+  if (/actualite|nouvelle|information|breve|mise a jour/.test(t)) {
+    console.log(`[REJECT NEWS] ${title} - Contenu d'actualité`);
+    return false;
+  }
+  
+  // Rejeter si c'est une analyse/étude sans vocabulaire de marché fort
+  if (/analyse|etude|evaluation|rapport/.test(t) && !hasStrongIndicators) {
+    console.log(`[REJECT STUDY] ${title} - Analyse/étude sans indicateurs marchés`);
+    return false;
+  }
+  
+  // Accepter seulement si vocabulaire marché + structure appropriée
+  if (hasTenderVocab) {
+    // Vérifier qu'il y a des éléments structurants d'un marché
+    const hasStructure = /date limite|depot|soumission|offre|candidature|dossier/.test(t);
+    if (hasStructure) {
+      console.log(`[ACCEPT STRUCTURED] ${title} - Vocabulaire + structure marché`);
+      return true;
+    }
+  }
+  
+  console.log(`[REJECT DEFAULT] ${title} - Ne correspond pas aux critères de marché public`);
+  return false;
 }
 
 // ── Classification complète d'un marché ──
