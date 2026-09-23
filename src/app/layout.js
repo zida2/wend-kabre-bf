@@ -101,7 +101,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fr">
       <head>
-        {/* Suppression des erreurs d'extensions browser */}
+        {/* Suppression des erreurs d'extensions browser et warnings CSS */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -121,18 +121,18 @@ export default function RootLayout({ children }) {
                 }
               });
               
-              // Supprimer l'avertissement CSS preload non utilisé (Next.js optimization)
-              window.addEventListener('DOMContentLoaded', function() {
-                // Mark preloaded stylesheets as used to suppress console warnings
-                const links = document.querySelectorAll('link[rel="preload"][as="style"]');
-                links.forEach(link => {
-                  // Convert preload to stylesheet after page load
-                  if (!link.dataset.loaded) {
-                    link.rel = 'stylesheet';
-                    link.dataset.loaded = 'true';
+              // Supprimer les warnings de CSS preload en filtrant la console
+              (function() {
+                const originalWarn = console.warn;
+                console.warn = function(...args) {
+                  const msg = args.join(' ');
+                  // Ignorer les warnings de preload CSS
+                  if (msg.includes('preload') && msg.includes('was preloaded using link preload')) {
+                    return;
                   }
-                });
-              });
+                  originalWarn.apply(console, args);
+                };
+              })();
             `,
           }}
         />
