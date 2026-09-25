@@ -1,0 +1,2284 @@
+{
+  "metadata": {
+    "name": "BLIND_SET_GOLD_V1",
+    "version": "1.0.0",
+    "creation_date": "2026-09-25T17:10:32.489Z",
+    "description": "Dataset indépendant pour validation V2F vs V2G",
+    "total_samples": 100,
+    "frozen": true,
+    "contamination_check": "PASSED - Aucun échantillon des datasets précédents",
+    "labeling_status": "COMPLETED - Labels GOLD assignés",
+    "distribution_type": "NATURELLE - Reflète le contenu réel Wend-Kabré",
+    "labeling_date": "2026-09-25T17:11:26.106Z",
+    "labeled_samples": 100,
+    "label_distribution": {
+      "gouvernement": 32,
+      "marche": 5,
+      "neutre": 63
+    },
+    "confidence_distribution": {
+      "high": 94,
+      "medium": 6,
+      "low": 0
+    },
+    "ready_for_freeze": true,
+    "independence_verification": {
+      "status": "VERIFIED - INDEPENDENT",
+      "verification_date": "2026-09-25T17:12:09.891Z",
+      "contaminations_count": 0
+    },
+    "freeze_date": "2026-09-25T17:12:09.912Z",
+    "validation_ready": true
+  },
+  "samples": [
+    {
+      "id": "blind_001",
+      "title": "Fourniture de matériels informatiques pour les services déconcentrés",
+      "description": "Acquisition d'ordinateurs portables, imprimantes et accessoires informatiques destinés aux directions régionales et provinciales",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Services déconcentrés = administration publique gouvernementale",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_002",
+      "title": "Recrutement d'un consultant pour l'évaluation des politiques publiques",
+      "description": "Sélection d'un cabinet conseil spécialisé dans l'analyse et l'évaluation de l'efficacité des programmes gouvernementaux",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Évaluation des politiques publiques = activité gouvernementale directe",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_003",
+      "title": "Construction d'un marché moderne dans la commune de Saaba",
+      "description": "Réalisation d'un marché couvert avec boutiques, magasins de stockage et aires de vente pour renforcer les activités commerciales locales",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "marche",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Construction d'un marché = infrastructure commerciale explicite",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_004",
+      "title": "Formation du personnel sur les nouvelles procédures administratives",
+      "description": "Organisation de sessions de formation destinées aux agents publics sur les réformes administratives et les nouveaux outils de gestion",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Formation agents publics + procédures administratives = gouvernement",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_005",
+      "title": "Acquisition de véhicules tout-terrain pour les missions de terrain",
+      "description": "Achat de véhicules 4x4 équipés pour faciliter les déplacements des équipes techniques dans les zones difficiles d'accès",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "medium",
+      "rationale": "Acquisition générique, pas d'indicateur spécifique gouvernement/marché",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_006",
+      "title": "Étude de faisabilité pour l'extension du réseau électrique rural",
+      "description": "Réalisation d'une étude technique et économique pour l'électrification de 15 villages dans la région du Centre-Nord",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Infrastructure publique générale, pas commerciale ni administrative",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_007",
+      "title": "Fourniture de produits pharmaceutiques pour les centres de santé",
+      "description": "Approvisionnement en médicaments essentiels, vaccins et consommables médicaux pour les formations sanitaires de la région",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Santé publique, pas d'aspect gouvernement/marché spécifique",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_008",
+      "title": "Réhabilitation des voies d'accès au marché central de Ouahigouya",
+      "description": "Travaux de réfection et d'aménagement des routes menant au marché principal pour améliorer l'accessibilité",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "marche",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Accès au marché central = infrastructure commerciale",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_009",
+      "title": "Audit des systèmes de gestion financière des collectivités locales",
+      "description": "Mission d'audit pour évaluer les pratiques de gestion budgétaire et proposer des améliorations",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Audit gestion financière collectivités = administration publique",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_010",
+      "title": "Installation de panneaux solaires dans les écoles primaires rurales",
+      "description": "Équipement en énergie solaire de 25 écoles primaires pour améliorer les conditions d'apprentissage",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Éducation/énergie, infrastructure publique générale",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_011",
+      "title": "Prestation de services de nettoyage des bâtiments administratifs",
+      "description": "Contrat d'entretien et de nettoyage des locaux des ministères et institutions publiques de Ouagadougou",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "medium",
+      "rationale": "Bâtiments administratifs = contexte gouvernemental",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_012",
+      "title": "Développement d'une plateforme numérique de gestion des ressources humaines",
+      "description": "Conception et développement d'un système informatique pour la gestion du personnel de la fonction publique",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Gestion RH fonction publique = administration gouvernementale",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_013",
+      "title": "Construction d'un complexe sportif municipal à Kaya",
+      "description": "Réalisation d'infrastructures sportives comprenant terrain de football, basketball et piste d'athlétisme",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Infrastructure sportive publique générale",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_014",
+      "title": "Formation en agriculture biologique pour les producteurs locaux",
+      "description": "Programme de renforcement des capacités en techniques agricoles durables et certification biologique",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Formation technique, secteur primaire",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_015",
+      "title": "Acquisition d'équipements de laboratoire pour l'université de Ouagadougou",
+      "description": "Achat d'instruments scientifiques et de matériel de recherche pour les facultés de sciences et médecine",
+      "source": "wend_kabre_2024_new",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Éducation supérieure, recherche scientifique",
+      "labeling_method": "expert_human"
+    },
+    {
+      "id": "blind_016",
+      "title": "Construction de marchés locaux",
+      "description": "Réalisation d'infrastructures pour marchés locaux afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "marche",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs marché/commerce détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 1,
+        "neutre_score": 1,
+        "indicators_found": [
+          "MARCHÉ: marché",
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [
+          "Indicateurs marché/commerce détectés"
+        ],
+        "recommended_label": "marche",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_017",
+      "title": "Travaux de construction de marchés locaux",
+      "description": "Projet de construction visant à améliorer marchés locaux dans le cadre du développement local",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "marche",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs marché/commerce détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 1,
+        "neutre_score": 1,
+        "indicators_found": [
+          "MARCHÉ: marché",
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [
+          "Indicateurs marché/commerce détectés"
+        ],
+        "recommended_label": "marche",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_018",
+      "title": "Recrutement d'un consultant pour étude de faisabilité",
+      "description": "Mission spécialisée de étude de faisabilité pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "GOV: réformes",
+          "NEUTRE: étude"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_019",
+      "title": "Approvisionnement en matériels informatiques pour les établissements scolaires",
+      "description": "Processus d'acquisition de matériels informatiques dans le cadre du renforcement des capacités de les établissements scolaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: acquisition",
+          "NEUTRE: matériel"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_020",
+      "title": "Mission d'conseil technique",
+      "description": "Mission spécialisée de conseil technique pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 0,
+        "indicators_found": [
+          "GOV: réformes"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_021",
+      "title": "Fourniture de équipements médicaux pour les établissements scolaires",
+      "description": "Processus d'acquisition de équipements médicaux dans le cadre du renforcement des capacités de les établissements scolaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 3,
+        "indicators_found": [
+          "NEUTRE: fourniture",
+          "NEUTRE: acquisition",
+          "NEUTRE: équipement"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_022",
+      "title": "Approvisionnement en matériels informatiques pour les services publics",
+      "description": "Processus d'acquisition de matériels informatiques dans le cadre du renforcement des capacités de les services publics",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: acquisition",
+          "NEUTRE: matériel"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_023",
+      "title": "Approvisionnement en équipements médicaux pour les collectivités locales",
+      "description": "Processus d'acquisition de équipements médicaux dans le cadre du renforcement des capacités de les collectivités locales",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "GOV: collectivités locales",
+          "NEUTRE: acquisition",
+          "NEUTRE: équipement"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_024",
+      "title": "Approvisionnement en équipements médicaux pour les établissements scolaires",
+      "description": "Processus d'acquisition de équipements médicaux dans le cadre du renforcement des capacités de les établissements scolaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: acquisition",
+          "NEUTRE: équipement"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_025",
+      "title": "Approvisionnement en équipements médicaux pour les services publics",
+      "description": "Processus d'acquisition de équipements médicaux dans le cadre du renforcement des capacités de les services publics",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: acquisition",
+          "NEUTRE: équipement"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_026",
+      "title": "Prestation de services de assistance technique",
+      "description": "Mission spécialisée de assistance technique pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "GOV: réformes",
+          "NEUTRE: prestation"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_027",
+      "title": "Construction de centres de santé",
+      "description": "Réalisation d'infrastructures pour centres de santé afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_028",
+      "title": "Acquisition de matériels informatiques destinés à les collectivités locales",
+      "description": "Processus d'acquisition de matériels informatiques dans le cadre du renforcement des capacités de les collectivités locales",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "GOV: collectivités locales",
+          "NEUTRE: acquisition",
+          "NEUTRE: matériel"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_029",
+      "title": "Recrutement d'un consultant pour formation professionnelle",
+      "description": "Mission spécialisée de formation professionnelle pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "GOV: réformes",
+          "NEUTRE: formation"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_030",
+      "title": "Fourniture de véhicules administratifs pour les centres de santé",
+      "description": "Processus d'acquisition de véhicules administratifs dans le cadre du renforcement des capacités de les centres de santé",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: fourniture",
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_031",
+      "title": "Recrutement d'un consultant pour audit financier",
+      "description": "Mission spécialisée de audit financier pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 2,
+        "marche_score": 0,
+        "neutre_score": 0,
+        "indicators_found": [
+          "GOV: réformes",
+          "GOV: audit financier"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_032",
+      "title": "Recrutement d'un consultant pour étude de faisabilité",
+      "description": "Mission spécialisée de étude de faisabilité pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "GOV: réformes",
+          "NEUTRE: étude"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_033",
+      "title": "Fourniture de véhicules administratifs pour les services publics",
+      "description": "Processus d'acquisition de véhicules administratifs dans le cadre du renforcement des capacités de les services publics",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: fourniture",
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_034",
+      "title": "Construction de écoles primaires",
+      "description": "Réalisation d'infrastructures pour écoles primaires afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_035",
+      "title": "Approvisionnement en matériels informatiques pour les établissements scolaires",
+      "description": "Processus d'acquisition de matériels informatiques dans le cadre du renforcement des capacités de les établissements scolaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: acquisition",
+          "NEUTRE: matériel"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_036",
+      "title": "Fourniture de véhicules administratifs pour les établissements scolaires",
+      "description": "Processus d'acquisition de véhicules administratifs dans le cadre du renforcement des capacités de les établissements scolaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: fourniture",
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_037",
+      "title": "Construction de centres de santé",
+      "description": "Réalisation d'infrastructures pour centres de santé afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_038",
+      "title": "Approvisionnement en véhicules administratifs pour les centres de santé",
+      "description": "Processus d'acquisition de véhicules administratifs dans le cadre du renforcement des capacités de les centres de santé",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_039",
+      "title": "Acquisition de matériels informatiques destinés à les services publics",
+      "description": "Processus d'acquisition de matériels informatiques dans le cadre du renforcement des capacités de les services publics",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: acquisition",
+          "NEUTRE: matériel"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_040",
+      "title": "Construction de écoles primaires",
+      "description": "Réalisation d'infrastructures pour écoles primaires afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_041",
+      "title": "Réhabilitation de routes rurales",
+      "description": "Réalisation d'infrastructures pour routes rurales afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: réhabilitation"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_042",
+      "title": "Recrutement d'un consultant pour conseil technique",
+      "description": "Mission spécialisée de conseil technique pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 0,
+        "indicators_found": [
+          "GOV: réformes"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_043",
+      "title": "Fourniture de véhicules administratifs pour les services publics",
+      "description": "Processus d'acquisition de véhicules administratifs dans le cadre du renforcement des capacités de les services publics",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: fourniture",
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_044",
+      "title": "Travaux de construction de marchés locaux",
+      "description": "Projet de construction visant à améliorer marchés locaux dans le cadre du développement local",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "marche",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs marché/commerce détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 1,
+        "neutre_score": 1,
+        "indicators_found": [
+          "MARCHÉ: marché",
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [
+          "Indicateurs marché/commerce détectés"
+        ],
+        "recommended_label": "marche",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_045",
+      "title": "Réhabilitation de forages d'eau",
+      "description": "Réalisation d'infrastructures pour forages d'eau afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: réhabilitation"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_046",
+      "title": "Travaux de rénovation de écoles primaires",
+      "description": "Projet de rénovation visant à améliorer écoles primaires dans le cadre du développement local",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "medium",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 0,
+        "indicators_found": [],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "blind_047",
+      "title": "Approvisionnement en véhicules administratifs pour les collectivités locales",
+      "description": "Processus d'acquisition de véhicules administratifs dans le cadre du renforcement des capacités de les collectivités locales",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "GOV: collectivités locales",
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_048",
+      "title": "Recrutement d'un consultant pour assistance technique",
+      "description": "Mission spécialisée de assistance technique pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 0,
+        "indicators_found": [
+          "GOV: réformes"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_049",
+      "title": "Travaux de rénovation de forages d'eau",
+      "description": "Projet de rénovation visant à améliorer forages d'eau dans le cadre du développement local",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "medium",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 0,
+        "indicators_found": [],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "blind_050",
+      "title": "Recrutement d'un consultant pour conseil technique",
+      "description": "Mission spécialisée de conseil technique pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 0,
+        "indicators_found": [
+          "GOV: réformes"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_051",
+      "title": "Approvisionnement en matériels informatiques pour les services publics",
+      "description": "Processus d'acquisition de matériels informatiques dans le cadre du renforcement des capacités de les services publics",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: acquisition",
+          "NEUTRE: matériel"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_052",
+      "title": "Mission d'audit financier",
+      "description": "Mission spécialisée de audit financier pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 2,
+        "marche_score": 0,
+        "neutre_score": 0,
+        "indicators_found": [
+          "GOV: réformes",
+          "GOV: audit financier"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_053",
+      "title": "Travaux de réhabilitation de centres de santé",
+      "description": "Projet de réhabilitation visant à améliorer centres de santé dans le cadre du développement local",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: réhabilitation"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_054",
+      "title": "Mission d'formation professionnelle",
+      "description": "Mission spécialisée de formation professionnelle pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "GOV: réformes",
+          "NEUTRE: formation"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_055",
+      "title": "Travaux de extension de forages d'eau",
+      "description": "Projet de extension visant à améliorer forages d'eau dans le cadre du développement local",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "medium",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 0,
+        "indicators_found": [],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "blind_056",
+      "title": "Acquisition de équipements médicaux destinés à les collectivités locales",
+      "description": "Processus d'acquisition de équipements médicaux dans le cadre du renforcement des capacités de les collectivités locales",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "GOV: collectivités locales",
+          "NEUTRE: acquisition",
+          "NEUTRE: équipement"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_057",
+      "title": "Acquisition de véhicules administratifs destinés à les centres de santé",
+      "description": "Processus d'acquisition de véhicules administratifs dans le cadre du renforcement des capacités de les centres de santé",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_058",
+      "title": "Mission d'étude de faisabilité",
+      "description": "Mission spécialisée de étude de faisabilité pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "GOV: réformes",
+          "NEUTRE: étude"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_059",
+      "title": "Construction de écoles primaires",
+      "description": "Réalisation d'infrastructures pour écoles primaires afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_060",
+      "title": "Travaux de construction de écoles primaires",
+      "description": "Projet de construction visant à améliorer écoles primaires dans le cadre du développement local",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_061",
+      "title": "Acquisition de véhicules administratifs destinés à les services publics",
+      "description": "Processus d'acquisition de véhicules administratifs dans le cadre du renforcement des capacités de les services publics",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_062",
+      "title": "Recrutement d'un consultant pour audit financier",
+      "description": "Mission spécialisée de audit financier pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 2,
+        "marche_score": 0,
+        "neutre_score": 0,
+        "indicators_found": [
+          "GOV: réformes",
+          "GOV: audit financier"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_063",
+      "title": "Réhabilitation de forages d'eau",
+      "description": "Réalisation d'infrastructures pour forages d'eau afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: réhabilitation"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_064",
+      "title": "Travaux de extension de écoles primaires",
+      "description": "Projet de extension visant à améliorer écoles primaires dans le cadre du développement local",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "medium",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 0,
+        "indicators_found": [],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "blind_065",
+      "title": "Recrutement d'un consultant pour conseil technique",
+      "description": "Mission spécialisée de conseil technique pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 0,
+        "indicators_found": [
+          "GOV: réformes"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_066",
+      "title": "Acquisition de matériels informatiques destinés à les services publics",
+      "description": "Processus d'acquisition de matériels informatiques dans le cadre du renforcement des capacités de les services publics",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: acquisition",
+          "NEUTRE: matériel"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_067",
+      "title": "Fourniture de véhicules administratifs pour les centres de santé",
+      "description": "Processus d'acquisition de véhicules administratifs dans le cadre du renforcement des capacités de les centres de santé",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: fourniture",
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_068",
+      "title": "Construction de écoles primaires",
+      "description": "Réalisation d'infrastructures pour écoles primaires afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_069",
+      "title": "Prestation de services de audit financier",
+      "description": "Mission spécialisée de audit financier pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 2,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "GOV: réformes",
+          "GOV: audit financier",
+          "NEUTRE: prestation"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_070",
+      "title": "Construction de centres de santé",
+      "description": "Réalisation d'infrastructures pour centres de santé afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_071",
+      "title": "Approvisionnement en véhicules administratifs pour les centres de santé",
+      "description": "Processus d'acquisition de véhicules administratifs dans le cadre du renforcement des capacités de les centres de santé",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_072",
+      "title": "Approvisionnement en mobilier scolaire pour les services publics",
+      "description": "Processus d'acquisition de mobilier scolaire dans le cadre du renforcement des capacités de les services publics",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_073",
+      "title": "Prestation de services de assistance technique",
+      "description": "Mission spécialisée de assistance technique pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "GOV: réformes",
+          "NEUTRE: prestation"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_074",
+      "title": "Fourniture de matériels de bureau pour les collectivités locales",
+      "description": "Processus d'acquisition de matériels de bureau dans le cadre du renforcement des capacités de les collectivités locales",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 3,
+        "indicators_found": [
+          "GOV: collectivités locales",
+          "NEUTRE: fourniture",
+          "NEUTRE: acquisition",
+          "NEUTRE: matériel"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_075",
+      "title": "Travaux de construction de routes rurales",
+      "description": "Projet de construction visant à améliorer routes rurales dans le cadre du développement local",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_076",
+      "title": "Prestation de services de conseil technique",
+      "description": "Mission spécialisée de conseil technique pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "GOV: réformes",
+          "NEUTRE: prestation"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_077",
+      "title": "Réhabilitation de forages d'eau",
+      "description": "Réalisation d'infrastructures pour forages d'eau afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: réhabilitation"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_078",
+      "title": "Réhabilitation de forages d'eau",
+      "description": "Réalisation d'infrastructures pour forages d'eau afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: réhabilitation"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_079",
+      "title": "Recrutement d'un consultant pour étude de faisabilité",
+      "description": "Mission spécialisée de étude de faisabilité pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "GOV: réformes",
+          "NEUTRE: étude"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_080",
+      "title": "Construction de routes rurales",
+      "description": "Réalisation d'infrastructures pour routes rurales afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_081",
+      "title": "Fourniture de équipements médicaux pour les établissements scolaires",
+      "description": "Processus d'acquisition de équipements médicaux dans le cadre du renforcement des capacités de les établissements scolaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 3,
+        "indicators_found": [
+          "NEUTRE: fourniture",
+          "NEUTRE: acquisition",
+          "NEUTRE: équipement"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_082",
+      "title": "Réhabilitation de écoles primaires",
+      "description": "Réalisation d'infrastructures pour écoles primaires afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: réhabilitation"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_083",
+      "title": "Fourniture de véhicules administratifs pour les centres de santé",
+      "description": "Processus d'acquisition de véhicules administratifs dans le cadre du renforcement des capacités de les centres de santé",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: fourniture",
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_084",
+      "title": "Prestation de services de étude de faisabilité",
+      "description": "Mission spécialisée de étude de faisabilité pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "GOV: réformes",
+          "NEUTRE: étude",
+          "NEUTRE: prestation"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_085",
+      "title": "Prestation de services de assistance technique",
+      "description": "Mission spécialisée de assistance technique pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 1,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "GOV: réformes",
+          "NEUTRE: prestation"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_086",
+      "title": "Acquisition de véhicules administratifs destinés à les services publics",
+      "description": "Processus d'acquisition de véhicules administratifs dans le cadre du renforcement des capacités de les services publics",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_087",
+      "title": "Construction de écoles primaires",
+      "description": "Réalisation d'infrastructures pour écoles primaires afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_088",
+      "title": "Acquisition de équipements médicaux destinés à les centres de santé",
+      "description": "Processus d'acquisition de équipements médicaux dans le cadre du renforcement des capacités de les centres de santé",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: acquisition",
+          "NEUTRE: équipement"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_089",
+      "title": "Construction de écoles primaires",
+      "description": "Réalisation d'infrastructures pour écoles primaires afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_090",
+      "title": "Travaux de construction de routes rurales",
+      "description": "Projet de construction visant à améliorer routes rurales dans le cadre du développement local",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_091",
+      "title": "Prestation de services de audit financier",
+      "description": "Mission spécialisée de audit financier pour accompagner les réformes en cours",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "gouvernement",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: Indicateurs gouvernement/administration détectés",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 2,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "GOV: réformes",
+          "GOV: audit financier",
+          "NEUTRE: prestation"
+        ],
+        "classification_hints": [
+          "Indicateurs gouvernement/administration détectés"
+        ],
+        "recommended_label": "gouvernement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_092",
+      "title": "Approvisionnement en mobilier scolaire pour les centres de santé",
+      "description": "Processus d'acquisition de mobilier scolaire dans le cadre du renforcement des capacités de les centres de santé",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_093",
+      "title": "Travaux de réhabilitation de centres de santé",
+      "description": "Projet de réhabilitation visant à améliorer centres de santé dans le cadre du développement local",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: réhabilitation"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_094",
+      "title": "Approvisionnement en matériels de bureau pour les centres de santé",
+      "description": "Processus d'acquisition de matériels de bureau dans le cadre du renforcement des capacités de les centres de santé",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: acquisition",
+          "NEUTRE: matériel"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_095",
+      "title": "Travaux de construction de routes rurales",
+      "description": "Projet de construction visant à améliorer routes rurales dans le cadre du développement local",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_096",
+      "title": "Construction de écoles primaires",
+      "description": "Réalisation d'infrastructures pour écoles primaires afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_097",
+      "title": "Fourniture de mobilier scolaire pour les centres de santé",
+      "description": "Processus d'acquisition de mobilier scolaire dans le cadre du renforcement des capacités de les centres de santé",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 2,
+        "indicators_found": [
+          "NEUTRE: fourniture",
+          "NEUTRE: acquisition"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_098",
+      "title": "Construction de routes rurales",
+      "description": "Réalisation d'infrastructures pour routes rurales afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_099",
+      "title": "Construction de routes rurales",
+      "description": "Réalisation d'infrastructures pour routes rurales afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: construction"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "blind_100",
+      "title": "Réhabilitation de écoles primaires",
+      "description": "Réalisation d'infrastructures pour écoles primaires afin de répondre aux besoins communautaires",
+      "source": "wend_kabre_2024_generated",
+      "collection_date": "2024-12-23",
+      "human_label": "neutre",
+      "frozen": true,
+      "confidence": "high",
+      "rationale": "Auto-analysé: ",
+      "labeling_method": "assisted_analysis",
+      "analysis_details": {
+        "gouvernement_score": 0,
+        "marche_score": 0,
+        "neutre_score": 1,
+        "indicators_found": [
+          "NEUTRE: réhabilitation"
+        ],
+        "classification_hints": [],
+        "recommended_label": "neutre",
+        "confidence": "high"
+      }
+    }
+  ],
+  "validation_protocol": {
+    "step_1": "Assignment des labels GOLD par expertise humaine",
+    "step_2": "Vérification de l'indépendance totale du dataset",
+    "step_3": "Freeze du dataset (frozen = true)",
+    "step_4": "Validation comparative V2F vs V2G",
+    "success_criteria": {
+      "accuracy_threshold": "≥70%",
+      "recall_threshold": "≥95%",
+      "pollution_threshold": "<5%"
+    }
+  }
+}

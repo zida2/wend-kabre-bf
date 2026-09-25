@@ -1,0 +1,306 @@
+{
+  "timestamp": "2026-09-23T14:49:32.030Z",
+  "original": {
+    "total": 50,
+    "correct": 36,
+    "accuracy": 72,
+    "precision": {
+      "VALID": 100,
+      "REVIEW": 59.25925925925925,
+      "REJECTED": 80
+    },
+    "recall": {
+      "VALID": 50,
+      "REVIEW": 84.21052631578947,
+      "REJECTED": 80
+    },
+    "f1Score": {
+      "VALID": 66.66666666666667,
+      "REVIEW": 69.56521739130434,
+      "REJECTED": 80
+    },
+    "confusionMatrix": {
+      "VALID→VALID": 8,
+      "VALID→REVIEW": 8,
+      "VALID→REJECTED": 0,
+      "REVIEW→VALID": 0,
+      "REVIEW→REVIEW": 16,
+      "REVIEW→REJECTED": 3,
+      "REJECTED→VALID": 0,
+      "REJECTED→REVIEW": 3,
+      "REJECTED→REJECTED": 12
+    },
+    "pollution": {
+      "displayedNonMarkets": 3,
+      "totalDisplayed": 35,
+      "pollutionRate": 8.571428571428571,
+      "criticalErrors": 0
+    },
+    "distribution": {
+      "human": {
+        "VALID": 16,
+        "REVIEW": 19,
+        "REJECTED": 15
+      },
+      "machine": {
+        "VALID": 8,
+        "REVIEW": 27,
+        "REJECTED": 15
+      }
+    }
+  },
+  "improved": {
+    "total": 50,
+    "correct": 36,
+    "accuracy": 72,
+    "precision": {
+      "VALID": 100,
+      "REVIEW": 64.70588235294117,
+      "REJECTED": 52.94117647058824
+    },
+    "recall": {
+      "VALID": 100,
+      "REVIEW": 57.89473684210527,
+      "REJECTED": 60
+    },
+    "f1Score": {
+      "VALID": 100,
+      "REVIEW": 61.11111111111111,
+      "REJECTED": 56.25
+    },
+    "confusionMatrix": {
+      "VALID→VALID": 16,
+      "VALID→REVIEW": 0,
+      "VALID→REJECTED": 0,
+      "REVIEW→VALID": 0,
+      "REVIEW→REVIEW": 11,
+      "REVIEW→REJECTED": 8,
+      "REJECTED→VALID": 0,
+      "REJECTED→REVIEW": 6,
+      "REJECTED→REJECTED": 9
+    },
+    "pollution": {
+      "displayedNonMarkets": 6,
+      "totalDisplayed": 33,
+      "pollutionRate": 18.181818181818183,
+      "criticalErrors": 0
+    },
+    "distribution": {
+      "human": {
+        "VALID": 16,
+        "REVIEW": 19,
+        "REJECTED": 15
+      },
+      "machine": {
+        "VALID": 16,
+        "REVIEW": 17,
+        "REJECTED": 17
+      }
+    }
+  },
+  "fixedCases": [
+    {
+      "id": "mock-4",
+      "title": "Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agriculture",
+      "human": "VALID",
+      "machine": "VALID",
+      "score": 1.81,
+      "confidence": 0.6033333333333334,
+      "contextual": [],
+      "originalMachine": "REVIEW"
+    },
+    {
+      "id": "mock-5",
+      "title": "Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya",
+      "human": "VALID",
+      "machine": "VALID",
+      "score": 2.01,
+      "confidence": 0.6699999999999999,
+      "contextual": [
+        {
+          "rule": "travaux_btp",
+          "adjustment": 1
+        }
+      ],
+      "originalMachine": "REVIEW"
+    },
+    {
+      "id": "mock-19",
+      "title": "Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agriculture",
+      "human": "VALID",
+      "machine": "VALID",
+      "score": 1.75,
+      "confidence": 0.5833333333333334,
+      "contextual": [],
+      "originalMachine": "REVIEW"
+    },
+    {
+      "id": "mock-20",
+      "title": "Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya",
+      "human": "VALID",
+      "machine": "VALID",
+      "score": 2.01,
+      "confidence": 0.6699999999999999,
+      "contextual": [
+        {
+          "rule": "travaux_btp",
+          "adjustment": 1
+        }
+      ],
+      "originalMachine": "REVIEW"
+    },
+    {
+      "id": "mock-34",
+      "title": "Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agriculture",
+      "human": "VALID",
+      "machine": "VALID",
+      "score": 1.81,
+      "confidence": 0.6033333333333334,
+      "contextual": [],
+      "originalMachine": "REVIEW"
+    },
+    {
+      "id": "mock-35",
+      "title": "Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya",
+      "human": "VALID",
+      "machine": "VALID",
+      "score": 2.01,
+      "confidence": 0.6699999999999999,
+      "contextual": [
+        {
+          "rule": "travaux_btp",
+          "adjustment": 1
+        }
+      ],
+      "originalMachine": "REVIEW"
+    },
+    {
+      "id": "mock-49",
+      "title": "Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agriculture",
+      "human": "VALID",
+      "machine": "VALID",
+      "score": 1.75,
+      "confidence": 0.5833333333333334,
+      "contextual": [],
+      "originalMachine": "REVIEW"
+    },
+    {
+      "id": "mock-50",
+      "title": "Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya",
+      "human": "VALID",
+      "machine": "VALID",
+      "score": 2.01,
+      "confidence": 0.6699999999999999,
+      "contextual": [
+        {
+          "rule": "travaux_btp",
+          "adjustment": 1
+        }
+      ],
+      "originalMachine": "REVIEW"
+    }
+  ],
+  "newErrors": [
+    {
+      "id": "mock-3",
+      "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs",
+      "human": "REVIEW",
+      "machine": "REJECTED",
+      "score": -3.99,
+      "confidence": 1,
+      "contextual": [
+        {
+          "rule": "prestation_recrutement",
+          "adjustment": -2
+        }
+      ],
+      "originalMachine": "REVIEW"
+    },
+    {
+      "id": "mock-9",
+      "title": "Cérémonie d'inauguration du nouveau complexe sportif de Bobo-Dioulasso",
+      "human": "REJECTED",
+      "machine": "REVIEW",
+      "score": 0.15,
+      "confidence": 0.3,
+      "contextual": [],
+      "originalMachine": "REJECTED"
+    },
+    {
+      "id": "mock-18",
+      "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs",
+      "human": "REVIEW",
+      "machine": "REJECTED",
+      "score": -4.14,
+      "confidence": 1,
+      "contextual": [
+        {
+          "rule": "prestation_recrutement",
+          "adjustment": -2
+        }
+      ],
+      "originalMachine": "REVIEW"
+    },
+    {
+      "id": "mock-24",
+      "title": "Cérémonie d'inauguration du nouveau complexe sportif de Bobo-Dioulasso",
+      "human": "REJECTED",
+      "machine": "REVIEW",
+      "score": 0.21,
+      "confidence": 0.3,
+      "contextual": [],
+      "originalMachine": "REJECTED"
+    },
+    {
+      "id": "mock-26",
+      "title": "Prestation de formation en gestion de projet pour les cadres du Ministère",
+      "human": "REVIEW",
+      "machine": "REJECTED",
+      "score": -0.34,
+      "confidence": 0.019999999999999934,
+      "contextual": [],
+      "originalMachine": "REVIEW"
+    },
+    {
+      "id": "mock-33",
+      "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs",
+      "human": "REVIEW",
+      "machine": "REJECTED",
+      "score": -3.99,
+      "confidence": 1,
+      "contextual": [
+        {
+          "rule": "prestation_recrutement",
+          "adjustment": -2
+        }
+      ],
+      "originalMachine": "REVIEW"
+    },
+    {
+      "id": "mock-39",
+      "title": "Cérémonie d'inauguration du nouveau complexe sportif de Bobo-Dioulasso",
+      "human": "REJECTED",
+      "machine": "REVIEW",
+      "score": 0.15,
+      "confidence": 0.3,
+      "contextual": [],
+      "originalMachine": "REJECTED"
+    },
+    {
+      "id": "mock-48",
+      "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs",
+      "human": "REVIEW",
+      "machine": "REJECTED",
+      "score": -4.14,
+      "confidence": 1,
+      "contextual": [
+        {
+          "rule": "prestation_recrutement",
+          "adjustment": -2
+        }
+      ],
+      "originalMachine": "REVIEW"
+    }
+  ],
+  "overallSuccess": false
+}

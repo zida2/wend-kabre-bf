@@ -1,0 +1,1030 @@
+{
+  "totalFalsePositives": 61,
+  "falsePositives": [
+    {
+      "id": "holdout-024",
+      "title": "Avis de recrutement - Techniciens supérieurs en informatique",
+      "description": "15 postes techniques dans les services déconcentrés",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0.4,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "SERVICE_OUTSOURCING",
+      "reasons": [],
+      "category": "recruitment_inspector",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-035",
+      "title": "Fourniture de mobilier scolaire pour 150 établissements secondaires",
+      "description": "Tables-bancs, bureaux et armoires pour collèges et lycées",
+      "human": "REJECTED",
+      "v2f": "VALID",
+      "score": 2.7,
+      "intent": "MARKET",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Acquisition/fourniture détectée → bonus",
+        "Intention marché claire → bonus"
+      ],
+      "category": "official_communication",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-036",
+      "title": "Travaux d'extension du réseau électrique en milieu rural - Province du Ganzourgou",
+      "description": "Électrification de 25 villages par extension du réseau national",
+      "human": "REJECTED",
+      "v2f": "VALID",
+      "score": 2.1,
+      "intent": "MARKET",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Travaux détectés → bonus",
+        "Intention marché claire → bonus"
+      ],
+      "category": "official_communication",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-043",
+      "title": "Lancement du Programme National de Digitalisation Administrative",
+      "description": "Présentation de la stratégie de transformation numérique",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_legal",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-099",
+      "title": "Prestation de services d'animation culturelle pour fêtes nationales",
+      "description": "Description générée pour: Prestation de services d'animation culturelle pour fêtes nationales...",
+      "human": "REJECTED",
+      "v2f": "VALID",
+      "score": 2.9,
+      "intent": "MARKET",
+      "contentType": "GENERAL",
+      "recruitmentType": "SERVICE_OUTSOURCING",
+      "reasons": [
+        "Prestation de service détectée → bonus",
+        "Intention marché claire → bonus"
+      ],
+      "category": "recruitment_health",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-100",
+      "title": "Avis de recrutement - Services de maintenance des jardins publics",
+      "description": "Description générée pour: Avis de recrutement - Services de maintenance des jardins publics...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0.4,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "SERVICE_OUTSOURCING",
+      "reasons": [],
+      "category": "recruitment_education",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-101",
+      "title": "Recrutement prestataire - Nettoyage spécialisé des locaux de santé",
+      "description": "Description générée pour: Recrutement prestataire - Nettoyage spécialisé des locaux de santé...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "SERVICE_OUTSOURCING",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_health",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-102",
+      "title": "Prestation de services funéraires pour personnalités officielles",
+      "description": "Description générée pour: Prestation de services funéraires pour personnalités officielles...",
+      "human": "REJECTED",
+      "v2f": "VALID",
+      "score": 2.9,
+      "intent": "MARKET",
+      "contentType": "GENERAL",
+      "recruitmentType": "SERVICE_OUTSOURCING",
+      "reasons": [
+        "Prestation de service détectée → bonus",
+        "Intention marché claire → bonus"
+      ],
+      "category": "recruitment_education",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-103",
+      "title": "Avis de recrutement - Services de restauration pour centres de formation",
+      "description": "Description générée pour: Avis de recrutement - Services de restauration pour centres de formation...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 1.2,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "SERVICE_OUTSOURCING",
+      "reasons": [
+        "Réhabilitation/restauration → bonus V2E"
+      ],
+      "category": "recruitment_security",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-104",
+      "title": "Mission d'expertise pour réforme de l'administration territoriale",
+      "description": "Description générée pour: Mission d'expertise pour réforme de l'administration territoriale...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_executive",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-105",
+      "title": "Étude d'optimisation des circuits de distribution pharmaceutique",
+      "description": "Description générée pour: Étude d'optimisation des circuits de distribution pharmaceutique...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_veterinary",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-106",
+      "title": "Évaluation de l'efficacité des programmes de microfinance rurale",
+      "description": "Description générée pour: Évaluation de l'efficacité des programmes de microfinance rurale...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_engineering",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-107",
+      "title": "Mission de conseil pour modernisation du système judiciaire",
+      "description": "Description générée pour: Mission de conseil pour modernisation du système judiciaire...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_judicial",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-108",
+      "title": "Étude de restructuration des entreprises publiques burkinabè",
+      "description": "Description générée pour: Étude de restructuration des entreprises publiques burkinabè...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_education",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-109",
+      "title": "Évaluation des politiques de promotion de l'entrepreneuriat jeune",
+      "description": "Description générée pour: Évaluation des politiques de promotion de l'entrepreneuriat jeune...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_administrative",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-110",
+      "title": "Mission d'assistance technique pour décentralisation fiscale",
+      "description": "Description générée pour: Mission d'assistance technique pour décentralisation fiscale...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_environmental",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-111",
+      "title": "Étude de rentabilité des investissements dans les énergies renouvelables",
+      "description": "Description générée pour: Étude de rentabilité des investissements dans les énergies renouvelables...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_financial",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-112",
+      "title": "Évaluation de l'impact des projets de développement rural",
+      "description": "Description générée pour: Évaluation de l'impact des projets de développement rural...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_statistical",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-113",
+      "title": "Mission de conseil pour amélioration du climat des affaires",
+      "description": "Description générée pour: Mission de conseil pour amélioration du climat des affaires...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_health",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-115",
+      "title": "Avis de recrutement - Inspecteurs de l'éducation pour l'enseignement primaire",
+      "description": "Description générée pour: Avis de recrutement - Inspecteurs de l'éducation pour l'enseignement primaire...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_technical",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-117",
+      "title": "Recrutement de conseillers pédagogiques pour l'enseignement secondaire",
+      "description": "Description générée pour: Recrutement de conseillers pédagogiques pour l'enseignement secondaire...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_administrative",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-120",
+      "title": "Recrutement de vétérinaires pour les services d'élevage régionaux",
+      "description": "Description générée pour: Recrutement de vétérinaires pour les services d'élevage régionaux...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0.4,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "SERVICE_OUTSOURCING",
+      "reasons": [],
+      "category": "recruitment_communication",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-122",
+      "title": "Avis de recrutement - Magistrats pour les tribunaux de première instance",
+      "description": "Description générée pour: Avis de recrutement - Magistrats pour les tribunaux de première instance...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_legal",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-123",
+      "title": "Recrutement de professeurs certifiés pour l'enseignement secondaire",
+      "description": "Description générée pour: Recrutement de professeurs certifiés pour l'enseignement secondaire...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_health",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-126",
+      "title": "Avis de recrutement - Contrôleurs du trésor public",
+      "description": "Description générée pour: Avis de recrutement - Contrôleurs du trésor public...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_technical",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-128",
+      "title": "Recrutement de sage-femmes pour les centres de santé ruraux",
+      "description": "Description générée pour: Recrutement de sage-femmes pour les centres de santé ruraux...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_financial",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-129",
+      "title": "Avis de recrutement - Inspecteurs des impôts et domaines",
+      "description": "Description générée pour: Avis de recrutement - Inspecteurs des impôts et domaines...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_education",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-130",
+      "title": "Poste vacant - Chef de service informatique à la Présidence",
+      "description": "Description générée pour: Poste vacant - Chef de service informatique à la Présidence...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0.4,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "SERVICE_OUTSOURCING",
+      "reasons": [],
+      "category": "recruitment_technical",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-131",
+      "title": "Recrutement de pharmaciens pour les dépôts pharmaceutiques régionaux",
+      "description": "Description générée pour: Recrutement de pharmaciens pour les dépôts pharmaceutiques régionaux...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_health",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-132",
+      "title": "Offre d'emploi - Archivistes pour les services déconcentrés",
+      "description": "Description générée pour: Offre d'emploi - Archivistes pour les services déconcentrés...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0.4,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "SERVICE_OUTSOURCING",
+      "reasons": [],
+      "category": "recruitment_surveying",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-134",
+      "title": "Recrutement de laborantins pour les laboratoires d'analyses médicales",
+      "description": "Description générée pour: Recrutement de laborantins pour les laboratoires d'analyses médicales...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_tourism",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-136",
+      "title": "Avis de recrutement - Contrôleurs de gestion dans les hôpitaux",
+      "description": "Description générée pour: Avis de recrutement - Contrôleurs de gestion dans les hôpitaux...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_security",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-138",
+      "title": "Recrutement de nutritionnistes pour les programmes de santé publique",
+      "description": "Description générée pour: Recrutement de nutritionnistes pour les programmes de santé publique...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_technical",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-139",
+      "title": "Avis de recrutement - Agents d'accueil pour les services publics",
+      "description": "Description générée pour: Avis de recrutement - Agents d'accueil pour les services publics...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0.4,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "SERVICE_OUTSOURCING",
+      "reasons": [],
+      "category": "recruitment_education",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-141",
+      "title": "Recrutement de techniciens de maintenance pour équipements médicaux",
+      "description": "Description générée pour: Recrutement de techniciens de maintenance pour équipements médicaux...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "SERVICE_OUTSOURCING",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_security",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-144",
+      "title": "Recrutement de moniteurs d'alphabétisation pour zones rurales",
+      "description": "Description générée pour: Recrutement de moniteurs d'alphabétisation pour zones rurales...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_transport",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-146",
+      "title": "Avis de recrutement - Inspecteurs de santé publique",
+      "description": "Description générée pour: Avis de recrutement - Inspecteurs de santé publique...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_labor",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-147",
+      "title": "Offre d'emploi - Géomètres pour les services de cadastre",
+      "description": "Description générée pour: Offre d'emploi - Géomètres pour les services de cadastre...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0.4,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "SERVICE_OUTSOURCING",
+      "reasons": [],
+      "category": "recruitment_health",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-148",
+      "title": "Recrutement de psychologues scolaires pour l'orientation",
+      "description": "Description générée pour: Recrutement de psychologues scolaires pour l'orientation...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "recruitment_cooperative",
+      "isRecuitmentError": true
+    },
+    {
+      "id": "holdout-150",
+      "title": "Poste vacant - Responsable qualité dans les services de santé",
+      "description": "Description générée pour: Poste vacant - Responsable qualité dans les services de santé...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0.4,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "SERVICE_OUTSOURCING",
+      "reasons": [],
+      "category": "death_notice",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-153",
+      "title": "Avis de recrutement - Techniciens en télécommunications",
+      "description": "Description générée pour: Avis de recrutement - Techniciens en télécommunications...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "death_notice",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-154",
+      "title": "Recrutement de bibliothécaires pour les établissements scolaires",
+      "description": "Description générée pour: Recrutement de bibliothécaires pour les établissements scolaires...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "death_notice",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-155",
+      "title": "Poste vacant - Chef de service protocole à la Primature",
+      "description": "Description générée pour: Poste vacant - Chef de service protocole à la Primature...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0.4,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "SERVICE_OUTSOURCING",
+      "reasons": [],
+      "category": "death_notice",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-158",
+      "title": "Recrutement de formateurs pour centres de formation professionnelle",
+      "description": "Description générée pour: Recrutement de formateurs pour centres de formation professionnelle...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "academic_conference",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-159",
+      "title": "Avis de recrutement - Contrôleurs de la circulation routière",
+      "description": "Description générée pour: Avis de recrutement - Contrôleurs de la circulation routière...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "academic_seminar",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-161",
+      "title": "Recrutement d'inspecteurs du travail et de la sécurité sociale",
+      "description": "Description générée pour: Recrutement d'inspecteurs du travail et de la sécurité sociale...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "RECRUITMENT",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "academic_workshop",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-173",
+      "title": "Colloque international sur la gouvernance démocratique en Afrique de l'Ouest",
+      "description": "Description générée pour: Colloque international sur la gouvernance démocratique en Afrique de l'Ouest...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "official_ceremony",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-174",
+      "title": "Séminaire de formation sur les techniques modernes d'irrigation",
+      "description": "Description générée pour: Séminaire de formation sur les techniques modernes d'irrigation...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "program_launch",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-176",
+      "title": "Atelier de sensibilisation sur les changements climatiques au Sahel",
+      "description": "Description générée pour: Atelier de sensibilisation sur les changements climatiques au Sahel...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "official_ceremony",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-178",
+      "title": "Symposium sur la médecine traditionnelle africaine",
+      "description": "Description générée pour: Symposium sur la médecine traditionnelle africaine...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "academic_graduation",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-179",
+      "title": "Journées scientifiques sur la sécurité alimentaire",
+      "description": "Description générée pour: Journées scientifiques sur la sécurité alimentaire...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "administrative_appointment",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-180",
+      "title": "Congrès national des enseignants-chercheurs burkinabè",
+      "description": "Description générée pour: Congrès national des enseignants-chercheurs burkinabè...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "administrative_appointment",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-181",
+      "title": "Semaine de la science et de la technologie au Burkina Faso",
+      "description": "Description générée pour: Semaine de la science et de la technologie au Burkina Faso...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "administrative_appointment",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-182",
+      "title": "Colloque sur le patrimoine culturel et linguistique national",
+      "description": "Description générée pour: Colloque sur le patrimoine culturel et linguistique national...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "administrative_appointment",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-183",
+      "title": "Rencontres nationales sur l'innovation technologique",
+      "description": "Description générée pour: Rencontres nationales sur l'innovation technologique...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "administrative_appointment",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-185",
+      "title": "Lancement officiel du Programme National de Volontariat",
+      "description": "Description générée pour: Lancement officiel du Programme National de Volontariat...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "administrative_appointment",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-189",
+      "title": "Lancement de la campagne nationale d'assainissement",
+      "description": "Description générée pour: Lancement de la campagne nationale d'assainissement...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "official_communication",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-192",
+      "title": "Lancement du Programme National de Réinsertion des Ex-combattants",
+      "description": "Description générée pour: Lancement du Programme National de Réinsertion des Ex-combattants...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "official_communication",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-200",
+      "title": "Mouvement dans le corps préfectoral - Nouvelles affectations",
+      "description": "Description générée pour: Mouvement dans le corps préfectoral - Nouvelles affectations...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "official_communication",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-203",
+      "title": "Mouvement dans la Magistrature - Promotions et affectations",
+      "description": "Description générée pour: Mouvement dans la Magistrature - Promotions et affectations...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "official_communication",
+      "isRecuitmentError": false
+    },
+    {
+      "id": "holdout-207",
+      "title": "Message du Président du Faso à la Nation pour la nouvelle année",
+      "description": "Description générée pour: Message du Président du Faso à la Nation pour la nouvelle année...",
+      "human": "REJECTED",
+      "v2f": "REVIEW",
+      "score": 0,
+      "intent": "NEUTRAL",
+      "contentType": "GENERAL",
+      "recruitmentType": "UNKNOWN",
+      "reasons": [
+        "Score=0 sans signaux clairs → révision par défaut V2F"
+      ],
+      "category": "academic_graduation",
+      "isRecuitmentError": false
+    }
+  ],
+  "analysis": {
+    "byIntentDetected": {
+      "RECRUITMENT": 31,
+      "MARKET": 4,
+      "NEUTRAL": 26
+    },
+    "byScore": {
+      "0": 47,
+      "0.4": 9,
+      "2.7": 1,
+      "2.1": 1,
+      "2.9": 2,
+      "1.2": 1
+    },
+    "byCategory": {
+      "recruitment_inspector": 1,
+      "official_communication": 6,
+      "recruitment_legal": 2,
+      "recruitment_health": 6,
+      "recruitment_education": 5,
+      "recruitment_security": 3,
+      "recruitment_executive": 1,
+      "recruitment_veterinary": 1,
+      "recruitment_engineering": 1,
+      "recruitment_judicial": 1,
+      "recruitment_administrative": 2,
+      "recruitment_environmental": 1,
+      "recruitment_financial": 2,
+      "recruitment_statistical": 1,
+      "recruitment_technical": 4,
+      "recruitment_communication": 1,
+      "recruitment_surveying": 1,
+      "recruitment_tourism": 1,
+      "recruitment_transport": 1,
+      "recruitment_labor": 1,
+      "recruitment_cooperative": 1,
+      "death_notice": 4,
+      "academic_conference": 1,
+      "academic_seminar": 1,
+      "academic_workshop": 1,
+      "official_ceremony": 2,
+      "program_launch": 1,
+      "academic_graduation": 2,
+      "administrative_appointment": 6
+    },
+    "byTriggeringPattern": {},
+    "recruitmentErrors": {
+      "prestation": 2,
+      "service": 7,
+      "avis": 7,
+      "recherche": 0,
+      "recrutement": 10,
+      "agents": 0,
+      "candidates": 0,
+      "autres": 11
+    }
+  },
+  "summary": {
+    "validErrors": 4,
+    "reviewErrors": 57,
+    "recruitmentErrors": 37,
+    "nonRecruitmentErrors": 24
+  }
+}

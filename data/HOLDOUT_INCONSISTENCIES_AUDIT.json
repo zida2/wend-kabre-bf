@@ -1,0 +1,189 @@
+{
+  "audit_metadata": {
+    "total_inconsistencies": 14,
+    "audit_date": "2026-09-24T12:37:42.757Z",
+    "methodology": "Manual review of identified inconsistencies"
+  },
+  "individual_audits": [
+    {
+      "id": "holdout-007",
+      "texte_complet": "Acquisition de matériel informatique pour 100 écoles primaires",
+      "description_complete": "Ordinateurs et équipements pédagogiques numériques",
+      "label_actuel": "VALID",
+      "category_actuelle": "market_supply",
+      "notes_humaines": "Matériel informatique écoles - fourniture",
+      "label_propose": "VALID",
+      "justification": "Le titre décrit effectivement un marché/acquisition",
+      "niveau_certitude": "PROBABLE",
+      "type_incoherence": "Titre semble cohérent avec VALID"
+    },
+    {
+      "id": "holdout-209",
+      "texte_complet": "Déclaration sur la politique nationale de lutte contre la pauvreté",
+      "description_complete": "Description générée pour: Déclaration sur la politique nationale de lutte contre la pauvreté...",
+      "label_actuel": "VALID",
+      "category_actuelle": "market_furniture",
+      "notes_humaines": "Mobilier scolaire - fourniture mobilier",
+      "label_propose": "REJECTED",
+      "justification": "Annonce de politique générale, pas d'appel d'offres spécifique",
+      "niveau_certitude": "CERTAIN",
+      "type_incoherence": "Communication politique/stratégique classée VALID"
+    },
+    {
+      "id": "holdout-210",
+      "texte_complet": "Communiqué du Ministère des Affaires Étrangères sur les relations bilatérales",
+      "description_complete": "Description générée pour: Communiqué du Ministère des Affaires Étrangères sur les relations bilatérales...",
+      "label_actuel": "VALID",
+      "category_actuelle": "market_infrastructure",
+      "notes_humaines": "Extension électrique - infrastructure",
+      "label_propose": "REJECTED",
+      "justification": "Annonce de politique générale, pas d'appel d'offres spécifique",
+      "niveau_certitude": "CERTAIN",
+      "type_incoherence": "Communication politique/stratégique classée VALID"
+    },
+    {
+      "id": "holdout-211",
+      "texte_complet": "Message de condoléances suite aux inondations dans l'Est",
+      "description_complete": "Description générée pour: Message de condoléances suite aux inondations dans l'Est...",
+      "label_actuel": "VALID",
+      "category_actuelle": "market_rehabilitation",
+      "notes_humaines": "Réhabilitation forages - travaux",
+      "label_propose": "REJECTED",
+      "justification": "Message de courtoisie/protocole, aucun marché public concerné",
+      "niveau_certitude": "CERTAIN",
+      "type_incoherence": "Communication cérémonielle classée VALID"
+    },
+    {
+      "id": "holdout-212",
+      "texte_complet": "Déclaration sur la mise en œuvre des Objectifs du Millénaire",
+      "description_complete": "Description générée pour: Déclaration sur la mise en œuvre des Objectifs du Millénaire...",
+      "label_actuel": "VALID",
+      "category_actuelle": "market_construction",
+      "notes_humaines": "Construction 30 salles - marché construction",
+      "label_propose": "REJECTED",
+      "justification": "Annonce de politique générale, pas d'appel d'offres spécifique",
+      "niveau_certitude": "CERTAIN",
+      "type_incoherence": "Communication politique/stratégique classée VALID"
+    },
+    {
+      "id": "holdout-213",
+      "texte_complet": "Communiqué sur les mesures de soutien aux producteurs agricoles",
+      "description_complete": "Description générée pour: Communiqué sur les mesures de soutien aux producteurs agricoles...",
+      "label_actuel": "VALID",
+      "category_actuelle": "market_infrastructure",
+      "notes_humaines": "Réhabilitation aéroport - marché travaux",
+      "label_propose": "REJECTED",
+      "justification": "Annonce de politique générale, pas d'appel d'offres spécifique",
+      "niveau_certitude": "CERTAIN",
+      "type_incoherence": "Communication politique/stratégique classée VALID"
+    },
+    {
+      "id": "holdout-214",
+      "texte_complet": "Déclaration relative à la protection de l'environnement",
+      "description_complete": "Description générée pour: Déclaration relative à la protection de l'environnement...",
+      "label_actuel": "VALID",
+      "category_actuelle": "market_construction",
+      "notes_humaines": "Centre formation - marché construction",
+      "label_propose": "REJECTED",
+      "justification": "Annonce de politique générale, pas d'appel d'offres spécifique",
+      "niveau_certitude": "CERTAIN",
+      "type_incoherence": "Communication politique/stratégique classée VALID"
+    },
+    {
+      "id": "holdout-215",
+      "texte_complet": "Communiqué sur le renforcement de la coopération Sud-Sud",
+      "description_complete": "Description générée pour: Communiqué sur le renforcement de la coopération Sud-Sud...",
+      "label_actuel": "VALID",
+      "category_actuelle": "market_infrastructure",
+      "notes_humaines": "Bitumage routes - marché infrastructure",
+      "label_propose": "REJECTED",
+      "justification": "Annonce de politique générale, pas d'appel d'offres spécifique",
+      "niveau_certitude": "CERTAIN",
+      "type_incoherence": "Communication politique/stratégique classée VALID"
+    },
+    {
+      "id": "holdout-216",
+      "texte_complet": "Message de félicitations aux équipes nationales sportives",
+      "description_complete": "Description générée pour: Message de félicitations aux équipes nationales sportives...",
+      "label_actuel": "VALID",
+      "category_actuelle": "market_construction",
+      "notes_humaines": "Barrage international - grand projet",
+      "label_propose": "REJECTED",
+      "justification": "Message de courtoisie/protocole, aucun marché public concerné",
+      "niveau_certitude": "CERTAIN",
+      "type_incoherence": "Communication cérémonielle classée VALID"
+    },
+    {
+      "id": "holdout-217",
+      "texte_complet": "Déclaration sur la politique de promotion de la jeunesse",
+      "description_complete": "Description générée pour: Déclaration sur la politique de promotion de la jeunesse...",
+      "label_actuel": "VALID",
+      "category_actuelle": "market_supply",
+      "notes_humaines": "Kits urgence - fourniture santé",
+      "label_propose": "REJECTED",
+      "justification": "Annonce de politique générale, pas d'appel d'offres spécifique",
+      "niveau_certitude": "CERTAIN",
+      "type_incoherence": "Communication politique/stratégique classée VALID"
+    },
+    {
+      "id": "holdout-218",
+      "texte_complet": "Communiqué de fin de Conseil des Ministres",
+      "description_complete": "Description générée pour: Communiqué de fin de Conseil des Ministres...",
+      "label_actuel": "VALID",
+      "category_actuelle": "market_supply",
+      "notes_humaines": "Matériel informatique - fourniture",
+      "label_propose": "REJECTED",
+      "justification": "Annonce de politique générale, pas d'appel d'offres spécifique",
+      "niveau_certitude": "CERTAIN",
+      "type_incoherence": "Communication politique/stratégique classée VALID"
+    },
+    {
+      "id": "holdout-219",
+      "texte_complet": "Message du Premier Ministre sur la réforme de l'administration",
+      "description_complete": "Description générée pour: Message du Premier Ministre sur la réforme de l'administration...",
+      "label_actuel": "VALID",
+      "category_actuelle": "market_supply",
+      "notes_humaines": "Semences certifiées - fourniture agricole",
+      "label_propose": "REJECTED",
+      "justification": "Annonce de politique générale, pas d'appel d'offres spécifique",
+      "niveau_certitude": "CERTAIN",
+      "type_incoherence": "Communication politique/stratégique classée VALID"
+    },
+    {
+      "id": "holdout-220",
+      "texte_complet": "Déclaration sur la stratégie nationale de développement durable",
+      "description_complete": "Description générée pour: Déclaration sur la stratégie nationale de développement durable...",
+      "label_actuel": "VALID",
+      "category_actuelle": "market_supply",
+      "notes_humaines": "Panneaux solaires - fourniture énergie",
+      "label_propose": "REJECTED",
+      "justification": "Annonce de politique générale, pas d'appel d'offres spécifique",
+      "niveau_certitude": "CERTAIN",
+      "type_incoherence": "Communication politique/stratégique classée VALID"
+    },
+    {
+      "id": "holdout-221",
+      "texte_complet": "Communiqué sur les mesures de lutte contre la corruption",
+      "description_complete": "Description générée pour: Communiqué sur les mesures de lutte contre la corruption...",
+      "label_actuel": "VALID",
+      "category_actuelle": "market_vehicles",
+      "notes_humaines": "Ambulances - acquisition véhicules",
+      "label_propose": "REJECTED",
+      "justification": "Annonce de politique générale, pas d'appel d'offres spécifique",
+      "niveau_certitude": "CERTAIN",
+      "type_incoherence": "Communication politique/stratégique classée VALID"
+    }
+  ],
+  "summary": {
+    "by_certainty": {
+      "PROBABLE": 1,
+      "CERTAIN": 13
+    },
+    "by_proposed_label": {
+      "VALID": 1,
+      "REJECTED": 13
+    },
+    "critical_mapping_errors": 0,
+    "communication_misclassified": 13
+  }
+}

@@ -1,0 +1,227 @@
+{
+  "totalErrors": 8,
+  "errorsByType": {
+    "FALSE_POSITIVE": [
+      {
+        "id": "shadow-academic-003",
+        "title": "Conférence scientifique internationale sur les énergies renouvelables",
+        "humanClass": "REJECTED",
+        "v2dClass": "REVIEW",
+        "score": 0,
+        "confidence": 0.33,
+        "primaryIntent": "NEUTRAL",
+        "contentType": "GENERAL",
+        "recruitmentType": "UNKNOWN",
+        "signalsDetected": "",
+        "reasons": "",
+        "category": "contenu_academique",
+        "errorType": "FALSE_POSITIVE"
+      },
+      {
+        "id": "shadow-event-003",
+        "title": "Cérémonie de remise de diplômes à l'École Nationale d'Administration",
+        "humanClass": "REJECTED",
+        "v2dClass": "REVIEW",
+        "score": 0,
+        "confidence": 0.33,
+        "primaryIntent": "NEUTRAL",
+        "contentType": "GENERAL",
+        "recruitmentType": "UNKNOWN",
+        "signalsDetected": "",
+        "reasons": "",
+        "category": "evenement_officiel",
+        "errorType": "FALSE_POSITIVE"
+      },
+      {
+        "id": "shadow-nomination-003",
+        "title": "Conseil des Ministres - Nominations au sein du Gouvernement",
+        "humanClass": "REJECTED",
+        "v2dClass": "REVIEW",
+        "score": 0,
+        "confidence": 0.33,
+        "primaryIntent": "NEUTRAL",
+        "contentType": "GENERAL",
+        "recruitmentType": "UNKNOWN",
+        "signalsDetected": "",
+        "reasons": "",
+        "category": "nomination_administrative",
+        "errorType": "FALSE_POSITIVE"
+      },
+      {
+        "id": "shadow-comm-002",
+        "title": "Déclaration du Ministre de la Santé sur la campagne de vaccination",
+        "humanClass": "REJECTED",
+        "v2dClass": "REVIEW",
+        "score": 0,
+        "confidence": 0.33,
+        "primaryIntent": "NEUTRAL",
+        "contentType": "GENERAL",
+        "recruitmentType": "UNKNOWN",
+        "signalsDetected": "",
+        "reasons": "",
+        "category": "communication_officielle",
+        "errorType": "FALSE_POSITIVE"
+      },
+      {
+        "id": "shadow-comm-003",
+        "title": "Communiqué du Conseil National de Sécurité sur la situation sécuritaire",
+        "humanClass": "REJECTED",
+        "v2dClass": "REVIEW",
+        "score": 0,
+        "confidence": 0.33,
+        "primaryIntent": "NEUTRAL",
+        "contentType": "GENERAL",
+        "recruitmentType": "UNKNOWN",
+        "signalsDetected": "",
+        "reasons": "",
+        "category": "communication_officielle",
+        "errorType": "FALSE_POSITIVE"
+      }
+    ],
+    "FALSE_NEGATIVE": [],
+    "AMBIGUITY_ERROR": [
+      {
+        "id": "shadow-market-006",
+        "title": "Marché de réhabilitation du marché central de Tenkodogo",
+        "humanClass": "VALID",
+        "v2dClass": "REVIEW",
+        "score": 0,
+        "confidence": 0.33,
+        "primaryIntent": "NEUTRAL",
+        "contentType": "GENERAL",
+        "recruitmentType": "UNKNOWN",
+        "signalsDetected": "",
+        "reasons": "",
+        "category": "marche_travaux",
+        "errorType": "AMBIGUITY_ERROR"
+      },
+      {
+        "id": "shadow-service-002",
+        "title": "Services de restauration pour les agents du Ministère de la Défense",
+        "humanClass": "VALID",
+        "v2dClass": "REVIEW",
+        "score": 1.2,
+        "confidence": 0.41,
+        "primaryIntent": "SERVICE_OUTSOURCING",
+        "contentType": "GENERAL",
+        "recruitmentType": "SERVICE_OUTSOURCING",
+        "signalsDetected": "recruitment(2), market(3)",
+        "reasons": "Recrutement de prestataire → évaluation neutre | Recrutement prestataire → révision manuelle",
+        "category": "prestation_service",
+        "errorType": "AMBIGUITY_ERROR"
+      },
+      {
+        "id": "shadow-service-004",
+        "title": "Prestation de transport du personnel du Ministère de la Santé",
+        "humanClass": "VALID",
+        "v2dClass": "REVIEW",
+        "score": 1.2,
+        "confidence": 0.41,
+        "primaryIntent": "SERVICE_OUTSOURCING",
+        "contentType": "GENERAL",
+        "recruitmentType": "SERVICE_OUTSOURCING",
+        "signalsDetected": "recruitment(2), market(3)",
+        "reasons": "Recrutement de prestataire → évaluation neutre | Recrutement prestataire → révision manuelle",
+        "category": "prestation_service",
+        "errorType": "AMBIGUITY_ERROR"
+      }
+    ]
+  },
+  "categoryErrorMatrix": {
+    "marche_travaux": {
+      "total": 1,
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "ambiguityErrors": 1
+    },
+    "prestation_service": {
+      "total": 2,
+      "falsePositives": 0,
+      "falseNegatives": 0,
+      "ambiguityErrors": 2
+    },
+    "contenu_academique": {
+      "total": 1,
+      "falsePositives": 1,
+      "falseNegatives": 0,
+      "ambiguityErrors": 0
+    },
+    "evenement_officiel": {
+      "total": 1,
+      "falsePositives": 1,
+      "falseNegatives": 0,
+      "ambiguityErrors": 0
+    },
+    "nomination_administrative": {
+      "total": 1,
+      "falsePositives": 1,
+      "falseNegatives": 0,
+      "ambiguityErrors": 0
+    },
+    "communication_officielle": {
+      "total": 2,
+      "falsePositives": 2,
+      "falseNegatives": 0,
+      "ambiguityErrors": 0
+    }
+  },
+  "rootCauses": {
+    "SCORE_ZERO_DEFAULT_REVIEW": {
+      "count": 5,
+      "description": "Score=0 envoyé automatiquement en REVIEW au lieu de REJECTED",
+      "solution": "Logique Score=0 : si aucun signal positif → REJECTED, si ambiguïté réelle → REVIEW"
+    },
+    "COMMUNICATION_NON_DETECTEE": {
+      "count": 2,
+      "description": "Communications officielles non détectées par les patterns",
+      "solution": "Étendre patterns : déclaration ministre, communiqué sécurité"
+    },
+    "ACADEMIQUE_PARTIEL": {
+      "count": 1,
+      "description": "Contenus académiques partiellement détectés",
+      "solution": "Étendre patterns : conférence scientifique"
+    },
+    "NOMINATION_INCOMPLETE": {
+      "count": 1,
+      "description": "Nominations complexes non détectées",
+      "solution": "Patterns : conseil ministres, nominations gouvernement"
+    },
+    "SEUIL_VALID_TROP_STRICT": {
+      "count": 3,
+      "description": "Prestations légitimes sous le seuil VALID (2.0)",
+      "solution": "Abaisser seuil VALID à 1.5 pour prestations service"
+    }
+  },
+  "prioritizedFixes": [
+    {
+      "cause": "SCORE_ZERO_DEFAULT_REVIEW",
+      "count": 5,
+      "description": "Score=0 envoyé automatiquement en REVIEW au lieu de REJECTED",
+      "solution": "Logique Score=0 : si aucun signal positif → REJECTED, si ambiguïté réelle → REVIEW"
+    },
+    {
+      "cause": "SEUIL_VALID_TROP_STRICT",
+      "count": 3,
+      "description": "Prestations légitimes sous le seuil VALID (2.0)",
+      "solution": "Abaisser seuil VALID à 1.5 pour prestations service"
+    },
+    {
+      "cause": "COMMUNICATION_NON_DETECTEE",
+      "count": 2,
+      "description": "Communications officielles non détectées par les patterns",
+      "solution": "Étendre patterns : déclaration ministre, communiqué sécurité"
+    },
+    {
+      "cause": "ACADEMIQUE_PARTIEL",
+      "count": 1,
+      "description": "Contenus académiques partiellement détectés",
+      "solution": "Étendre patterns : conférence scientifique"
+    },
+    {
+      "cause": "NOMINATION_INCOMPLETE",
+      "count": 1,
+      "description": "Nominations complexes non détectées",
+      "solution": "Patterns : conseil ministres, nominations gouvernement"
+    }
+  ]
+}

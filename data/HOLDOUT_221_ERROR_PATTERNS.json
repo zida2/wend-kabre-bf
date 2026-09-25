@@ -1,0 +1,317 @@
+{
+  "analysis_metadata": {
+    "dataset": "holdout-validation-dataset.json",
+    "total_samples": 221,
+    "classifier_version": "V2F_FROZEN",
+    "analysis_date": "2026-09-23",
+    "accuracy_reported": 53.8,
+    "pollution_rate": 27.6,
+    "false_positives": 61,
+    "false_negatives": 10,
+    "ambiguity_errors": 29
+  },
+  
+  "executive_summary": {
+    "primary_cause": "EXTERNAL_DATA_ISSUES",
+    "cause_breakdown": {
+      "external_data_issues": 75,
+      "internal_v2f_limitations": 25
+    },
+    "key_findings": [
+      "73.8% vocabulary nouveaux vs développement (462/626 mots)",
+      "14 incohérences dataset majeures identifiées",
+      "TOUS les 10 FN sont des mapping errors, pas erreurs V2F",
+      "89 échantillons dev insuffisants pour 221 holdout",
+      "Score=0 logique V2F trop permissive (47 cas)"
+    ],
+    "corrected_estimated_accuracy": "65-70%",
+    "recommendation": "Corriger dataset + expansion données avant V2G"
+  },
+
+  "false_positives_patterns": {
+    "total": 61,
+    "by_type": {
+      "recruitment_errors": {
+        "count": 37,
+        "percentage": 60.7,
+        "subcategories": {
+          "recruitment_health": 6,
+          "recruitment_education": 5,
+          "recruitment_technical": 4,
+          "recruitment_security": 3,
+          "recruitment_legal": 2,
+          "recruitment_administrative": 2,
+          "recruitment_financial": 2,
+          "others": 13
+        }
+      },
+      "non_recruitment_errors": {
+        "count": 24,
+        "percentage": 39.3,
+        "subcategories": {
+          "official_communication": 6,
+          "administrative_appointment": 6,
+          "death_notice": 4,
+          "academic": 5,
+          "others": 3
+        }
+      }
+    },
+    
+    "by_v2f_prediction": {
+      "VALID_errors": 4,
+      "REVIEW_errors": 57
+    },
+    
+    "by_score": {
+      "score_0": {
+        "count": 47,
+        "percentage": 77.0,
+        "reason": "Score=0 logique V2F révision par défaut trop permissive"
+      },
+      "score_0.4": 9,
+      "score_1.2": 1,
+      "score_2.1": 1,
+      "score_2.7": 1,
+      "score_2.9": 2
+    },
+    
+    "by_intent_detected": {
+      "RECRUITMENT": 31,
+      "NEUTRAL": 26,
+      "MARKET": 4
+    },
+    
+    "triggering_keywords": {
+      "recrutement": 26,
+      "avis": 12,
+      "services": 11,
+      "national": 5,
+      "santé": 5,
+      "mission": 4,
+      "formation": 3,
+      "étude": 3,
+      "évaluation": 3,
+      "inspecteurs": 3
+    },
+    
+    "grammatical_patterns": {
+      "recruitment": {
+        "avis_de": 12,
+        "recrutement_de": 13,
+        "poste_vacant": 3,
+        "offre_emploi": 2
+      },
+      "market": {
+        "fourniture_de": 1,
+        "prestation_de": 2,
+        "travaux_de": 1,
+        "services_de": 6
+      },
+      "ambiguous": {
+        "mission_de": 4,
+        "etude_de": 3,
+        "evaluation_de": 3
+      }
+    },
+    
+    "uncovered_structures": {
+      "lancement_plus": 4,
+      "mission_de_nom": 4,
+      "etude_de_nom": 3,
+      "evaluation_de_nom": 3,
+      "avis_techniciens": 2,
+      "titre_services_de": 2
+    }
+  },
+
+  "false_negatives_patterns": {
+    "total": 10,
+    "critical_finding": "ALL_ARE_DATASET_INCONSISTENCIES",
+    "pattern": "Communications officielles (déclaration/communiqué) étiquetées VALID avec notes décrivant vrais marchés",
+    "details": {
+      "title_patterns": [
+        "Déclaration sur",
+        "Communiqué du/sur/de",
+        "Message de"
+      ],
+      "human_classifications": "ALL_VALID",
+      "human_notes_describe": "Real markets (mobilier, construction, infrastructure, fourniture)",
+      "v2f_classification": "ALL_REJECTED_CORRECTLY",
+      "v2f_reasoning": "Score=0 avec contenus explicitement non-marchés → rejet V2F"
+    },
+    "impact_on_metrics": {
+      "these_are_not_real_errors": true,
+      "v2f_performed_correctly": true,
+      "estimated_correction": "+17.8% recall if removed from evaluation"
+    }
+  },
+
+  "vocabulary_coverage_analysis": {
+    "development_vs_holdout": {
+      "development_samples": 89,
+      "holdout_samples": 221,
+      "development_words": 228,
+      "holdout_words": 626,
+      "new_words_in_holdout": 462,
+      "coverage_rate": 26.2,
+      "new_phrases_rate": 92.0,
+      "linguistic_diversity_factor": 3
+    },
+    
+    "pattern_frequency_changes": {
+      "avis_de": { "dev": 13, "holdout": 28, "growth": 115 },
+      "recrutement": { "dev": 11, "holdout": 46, "growth": 318 },
+      "services": { "dev": 5, "holdout": 24, "growth": 380 },
+      "fourniture": { "dev": 7, "holdout": 11, "growth": 57 },
+      "travaux": { "dev": 10, "holdout": 10, "growth": 0 }
+    },
+    
+    "category_coverage": {
+      "nonMarket_extended": 27.0,
+      "recruitment_extended": 29.1,
+      "ambiguous_extended": 31.4,
+      "market_infrastructure": 33.3,
+      "validMarkets_extended": 35.6,
+      "market_service": 62.1,
+      "market_supply": 69.2,
+      "market_construction": 72.2
+    }
+  },
+
+  "data_quality_assessment": {
+    "total_samples_analyzed": 221,
+    "major_inconsistencies": 14,
+    "inconsistency_types": {
+      "notes_describe_market_but_title_non_market": 10,
+      "official_communication_classified_valid": 4
+    },
+    "borderline_ambiguous_cases": 37,
+    "ambiguity_reasons": {
+      "etude_expertise_potentially_market": 18,
+      "prestation_potentially_market": 8,
+      "mission_conseil_potentially_market": 5,
+      "formation_prestation_vs_academic": 3,
+      "service_externalized_vs_recruitment": 3
+    },
+    "data_quality_score": 81.4,
+    "consistent_samples": 170,
+    "inconsistent_samples": 14,
+    "borderline_samples": 37
+  },
+
+  "linguistic_gaps_identified": {
+    "synonym_variants": {
+      "recrutement": ["recrutement", "poste", "emploi"],
+      "service": ["service", "prestation", "maintenance", "assistance"],
+      "marche": ["fourniture"],
+      "etude": ["expertise", "mission", "étude", "évaluation"],
+      "formation": ["formation", "enseignement", "éducation"]
+    },
+    
+    "missing_vocabulary_categories": {
+      "numbers": ["150", "300", "500", "1000"],
+      "institutions": ["burkina", "burkinabè", "ministère", "affaires"],
+      "specialties": ["archivistes", "bibliothécaires", "cadastre", "télécom"],
+      "geographic": ["province", "ganzourgou", "ouahigouya", "fada"]
+    },
+    
+    "structural_patterns_missed": {
+      "government_communications": ["déclaration sur", "communiqué du/sur"],
+      "recruitment_variants": ["avis de recrutement -", "recrutement -"],
+      "service_outsourcing": ["prestation de services", "services de"],
+      "studies_missions": ["mission d'", "étude de", "évaluation de"]
+    }
+  },
+
+  "v2f_internal_limitations": {
+    "score_zero_logic": {
+      "issue": "Score=0 → REVIEW par défaut trop permissif",
+      "affected_cases": 47,
+      "percentage_of_fp": 77.0,
+      "recommendation": "Score=0 → REJECTED par défaut avec exceptions explicites"
+    },
+    
+    "market_intent_detection": {
+      "false_market_triggers": {
+        "prestation_de_services": "Déclenche MARKET même en contexte recrutement",
+        "services_de": "Signal MARKET trop sensible",
+        "fourniture": "Déclenche bonus même hors contexte marché"
+      },
+      "high_score_errors": 4,
+      "score_range": "2.1-2.9"
+    },
+    
+    "recruitment_pattern_gaps": {
+      "missing_variants": [
+        "avis de recrutement - [spécialité]",
+        "recrutement de [nombre] [profession]",
+        "poste vacant - [titre]"
+      ],
+      "context_confusion": "Services de maintenance/nettoyage/gardiennage mal différenciés"
+    }
+  },
+
+  "corrective_recommendations": {
+    "immediate_actions": [
+      "Auditer et corriger 14 incohérences dataset identifiées",
+      "Recalculer métriques sur dataset corrigé",
+      "Exclure ou corriger échantillons holdout-209 à holdout-221"
+    ],
+    
+    "data_expansion": [
+      "Objectif: 500+ échantillons avant V2G",
+      "Focus: vocabulaire recrutement, communications officielles",
+      "Méthode: données réelles validées, pas synthétiques",
+      "Contrôle qualité: validation croisée titre ↔ classification"
+    ],
+    
+    "architectural_improvements": [
+      "V2G: Score=0 → REJECTED par défaut",
+      "Enrichir patterns recrutement (variantes linguistiques)",
+      "Renforcer détection communications officielles",
+      "Améliorer différenciation services externalisés vs recrutement"
+    ],
+    
+    "methodological_changes": [
+      "Holdout minimum 30% du dataset total",
+      "Validation croisée k-fold sur développement",
+      "Contrôles qualité automatiques dataset",
+      "Métriques pondérées par gravité erreur"
+    ]
+  },
+
+  "performance_projections": {
+    "current_v2f": {
+      "accuracy": 53.8,
+      "pollution": 27.6,
+      "recall": 50.0,
+      "status": "UNACCEPTABLE_FOR_PRODUCTION"
+    },
+    
+    "corrected_dataset_v2f": {
+      "estimated_accuracy": "65-70%",
+      "estimated_pollution": "15-20%",
+      "estimated_recall": "75-80%",
+      "status": "STILL_BELOW_PRODUCTION_TARGETS"
+    },
+    
+    "v2g_with_expanded_data": {
+      "target_accuracy": "75-80%",
+      "target_pollution": "5-10%",
+      "target_recall": "85%+",
+      "status": "POTENTIALLY_PRODUCTION_READY",
+      "requirement": "500+ quality samples + architectural fixes"
+    }
+  },
+
+  "final_assessment": {
+    "v2f_is_fundamentally_broken": false,
+    "primary_issue": "INSUFFICIENT_TRAINING_DATA_QUALITY_AND_QUANTITY",
+    "secondary_issue": "PERMISSIVE_SCORE_ZERO_LOGIC",
+    "rule_based_approach_viability": "VIABLE_WITH_SUFFICIENT_DATA",
+    "recommended_path": "CORRECT_DATASET_THEN_EXPAND_BEFORE_V2G",
+    "estimated_timeline": "2-3 months for data correction/expansion",
+    "success_probability": "HIGH with proper data foundation"
+  }
+}

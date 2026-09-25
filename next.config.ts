@@ -111,8 +111,8 @@ const nextConfig = {
   // 🚀 OPTIMISATIONS EXPÉRIMENTALES
   // ═══════════════════════════════════════════════════════════════════════════
   experimental: {
-    // Optimiser l'import des packages volumineux
-    optimizePackageImports: ['lucide-react', 'firebase', 'firebase-admin'],
+    // Optimiser l'import des packages volumineux (client-side seulement)
+    optimizePackageImports: ['lucide-react'],
   },
 
   // ═══════════════════════════════════════════════════════════════════════════

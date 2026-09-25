@@ -1,0 +1,43 @@
+{
+  "threshold_adjustment": {
+    "description": "Ajustement seuils pour réduire pollution modérée",
+    "current_valid_threshold": 1.5,
+    "proposed_valid_threshold": 2.0,
+    "rationale": "Zone 1.5-2.0 trop permissive, génère pollution modérée",
+    "impact": "Réduit passages REVIEW→VALID abusifs"
+  },
+  "gray_zone_management": {
+    "description": "Gestion zone grise scores 1.5-2.5",
+    "approach": "Validation humaine obligatoire dans zone grise",
+    "conditions": [
+      "Score entre 1.5 et 2.5 → REVIEW forcé",
+      "Intent=MARKET + contexte gouvernemental → REVIEW",
+      "Mots-clés marchés + patterns ambigus → REVIEW"
+    ],
+    "benefit": "Évite promotions prématurées cas ambigus"
+  },
+  "ambiguity_detection": {
+    "description": "Détection automatique contextes ambigus",
+    "suspicious_patterns": [
+      "prestation + services + gouvernemental",
+      "fourniture + bureau + ministère",
+      "traduction + diplomatique",
+      "audit + organisationnel",
+      "maintenance + infrastructure + gouvernemental"
+    ],
+    "action": "Force REVIEW malgré score élevé"
+  },
+  "government_context_validation": {
+    "description": "Validation renforcée contextes gouvernementaux",
+    "trigger_sources": [
+      "*.gov.bf",
+      "ministère dans titre",
+      "gouvernement dans source"
+    ],
+    "additional_checks": [
+      "Score < 3.0 + source gouvernementale → REVIEW",
+      "Mots-clés génériques + .gov.bf → REVIEW",
+      "Intent=MARKET + communication pattern → REVIEW"
+    ]
+  }
+}

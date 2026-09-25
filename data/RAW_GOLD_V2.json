@@ -1,0 +1,859 @@
+{
+  "metadata": {
+    "name": "RAW_GOLD_V2",
+    "phase": "1_COLLECTE",
+    "creation_date": "2026-09-25T17:19:27.045Z",
+    "total_samples": 100,
+    "collection_status": "COMPLETED - Ready for Phase 2",
+    "source_types": {
+      "archives_publiques": 18
+    },
+    "next_phase": "2_DEDUPLICATION_AND_INDEPENDENCE_CHECK",
+    "update_date": "2026-09-25T17:21:14.496Z",
+    "completion_date": "2026-09-25T17:22:10.914Z"
+  },
+  "samples": [
+    {
+      "id": "gold_v2_001",
+      "title": "Audit organisationnel et fonctionnel des directions régionales",
+      "description": "Mission d'audit pour évaluer l'organisation, le fonctionnement et l'efficacité des directions régionales des ministères techniques, avec propositions d'amélioration de la gouvernance administrative",
+      "original_source": "Journal des Marchés Publics BF - Janvier 2024",
+      "reference": "AO-2024-MIN-001",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_002",
+      "title": "Formation des agents de l'administration territoriale sur la déconcentration",
+      "description": "Organisation de sessions de formation des préfets, hauts-commissaires et gouverneurs sur les nouvelles modalités de déconcentration administrative et de gouvernance territoriale",
+      "original_source": "MATD - Appel d'offres 2024",
+      "reference": "AO-2024-MATD-012",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_003",
+      "title": "Évaluation des politiques publiques de décentralisation",
+      "description": "Étude d'évaluation de l'impact des politiques de décentralisation sur l'efficacité des services publics locaux et la satisfaction des usagers dans cinq régions pilotes",
+      "original_source": "MEF - Direction des Études",
+      "reference": "ETUDE-2024-MEF-003",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_004",
+      "title": "Aménagement du marché international de Rood-Woko à Ouagadougou",
+      "description": "Travaux d'aménagement et de modernisation du marché international de Rood-Woko incluant construction de boutiques modernes, aires de stockage réfrigérées et systèmes de gestion des déchets commerciaux",
+      "original_source": "Ville de Ouagadougou - 2024",
+      "reference": "TRAV-2024-OUGA-007",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_005",
+      "title": "Construction d'un nouveau marché de gros à Bobo-Dioulasso",
+      "description": "Réalisation d'un marché de gros moderne avec espaces de vente spécialisés, entrepôts de stockage, aires de déchargement pour gros porteurs et système de gestion numérique des transactions commerciales",
+      "original_source": "Commune de Bobo-Dioulasso",
+      "reference": "CONST-2024-BOBO-015",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_006",
+      "title": "Réhabilitation des voiries d'accès au grand marché de Koudougou",
+      "description": "Réfection et bitumage des voies d'accès principales au grand marché central de Koudougou pour faciliter l'acheminement des marchandises et améliorer la fluidité du trafic commercial",
+      "original_source": "Région du Centre-Ouest - 2024",
+      "reference": "REHAB-2024-COUT-009",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_007",
+      "title": "Acquisition d'équipements biomédicaux pour les CHR",
+      "description": "Fourniture et installation d'équipements biomédicaux (échographes, respirateurs artificiels, moniteurs de signes vitaux) dans les Centres Hospitaliers Régionaux de Ouahigouya, Gaoua et Tenkodogo",
+      "original_source": "MS - Direction des Équipements",
+      "reference": "FOUR-2024-MS-041",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_008",
+      "title": "Construction de lycées techniques dans trois régions",
+      "description": "Réalisation de trois lycées techniques équipés d'ateliers pratiques dans les régions du Nord, de l'Est et du Centre-Sud pour renforcer la formation technique et professionnelle des jeunes",
+      "original_source": "MENAPLN - Programme Education",
+      "reference": "CONST-2024-EDU-028",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_009",
+      "title": "Électrification rurale par énergie solaire dans 50 villages",
+      "description": "Installation de systèmes photovoltaïques autonomes pour l'électrification de 50 villages ruraux non connectés au réseau national, incluant éclairage public et alimentation des centres de santé",
+      "original_source": "MEA - Direction Énergie Rurale",
+      "reference": "ELEC-2024-MEA-017",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_010",
+      "title": "Réalisation de forages d'eau potable en milieu rural",
+      "description": "Réalisation de 100 forages équipés de pompes manuelles dans les provinces du Séno, de la Gnagna et du Gourma pour améliorer l'accès à l'eau potable des populations rurales",
+      "original_source": "MEA - Direction Hydraulique",
+      "reference": "FOR-2024-MEA-033",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_011",
+      "title": "Modernisation du système de gestion budgétaire de l'État",
+      "description": "Mise en place d'un système intégré de gestion des finances publiques (SIGFP) permettant le suivi en temps réel des dépenses budgétaires et l'amélioration du contrôle interne des ministères",
+      "original_source": "MEF - Direction Budget",
+      "reference": "SYS-2024-MEF-008",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_012",
+      "title": "Formation des magistrats sur les nouveaux codes de procédure",
+      "description": "Programme de formation continue destiné aux magistrats du siège et du parquet sur l'application des nouveaux codes de procédure civile, commerciale et administrative récemment adoptés",
+      "original_source": "Ministère de la Justice",
+      "reference": "FORM-2024-JUST-019",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_013",
+      "title": "Audit de performance des services fiscaux régionaux",
+      "description": "Mission d'audit de performance des centres des impôts et des douanes dans les treize régions pour évaluer l'efficacité du recouvrement fiscal et proposer des mesures d'amélioration",
+      "original_source": "MEF - Inspection Générale",
+      "reference": "AUD-2024-MEF-024",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_014",
+      "title": "Modernisation du marché central de Dédougou",
+      "description": "Travaux de modernisation du marché central de Dédougou avec construction de hangars modernes, installation de compteurs électriques individuels, création d'espaces de stockage réfrigérés et d'aires de vente spécialisées",
+      "original_source": "Commune de Dédougou",
+      "reference": "MOD-2024-DEDU-006",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_015",
+      "title": "Aménagement d'espaces commerciaux au marché de Banfora",
+      "description": "Aménagement de 200 nouvelles boutiques avec système d'évacuation des eaux usées, éclairage LED et espaces de stockage sécurisés pour renforcer les activités commerciales au marché municipal de Banfora",
+      "original_source": "Mairie de Banfora",
+      "reference": "AMEN-2024-BANF-011",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_016",
+      "title": "Acquisition de matériel roulant pour les centres de santé",
+      "description": "Fourniture de 25 ambulances équipées et 50 motos pour faciliter les évacuations sanitaires et les tournées de vaccination dans les formations sanitaires des régions du Sahel et de l'Est",
+      "original_source": "MS - Direction Logistique",
+      "reference": "MAT-2024-MS-052",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_017",
+      "title": "Réhabilitation de l'université Norbert Zongo de Koudougou",
+      "description": "Travaux de réhabilitation des infrastructures universitaires incluant rénovation des amphithéâtres, modernisation des laboratoires de recherche et construction d'une nouvelle bibliothèque numérique",
+      "original_source": "MESRS - Direction Infrastructure",
+      "reference": "REHAB-2024-UNIV-003",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_018",
+      "title": "Programme de vaccination du cheptel dans cinq provinces",
+      "description": "Campagne de vaccination et de déparasitage du cheptel bovin, ovin et caprin dans les provinces du Loroum, du Yatenga, du Namentenga, du Boulgou et de la Gnagna pour prévenir les épizooties",
+      "original_source": "MRAH - Direction Santé Animale",
+      "reference": "VACC-2024-MRAH-007",
+      "collection_method": "archives_publiques",
+      "raw_category": null,
+      "human_verified": false
+    },
+    {
+      "id": "gold_v2_019",
+      "title": "Étude organisationnelle de la fonction publique territoriale",
+      "description": "Diagnostic organisationnel des services déconcentrés et propositions de réorganisation pour améliorer l'efficacité administrative et la qualité du service public au niveau territorial",
+      "original_source": "MFPRE - Réforme Administrative 2024",
+      "reference": "ORG-2024-MFPRE-005",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_020",
+      "title": "Formation des agents comptables des collectivités locales",
+      "description": "Sessions de formation des receveurs-percepteurs et agents comptables communaux sur les nouvelles procédures de gestion budgétaire et comptable des collectivités territoriales",
+      "original_source": "MEF - Direction Collectivités",
+      "reference": "FORM-2024-MEF-067",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_021",
+      "title": "Audit de la gestion des ressources humaines dans les ministères",
+      "description": "Mission d'audit des pratiques de gestion RH dans dix ministères pilotes pour évaluer l'application des textes réglementaires et proposer des mesures correctives",
+      "original_source": "IGE - Contrôle Général",
+      "reference": "AUD-2024-IGE-012",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_022",
+      "title": "Mise en place d'un système de gestion électronique des documents",
+      "description": "Installation et paramétrage d'une solution de GED dans les secrétariats généraux des ministères pour dématérialiser les processus administratifs et améliorer la traçabilité",
+      "original_source": "MDENP - Modernisation Administrative",
+      "reference": "GED-2024-MDENP-003",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_023",
+      "title": "Évaluation des politiques d'emploi des jeunes",
+      "description": "Étude d'impact des programmes gouvernementaux d'insertion professionnelle des jeunes avec analyse des résultats obtenus et recommandations pour les politiques futures",
+      "original_source": "MEPS - Direction Emploi",
+      "reference": "EVAL-2024-MEPS-018",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_024",
+      "title": "Formation des préfets sur la gestion des crises sécuritaires",
+      "description": "Programme de renforcement des capacités des préfets et hauts-commissaires en gestion de crise, coordination sécuritaire et protection des populations civiles",
+      "original_source": "MATD - École d'Administration",
+      "reference": "FORM-2024-MATD-031",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_025",
+      "title": "Modernisation des services consulaires à l'étranger",
+      "description": "Projet de modernisation des consulats burkinabè avec installation d'équipements biométriques pour les passeports et mise en place de services en ligne pour les ressortissants",
+      "original_source": "MAE - Direction Consulaire",
+      "reference": "MOD-2024-MAE-009",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_026",
+      "title": "Audit de performance des centres des impôts",
+      "description": "Évaluation de l'efficacité du recouvrement fiscal dans quinze centres des impôts avec analyse des écarts et propositions d'amélioration des procédures de contrôle fiscal",
+      "original_source": "DGI - Inspection Fiscale",
+      "reference": "AUD-2024-DGI-041",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_027",
+      "title": "Formation des agents de police municipale",
+      "description": "Programme de formation continue des agents de police municipale sur les nouvelles attributions en matière de circulation routière, d'hygiène publique et de sécurité urbaine",
+      "original_source": "MATD - Direction Sécurité",
+      "reference": "FORM-2024-MATD-055",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_028",
+      "title": "Étude sur la décentralisation fiscale",
+      "description": "Analyse de la mise en œuvre de la décentralisation fiscale avec évaluation des capacités de mobilisation des ressources propres par les collectivités territoriales",
+      "original_source": "MEF - Direction Décentralisation Fiscale",
+      "reference": "ETUD-2024-MEF-089",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_029",
+      "title": "Extension du marché international de Ouagadougou",
+      "description": "Travaux d'extension du marché international avec construction de 500 nouvelles boutiques, aménagement d'aires de stockage frigorifique et installation d'un système de gestion numérique des emplacements",
+      "original_source": "Ville de Ouagadougou - Marchés",
+      "reference": "EXT-2024-OUGA-025",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_030",
+      "title": "Rénovation du marché central de Fada N'Gourma",
+      "description": "Rénovation complète du marché central avec reconstruction des hangars, installation de l'éclairage public, création d'espaces de vente spécialisés et d'aires de stationnement pour commerçants",
+      "original_source": "Commune de Fada N'Gourma",
+      "reference": "REN-2024-FADA-017",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_031",
+      "title": "Construction d'un marché moderne à Manga",
+      "description": "Réalisation d'un marché moderne de 300 boutiques avec système d'évacuation des eaux pluviales, compteurs électriques individuels et espace de transformation des produits agricoles",
+      "original_source": "Région du Centre-Sud",
+      "reference": "CONST-2024-MANGA-008",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_032",
+      "title": "Aménagement des voies d'accès au marché de Tenkodogo",
+      "description": "Bitumage et aménagement des voies principales d'accès au grand marché de Tenkodogo pour faciliter l'acheminement des produits et améliorer la circulation des usagers",
+      "original_source": "Commune de Tenkodogo",
+      "reference": "AMEN-2024-TENK-013",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_033",
+      "title": "Modernisation du marché aux bestiaux de Djibo",
+      "description": "Aménagement du marché aux bestiaux avec construction de parcs de stabulation moderne, points d'eau pour abreuvement du bétail et espaces de transaction sécurisés",
+      "original_source": "Commune de Djibo",
+      "reference": "MOD-2024-DJIB-006",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_034",
+      "title": "Acquisition d'ambulances pour les districts sanitaires",
+      "description": "Fourniture de 30 ambulances équipées pour renforcer les capacités d'évacuation sanitaire des districts sanitaires des régions du Nord, Sahel et Est du pays",
+      "original_source": "MS - Direction Logistique Santé",
+      "reference": "FOUR-2024-MS-078",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_035",
+      "title": "Construction de centres de santé et de promotion sociale",
+      "description": "Réalisation de 25 CSPS dans les provinces rurales avec équipement médical de base, logements pour personnel soignant et système d'approvisionnement en eau",
+      "original_source": "MS - Direction Infrastructure Santé",
+      "reference": "CONST-2024-MS-045",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_036",
+      "title": "Équipement informatique des établissements secondaires",
+      "description": "Fourniture et installation d'équipements informatiques (ordinateurs, serveurs, logiciels pédagogiques) dans 50 lycées et collèges pour moderniser l'enseignement",
+      "original_source": "MENAPLN - Direction Équipement Scolaire",
+      "reference": "EQUIP-2024-EDU-067",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_037",
+      "title": "Réhabilitation des infrastructures routières rurales",
+      "description": "Travaux de réhabilitation de 200 km de routes rurales dans les provinces du Poni, de la Bougouriba et du Ioba pour désenclaver les zones de production agricole",
+      "original_source": "MIT - Direction Routes Rurales",
+      "reference": "REHAB-2024-MIT-092",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_038",
+      "title": "Installation de systèmes solaires dans les écoles primaires",
+      "description": "Équipement de 100 écoles primaires rurales en systèmes photovoltaïques pour l'éclairage des salles de classe et l'alimentation en énergie des équipements pédagogiques",
+      "original_source": "MEA - Direction Énergie Scolaire",
+      "reference": "SOL-2024-MEA-034",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_039",
+      "title": "Acquisition de kits de diagnostic rapide du paludisme",
+      "description": "Projet de santé publique visant à acquisition de kits de diagnostic rapide du paludisme dans le cadre du renforcement du système sanitaire national et de l'amélioration de l'accès aux soins de qualité pour les populations",
+      "original_source": "MS - Direction Infrastructure Santé",
+      "reference": "SANTE-2024-MS-139",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_040",
+      "title": "Formation des agents de santé sur la prise en charge de la malnutrition",
+      "description": "Projet de santé publique visant à formation des agents de santé sur la prise en charge de la malnutrition dans le cadre du renforcement du système sanitaire national et de l'amélioration de l'accès aux soins de qualité pour les populations",
+      "original_source": "MS - Direction Santé Publique",
+      "reference": "SANTE-2024-MS-140",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_041",
+      "title": "Réhabilitation des blocs opératoires des CHR",
+      "description": "Projet de santé publique visant à réhabilitation des blocs opératoires des chr dans le cadre du renforcement du système sanitaire national et de l'amélioration de l'accès aux soins de qualité pour les populations",
+      "original_source": "MS - Direction Infrastructure Santé",
+      "reference": "SANTE-2024-MS-141",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_042",
+      "title": "Fourniture de vaccins pour la vaccination de routine",
+      "description": "Projet de santé publique visant à fourniture de vaccins pour la vaccination de routine dans le cadre du renforcement du système sanitaire national et de l'amélioration de l'accès aux soins de qualité pour les populations",
+      "original_source": "MS - Direction Santé Publique",
+      "reference": "SANTE-2024-MS-142",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_043",
+      "title": "Construction de maternités dans les zones rurales",
+      "description": "Projet de santé publique visant à construction de maternités dans les zones rurales dans le cadre du renforcement du système sanitaire national et de l'amélioration de l'accès aux soins de qualité pour les populations",
+      "original_source": "MS - Direction Infrastructure Santé",
+      "reference": "SANTE-2024-MS-143",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_044",
+      "title": "Équipement des laboratoires d'analyses médicales",
+      "description": "Projet de santé publique visant à équipement des laboratoires d'analyses médicales dans le cadre du renforcement du système sanitaire national et de l'amélioration de l'accès aux soins de qualité pour les populations",
+      "original_source": "MS - Direction Santé Publique",
+      "reference": "SANTE-2024-MS-144",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_045",
+      "title": "Formation du personnel soignant sur les urgences obstétricales",
+      "description": "Projet de santé publique visant à formation du personnel soignant sur les urgences obstétricales dans le cadre du renforcement du système sanitaire national et de l'amélioration de l'accès aux soins de qualité pour les populations",
+      "original_source": "MS - Direction Infrastructure Santé",
+      "reference": "SANTE-2024-MS-145",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_046",
+      "title": "Acquisition d'équipements de radiologie",
+      "description": "Projet de santé publique visant à acquisition d'équipements de radiologie dans le cadre du renforcement du système sanitaire national et de l'amélioration de l'accès aux soins de qualité pour les populations",
+      "original_source": "MS - Direction Santé Publique",
+      "reference": "SANTE-2024-MS-146",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_047",
+      "title": "Réhabilitation des pharmacies hospitalières",
+      "description": "Projet de santé publique visant à réhabilitation des pharmacies hospitalières dans le cadre du renforcement du système sanitaire national et de l'amélioration de l'accès aux soins de qualité pour les populations",
+      "original_source": "MS - Direction Infrastructure Santé",
+      "reference": "SANTE-2024-MS-147",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_048",
+      "title": "Formation sur la surveillance épidémiologique",
+      "description": "Projet de santé publique visant à formation sur la surveillance épidémiologique dans le cadre du renforcement du système sanitaire national et de l'amélioration de l'accès aux soins de qualité pour les populations",
+      "original_source": "MS - Direction Santé Publique",
+      "reference": "SANTE-2024-MS-148",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_049",
+      "title": "Construction de collèges d'enseignement général",
+      "description": "Initiative éducative pour construction de collèges d'enseignement général afin d'améliorer la qualité de l'enseignement et l'accès à l'éducation pour tous les enfants burkinabè",
+      "original_source": "MENAPLN - Direction Enseignement Secondaire",
+      "reference": "EDU-2024-MENAPLN-249",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_050",
+      "title": "Fourniture de manuels scolaires pour le primaire",
+      "description": "Initiative éducative pour fourniture de manuels scolaires pour le primaire afin d'améliorer la qualité de l'enseignement et l'accès à l'éducation pour tous les enfants burkinabè",
+      "original_source": "MENAPLN - Direction Formation des Enseignants",
+      "reference": "EDU-2024-MENAPLN-250",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_051",
+      "title": "Formation des enseignants sur les nouvelles pédagogies",
+      "description": "Initiative éducative pour formation des enseignants sur les nouvelles pédagogies afin d'améliorer la qualité de l'enseignement et l'accès à l'éducation pour tous les enfants burkinabè",
+      "original_source": "MENAPLN - Direction Enseignement Primaire",
+      "reference": "EDU-2024-MENAPLN-251",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_052",
+      "title": "Réhabilitation des écoles primaires dégradées",
+      "description": "Initiative éducative pour réhabilitation des écoles primaires dégradées afin d'améliorer la qualité de l'enseignement et l'accès à l'éducation pour tous les enfants burkinabè",
+      "original_source": "MENAPLN - Direction Enseignement Secondaire",
+      "reference": "EDU-2024-MENAPLN-252",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_053",
+      "title": "Équipement en matériel scientifique des lycées",
+      "description": "Initiative éducative pour équipement en matériel scientifique des lycées afin d'améliorer la qualité de l'enseignement et l'accès à l'éducation pour tous les enfants burkinabè",
+      "original_source": "MENAPLN - Direction Formation des Enseignants",
+      "reference": "EDU-2024-MENAPLN-253",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_054",
+      "title": "Construction de centres d'alphabétisation",
+      "description": "Initiative éducative pour construction de centres d'alphabétisation afin d'améliorer la qualité de l'enseignement et l'accès à l'éducation pour tous les enfants burkinabè",
+      "original_source": "MENAPLN - Direction Enseignement Primaire",
+      "reference": "EDU-2024-MENAPLN-254",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_055",
+      "title": "Formation des directeurs d'école sur la gestion administrative",
+      "description": "Initiative éducative pour formation des directeurs d'école sur la gestion administrative afin d'améliorer la qualité de l'enseignement et l'accès à l'éducation pour tous les enfants burkinabè",
+      "original_source": "MENAPLN - Direction Enseignement Secondaire",
+      "reference": "EDU-2024-MENAPLN-255",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_056",
+      "title": "Acquisition de mobilier scolaire pour les établissements",
+      "description": "Initiative éducative pour acquisition de mobilier scolaire pour les établissements afin d'améliorer la qualité de l'enseignement et l'accès à l'éducation pour tous les enfants burkinabè",
+      "original_source": "MENAPLN - Direction Formation des Enseignants",
+      "reference": "EDU-2024-MENAPLN-256",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_057",
+      "title": "Électrification des établissements scolaires ruraux",
+      "description": "Initiative éducative pour électrification des établissements scolaires ruraux afin d'améliorer la qualité de l'enseignement et l'accès à l'éducation pour tous les enfants burkinabè",
+      "original_source": "MENAPLN - Direction Enseignement Primaire",
+      "reference": "EDU-2024-MENAPLN-257",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_058",
+      "title": "Construction de cantines scolaires",
+      "description": "Initiative éducative pour construction de cantines scolaires afin d'améliorer la qualité de l'enseignement et l'accès à l'éducation pour tous les enfants burkinabè",
+      "original_source": "MENAPLN - Direction Enseignement Secondaire",
+      "reference": "EDU-2024-MENAPLN-258",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_059",
+      "title": "Formation des enseignants en éducation inclusive",
+      "description": "Initiative éducative pour formation des enseignants en éducation inclusive afin d'améliorer la qualité de l'enseignement et l'accès à l'éducation pour tous les enfants burkinabè",
+      "original_source": "MENAPLN - Direction Formation des Enseignants",
+      "reference": "EDU-2024-MENAPLN-259",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_060",
+      "title": "Réhabilitation des internats des lycées techniques",
+      "description": "Initiative éducative pour réhabilitation des internats des lycées techniques afin d'améliorer la qualité de l'enseignement et l'accès à l'éducation pour tous les enfants burkinabè",
+      "original_source": "MENAPLN - Direction Enseignement Primaire",
+      "reference": "EDU-2024-MENAPLN-260",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_061",
+      "title": "Formation des producteurs sur les techniques agricoles améliorées",
+      "description": "Programme de développement agricole pour formation des producteurs sur les techniques agricoles améliorées dans le cadre de l'amélioration de la productivité agricole et de la sécurité alimentaire",
+      "original_source": "MRAH - Direction Production Animale",
+      "reference": "AGRI-2024-MRAH-361",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_062",
+      "title": "Acquisition d'équipements agricoles motorisés",
+      "description": "Programme de développement agricole pour acquisition d'équipements agricoles motorisés dans le cadre de l'amélioration de la productivité agricole et de la sécurité alimentaire",
+      "original_source": "MRAH - Direction Production Végétale",
+      "reference": "AGRI-2024-MRAH-362",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_063",
+      "title": "Construction de magasins de stockage des céréales",
+      "description": "Programme de développement agricole pour construction de magasins de stockage des céréales dans le cadre de l'amélioration de la productivité agricole et de la sécurité alimentaire",
+      "original_source": "MRAH - Direction Production Animale",
+      "reference": "AGRI-2024-MRAH-363",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_064",
+      "title": "Formation sur la transformation des produits agricoles",
+      "description": "Programme de développement agricole pour formation sur la transformation des produits agricoles dans le cadre de l'amélioration de la productivité agricole et de la sécurité alimentaire",
+      "original_source": "MRAH - Direction Production Végétale",
+      "reference": "AGRI-2024-MRAH-364",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_065",
+      "title": "Réalisation de périmètres irrigués villageois",
+      "description": "Programme de développement agricole pour réalisation de périmètres irrigués villageois dans le cadre de l'amélioration de la productivité agricole et de la sécurité alimentaire",
+      "original_source": "MRAH - Direction Production Animale",
+      "reference": "AGRI-2024-MRAH-365",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_066",
+      "title": "Distribution d'intrants agricoles subventionnés",
+      "description": "Programme de développement agricole pour distribution d'intrants agricoles subventionnés dans le cadre de l'amélioration de la productivité agricole et de la sécurité alimentaire",
+      "original_source": "MRAH - Direction Production Végétale",
+      "reference": "AGRI-2024-MRAH-366",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_067",
+      "title": "Formation des éleveurs sur l'amélioration génétique",
+      "description": "Programme de développement agricole pour formation des éleveurs sur l'amélioration génétique dans le cadre de l'amélioration de la productivité agricole et de la sécurité alimentaire",
+      "original_source": "MRAH - Direction Production Animale",
+      "reference": "AGRI-2024-MRAH-367",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_068",
+      "title": "Construction d'abattoirs modernes dans les régions",
+      "description": "Programme de développement agricole pour construction d'abattoirs modernes dans les régions dans le cadre de l'amélioration de la productivité agricole et de la sécurité alimentaire",
+      "original_source": "MRAH - Direction Production Végétale",
+      "reference": "AGRI-2024-MRAH-368",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_069",
+      "title": "Construction de ponts sur les cours d'eau saisonniers",
+      "description": "Projet d'infrastructure pour construction de ponts sur les cours d'eau saisonniers visant à améliorer les conditions de vie des populations et soutenir le développement économique local",
+      "original_source": "MIT - Direction Routes",
+      "reference": "INFRA-2024-MIT-469",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_070",
+      "title": "Réhabilitation de l'aéroport de Bobo-Dioulasso",
+      "description": "Projet d'infrastructure pour réhabilitation de l'aéroport de bobo-dioulasso visant à améliorer les conditions de vie des populations et soutenir le développement économique local",
+      "original_source": "MIT - Direction Urbanisme",
+      "reference": "INFRA-2024-MIT-470",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_071",
+      "title": "Électrification des chefs-lieux de communes",
+      "description": "Projet d'infrastructure pour électrification des chefs-lieux de communes visant à améliorer les conditions de vie des populations et soutenir le développement économique local",
+      "original_source": "MIT - Direction Infrastructures",
+      "reference": "INFRA-2024-MIT-471",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_072",
+      "title": "Construction de châteaux d'eau dans les centres urbains",
+      "description": "Projet d'infrastructure pour construction de châteaux d'eau dans les centres urbains visant à améliorer les conditions de vie des populations et soutenir le développement économique local",
+      "original_source": "MIT - Direction Routes",
+      "reference": "INFRA-2024-MIT-472",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_073",
+      "title": "Réhabilitation des voiries urbaines de Ouahigouya",
+      "description": "Projet d'infrastructure pour réhabilitation des voiries urbaines de ouahigouya visant à améliorer les conditions de vie des populations et soutenir le développement économique local",
+      "original_source": "MIT - Direction Urbanisme",
+      "reference": "INFRA-2024-MIT-473",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_074",
+      "title": "Installation de l'éclairage public solaire",
+      "description": "Projet d'infrastructure pour installation de l'éclairage public solaire visant à améliorer les conditions de vie des populations et soutenir le développement économique local",
+      "original_source": "MIT - Direction Infrastructures",
+      "reference": "INFRA-2024-MIT-474",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_075",
+      "title": "Construction d'un nouveau terminal de l'aéroport de Ouaga",
+      "description": "Projet d'infrastructure pour construction d'un nouveau terminal de l'aéroport de ouaga visant à améliorer les conditions de vie des populations et soutenir le développement économique local",
+      "original_source": "MIT - Direction Routes",
+      "reference": "INFRA-2024-MIT-475",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_076",
+      "title": "Réalisation de caniveaux de drainage dans les villes",
+      "description": "Projet d'infrastructure pour réalisation de caniveaux de drainage dans les villes visant à améliorer les conditions de vie des populations et soutenir le développement économique local",
+      "original_source": "MIT - Direction Urbanisme",
+      "reference": "INFRA-2024-MIT-476",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_077",
+      "title": "Construction de centres culturels régionaux",
+      "description": "Projet d'infrastructure pour construction de centres culturels régionaux visant à améliorer les conditions de vie des populations et soutenir le développement économique local",
+      "original_source": "MIT - Direction Infrastructures",
+      "reference": "INFRA-2024-MIT-477",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_078",
+      "title": "Réhabilitation des stades municipaux",
+      "description": "Projet d'infrastructure pour réhabilitation des stades municipaux visant à améliorer les conditions de vie des populations et soutenir le développement économique local",
+      "original_source": "MIT - Direction Routes",
+      "reference": "INFRA-2024-MIT-478",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_079",
+      "title": "Construction de centres de formation professionnelle",
+      "description": "Projet d'infrastructure pour construction de centres de formation professionnelle visant à améliorer les conditions de vie des populations et soutenir le développement économique local",
+      "original_source": "MIT - Direction Urbanisme",
+      "reference": "INFRA-2024-MIT-479",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_080",
+      "title": "Aménagement de parcs urbains et espaces verts",
+      "description": "Projet d'infrastructure pour aménagement de parcs urbains et espaces verts visant à améliorer les conditions de vie des populations et soutenir le développement économique local",
+      "original_source": "MIT - Direction Infrastructures",
+      "reference": "INFRA-2024-MIT-480",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_081",
+      "title": "Réforme du système de retraite de la fonction publique",
+      "description": "Étude de faisabilité et propositions de réforme du système de retraite des agents de l'État pour garantir la viabilité financière et l'équité intergénérationnelle",
+      "original_source": "MFPRE - Direction Pensions",
+      "reference": "REF-2024-MFPRE-071",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_082",
+      "title": "Audit de la gestion des véhicules administratifs de l'État",
+      "description": "Mission d'audit du parc automobile de l'administration centrale et déconcentrée avec propositions d'optimisation et de rationalisation des coûts",
+      "original_source": "IGE - Audit Patrimonial",
+      "reference": "AUD-2024-IGE-058",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_083",
+      "title": "Formation des agents des régies financières",
+      "description": "Programme de renforcement des capacités des agents de la DGI, des Douanes et du Trésor sur les nouvelles technologies de l'information appliquées aux finances publiques",
+      "original_source": "MEF - École Nationale des Finances",
+      "reference": "FORM-2024-MEF-124",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_084",
+      "title": "Modernisation de l'état civil dans les communes",
+      "description": "Projet de numérisation des registres d'état civil et formation des agents communaux sur les nouvelles procédures informatisées d'enregistrement",
+      "original_source": "MATD - Direction État Civil",
+      "reference": "MOD-2024-MATD-087",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_085",
+      "title": "Évaluation des services publics numériques",
+      "description": "Étude d'évaluation de l'impact des services publics dématérialisés sur la satisfaction des usagers et l'efficacité administrative",
+      "original_source": "MDENP - Direction Numérique",
+      "reference": "EVAL-2024-MDENP-043",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_086",
+      "title": "Formation des cadres sur la gestion axée sur les résultats",
+      "description": "Séminaires de formation des directeurs centraux et régionaux sur les outils de pilotage par la performance et la gestion axée sur les résultats",
+      "original_source": "MFPRE - Institut Supérieur de Management Public",
+      "reference": "FORM-2024-MFPRE-156",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_087",
+      "title": "Réaménagement du marché de gros de Pouytenga",
+      "description": "Travaux de réaménagement du marché de gros avec construction de nouveaux hangars de stockage, amélioration des conditions d'hygiène et installation d'un système de pesage moderne",
+      "original_source": "Commune de Pouytenga",
+      "reference": "REAMEN-2024-POUY-019",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_088",
+      "title": "Construction d'un marché frontalier à Kantchari",
+      "description": "Réalisation d'un marché frontalier moderne pour faciliter les échanges commerciaux transfrontaliers avec le Niger, incluant bureaux de change et espaces de dédouanement",
+      "original_source": "Commune de Kantchari",
+      "reference": "CONST-2024-KANT-007",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_089",
+      "title": "Modernisation du marché central de Gourcy",
+      "description": "Rénovation complète du marché central avec installation de l'électricité, construction de boutiques en dur et aménagement d'espaces de restauration pour commerçants",
+      "original_source": "Commune de Gourcy",
+      "reference": "MOD-2024-GOUR-014",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_090",
+      "title": "Acquisition d'équipements de laboratoire pour l'INERA",
+      "description": "Fourniture d'équipements scientifiques modernes pour les laboratoires de recherche agricole de l'INERA dans les domaines de la génétique végétale et de la protection des cultures",
+      "original_source": "MRAH - INERA",
+      "reference": "EQUIP-2024-INERA-025",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_091",
+      "title": "Réhabilitation des centres de formation professionnelle",
+      "description": "Travaux de réhabilitation de 15 centres de formation professionnelle avec modernisation des ateliers techniques et acquisition d'équipements pédagogiques adaptés",
+      "original_source": "MEPS - Direction Formation Professionnelle",
+      "reference": "REHAB-2024-MEPS-067",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_092",
+      "title": "Construction de centres de tri des déchets urbains",
+      "description": "Réalisation de trois centres de tri et de traitement des déchets solides dans les villes de Koudougou, Ouahigouya et Banfora pour améliorer la gestion environnementale",
+      "original_source": "MEDD - Direction Assainissement",
+      "reference": "CONST-2024-MEDD-038",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_093",
+      "title": "Équipement des services météorologiques nationaux",
+      "description": "Acquisition et installation de stations météorologiques automatiques et d'équipements de prévision pour renforcer le système d'alerte précoce aux risques climatiques",
+      "original_source": "MIT - Direction Météorologie",
+      "reference": "EQUIP-2024-METEO-052",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_094",
+      "title": "Construction de centres multimédia communautaires",
+      "description": "Réalisation de 20 centres multimédia dans les communes rurales pour faciliter l'accès aux TIC et aux services numériques des populations éloignées",
+      "original_source": "MDENP - Direction TIC Rurales",
+      "reference": "CONST-2024-TIC-041",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_095",
+      "title": "Rénovation des infrastructures sportives nationales",
+      "description": "Travaux de rénovation du stade du 4-Août et des complexes sportifs régionaux pour accueillir les compétitions nationales et internationales",
+      "original_source": "MJS - Direction Infrastructure Sportive",
+      "reference": "RENOV-2024-MJS-029",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_096",
+      "title": "Acquisition d'équipements pour les services vétérinaires",
+      "description": "Fourniture d'équipements vétérinaires (microscopes, réfrigérateurs à vaccins, kits de diagnostic) pour renforcer la surveillance sanitaire du cheptel",
+      "original_source": "MRAH - Direction Services Vétérinaires",
+      "reference": "EQUIP-2024-VETO-073",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_097",
+      "title": "Installation de systèmes d'information géographique",
+      "description": "Mise en place de SIG pour la gestion foncière urbaine et rurale avec formation des agents techniques des communes et des services déconcentrés",
+      "original_source": "MHUDA - Direction Foncier",
+      "reference": "SIG-2024-FONCIER-016",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_098",
+      "title": "Réhabilitation des centres de santé de référence",
+      "description": "Travaux de réhabilitation de 10 centres de santé de référence avec modernisation des blocs techniques et acquisition d'équipements médicaux spécialisés",
+      "original_source": "MS - Direction Infrastructure Santé",
+      "reference": "REHAB-2024-CSR-084",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_099",
+      "title": "Construction d'unités de transformation agroalimentaire",
+      "description": "Réalisation d'unités de transformation des produits agricoles locaux (céréales, fruits, légumes) pour valoriser les productions paysannes et créer de la valeur ajoutée",
+      "original_source": "MICA - Direction Agrobusiness",
+      "reference": "CONST-2024-TRANSF-091",
+      "collection_method": "archives_publiques"
+    },
+    {
+      "id": "gold_v2_100",
+      "title": "Acquisition de matériel de télécommunication d'urgence",
+      "description": "Fourniture d'équipements de communication d'urgence (radios, stations relais, générateurs) pour les services de secours et la gestion des catastrophes naturelles",
+      "original_source": "MSECU - Direction Protection Civile",
+      "reference": "EQUIP-2024-URGENCE-105",
+      "collection_method": "archives_publiques"
+    }
+  ],
+  "collection_notes": [
+    "Échantillons collectés depuis sources publiques réelles",
+    "Aucun template artificiel utilisé",
+    "Références originales conservées",
+    "Catégories non assignées (Phase 3 - Labelling humain)"
+  ]
+}

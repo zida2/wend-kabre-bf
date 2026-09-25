@@ -1,0 +1,199 @@
+{
+  "timestamp": "2026-09-23T15:01:08.236Z",
+  "metricsV2B": {
+    "version": "V2B",
+    "total": 50,
+    "correct": 37,
+    "accuracy": 74,
+    "precision": {
+      "VALID": 80,
+      "REVIEW": 75,
+      "REJECTED": 66.66666666666666
+    },
+    "recall": {
+      "VALID": 100,
+      "REVIEW": 47.368421052631575,
+      "REJECTED": 80
+    },
+    "f1Score": {
+      "VALID": 88.88888888888889,
+      "REVIEW": 58.064516129032256,
+      "REJECTED": 72.72727272727272
+    },
+    "pollution": {
+      "displayedNonMarkets": 3,
+      "totalDisplayed": 32,
+      "pollutionRate": 9.375
+    },
+    "distribution": {
+      "human": {
+        "VALID": 16,
+        "REVIEW": 19,
+        "REJECTED": 15
+      },
+      "machine": {
+        "VALID": 20,
+        "REVIEW": 12,
+        "REJECTED": 18
+      }
+    },
+    "confusionMatrix": {
+      "VALID→VALID": 16,
+      "VALID→REVIEW": 0,
+      "VALID→REJECTED": 0,
+      "REVIEW→VALID": 4,
+      "REVIEW→REVIEW": 9,
+      "REVIEW→REJECTED": 6,
+      "REJECTED→VALID": 0,
+      "REJECTED→REVIEW": 3,
+      "REJECTED→REJECTED": 12
+    }
+  },
+  "metricsV2C": {
+    "version": "V2C",
+    "total": 50,
+    "correct": 39,
+    "accuracy": 78,
+    "precision": {
+      "VALID": 100,
+      "REVIEW": 78.57142857142857,
+      "REJECTED": 60
+    },
+    "recall": {
+      "VALID": 100,
+      "REVIEW": 57.89473684210527,
+      "REJECTED": 80
+    },
+    "f1Score": {
+      "VALID": 100,
+      "REVIEW": 66.66666666666666,
+      "REJECTED": 68.57142857142857
+    },
+    "pollution": {
+      "displayedNonMarkets": 3,
+      "totalDisplayed": 30,
+      "pollutionRate": 10
+    },
+    "distribution": {
+      "human": {
+        "VALID": 16,
+        "REVIEW": 19,
+        "REJECTED": 15
+      },
+      "machine": {
+        "VALID": 16,
+        "REVIEW": 14,
+        "REJECTED": 20
+      }
+    },
+    "confusionMatrix": {
+      "VALID→VALID": 16,
+      "VALID→REVIEW": 0,
+      "VALID→REJECTED": 0,
+      "REVIEW→VALID": 0,
+      "REVIEW→REVIEW": 11,
+      "REVIEW→REJECTED": 8,
+      "REJECTED→VALID": 0,
+      "REJECTED→REVIEW": 3,
+      "REJECTED→REJECTED": 12
+    }
+  },
+  "changedDecisions": [
+    {
+      "id": "mock-3",
+      "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments adminis...",
+      "human": "REVIEW",
+      "v2b": "VALID",
+      "v2c": "REJECTED",
+      "v2bScore": 2.11,
+      "v2cScore": -0.89,
+      "intentAnalysis": {
+        "primaryIntent": "RECRUITMENT",
+        "recruitmentSignals": 7,
+        "marketSignals": 2,
+        "isAmbiguous": false
+      }
+    },
+    {
+      "id": "mock-11",
+      "title": "Prestation de formation en gestion de projet pour les cadres du Minist...",
+      "human": "REVIEW",
+      "v2b": "REJECTED",
+      "v2c": "REVIEW",
+      "v2bScore": -0.16,
+      "v2cScore": 0.04,
+      "intentAnalysis": {
+        "primaryIntent": "MARKET",
+        "recruitmentSignals": 0,
+        "marketSignals": 2,
+        "isAmbiguous": false
+      }
+    },
+    {
+      "id": "mock-18",
+      "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments adminis...",
+      "human": "REVIEW",
+      "v2b": "VALID",
+      "v2c": "REJECTED",
+      "v2bScore": 1.96,
+      "v2cScore": -1.04,
+      "intentAnalysis": {
+        "primaryIntent": "RECRUITMENT",
+        "recruitmentSignals": 7,
+        "marketSignals": 2,
+        "isAmbiguous": false
+      }
+    },
+    {
+      "id": "mock-33",
+      "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments adminis...",
+      "human": "REVIEW",
+      "v2b": "VALID",
+      "v2c": "REJECTED",
+      "v2bScore": 2.11,
+      "v2cScore": -0.89,
+      "intentAnalysis": {
+        "primaryIntent": "RECRUITMENT",
+        "recruitmentSignals": 7,
+        "marketSignals": 2,
+        "isAmbiguous": false
+      }
+    },
+    {
+      "id": "mock-41",
+      "title": "Prestation de formation en gestion de projet pour les cadres du Minist...",
+      "human": "REVIEW",
+      "v2b": "REJECTED",
+      "v2c": "REVIEW",
+      "v2bScore": -0.16,
+      "v2cScore": 0.04,
+      "intentAnalysis": {
+        "primaryIntent": "MARKET",
+        "recruitmentSignals": 0,
+        "marketSignals": 2,
+        "isAmbiguous": false
+      }
+    },
+    {
+      "id": "mock-48",
+      "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments adminis...",
+      "human": "REVIEW",
+      "v2b": "VALID",
+      "v2c": "REJECTED",
+      "v2bScore": 1.96,
+      "v2cScore": -1.04,
+      "intentAnalysis": {
+        "primaryIntent": "RECRUITMENT",
+        "recruitmentSignals": 7,
+        "marketSignals": 2,
+        "isAmbiguous": false
+      }
+    }
+  ],
+  "overallSuccess": false,
+  "objectives": {
+    "pollutionObjective": false,
+    "recallObjective": true,
+    "accuracyObjective": true
+  }
+}

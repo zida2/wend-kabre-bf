@@ -1,0 +1,213 @@
+{
+  "audit_metadata": {
+    "total_false_negatives": 10,
+    "audit_date": "2026-09-24T12:44:13.700Z",
+    "methodology": "Manual review with V2F re-classification"
+  },
+  "individual_audits": [
+    {
+      "id": "holdout-209",
+      "texte_complet": "Déclaration sur la politique nationale de lutte contre la pauvreté",
+      "description_complete": "Description générée pour: Déclaration sur la politique nationale de lutte contre la pauvreté...",
+      "label_humain": "VALID",
+      "category_humaine": "market_furniture",
+      "notes_humaines": "Mobilier scolaire - fourniture mobilier",
+      "prediction_v2f": "REJECTED",
+      "score_v2f": 0,
+      "intent_v2f": "NEUTRAL",
+      "raisons_v2f": [
+        "Score=0 avec contenus explicitement non-marchés → rejet V2F"
+      ],
+      "coherence_analysis": "Communication officielle étiquetée VALID",
+      "label_propose": "REJECTED",
+      "justification": "Communication politique/stratégique sans marché spécifique",
+      "niveau_certitude": "CERTAIN",
+      "v2f_correctness": "V2F_CORRECT"
+    },
+    {
+      "id": "holdout-210",
+      "texte_complet": "Communiqué du Ministère des Affaires Étrangères sur les relations bilatérales",
+      "description_complete": "Description générée pour: Communiqué du Ministère des Affaires Étrangères sur les relations bilatérales...",
+      "label_humain": "VALID",
+      "category_humaine": "market_infrastructure",
+      "notes_humaines": "Extension électrique - infrastructure",
+      "prediction_v2f": "REJECTED",
+      "score_v2f": 0,
+      "intent_v2f": "NEUTRAL",
+      "raisons_v2f": [
+        "Score=0 avec contenus explicitement non-marchés → rejet V2F"
+      ],
+      "coherence_analysis": "Communication officielle étiquetée VALID",
+      "label_propose": "REJECTED",
+      "justification": "Communication politique/stratégique sans marché spécifique",
+      "niveau_certitude": "CERTAIN",
+      "v2f_correctness": "V2F_CORRECT"
+    },
+    {
+      "id": "holdout-212",
+      "texte_complet": "Déclaration sur la mise en œuvre des Objectifs du Millénaire",
+      "description_complete": "Description générée pour: Déclaration sur la mise en œuvre des Objectifs du Millénaire...",
+      "label_humain": "VALID",
+      "category_humaine": "market_construction",
+      "notes_humaines": "Construction 30 salles - marché construction",
+      "prediction_v2f": "REJECTED",
+      "score_v2f": 0,
+      "intent_v2f": "NEUTRAL",
+      "raisons_v2f": [
+        "Score=0 avec contenus explicitement non-marchés → rejet V2F"
+      ],
+      "coherence_analysis": "Communication officielle étiquetée VALID",
+      "label_propose": "REJECTED",
+      "justification": "Communication politique/stratégique sans marché spécifique",
+      "niveau_certitude": "CERTAIN",
+      "v2f_correctness": "V2F_CORRECT"
+    },
+    {
+      "id": "holdout-213",
+      "texte_complet": "Communiqué sur les mesures de soutien aux producteurs agricoles",
+      "description_complete": "Description générée pour: Communiqué sur les mesures de soutien aux producteurs agricoles...",
+      "label_humain": "VALID",
+      "category_humaine": "market_infrastructure",
+      "notes_humaines": "Réhabilitation aéroport - marché travaux",
+      "prediction_v2f": "REJECTED",
+      "score_v2f": 0,
+      "intent_v2f": "NEUTRAL",
+      "raisons_v2f": [
+        "Score=0 avec contenus explicitement non-marchés → rejet V2F"
+      ],
+      "coherence_analysis": "Communication officielle étiquetée VALID",
+      "label_propose": "REJECTED",
+      "justification": "Communication politique/stratégique sans marché spécifique",
+      "niveau_certitude": "CERTAIN",
+      "v2f_correctness": "V2F_CORRECT"
+    },
+    {
+      "id": "holdout-214",
+      "texte_complet": "Déclaration relative à la protection de l'environnement",
+      "description_complete": "Description générée pour: Déclaration relative à la protection de l'environnement...",
+      "label_humain": "VALID",
+      "category_humaine": "market_construction",
+      "notes_humaines": "Centre formation - marché construction",
+      "prediction_v2f": "REJECTED",
+      "score_v2f": 0,
+      "intent_v2f": "NEUTRAL",
+      "raisons_v2f": [
+        "Score=0 avec contenus explicitement non-marchés → rejet V2F"
+      ],
+      "coherence_analysis": "Communication officielle étiquetée VALID",
+      "label_propose": "REJECTED",
+      "justification": "Communication politique/stratégique sans marché spécifique",
+      "niveau_certitude": "CERTAIN",
+      "v2f_correctness": "V2F_CORRECT"
+    },
+    {
+      "id": "holdout-215",
+      "texte_complet": "Communiqué sur le renforcement de la coopération Sud-Sud",
+      "description_complete": "Description générée pour: Communiqué sur le renforcement de la coopération Sud-Sud...",
+      "label_humain": "VALID",
+      "category_humaine": "market_infrastructure",
+      "notes_humaines": "Bitumage routes - marché infrastructure",
+      "prediction_v2f": "REJECTED",
+      "score_v2f": 0,
+      "intent_v2f": "NEUTRAL",
+      "raisons_v2f": [
+        "Score=0 avec contenus explicitement non-marchés → rejet V2F"
+      ],
+      "coherence_analysis": "Communication officielle étiquetée VALID",
+      "label_propose": "REJECTED",
+      "justification": "Communication politique/stratégique sans marché spécifique",
+      "niveau_certitude": "CERTAIN",
+      "v2f_correctness": "V2F_CORRECT"
+    },
+    {
+      "id": "holdout-217",
+      "texte_complet": "Déclaration sur la politique de promotion de la jeunesse",
+      "description_complete": "Description générée pour: Déclaration sur la politique de promotion de la jeunesse...",
+      "label_humain": "VALID",
+      "category_humaine": "market_supply",
+      "notes_humaines": "Kits urgence - fourniture santé",
+      "prediction_v2f": "REJECTED",
+      "score_v2f": 0,
+      "intent_v2f": "NEUTRAL",
+      "raisons_v2f": [
+        "Score=0 avec contenus explicitement non-marchés → rejet V2F"
+      ],
+      "coherence_analysis": "Communication officielle étiquetée VALID",
+      "label_propose": "REJECTED",
+      "justification": "Communication politique/stratégique sans marché spécifique",
+      "niveau_certitude": "CERTAIN",
+      "v2f_correctness": "V2F_CORRECT"
+    },
+    {
+      "id": "holdout-218",
+      "texte_complet": "Communiqué de fin de Conseil des Ministres",
+      "description_complete": "Description générée pour: Communiqué de fin de Conseil des Ministres...",
+      "label_humain": "VALID",
+      "category_humaine": "market_supply",
+      "notes_humaines": "Matériel informatique - fourniture",
+      "prediction_v2f": "REJECTED",
+      "score_v2f": 0,
+      "intent_v2f": "NEUTRAL",
+      "raisons_v2f": [
+        "Score=0 avec contenus explicitement non-marchés → rejet V2F"
+      ],
+      "coherence_analysis": "Communication officielle étiquetée VALID",
+      "label_propose": "REJECTED",
+      "justification": "Communication politique/stratégique sans marché spécifique",
+      "niveau_certitude": "CERTAIN",
+      "v2f_correctness": "V2F_CORRECT"
+    },
+    {
+      "id": "holdout-220",
+      "texte_complet": "Déclaration sur la stratégie nationale de développement durable",
+      "description_complete": "Description générée pour: Déclaration sur la stratégie nationale de développement durable...",
+      "label_humain": "VALID",
+      "category_humaine": "market_supply",
+      "notes_humaines": "Panneaux solaires - fourniture énergie",
+      "prediction_v2f": "REJECTED",
+      "score_v2f": 0,
+      "intent_v2f": "NEUTRAL",
+      "raisons_v2f": [
+        "Score=0 avec contenus explicitement non-marchés → rejet V2F"
+      ],
+      "coherence_analysis": "Communication officielle étiquetée VALID",
+      "label_propose": "REJECTED",
+      "justification": "Communication politique/stratégique sans marché spécifique",
+      "niveau_certitude": "CERTAIN",
+      "v2f_correctness": "V2F_CORRECT"
+    },
+    {
+      "id": "holdout-221",
+      "texte_complet": "Communiqué sur les mesures de lutte contre la corruption",
+      "description_complete": "Description générée pour: Communiqué sur les mesures de lutte contre la corruption...",
+      "label_humain": "VALID",
+      "category_humaine": "market_vehicles",
+      "notes_humaines": "Ambulances - acquisition véhicules",
+      "prediction_v2f": "REJECTED",
+      "score_v2f": 0,
+      "intent_v2f": "NEUTRAL",
+      "raisons_v2f": [
+        "Score=0 avec contenus explicitement non-marchés → rejet V2F"
+      ],
+      "coherence_analysis": "Communication officielle étiquetée VALID",
+      "label_propose": "REJECTED",
+      "justification": "Communication politique/stratégique sans marché spécifique",
+      "niveau_certitude": "CERTAIN",
+      "v2f_correctness": "V2F_CORRECT"
+    }
+  ],
+  "summary": {
+    "by_v2f_correctness": {
+      "V2F_CORRECT": 10
+    },
+    "by_certainty": {
+      "CERTAIN": 10
+    },
+    "by_proposed_label": {
+      "REJECTED": 10
+    },
+    "v2f_was_correct": 10,
+    "v2f_was_wrong": 0,
+    "data_errors": 0
+  }
+}
