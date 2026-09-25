@@ -1,5 +1,5 @@
 /**
- * CLASSIFICATEUR D'INTENTION V2F - VERSION ÉQUILIBRÉE FINALE
+ * CLASSIFICATEUR D'INTENTION V2F - VERSION ÉQUILIBRÉE FINALE + IA GRATUITE
  * ==========================================================
  * 
  * Objectif : Corriger les 9 régressions V2E sans perdre les améliorations shadow

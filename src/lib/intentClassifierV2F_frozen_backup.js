@@ -1,17 +1,20 @@
 /**
- * CLASSIFICATEUR D'INTENTION V2F - VERSION ÉQUILIBRÉE FINALE
- * ==========================================================
+ * CLASSIFICATEUR D'INTENTION V2F - VERSION ÉQUILIBRÉE FINALE + IA GRATUITE
+ * =======================================================================
  * 
- * Objectif : Corriger les 9 régressions V2E sans perdre les améliorations shadow
- * V2D et V2E restent figées - V2F logique Score=0 équilibrée
+ * NOUVEAUTÉ: Intégration IA gratuite (OpenRouter + Transformers.js)
+ * Remplace l'analyse IA payante par des solutions gratuites performantes
  * 
  * CORRECTIONS V2F:
  * - Maintient toutes les améliorations V2E (shadow 92.3%, pollution 0%)
  * - Corrige logique Score=0 pour études/évaluations/rapports
- * - Approche générique, pas de hardcoding des 9 cas connus
+ * - Ajoute fallback IA gratuite pour cas ambigus
  * 
  * RÈGLE ABSOLUE: Dataset final 10 cas NON utilisé pour développement
  */
+
+// Import de l'IA gratuite
+import { classifyWithFreeAI } from './freeAIClassifier.js';
 
 /**
  * Classification intelligente avec analyse d'intention V2F
