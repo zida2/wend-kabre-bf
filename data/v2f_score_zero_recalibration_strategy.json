@@ -1,0 +1,41 @@
+{
+  "enhanced_market_signals": {
+    "description": "Signaux marchés enrichis pour réduire Score=0",
+    "new_keywords": {
+      "mobilier_scolaire": 1.5,
+      "centre_formation": 1.5,
+      "infrastructure": 1.2,
+      "réhabilitation": 1.2,
+      "équipement": 1.0,
+      "matériel_informatique": 1.5,
+      "véhicules": 1.0,
+      "ambulances": 1.2,
+      "panneaux_solaires": 1.5,
+      "bitumage_routes": 1.5,
+      "kits_urgence": 1.0
+    },
+    "implementation": "Ajouter ces patterns dans marketSignals V2F"
+  },
+  "score_zero_policy_change": {
+    "description": "Nouvelle politique Score=0 moins punitive",
+    "current_logic": "Score=0 → REJECTED si explicit non-market",
+    "new_logic": "Score=0 → REVIEW par défaut, REJECTED si explicit non-market uniquement",
+    "rationale": "50% opportunités perdues avec Score=0, risque business trop élevé"
+  },
+  "neutral_intent_refinement": {
+    "description": "Amélioration détection Intent dans contenus génériques",
+    "approach": "Patterns cachés dans titres génériques",
+    "examples": [
+      "'Déclaration politique' + notes humaines 'mobilier' → suspect marché",
+      "'Communiqué ministère' + notes 'construction' → probable marché"
+    ]
+  },
+  "validation_triggers": {
+    "description": "Déclencheurs validation humaine automatique",
+    "conditions": [
+      "Score=0 ET source gouvernementale ET pas pattern communication claire",
+      "Score=0 ET titre générique ET domaine technique (construction, informatique, etc.)",
+      "Intent=NEUTRAL ET mots-clés équipement/infrastructure présents"
+    ]
+  }
+}

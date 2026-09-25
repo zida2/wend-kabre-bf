@@ -1,0 +1,665 @@
+{
+  "audit_timestamp": "2026-09-24",
+  "total_contradictions": 53,
+  "contradictions_by_type": {
+    "REJECTED vs REVIEW": 1,
+    "UNKNOWN vs REJECTED": 4,
+    "UNKNOWN vs VALID": 3,
+    "UNKNOWN vs REVIEW": 2,
+    "VALID vs REVIEW": 15,
+    "REVIEW vs REJECTED": 15,
+    "REJECTED vs VALID": 13
+  },
+  "all_contradictions": [
+    {
+      "id": "holdout-020",
+      "title": "Avis de recrutement - 100 instituteurs pour l'enseignement p...",
+      "holdout_category": "expected_rejected",
+      "holdout_simplified": "REJECTED",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Services traduction - prestation spécialisée",
+      "contradiction_type": "REJECTED vs REVIEW"
+    },
+    {
+      "id": "holdout-035",
+      "title": "Fourniture de mobilier scolaire pour 150 établissements seco...",
+      "holdout_category": "mixed_categories",
+      "holdout_simplified": "UNKNOWN",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Communiqué stratégie rurale - communication officielle",
+      "contradiction_type": "UNKNOWN vs REJECTED"
+    },
+    {
+      "id": "holdout-036",
+      "title": "Travaux d'extension du réseau électrique en milieu rural - P...",
+      "holdout_category": "mixed_categories",
+      "holdout_simplified": "UNKNOWN",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Déclaration ministre santé - communication officielle",
+      "contradiction_type": "UNKNOWN vs REJECTED"
+    },
+    {
+      "id": "holdout-037",
+      "title": "Appel d'offres pour la réhabilitation de 10 forages dans le ...",
+      "holdout_category": "mixed_categories",
+      "holdout_simplified": "UNKNOWN",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Tables-bancs établissements - mobilier scolaire",
+      "contradiction_type": "UNKNOWN vs VALID"
+    },
+    {
+      "id": "holdout-038",
+      "title": "Étude d'impact environnemental du projet minier de Bissa...",
+      "holdout_category": "mixed_categories",
+      "holdout_simplified": "UNKNOWN",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Extension réseau électrique - infrastructure",
+      "contradiction_type": "UNKNOWN vs VALID"
+    },
+    {
+      "id": "holdout-039",
+      "title": "Mission d'expertise comptable pour audit des comptes publics...",
+      "holdout_category": "mixed_categories",
+      "holdout_simplified": "UNKNOWN",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Réhabilitation forages - travaux hydrauliques",
+      "contradiction_type": "UNKNOWN vs VALID"
+    },
+    {
+      "id": "holdout-040",
+      "title": "Recrutement de 25 contrôleurs des douanes pour les postes fr...",
+      "holdout_category": "mixed_categories",
+      "holdout_simplified": "UNKNOWN",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Impact environnemental - étude expertise",
+      "contradiction_type": "UNKNOWN vs REVIEW"
+    },
+    {
+      "id": "holdout-041",
+      "title": "Avis de recrutement - Conseillers juridiques au Ministère de...",
+      "holdout_category": "mixed_categories",
+      "holdout_simplified": "UNKNOWN",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Expertise comptable - mission audit",
+      "contradiction_type": "UNKNOWN vs REVIEW"
+    },
+    {
+      "id": "holdout-042",
+      "title": "Remise de diplômes aux lauréats de l'École Nationale d'Admin...",
+      "holdout_category": "mixed_categories",
+      "holdout_simplified": "UNKNOWN",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Contrôleurs douanes - recrutement direct",
+      "contradiction_type": "UNKNOWN vs REJECTED"
+    },
+    {
+      "id": "holdout-043",
+      "title": "Lancement du Programme National de Digitalisation Administra...",
+      "holdout_category": "mixed_categories",
+      "holdout_simplified": "UNKNOWN",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Conseillers juridiques - recrutement direct",
+      "contradiction_type": "UNKNOWN vs REJECTED"
+    },
+    {
+      "id": "holdout-069",
+      "title": "Fourniture de matériel de bureau pour tous les ministères...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Faisabilité agroalimentaire - étude expertise",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-070",
+      "title": "Marché de fourniture de carburant pour le parc automobile de...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Évaluation politiques santé - mission évaluation",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-071",
+      "title": "Acquisition de groupe électrogènes pour les centres de santé...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Expertise déchets urbains - rapport technique",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-072",
+      "title": "Fourniture d'uniformes scolaires pour 50 000 élèves du prima...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Impact social aurifère - étude environnementale",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-073",
+      "title": "Marché de fourniture de livres scolaires pour l'enseignement...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Besoins formation artisanat - évaluation",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-074",
+      "title": "Prestation de services d'ingénierie pour le projet de centra...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Diagnostic éducatif - mission analyse",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-075",
+      "title": "Services de conseil juridique pour la révision du code minie...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Étude marché export - analyse économique",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-076",
+      "title": "Prestation d'expertise comptable pour audit des finances pub...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Évaluation promotion femme - mission",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-077",
+      "title": "Services de formation en gestion de projets pour 200 cadres...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Audit ressources eau - mission technique",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-078",
+      "title": "Contrat de maintenance des infrastructures télécom gouvernem...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Étude démographique - analyse prospective",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-079",
+      "title": "Prestation de services de traduction pour les instances inte...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Catering missions - prestation restauration",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-080",
+      "title": "Services de consultance pour élaboration du plan national de...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Services protocole - prestation événementiel",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-081",
+      "title": "Prestation d'études techniques pour modernisation des douane...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Communication institutionnelle - service",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-082",
+      "title": "Services d'assistance technique pour digitalisation de l'éta...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Conseil organisation - prestation expertise",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-083",
+      "title": "Contrat de prestation pour audit organisationnel des ministè...",
+      "holdout_category": "expected_valid",
+      "holdout_simplified": "VALID",
+      "human_classification": "REVIEW",
+      "human_simplified": "REVIEW",
+      "human_notes": "Expertise RH - service spécialisé",
+      "contradiction_type": "VALID vs REVIEW"
+    },
+    {
+      "id": "holdout-099",
+      "title": "Prestation de services d'animation culturelle pour fêtes nat...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Agents santé - recrutement direct massif",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-100",
+      "title": "Avis de recrutement - Services de maintenance des jardins pu...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Inspecteurs éducation - recrutement direct",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-101",
+      "title": "Recrutement prestataire - Nettoyage spécialisé des locaux de...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Médecins spécialistes - recrutement direct",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-102",
+      "title": "Prestation de services funéraires pour personnalités officie...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Conseillers pédagogiques - recrutement direct",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-103",
+      "title": "Avis de recrutement - Services de restauration pour centres ...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Agents police - recrutement direct",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-104",
+      "title": "Mission d'expertise pour réforme de l'administration territo...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Directeur cabinet - recrutement cadre",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-105",
+      "title": "Étude d'optimisation des circuits de distribution pharmaceut...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Vétérinaires régionaux - recrutement direct",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-106",
+      "title": "Évaluation de l'efficacité des programmes de microfinance ru...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Ingénieurs ponts - recrutement direct",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-107",
+      "title": "Mission de conseil pour modernisation du système judiciaire...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Magistrats tribunaux - recrutement direct",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-108",
+      "title": "Étude de restructuration des entreprises publiques burkinabè...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Professeurs certifiés - recrutement direct",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-109",
+      "title": "Évaluation des politiques de promotion de l'entrepreneuriat ...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Secrétaire général - recrutement direct",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-110",
+      "title": "Mission d'assistance technique pour décentralisation fiscale...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Agents eaux forêts - recrutement direct",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-111",
+      "title": "Étude de rentabilité des investissements dans les énergies r...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Contrôleurs trésor - recrutement direct",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-112",
+      "title": "Évaluation de l'impact des projets de développement rural...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Statisticiens INS - recrutement direct",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-113",
+      "title": "Mission de conseil pour amélioration du climat des affaires...",
+      "holdout_category": "expected_review",
+      "holdout_simplified": "REVIEW",
+      "human_classification": "REJECTED",
+      "human_simplified": "REJECTED",
+      "human_notes": "Sage-femmes rurales - recrutement direct",
+      "contradiction_type": "REVIEW vs REJECTED"
+    },
+    {
+      "id": "holdout-209",
+      "title": "Déclaration sur la politique nationale de lutte contre la pa...",
+      "holdout_category": "expected_rejected",
+      "holdout_simplified": "REJECTED",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Mobilier scolaire - fourniture mobilier",
+      "contradiction_type": "REJECTED vs VALID"
+    },
+    {
+      "id": "holdout-210",
+      "title": "Communiqué du Ministère des Affaires Étrangères sur les rela...",
+      "holdout_category": "expected_rejected",
+      "holdout_simplified": "REJECTED",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Extension électrique - infrastructure",
+      "contradiction_type": "REJECTED vs VALID"
+    },
+    {
+      "id": "holdout-211",
+      "title": "Message de condoléances suite aux inondations dans l'Est...",
+      "holdout_category": "expected_rejected",
+      "holdout_simplified": "REJECTED",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Réhabilitation forages - travaux",
+      "contradiction_type": "REJECTED vs VALID"
+    },
+    {
+      "id": "holdout-212",
+      "title": "Déclaration sur la mise en œuvre des Objectifs du Millénaire...",
+      "holdout_category": "expected_rejected",
+      "holdout_simplified": "REJECTED",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Construction 30 salles - marché construction",
+      "contradiction_type": "REJECTED vs VALID"
+    },
+    {
+      "id": "holdout-213",
+      "title": "Communiqué sur les mesures de soutien aux producteurs agrico...",
+      "holdout_category": "expected_rejected",
+      "holdout_simplified": "REJECTED",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Réhabilitation aéroport - marché travaux",
+      "contradiction_type": "REJECTED vs VALID"
+    },
+    {
+      "id": "holdout-214",
+      "title": "Déclaration relative à la protection de l'environnement...",
+      "holdout_category": "expected_rejected",
+      "holdout_simplified": "REJECTED",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Centre formation - marché construction",
+      "contradiction_type": "REJECTED vs VALID"
+    },
+    {
+      "id": "holdout-215",
+      "title": "Communiqué sur le renforcement de la coopération Sud-Sud...",
+      "holdout_category": "expected_rejected",
+      "holdout_simplified": "REJECTED",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Bitumage routes - marché infrastructure",
+      "contradiction_type": "REJECTED vs VALID"
+    },
+    {
+      "id": "holdout-216",
+      "title": "Message de félicitations aux équipes nationales sportives...",
+      "holdout_category": "expected_rejected",
+      "holdout_simplified": "REJECTED",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Barrage international - grand projet",
+      "contradiction_type": "REJECTED vs VALID"
+    },
+    {
+      "id": "holdout-217",
+      "title": "Déclaration sur la politique de promotion de la jeunesse...",
+      "holdout_category": "expected_rejected",
+      "holdout_simplified": "REJECTED",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Kits urgence - fourniture santé",
+      "contradiction_type": "REJECTED vs VALID"
+    },
+    {
+      "id": "holdout-218",
+      "title": "Communiqué de fin de Conseil des Ministres...",
+      "holdout_category": "expected_rejected",
+      "holdout_simplified": "REJECTED",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Matériel informatique - fourniture",
+      "contradiction_type": "REJECTED vs VALID"
+    },
+    {
+      "id": "holdout-219",
+      "title": "Message du Premier Ministre sur la réforme de l'administrati...",
+      "holdout_category": "expected_rejected",
+      "holdout_simplified": "REJECTED",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Semences certifiées - fourniture agricole",
+      "contradiction_type": "REJECTED vs VALID"
+    },
+    {
+      "id": "holdout-220",
+      "title": "Déclaration sur la stratégie nationale de développement dura...",
+      "holdout_category": "expected_rejected",
+      "holdout_simplified": "REJECTED",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Panneaux solaires - fourniture énergie",
+      "contradiction_type": "REJECTED vs VALID"
+    },
+    {
+      "id": "holdout-221",
+      "title": "Communiqué sur les mesures de lutte contre la corruption...",
+      "holdout_category": "expected_rejected",
+      "holdout_simplified": "REJECTED",
+      "human_classification": "VALID",
+      "human_simplified": "VALID",
+      "human_notes": "Ambulances - acquisition véhicules",
+      "contradiction_type": "REJECTED vs VALID"
+    }
+  ],
+  "false_negatives_analysis": [
+    {
+      "id": "holdout-209",
+      "title": "Déclaration sur la politique nationale de lutte contre la pa...",
+      "dataset_label": "expected_rejected",
+      "human_label": "VALID",
+      "human_notes": "Mobilier scolaire - fourniture mobilier",
+      "v2f_prediction": "N/A",
+      "is_true_fn": "TO_DETERMINE"
+    },
+    {
+      "id": "holdout-210",
+      "title": "Communiqué du Ministère des Affaires Étrangères sur les rela...",
+      "dataset_label": "expected_rejected",
+      "human_label": "VALID",
+      "human_notes": "Extension électrique - infrastructure",
+      "v2f_prediction": "N/A",
+      "is_true_fn": "TO_DETERMINE"
+    },
+    {
+      "id": "holdout-211",
+      "title": "Message de condoléances suite aux inondations dans l'Est...",
+      "dataset_label": "expected_rejected",
+      "human_label": "VALID",
+      "human_notes": "Réhabilitation forages - travaux",
+      "v2f_prediction": "N/A",
+      "is_true_fn": "TO_DETERMINE"
+    },
+    {
+      "id": "holdout-212",
+      "title": "Déclaration sur la mise en œuvre des Objectifs du Millénaire...",
+      "dataset_label": "expected_rejected",
+      "human_label": "VALID",
+      "human_notes": "Construction 30 salles - marché construction",
+      "v2f_prediction": "N/A",
+      "is_true_fn": "TO_DETERMINE"
+    },
+    {
+      "id": "holdout-213",
+      "title": "Communiqué sur les mesures de soutien aux producteurs agrico...",
+      "dataset_label": "expected_rejected",
+      "human_label": "VALID",
+      "human_notes": "Réhabilitation aéroport - marché travaux",
+      "v2f_prediction": "N/A",
+      "is_true_fn": "TO_DETERMINE"
+    },
+    {
+      "id": "holdout-214",
+      "title": "Déclaration relative à la protection de l'environnement...",
+      "dataset_label": "expected_rejected",
+      "human_label": "VALID",
+      "human_notes": "Centre formation - marché construction",
+      "v2f_prediction": "N/A",
+      "is_true_fn": "TO_DETERMINE"
+    },
+    {
+      "id": "holdout-215",
+      "title": "Communiqué sur le renforcement de la coopération Sud-Sud...",
+      "dataset_label": "expected_rejected",
+      "human_label": "VALID",
+      "human_notes": "Bitumage routes - marché infrastructure",
+      "v2f_prediction": "N/A",
+      "is_true_fn": "TO_DETERMINE"
+    },
+    {
+      "id": "holdout-216",
+      "title": "Message de félicitations aux équipes nationales sportives...",
+      "dataset_label": "expected_rejected",
+      "human_label": "VALID",
+      "human_notes": "Barrage international - grand projet",
+      "v2f_prediction": "N/A",
+      "is_true_fn": "TO_DETERMINE"
+    },
+    {
+      "id": "holdout-217",
+      "title": "Déclaration sur la politique de promotion de la jeunesse...",
+      "dataset_label": "expected_rejected",
+      "human_label": "VALID",
+      "human_notes": "Kits urgence - fourniture santé",
+      "v2f_prediction": "N/A",
+      "is_true_fn": "TO_DETERMINE"
+    },
+    {
+      "id": "holdout-218",
+      "title": "Communiqué de fin de Conseil des Ministres...",
+      "dataset_label": "expected_rejected",
+      "human_label": "VALID",
+      "human_notes": "Matériel informatique - fourniture",
+      "v2f_prediction": "N/A",
+      "is_true_fn": "TO_DETERMINE"
+    },
+    {
+      "id": "holdout-219",
+      "title": "Message du Premier Ministre sur la réforme de l'administrati...",
+      "dataset_label": "expected_rejected",
+      "human_label": "VALID",
+      "human_notes": "Semences certifiées - fourniture agricole",
+      "v2f_prediction": "N/A",
+      "is_true_fn": "TO_DETERMINE"
+    },
+    {
+      "id": "holdout-220",
+      "title": "Déclaration sur la stratégie nationale de développement dura...",
+      "dataset_label": "expected_rejected",
+      "human_label": "VALID",
+      "human_notes": "Panneaux solaires - fourniture énergie",
+      "v2f_prediction": "N/A",
+      "is_true_fn": "TO_DETERMINE"
+    },
+    {
+      "id": "holdout-221",
+      "title": "Communiqué sur les mesures de lutte contre la corruption...",
+      "dataset_label": "expected_rejected",
+      "human_label": "VALID",
+      "human_notes": "Ambulances - acquisition véhicules",
+      "v2f_prediction": "N/A",
+      "is_true_fn": "TO_DETERMINE"
+    }
+  ],
+  "holdout_209_221_analysis": "Communications officielles REJECTED dans dataset mais VALID chez humains"
+}

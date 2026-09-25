@@ -1,0 +1,214 @@
+{
+  "comparison_date": "2026-09-24",
+  "datasets_compared": [
+    "holdout_original",
+    "gold_v1",
+    "human_labels"
+  ],
+  "holdout_metrics": {
+    "accuracy": 0.6470588235294118,
+    "macro_precision": 0.5287307874149205,
+    "macro_recall": 0.5407286639711317,
+    "macro_f1": 0.4870494836809138,
+    "precision_by_class": {
+      "REJECTED": 0.9746835443037974,
+      "REVIEW": 0.30303030303030304,
+      "UNKNOWN": 0,
+      "VALID": 0.8372093023255814
+    },
+    "recall_by_class": {
+      "REJECTED": 0.6260162601626016,
+      "REVIEW": 0.8823529411764706,
+      "UNKNOWN": 0.0,
+      "VALID": 0.6545454545454545
+    },
+    "f1_by_class": {
+      "REJECTED": 0.7623762376237624,
+      "REVIEW": 0.4511278195488722,
+      "UNKNOWN": 0,
+      "VALID": 0.7346938775510204
+    },
+    "confusion_matrix": [
+      [
+        77,
+        46,
+        0,
+        0
+      ],
+      [
+        0,
+        30,
+        0,
+        4
+      ],
+      [
+        2,
+        4,
+        0,
+        3
+      ],
+      [
+        0,
+        19,
+        0,
+        36
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "REJECTED",
+      "REVIEW",
+      "UNKNOWN",
+      "VALID"
+    ],
+    "distribution_true": {
+      "VALID": 55,
+      "REVIEW": 34,
+      "REJECTED": 123,
+      "UNKNOWN": 9
+    },
+    "distribution_pred": {
+      "VALID": 43,
+      "REVIEW": 99,
+      "REJECTED": 79
+    },
+    "pollution_rate": 0.0,
+    "false_positives": 0,
+    "valid_predicted": 43
+  },
+  "gold_v1_metrics": {
+    "accuracy": 0.6470588235294118,
+    "macro_precision": 0.5287307874149205,
+    "macro_recall": 0.5407286639711317,
+    "macro_f1": 0.4870494836809138,
+    "precision_by_class": {
+      "REJECTED": 0.9746835443037974,
+      "REVIEW": 0.30303030303030304,
+      "UNKNOWN": 0,
+      "VALID": 0.8372093023255814
+    },
+    "recall_by_class": {
+      "REJECTED": 0.6260162601626016,
+      "REVIEW": 0.8823529411764706,
+      "UNKNOWN": 0.0,
+      "VALID": 0.6545454545454545
+    },
+    "f1_by_class": {
+      "REJECTED": 0.7623762376237624,
+      "REVIEW": 0.4511278195488722,
+      "UNKNOWN": 0,
+      "VALID": 0.7346938775510204
+    },
+    "confusion_matrix": [
+      [
+        77,
+        46,
+        0,
+        0
+      ],
+      [
+        0,
+        30,
+        0,
+        4
+      ],
+      [
+        2,
+        4,
+        0,
+        3
+      ],
+      [
+        0,
+        19,
+        0,
+        36
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "REJECTED",
+      "REVIEW",
+      "UNKNOWN",
+      "VALID"
+    ],
+    "distribution_true": {
+      "VALID": 55,
+      "REVIEW": 34,
+      "REJECTED": 123,
+      "UNKNOWN": 9
+    },
+    "distribution_pred": {
+      "VALID": 43,
+      "REVIEW": 99,
+      "REJECTED": 79
+    },
+    "pollution_rate": 0.0,
+    "false_positives": 0,
+    "valid_predicted": 43
+  },
+  "human_reference_metrics": {
+    "accuracy": 0.5384615384615384,
+    "macro_precision": 0.5805627663149006,
+    "macro_recall": 0.5573620495495496,
+    "macro_f1": 0.521980245765412,
+    "precision_by_class": {
+      "REJECTED": 0.8481012658227848,
+      "REVIEW": 0.24242424242424243,
+      "VALID": 0.6511627906976745
+    },
+    "recall_by_class": {
+      "REJECTED": 0.5234375,
+      "REVIEW": 0.6486486486486487,
+      "VALID": 0.5
+    },
+    "f1_by_class": {
+      "REJECTED": 0.647342995169082,
+      "REVIEW": 0.35294117647058826,
+      "VALID": 0.5656565656565656
+    },
+    "confusion_matrix": [
+      [
+        67,
+        57,
+        4
+      ],
+      [
+        2,
+        24,
+        11
+      ],
+      [
+        10,
+        18,
+        28
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "REJECTED",
+      "REVIEW",
+      "VALID"
+    ],
+    "distribution_true": {
+      "VALID": 56,
+      "REVIEW": 37,
+      "REJECTED": 128
+    },
+    "distribution_pred": {
+      "VALID": 43,
+      "REVIEW": 99,
+      "REJECTED": 79
+    },
+    "pollution_rate": 9.30232558139535,
+    "false_positives": 4,
+    "valid_predicted": 43
+  },
+  "samples_count": {
+    "holdout": 221,
+    "gold_v1": 221,
+    "human": 221
+  },
+  "conclusion": {
+    "performance_identical": true,
+    "improvement_claim_validated": false,
+    "gold_v1_justification": "No performance improvement - Gold V1 equivalent to original holdout"
+  }
+}

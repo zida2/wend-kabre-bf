@@ -1,0 +1,82 @@
+[
+  {
+    "id": "final-test-001",
+    "title": "Appel d'offres pour construction d'un complexe hospitalier universitaire à Ouahigouya",
+    "description": "Construction d'un hôpital de 300 lits avec équipements médicaux de pointe",
+    "source": "sante.gov.bf",
+    "category": "test_final",
+    "note": "NOUVEAU - Jamais utilisé en développement"
+  },
+  {
+    "id": "final-test-002", 
+    "title": "Fourniture de 1000 ordinateurs portables pour les lycées du Burkina Faso",
+    "description": "Équipement informatique dans le cadre du programme de digitalisation éducative",
+    "source": "education.gov.bf",
+    "category": "test_final",
+    "note": "NOUVEAU"
+  },
+  {
+    "id": "final-test-003",
+    "title": "Avis de recrutement - Prestation de surveillance électronique des frontières",
+    "description": "Services de sécurité par prestataire spécialisé pour contrôle frontalier",
+    "source": "securite.gov.bf", 
+    "category": "test_final",
+    "note": "NOUVEAU - Cas limite prestation/recrutement"
+  },
+  {
+    "id": "final-test-004",
+    "title": "Communiqué de presse - Signature d'accord de coopération avec le Ghana",
+    "description": "Annonce officielle de partenariat économique entre les deux pays",
+    "source": "affaires-etrangeres.gov.bf",
+    "category": "test_final", 
+    "note": "NOUVEAU - Communication officielle"
+  },
+  {
+    "id": "final-test-005",
+    "title": "Avis de décès - Rappel à Dieu du Général TRAORE, ancien Chef d'État-Major",
+    "description": "Décès d'une personnalité militaire de haut rang",
+    "source": "defense.gov.bf",
+    "category": "test_final",
+    "note": "NOUVEAU - Avis de décès"
+  },
+  {
+    "id": "final-test-006",
+    "title": "Travaux de construction de 20 forages solaires dans la région du Sahel",
+    "description": "Infrastructure d'accès à l'eau potable par énergie renouvelable", 
+    "source": "hydraulique.gov.bf",
+    "category": "test_final",
+    "note": "NOUVEAU"
+  },
+  {
+    "id": "final-test-007",
+    "title": "Colloque international sur l'agriculture climato-intelligente - Université de Bobo",
+    "description": "Conférence scientifique sur les pratiques agricoles adaptées au climat",
+    "source": "univ-bobo.bf",
+    "category": "test_final",
+    "note": "NOUVEAU - Contenu académique"
+  },
+  {
+    "id": "final-test-008",
+    "title": "Recrutement de 200 agents de santé communautaire - Postes permanents",
+    "description": "Offre d'emploi direct dans la fonction publique sanitaire",
+    "source": "sante.gov.bf",
+    "category": "test_final",
+    "note": "NOUVEAU - Recrutement direct"
+  },
+  {
+    "id": "final-test-009",
+    "title": "Prestation de services de blanchisserie industrielle pour les hôpitaux",
+    "description": "Contrat de lavage et désinfection du linge hospitalier",
+    "source": "sante.gov.bf", 
+    "category": "test_final",
+    "note": "NOUVEAU - Prestation service"
+  },
+  {
+    "id": "final-test-010",
+    "title": "Inauguration du nouveau pont sur le fleuve Mouhoun à Dédougou",
+    "description": "Cérémonie officielle d'ouverture de l'infrastructure routière",
+    "source": "infrastructures.gov.bf",
+    "category": "test_final",
+    "note": "NOUVEAU - Événement officiel"
+  }
+]

@@ -1,0 +1,13 @@
+errorType,title,human,machine,confidence,source,positiveSignals,negativeSignals
+FALSE_POSITIVE,"Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs...",REVIEW,VALID,0.6866666666666666,sante.gov.bf,2,0
+FALSE_POSITIVE,"Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs...",REVIEW,VALID,0.6866666666666666,info.bf,2,0
+FALSE_POSITIVE,"Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs...",REVIEW,VALID,0.6866666666666666,sante.gov.bf,2,0
+FALSE_POSITIVE,"Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs...",REVIEW,VALID,0.6866666666666666,info.bf,2,0
+FALSE_NEGATIVE,"Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agricultu...",VALID,REVIEW,0.3,infrastructures.gov.bf,1,0
+FALSE_NEGATIVE,"Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya...",VALID,REVIEW,0.3,agriculture.gov.bf,1,0
+FALSE_NEGATIVE,"Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agricultu...",VALID,REVIEW,0.3,gouvernement.gov.bf,1,0
+FALSE_NEGATIVE,"Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya...",VALID,REVIEW,0.3,equipement.gov.bf,1,0
+FALSE_NEGATIVE,"Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agricultu...",VALID,REVIEW,0.3,infrastructures.gov.bf,1,0
+FALSE_NEGATIVE,"Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya...",VALID,REVIEW,0.3,agriculture.gov.bf,1,0
+FALSE_NEGATIVE,"Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agricultu...",VALID,REVIEW,0.3,gouvernement.gov.bf,1,0
+FALSE_NEGATIVE,"Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya...",VALID,REVIEW,0.3,equipement.gov.bf,1,0

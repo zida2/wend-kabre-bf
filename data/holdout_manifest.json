@@ -1,0 +1,61 @@
+{
+  "dataset_version": "holdout_v1.0",
+  "created_at": "2026-09-23T19:20:48.901Z",
+  "total_samples": 221,
+  "purpose": "Final validation of V2F classifier - V2F remains frozen",
+  "source_distribution": {
+    "education.gov.bf": 34,
+    "transport.gov.bf": 1,
+    "emploi.gov.bf": 1,
+    "infrastructures.gov.bf": 11,
+    "energie.gov.bf": 13,
+    "sante.gov.bf": 33,
+    "agriculture.gov.bf": 2,
+    "securite.gov.bf": 2,
+    "affaires-etrangeres.gov.bf": 1,
+    "economie.gov.bf": 1,
+    "finances.gov.bf": 12,
+    "digitale.gov.bf": 2,
+    "info.bf": 21,
+    "assemblee-nationale.gov.bf": 1,
+    "univ-ouaga.bf": 20,
+    "recherche.gov.bf": 12,
+    "justice.gov.bf": 3,
+    "gouvernement.gov.bf": 21,
+    "hydraulique.gov.bf": 1,
+    "environnement.gov.bf": 11,
+    "douanes.gov.bf": 1,
+    "fonction-publique.gov.bf": 17
+  },
+  "category_distribution": {
+    "expected_valid": 55,
+    "expected_review": 34,
+    "expected_rejected": 123,
+    "mixed_categories": 9
+  },
+  "duplicate_check": {
+    "existing_datasets_checked": [
+      "benchmark",
+      "shadow",
+      "final"
+    ],
+    "total_existing_ids": 99,
+    "excluded_duplicates": 0,
+    "verification_method": "title_normalization_and_hash"
+  },
+  "validation_protocol": {
+    "classifier_version": "V2F_FROZEN",
+    "human_labeling_required": true,
+    "modification_forbidden": true,
+    "min_accuracy_threshold": "Not specified - measurement only",
+    "max_pollution_threshold": "5.0%"
+  },
+  "notes": [
+    "Dataset totalement inédit pour validation finale V2F",
+    "V2F reste gelée quels que soient les résultats",
+    "Classification humaine indépendante requise",
+    "Aucune modification de V2F autorisée post-holdout"
+  ],
+  "extension_created_at": "2026-09-23T19:22:41.046Z",
+  "extended_samples": 178
+}

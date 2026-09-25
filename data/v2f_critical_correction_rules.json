@@ -1,0 +1,26 @@
+{
+  "contextual_government_rule": {
+    "condition": "mots_clés_marchés AND source_gov AND pattern_communication",
+    "action": "force_REVIEW",
+    "description": "Communications gouvernementales avec mots-clés marchés → REVIEW obligatoire"
+  },
+  "critical_sources_blacklist": {
+    "sources": [
+      "education.gov.bf",
+      "energie.gov.bf",
+      "recherche.gov.bf"
+    ],
+    "action": "human_validation_required",
+    "description": "Sources critiques identifiées → validation humaine"
+  },
+  "score_adjustment_gov": {
+    "condition": "source.endswith('.gov.bf') AND market_keywords_detected",
+    "adjustment": "reduce_market_bonus_by_50%",
+    "description": "Réduire bonus mots-clés marchés si source gouvernementale"
+  },
+  "cross_validation_check": {
+    "condition": "v2f_score > 2.0 AND v2f_intent == 'MARKET' AND human_pattern_suggests_communication",
+    "action": "flag_for_review",
+    "description": "Score élevé + intent marché MAIS pattern communication → doute"
+  }
+}

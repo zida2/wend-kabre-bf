@@ -1,0 +1,1377 @@
+{
+  "timestamp": "2026-09-23T14:04:07.204Z",
+  "totalSamples": 50,
+  "samplesWithReference": 50,
+  "accuracy": 64,
+  "precision": {
+    "VALID": 66.66666666666666,
+    "REVIEW": 52.17391304347826,
+    "REJECTED": 80
+  },
+  "recall": {
+    "VALID": 50,
+    "REVIEW": 63.1578947368421,
+    "REJECTED": 80
+  },
+  "f1Score": {
+    "VALID": 57.14285714285714,
+    "REVIEW": 57.142857142857146,
+    "REJECTED": 80
+  },
+  "confusionMatrix": {
+    "VALID→VALID": 8,
+    "VALID→REVIEW": 8,
+    "VALID→REJECTED": 0,
+    "REVIEW→VALID": 4,
+    "REVIEW→REVIEW": 12,
+    "REVIEW→REJECTED": 3,
+    "REJECTED→VALID": 0,
+    "REJECTED→REVIEW": 3,
+    "REJECTED→REJECTED": 12
+  },
+  "distribution": {
+    "human": {
+      "VALID": 16,
+      "REVIEW": 19,
+      "REJECTED": 15
+    },
+    "machine": {
+      "VALID": 12,
+      "REVIEW": 23,
+      "REJECTED": 15
+    }
+  },
+  "errors": {
+    "falsePositives": [
+      {
+        "id": "mock-3",
+        "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs...",
+        "source": "sante.gov.bf",
+        "automatic": {
+          "classification": "VALID",
+          "confidence": 0.6866666666666666,
+          "score": 2.06
+        },
+        "human": "REVIEW",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 2,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Classification incertaine - révision recommandée",
+        "reasons": [
+          "Indicateur fort détecté: \"avis de recrutement\" (+3 pts)",
+          "Indicateur moyen détecté: \"prestation de\" (+2 pts)",
+          "Score suffisant pour validation automatique (2.06 ≥ 1.5)"
+        ]
+      },
+      {
+        "id": "mock-18",
+        "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs...",
+        "source": "info.bf",
+        "automatic": {
+          "classification": "VALID",
+          "confidence": 0.6866666666666666,
+          "score": 2.06
+        },
+        "human": "REVIEW",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 2,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Classification incertaine - révision recommandée",
+        "reasons": [
+          "Indicateur fort détecté: \"avis de recrutement\" (+3 pts)",
+          "Indicateur moyen détecté: \"prestation de\" (+2 pts)",
+          "Score suffisant pour validation automatique (2.06 ≥ 1.5)"
+        ]
+      },
+      {
+        "id": "mock-33",
+        "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs...",
+        "source": "sante.gov.bf",
+        "automatic": {
+          "classification": "VALID",
+          "confidence": 0.6866666666666666,
+          "score": 2.06
+        },
+        "human": "REVIEW",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 2,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Classification incertaine - révision recommandée",
+        "reasons": [
+          "Indicateur fort détecté: \"avis de recrutement\" (+3 pts)",
+          "Indicateur moyen détecté: \"prestation de\" (+2 pts)",
+          "Score suffisant pour validation automatique (2.06 ≥ 1.5)"
+        ]
+      },
+      {
+        "id": "mock-48",
+        "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs...",
+        "source": "info.bf",
+        "automatic": {
+          "classification": "VALID",
+          "confidence": 0.6866666666666666,
+          "score": 2.06
+        },
+        "human": "REVIEW",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 2,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Classification incertaine - révision recommandée",
+        "reasons": [
+          "Indicateur fort détecté: \"avis de recrutement\" (+3 pts)",
+          "Indicateur moyen détecté: \"prestation de\" (+2 pts)",
+          "Score suffisant pour validation automatique (2.06 ≥ 1.5)"
+        ]
+      }
+    ],
+    "falseNegatives": [
+      {
+        "id": "mock-4",
+        "title": "Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agricultu...",
+        "source": "infrastructures.gov.bf",
+        "automatic": {
+          "classification": "REVIEW",
+          "confidence": 0.3,
+          "score": 0.86
+        },
+        "human": "VALID",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 1,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Marché public standard - à valider",
+        "reasons": [
+          "Indicateur moyen détecté: \"acquisition de\" (+2 pts)",
+          "Score dans la zone d'incertitude (-0.5 < 0.86 < 1.5) - révision nécessaire"
+        ]
+      },
+      {
+        "id": "mock-5",
+        "title": "Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya...",
+        "source": "agriculture.gov.bf",
+        "automatic": {
+          "classification": "REVIEW",
+          "confidence": 0.3,
+          "score": 0.86
+        },
+        "human": "VALID",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 1,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Marché public standard - à valider",
+        "reasons": [
+          "Indicateur moyen détecté: \"travaux de\" (+2 pts)",
+          "Score dans la zone d'incertitude (-0.5 < 0.86 < 1.5) - révision nécessaire"
+        ]
+      },
+      {
+        "id": "mock-19",
+        "title": "Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agricultu...",
+        "source": "gouvernement.gov.bf",
+        "automatic": {
+          "classification": "REVIEW",
+          "confidence": 0.3,
+          "score": 0.98
+        },
+        "human": "VALID",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 1,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.6
+        },
+        "humanNotes": "Marché public standard - à valider",
+        "reasons": [
+          "Source partiellement fiable: Site gouvernemental",
+          "Indicateur moyen détecté: \"acquisition de\" (+2 pts)",
+          "Score dans la zone d'incertitude (-0.5 < 0.98 < 1.5) - révision nécessaire"
+        ]
+      },
+      {
+        "id": "mock-20",
+        "title": "Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya...",
+        "source": "equipement.gov.bf",
+        "automatic": {
+          "classification": "REVIEW",
+          "confidence": 0.3,
+          "score": 0.86
+        },
+        "human": "VALID",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 1,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Marché public standard - à valider",
+        "reasons": [
+          "Indicateur moyen détecté: \"travaux de\" (+2 pts)",
+          "Score dans la zone d'incertitude (-0.5 < 0.86 < 1.5) - révision nécessaire"
+        ]
+      },
+      {
+        "id": "mock-34",
+        "title": "Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agricultu...",
+        "source": "infrastructures.gov.bf",
+        "automatic": {
+          "classification": "REVIEW",
+          "confidence": 0.3,
+          "score": 0.86
+        },
+        "human": "VALID",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 1,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Marché public standard - à valider",
+        "reasons": [
+          "Indicateur moyen détecté: \"acquisition de\" (+2 pts)",
+          "Score dans la zone d'incertitude (-0.5 < 0.86 < 1.5) - révision nécessaire"
+        ]
+      },
+      {
+        "id": "mock-35",
+        "title": "Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya...",
+        "source": "agriculture.gov.bf",
+        "automatic": {
+          "classification": "REVIEW",
+          "confidence": 0.3,
+          "score": 0.86
+        },
+        "human": "VALID",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 1,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Marché public standard - à valider",
+        "reasons": [
+          "Indicateur moyen détecté: \"travaux de\" (+2 pts)",
+          "Score dans la zone d'incertitude (-0.5 < 0.86 < 1.5) - révision nécessaire"
+        ]
+      },
+      {
+        "id": "mock-49",
+        "title": "Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agricultu...",
+        "source": "gouvernement.gov.bf",
+        "automatic": {
+          "classification": "REVIEW",
+          "confidence": 0.3,
+          "score": 0.98
+        },
+        "human": "VALID",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 1,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.6
+        },
+        "humanNotes": "Marché public standard - à valider",
+        "reasons": [
+          "Source partiellement fiable: Site gouvernemental",
+          "Indicateur moyen détecté: \"acquisition de\" (+2 pts)",
+          "Score dans la zone d'incertitude (-0.5 < 0.98 < 1.5) - révision nécessaire"
+        ]
+      },
+      {
+        "id": "mock-50",
+        "title": "Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya...",
+        "source": "equipement.gov.bf",
+        "automatic": {
+          "classification": "REVIEW",
+          "confidence": 0.3,
+          "score": 0.86
+        },
+        "human": "VALID",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 1,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Marché public standard - à valider",
+        "reasons": [
+          "Indicateur moyen détecté: \"travaux de\" (+2 pts)",
+          "Score dans la zone d'incertitude (-0.5 < 0.86 < 1.5) - révision nécessaire"
+        ]
+      }
+    ],
+    "misclassifiedReview": [
+      {
+        "id": "mock-8",
+        "title": "Avis de décès - Rappel à Dieu de l'ancien Ministre de l'Agriculture...",
+        "source": "info.bf",
+        "automatic": {
+          "classification": "REVIEW",
+          "confidence": 0.3,
+          "score": 0.06
+        },
+        "human": "REJECTED",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 0,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Événement personnel/officiel - à rejeter",
+        "reasons": [
+          "Score dans la zone d'incertitude (-0.5 < 0.06 < 1.5) - révision nécessaire"
+        ]
+      },
+      {
+        "id": "mock-13",
+        "title": "Session de formation sur les marchés publics pour les agents comptables...",
+        "source": "sante.gov.bf",
+        "automatic": {
+          "classification": "REJECTED",
+          "confidence": 0.31999999999999995,
+          "score": -1.14
+        },
+        "human": "REVIEW",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 0,
+          "negativeSignals": 1,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Cas ambigu - nécessite révision manuelle",
+        "reasons": [
+          "Indicateur négatif détecté: \"formation\" (-2 pts)",
+          "Score insuffisant pour un marché (-1.14 ≤ -0.5)"
+        ]
+      },
+      {
+        "id": "mock-23",
+        "title": "Avis de décès - Rappel à Dieu de l'ancien Ministre de l'Agriculture...",
+        "source": "sante.gov.bf",
+        "automatic": {
+          "classification": "REVIEW",
+          "confidence": 0.3,
+          "score": 0.06
+        },
+        "human": "REJECTED",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 0,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Événement personnel/officiel - à rejeter",
+        "reasons": [
+          "Score dans la zone d'incertitude (-0.5 < 0.06 < 1.5) - révision nécessaire"
+        ]
+      },
+      {
+        "id": "mock-28",
+        "title": "Session de formation sur les marchés publics pour les agents comptables...",
+        "source": "info.bf",
+        "automatic": {
+          "classification": "REJECTED",
+          "confidence": 0.31999999999999995,
+          "score": -1.14
+        },
+        "human": "REVIEW",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 0,
+          "negativeSignals": 1,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Cas ambigu - nécessite révision manuelle",
+        "reasons": [
+          "Indicateur négatif détecté: \"formation\" (-2 pts)",
+          "Score insuffisant pour un marché (-1.14 ≤ -0.5)"
+        ]
+      },
+      {
+        "id": "mock-38",
+        "title": "Avis de décès - Rappel à Dieu de l'ancien Ministre de l'Agriculture...",
+        "source": "info.bf",
+        "automatic": {
+          "classification": "REVIEW",
+          "confidence": 0.3,
+          "score": 0.06
+        },
+        "human": "REJECTED",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 0,
+          "negativeSignals": 0,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Événement personnel/officiel - à rejeter",
+        "reasons": [
+          "Score dans la zone d'incertitude (-0.5 < 0.06 < 1.5) - révision nécessaire"
+        ]
+      },
+      {
+        "id": "mock-43",
+        "title": "Session de formation sur les marchés publics pour les agents comptables...",
+        "source": "sante.gov.bf",
+        "automatic": {
+          "classification": "REJECTED",
+          "confidence": 0.31999999999999995,
+          "score": -1.14
+        },
+        "human": "REVIEW",
+        "match": false,
+        "diagnostics": {
+          "positiveSignals": 0,
+          "negativeSignals": 1,
+          "exclusions": 0,
+          "sourceConfidence": 0.2
+        },
+        "humanNotes": "Cas ambigu - nécessite révision manuelle",
+        "reasons": [
+          "Indicateur négatif détecté: \"formation\" (-2 pts)",
+          "Score insuffisant pour un marché (-1.14 ≤ -0.5)"
+        ]
+      }
+    ],
+    "unexpected": []
+  },
+  "detailedResults": [
+    {
+      "id": "mock-1",
+      "title": "Appel d'offres pour fourniture de matériel informatique au profit du Ministère d...",
+      "source": "dgcmef.gov.bf",
+      "automatic": {
+        "classification": "VALID",
+        "confidence": 0.7566666666666667,
+        "score": 2.27
+      },
+      "human": "VALID",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 2,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.9
+      }
+    },
+    {
+      "id": "mock-2",
+      "title": "Demande de cotation pour travaux de construction d'un centre de santé à Koudougo...",
+      "source": "arcop.bf",
+      "automatic": {
+        "classification": "VALID",
+        "confidence": 1,
+        "score": 3.07
+      },
+      "human": "VALID",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 3,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.9
+      }
+    },
+    {
+      "id": "mock-3",
+      "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs...",
+      "source": "sante.gov.bf",
+      "automatic": {
+        "classification": "VALID",
+        "confidence": 0.6866666666666666,
+        "score": 2.06
+      },
+      "human": "REVIEW",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 2,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-4",
+      "title": "Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agricultu...",
+      "source": "infrastructures.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.86
+      },
+      "human": "VALID",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 1,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-5",
+      "title": "Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya...",
+      "source": "agriculture.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.86
+      },
+      "human": "VALID",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 1,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-6",
+      "title": "Soutenance de thèse de Master en Informatique - Université Joseph Ki-Zerbo...",
+      "source": "univ-ouaga.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.95,
+        "score": 0
+      },
+      "human": "REJECTED",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 1,
+        "sourceConfidence": 0
+      }
+    },
+    {
+      "id": "mock-7",
+      "title": "Communiqué de presse - Nomination du nouveau Directeur Général des Impôts...",
+      "source": "finances.gov.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.95,
+        "score": 0
+      },
+      "human": "REJECTED",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 1,
+        "sourceConfidence": 0
+      }
+    },
+    {
+      "id": "mock-8",
+      "title": "Avis de décès - Rappel à Dieu de l'ancien Ministre de l'Agriculture...",
+      "source": "info.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.06
+      },
+      "human": "REJECTED",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-9",
+      "title": "Cérémonie d'inauguration du nouveau complexe sportif de Bobo-Dioulasso...",
+      "source": "gouvernement.gov.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.95,
+        "score": 0
+      },
+      "human": "REJECTED",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 1,
+        "sourceConfidence": 0
+      }
+    },
+    {
+      "id": "mock-10",
+      "title": "Décret N°2024-001 portant nomination au sein du Ministère des Finances...",
+      "source": "equipement.gov.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.95,
+        "score": 0
+      },
+      "human": "REJECTED",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 1,
+        "sourceConfidence": 0
+      }
+    },
+    {
+      "id": "mock-11",
+      "title": "Prestation de formation en gestion de projet pour les cadres du Ministère...",
+      "source": "dgcmef.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": -0.13
+      },
+      "human": "REVIEW",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 1,
+        "negativeSignals": 1,
+        "exclusions": 0,
+        "sourceConfidence": 0.9
+      }
+    },
+    {
+      "id": "mock-12",
+      "title": "Étude de faisabilité pour la construction du pont de Kongoussi...",
+      "source": "arcop.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 1.07
+      },
+      "human": "REVIEW",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 1,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.9
+      }
+    },
+    {
+      "id": "mock-13",
+      "title": "Session de formation sur les marchés publics pour les agents comptables...",
+      "source": "sante.gov.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.31999999999999995,
+        "score": -1.14
+      },
+      "human": "REVIEW",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 1,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-14",
+      "title": "Évaluation des besoins en infrastructures sanitaires dans la région du Sahel...",
+      "source": "infrastructures.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.06
+      },
+      "human": "REVIEW",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-15",
+      "title": "Rapport d'étude sur l'amélioration du système d'approvisionnement en eau...",
+      "source": "agriculture.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.06
+      },
+      "human": "REVIEW",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-16",
+      "title": "Appel d'offres pour fourniture de matériel informatique au profit du Ministère d...",
+      "source": "univ-ouaga.bf",
+      "automatic": {
+        "classification": "VALID",
+        "confidence": 0.6866666666666666,
+        "score": 2.06
+      },
+      "human": "VALID",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 2,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-17",
+      "title": "Demande de cotation pour travaux de construction d'un centre de santé à Koudougo...",
+      "source": "finances.gov.bf",
+      "automatic": {
+        "classification": "VALID",
+        "confidence": 0.9533333333333335,
+        "score": 2.86
+      },
+      "human": "VALID",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 3,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-18",
+      "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs...",
+      "source": "info.bf",
+      "automatic": {
+        "classification": "VALID",
+        "confidence": 0.6866666666666666,
+        "score": 2.06
+      },
+      "human": "REVIEW",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 2,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-19",
+      "title": "Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agricultu...",
+      "source": "gouvernement.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.98
+      },
+      "human": "VALID",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 1,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.6
+      }
+    },
+    {
+      "id": "mock-20",
+      "title": "Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya...",
+      "source": "equipement.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.86
+      },
+      "human": "VALID",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 1,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-21",
+      "title": "Soutenance de thèse de Master en Informatique - Université Joseph Ki-Zerbo...",
+      "source": "dgcmef.gov.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.95,
+        "score": 0
+      },
+      "human": "REJECTED",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 1,
+        "sourceConfidence": 0
+      }
+    },
+    {
+      "id": "mock-22",
+      "title": "Communiqué de presse - Nomination du nouveau Directeur Général des Impôts...",
+      "source": "arcop.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.95,
+        "score": 0
+      },
+      "human": "REJECTED",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 1,
+        "sourceConfidence": 0
+      }
+    },
+    {
+      "id": "mock-23",
+      "title": "Avis de décès - Rappel à Dieu de l'ancien Ministre de l'Agriculture...",
+      "source": "sante.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.06
+      },
+      "human": "REJECTED",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-24",
+      "title": "Cérémonie d'inauguration du nouveau complexe sportif de Bobo-Dioulasso...",
+      "source": "infrastructures.gov.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.95,
+        "score": 0
+      },
+      "human": "REJECTED",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 1,
+        "sourceConfidence": 0
+      }
+    },
+    {
+      "id": "mock-25",
+      "title": "Décret N°2024-001 portant nomination au sein du Ministère des Finances...",
+      "source": "agriculture.gov.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.95,
+        "score": 0
+      },
+      "human": "REJECTED",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 1,
+        "sourceConfidence": 0
+      }
+    },
+    {
+      "id": "mock-26",
+      "title": "Prestation de formation en gestion de projet pour les cadres du Ministère...",
+      "source": "univ-ouaga.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": -0.34
+      },
+      "human": "REVIEW",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 1,
+        "negativeSignals": 1,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-27",
+      "title": "Étude de faisabilité pour la construction du pont de Kongoussi...",
+      "source": "finances.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.86
+      },
+      "human": "REVIEW",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 1,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-28",
+      "title": "Session de formation sur les marchés publics pour les agents comptables...",
+      "source": "info.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.31999999999999995,
+        "score": -1.14
+      },
+      "human": "REVIEW",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 1,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-29",
+      "title": "Évaluation des besoins en infrastructures sanitaires dans la région du Sahel...",
+      "source": "gouvernement.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.18
+      },
+      "human": "REVIEW",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.6
+      }
+    },
+    {
+      "id": "mock-30",
+      "title": "Rapport d'étude sur l'amélioration du système d'approvisionnement en eau...",
+      "source": "equipement.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.06
+      },
+      "human": "REVIEW",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-31",
+      "title": "Appel d'offres pour fourniture de matériel informatique au profit du Ministère d...",
+      "source": "dgcmef.gov.bf",
+      "automatic": {
+        "classification": "VALID",
+        "confidence": 0.7566666666666667,
+        "score": 2.27
+      },
+      "human": "VALID",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 2,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.9
+      }
+    },
+    {
+      "id": "mock-32",
+      "title": "Demande de cotation pour travaux de construction d'un centre de santé à Koudougo...",
+      "source": "arcop.bf",
+      "automatic": {
+        "classification": "VALID",
+        "confidence": 1,
+        "score": 3.07
+      },
+      "human": "VALID",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 3,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.9
+      }
+    },
+    {
+      "id": "mock-33",
+      "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs...",
+      "source": "sante.gov.bf",
+      "automatic": {
+        "classification": "VALID",
+        "confidence": 0.6866666666666666,
+        "score": 2.06
+      },
+      "human": "REVIEW",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 2,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-34",
+      "title": "Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agricultu...",
+      "source": "infrastructures.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.86
+      },
+      "human": "VALID",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 1,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-35",
+      "title": "Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya...",
+      "source": "agriculture.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.86
+      },
+      "human": "VALID",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 1,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-36",
+      "title": "Soutenance de thèse de Master en Informatique - Université Joseph Ki-Zerbo...",
+      "source": "univ-ouaga.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.95,
+        "score": 0
+      },
+      "human": "REJECTED",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 1,
+        "sourceConfidence": 0
+      }
+    },
+    {
+      "id": "mock-37",
+      "title": "Communiqué de presse - Nomination du nouveau Directeur Général des Impôts...",
+      "source": "finances.gov.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.95,
+        "score": 0
+      },
+      "human": "REJECTED",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 1,
+        "sourceConfidence": 0
+      }
+    },
+    {
+      "id": "mock-38",
+      "title": "Avis de décès - Rappel à Dieu de l'ancien Ministre de l'Agriculture...",
+      "source": "info.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.06
+      },
+      "human": "REJECTED",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-39",
+      "title": "Cérémonie d'inauguration du nouveau complexe sportif de Bobo-Dioulasso...",
+      "source": "gouvernement.gov.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.95,
+        "score": 0
+      },
+      "human": "REJECTED",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 1,
+        "sourceConfidence": 0
+      }
+    },
+    {
+      "id": "mock-40",
+      "title": "Décret N°2024-001 portant nomination au sein du Ministère des Finances...",
+      "source": "equipement.gov.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.95,
+        "score": 0
+      },
+      "human": "REJECTED",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 1,
+        "sourceConfidence": 0
+      }
+    },
+    {
+      "id": "mock-41",
+      "title": "Prestation de formation en gestion de projet pour les cadres du Ministère...",
+      "source": "dgcmef.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": -0.13
+      },
+      "human": "REVIEW",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 1,
+        "negativeSignals": 1,
+        "exclusions": 0,
+        "sourceConfidence": 0.9
+      }
+    },
+    {
+      "id": "mock-42",
+      "title": "Étude de faisabilité pour la construction du pont de Kongoussi...",
+      "source": "arcop.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 1.07
+      },
+      "human": "REVIEW",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 1,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.9
+      }
+    },
+    {
+      "id": "mock-43",
+      "title": "Session de formation sur les marchés publics pour les agents comptables...",
+      "source": "sante.gov.bf",
+      "automatic": {
+        "classification": "REJECTED",
+        "confidence": 0.31999999999999995,
+        "score": -1.14
+      },
+      "human": "REVIEW",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 1,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-44",
+      "title": "Évaluation des besoins en infrastructures sanitaires dans la région du Sahel...",
+      "source": "infrastructures.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.06
+      },
+      "human": "REVIEW",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-45",
+      "title": "Rapport d'étude sur l'amélioration du système d'approvisionnement en eau...",
+      "source": "agriculture.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.06
+      },
+      "human": "REVIEW",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 0,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-46",
+      "title": "Appel d'offres pour fourniture de matériel informatique au profit du Ministère d...",
+      "source": "univ-ouaga.bf",
+      "automatic": {
+        "classification": "VALID",
+        "confidence": 0.6866666666666666,
+        "score": 2.06
+      },
+      "human": "VALID",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 2,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-47",
+      "title": "Demande de cotation pour travaux de construction d'un centre de santé à Koudougo...",
+      "source": "finances.gov.bf",
+      "automatic": {
+        "classification": "VALID",
+        "confidence": 0.9533333333333335,
+        "score": 2.86
+      },
+      "human": "VALID",
+      "match": true,
+      "diagnostics": {
+        "positiveSignals": 3,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-48",
+      "title": "Avis de recrutement - Prestation de gardiennage pour bâtiments administratifs...",
+      "source": "info.bf",
+      "automatic": {
+        "classification": "VALID",
+        "confidence": 0.6866666666666666,
+        "score": 2.06
+      },
+      "human": "REVIEW",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 2,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    },
+    {
+      "id": "mock-49",
+      "title": "Acquisition de véhicules tout-terrain pour la Direction Régionale de l'Agricultu...",
+      "source": "gouvernement.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.98
+      },
+      "human": "VALID",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 1,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.6
+      }
+    },
+    {
+      "id": "mock-50",
+      "title": "Travaux de réfection de la route nationale RN1 - Tronçon Ouagadougou-Kaya...",
+      "source": "equipement.gov.bf",
+      "automatic": {
+        "classification": "REVIEW",
+        "confidence": 0.3,
+        "score": 0.86
+      },
+      "human": "VALID",
+      "match": false,
+      "diagnostics": {
+        "positiveSignals": 1,
+        "negativeSignals": 0,
+        "exclusions": 0,
+        "sourceConfidence": 0.2
+      }
+    }
+  ],
+  "pollutionMetrics": {
+    "displayedNonMarkets": 4,
+    "pollutionRate": 11.428571428571429,
+    "criticalErrors": 0
+  }
+}

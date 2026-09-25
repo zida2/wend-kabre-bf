@@ -1,0 +1,84 @@
+{
+  "audit_timestamp": "2026-09-24T13:21:02.028915",
+  "summary": {
+    "total_corrections": 0,
+    "total_confirmations": 1,
+    "total_modifications": 1
+  },
+  "corrections_by_type": {},
+  "detailed_table": [
+    {
+      "ID": "holdout-007",
+      "Type": "CONFIRMATION",
+      "Ancien_Label": "expected_valid",
+      "Nouveau_Label": "expected_valid",
+      "Texte": "Acquisition de matériel informatique pour 100 écoles primaires",
+      "Justification": "Label validated as correct",
+      "Source_Audit": "HOLDOUT_INCONSISTENCIES_AUDIT",
+      "Date": "2026-09-24T13:11:14.458310"
+    }
+  ],
+  "special_cases_analysis": {
+    "corrections_13_analysis": {
+      "expected_ids": [
+        "holdout-209",
+        "holdout-210",
+        "holdout-211",
+        "holdout-212",
+        "holdout-213",
+        "holdout-214",
+        "holdout-215",
+        "holdout-216",
+        "holdout-217",
+        "holdout-218",
+        "holdout-219",
+        "holdout-220",
+        "holdout-221"
+      ],
+      "found_corrections": [],
+      "missing_corrections": [
+        "holdout-209",
+        "holdout-210",
+        "holdout-211",
+        "holdout-212",
+        "holdout-213",
+        "holdout-214",
+        "holdout-215",
+        "holdout-216",
+        "holdout-217",
+        "holdout-218",
+        "holdout-219",
+        "holdout-220",
+        "holdout-221"
+      ],
+      "unexpected_corrections": []
+    },
+    "confirmation_analysis": {
+      "expected_ids": [
+        "holdout-007"
+      ],
+      "found_confirmations": [
+        "holdout-007"
+      ],
+      "missing_confirmations": []
+    },
+    "false_negatives_analysis": {
+      "note": "IDs à identifier à partir des résultats V2F"
+    }
+  },
+  "corrections_list": [],
+  "confirmations_list": [
+    {
+      "id": "holdout-007",
+      "title": "Acquisition de matériel informatique pour 100 écoles primaires",
+      "category": "expected_valid",
+      "confirmation_metadata": {
+        "date": "2026-09-24T13:11:14.458310",
+        "type": "CONFIRMED_VALID",
+        "audit_source": "HOLDOUT_INCONSISTENCIES_AUDIT",
+        "status": "Label validated as correct"
+      },
+      "text_full": "Acquisition de matériel informatique pour 100 écoles primaires"
+    }
+  ]
+}

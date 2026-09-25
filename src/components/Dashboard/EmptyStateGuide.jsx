@@ -167,20 +167,60 @@ function getCompletedSteps(userProfile) {
 
 /**
  * Statistiques motivantes pour remplacer les 0/0/0
+ * ROBUSTE : Gestion explicite des structures de données
  */
 export function MotivatingStats({ userProfile, totalMarkets, savedMarkets, applications }) {
   const completedSteps = getCompletedSteps(userProfile);
   const progressPercent = (completedSteps.length / steps.length) * 100;
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CALCUL ROBUSTE DES COMPTEURS (éviter les erreurs de structure)
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  // 1. Marchés sauvegardés - Structure explicite
+  let savedMarketsCount = 0;
+  if (userProfile?.savedMarkets && Array.isArray(userProfile.savedMarkets)) {
+    savedMarketsCount = userProfile.savedMarkets.length;
+  } else if (userProfile?.crm && typeof userProfile.crm === 'object') {
+    // Si utilisation du CRM legacy, filtrer uniquement les marchés
+    savedMarketsCount = Object.entries(userProfile.crm)
+      .filter(([key, value]) => value?.type === 'marche' || value?.status === 'favoris')
+      .length;
+  } else {
+    savedMarketsCount = savedMarkets || 0; // Fallback sur le paramètre
+  }
+  
+  // 2. Dossiers en préparation - Structure explicite
+  let applicationsCount = 0;
+  if (userProfile?.applications && Array.isArray(userProfile.applications)) {
+    applicationsCount = userProfile.applications.filter(app => 
+      app.status === 'en_preparation' || app.status === 'brouillon'
+    ).length;
+  } else {
+    applicationsCount = applications || 0; // Fallback sur le paramètre
+  }
+  
+  // 3. Total des opportunités - Clarification
+  let totalOpportunities = totalMarkets || 0;
+  const lastUpdate = userProfile?.lastMarketsUpdate 
+    ? new Date(userProfile.lastMarketsUpdate).toLocaleString('fr-FR')
+    : null;
   
   return (
     <div className={styles.statsContainer}>
       <div className={styles.stat}>
         <div className={styles.statIcon}>🎯</div>
         <div className={styles.statContent}>
-          <div className={styles.statNumber}>{totalMarkets || 102}</div>
-          <div className={styles.statLabel}>Opportunités disponibles</div>
-          {totalMarkets === 0 && (
+          <div className={styles.statNumber}>{totalOpportunities}</div>
+          <div className={styles.statLabel}>
+            Opportunités ouvertes correspondant à votre profil
+          </div>
+          {totalOpportunities === 0 ? (
             <div className={styles.statHint}>Actualisées quotidiennement</div>
+          ) : (
+            <div className={styles.statHint}>
+              {lastUpdate ? `Mise à jour: ${lastUpdate}` : 'Mise à jour quotidienne'}
+            </div>
           )}
         </div>
       </div>
@@ -188,11 +228,15 @@ export function MotivatingStats({ userProfile, totalMarkets, savedMarkets, appli
       <div className={styles.stat}>
         <div className={styles.statIcon}>🔖</div>
         <div className={styles.statContent}>
-          <div className={styles.statNumber}>{savedMarkets}</div>
-          <div className={styles.statLabel}>Marchés sauvegardés</div>
-          {savedMarkets === 0 && (
+          <div className={styles.statNumber}>{savedMarketsCount}</div>
+          <div className={styles.statLabel}>Marchés sauvegardés en favoris</div>
+          {savedMarketsCount === 0 ? (
             <div className={styles.statHint}>
               <Link href="/marches" className={styles.statAction}>Sauvegarder le premier</Link>
+            </div>
+          ) : (
+            <div className={styles.statHint}>
+              <Link href="/dashboard?tab=favoris" className={styles.statAction}>Voir mes favoris</Link>
             </div>
           )}
         </div>
@@ -201,11 +245,15 @@ export function MotivatingStats({ userProfile, totalMarkets, savedMarkets, appli
       <div className={styles.stat}>
         <div className={styles.statIcon}>📁</div>
         <div className={styles.statContent}>
-          <div className={styles.statNumber}>{applications}</div>
-          <div className={styles.statLabel}>Dossiers en préparation</div>
-          {applications === 0 && (
+          <div className={styles.statNumber}>{applicationsCount}</div>
+          <div className={styles.statLabel}>Dossiers de candidature en préparation</div>
+          {applicationsCount === 0 ? (
             <div className={styles.statHint}>
-              <Link href="/studio" className={styles.statAction}>Créer le premier</Link>
+              <Link href="/studio" className={styles.statAction}>Créer le premier dossier</Link>
+            </div>
+          ) : (
+            <div className={styles.statHint}>
+              <Link href="/dashboard?tab=dossiers" className={styles.statAction}>Continuer la préparation</Link>
             </div>
           )}
         </div>
@@ -215,10 +263,16 @@ export function MotivatingStats({ userProfile, totalMarkets, savedMarkets, appli
         <div className={styles.statIcon}>⚡</div>
         <div className={styles.statContent}>
           <div className={styles.statNumber}>{Math.round(progressPercent)}%</div>
-          <div className={styles.statLabel}>Configuration terminée</div>
-          {progressPercent < 100 && (
+          <div className={styles.statLabel}>Configuration du profil terminée</div>
+          {progressPercent < 100 ? (
             <div className={styles.statHint}>
-              <span className={styles.statAction}>Terminer la config</span>
+              <Link href="/profil-entreprise" className={styles.statAction}>
+                Terminer la configuration
+              </Link>
+            </div>
+          ) : (
+            <div className={styles.statHint}>
+              Profil optimisé pour les recommandations
             </div>
           )}
         </div>

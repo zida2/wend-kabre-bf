@@ -216,70 +216,169 @@ export function normalizeTitle(title) {
     .slice(0, 120);
 }
 
-// ── Détection « vrai marché public » (VERSION STRICTE) ──
+// ── Détection « vrai marché public » (VERSION ROBUSTE À 3 NIVEAUX) ──
 export function isRealTender(title, description, source) {
   const fullText = `${title} ${description}`.toLowerCase();
   const t = norm(fullText);
   const src = norm(source || '');
   
-  // ÉTAPE 1: Exclusion immédiate des contenus académiques/actualités
-  const hasAcademicIndicators = ACADEMIC_INDICATORS.some(indicator => t.includes(norm(indicator)));
-  if (hasAcademicIndicators) {
-    console.log(`[REJECT ACADEMIC] ${title} - Contient: ${ACADEMIC_INDICATORS.find(i => t.includes(norm(i)))}`);
-    return false;
+  // ═══════════════════════════════════════════════════════════════════════════
+  // NIVEAU 1: ÉVALUATION DE LA SOURCE (confiance de base)
+  // ═══════════════════════════════════════════════════════════════════════════
+  let sourceConfidence = 0;
+  const trustedSources = ['arcop', 'dgcmef', 'reliefweb', 'marches-publics'];
+  const partiallyTrustedSources = ['ministere', 'gouvernement', 'administration'];
+  
+  if (trustedSources.some(ts => src.includes(ts))) {
+    sourceConfidence = 0.8; // Source très fiable
+  } else if (partiallyTrustedSources.some(pts => src.includes(pts))) {
+    sourceConfidence = 0.5; // Source moyennement fiable
+  } else {
+    sourceConfidence = 0.2; // Source inconnue
   }
   
-  // ÉTAPE 2: Exclusion du bruit général
-  const hasExcludeVocab = EXCLUDE_VOCAB.some(exclude => t.includes(norm(exclude)));
-  if (hasExcludeVocab) {
-    console.log(`[REJECT NOISE] ${title} - Contient: ${EXCLUDE_VOCAB.find(e => t.includes(norm(e)))}`);
-    return false;
-  }
+  // ═══════════════════════════════════════════════════════════════════════════
+  // NIVEAU 2: INDICATEURS POSITIFS (preuves que c'est un marché)
+  // ═══════════════════════════════════════════════════════════════════════════
+  let positiveScore = 0;
+  const maxPositiveScore = 10;
   
-  // ÉTAPE 3: Sources de confiance (mais on vérifie quand même le contenu)
-  const trustedSource = /arcop|dgcmef|reliefweb|marches-publics/.test(src);
+  // Indicateurs forts (+3 points chacun)
+  const strongIndicators = [
+    'appel d\'offres', 'demande de cotation', 'avis de recrutement',
+    'dao', 'manifestation d\'interet', 'passation de marche'
+  ];
+  strongIndicators.forEach(indicator => {
+    if (t.includes(norm(indicator))) positiveScore += 3;
+  });
   
-  // ÉTAPE 4: Vérification des indicateurs forts de marché public
-  const hasStrongIndicators = STRONG_TENDER_INDICATORS.some(indicator => t.includes(norm(indicator)));
-  const hasTenderVocab = TENDER_VOCAB.some(vocab => t.includes(norm(vocab)));
+  // Indicateurs moyens (+2 points chacun)
+  const mediumIndicators = [
+    'acquisition de', 'fourniture de', 'prestation de service',
+    'travaux de construction', 'marche public', 'autorite contractante'
+  ];
+  mediumIndicators.forEach(indicator => {
+    if (t.includes(norm(indicator))) positiveScore += 2;
+  });
   
-  // ÉTAPE 5: Règles de décision strictes
-  if (hasStrongIndicators) {
-    console.log(`[ACCEPT STRONG] ${title} - Indicateur fort trouvé`);
+  // Indicateurs faibles (+1 point chacun)
+  const weakIndicators = [
+    'soumission', 'caution', 'ouverture des plis', 'date limite',
+    'depot des offres', 'candidature', 'cahier des charges'
+  ];
+  weakIndicators.forEach(indicator => {
+    if (t.includes(norm(indicator))) positiveScore += 1;
+  });
+  
+  // Plafonner le score positif
+  positiveScore = Math.min(positiveScore, maxPositiveScore);
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // NIVEAU 3: INDICATEURS NÉGATIFS (preuves que ce N'EST PAS un marché)
+  // ═══════════════════════════════════════════════════════════════════════════
+  let negativeScore = 0;
+  const maxNegativeScore = 10;
+  
+  // Exclusions académiques fortes (-4 points chacune)
+  const academicExclusions = [
+    'soutenance de', 'memoire de', 'these de', 'master en',
+    'doctorat en', 'recherche sur', 'universite', 'faculte'
+  ];
+  academicExclusions.forEach(exclusion => {
+    if (t.includes(norm(exclusion))) negativeScore += 4;
+  });
+  
+  // Exclusions administratives (-3 points chacune)
+  const adminExclusions = [
+    'nomination', 'nomme', 'decret n', 'arrete n',
+    'communique de presse', 'conseil des ministres'
+  ];
+  adminExclusions.forEach(exclusion => {
+    if (t.includes(norm(exclusion))) negativeScore += 3;
+  });
+  
+  // Exclusions actualités (-2 points chacune)
+  const newsExclusions = [
+    'actualite', 'nouvelle', 'information', 'breve',
+    'mise a jour', 'flash info', 'conference de presse'
+  ];
+  newsExclusions.forEach(exclusion => {
+    if (t.includes(norm(exclusion))) negativeScore += 2;
+  });
+  
+  // Exclusions événements (-2 points chacune)
+  const eventExclusions = [
+    'ceremonie', 'inauguration', 'visite officielle',
+    'seminaire', 'atelier de formation', 'session de formation'
+  ];
+  eventExclusions.forEach(exclusion => {
+    if (t.includes(norm(exclusion))) negativeScore += 2;
+  });
+  
+  // Plafonner le score négatif
+  negativeScore = Math.min(negativeScore, maxNegativeScore);
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CALCUL DU SCORE FINAL ET DÉCISION
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  // Score final = (source * 0.3) + (positifs * 0.4) - (négatifs * 0.6)
+  // Les négatifs ont plus de poids pour éviter les faux positifs
+  const finalScore = (sourceConfidence * 3) + (positiveScore * 0.4) - (negativeScore * 0.6);
+  
+  // Seuils de décision
+  const ACCEPT_THRESHOLD = 2.5;
+  const REJECT_THRESHOLD = 0.5;
+  
+  let decision = 'unknown';
+  let confidence = 0;
+  let reasons = [];
+  
+  if (finalScore >= ACCEPT_THRESHOLD) {
+    decision = 'accept';
+    confidence = Math.min(finalScore / 5, 1); // Normaliser sur [0,1]
+    
+    // Identifier les raisons principales de l'acceptation
+    if (positiveScore >= 6) reasons.push('strong_market_indicators');
+    if (sourceConfidence >= 0.8) reasons.push('trusted_source');
+    if (negativeScore === 0) reasons.push('no_exclusion_flags');
+    
+    console.log(`[ACCEPT] ${title} - Score: ${finalScore.toFixed(2)} (${Math.round(confidence*100)}% confiance)`);
     return true;
-  }
-  
-  if (trustedSource && hasTenderVocab) {
-    console.log(`[ACCEPT TRUSTED] ${title} - Source fiable + vocabulaire marché`);
-    return true;
-  }
-  
-  // ÉTAPE 6: Vérifications supplémentaires pour éviter les faux positifs
-  
-  // Rejeter si c'est clairement une actualité/nouvelle
-  if (/actualite|nouvelle|information|breve|mise a jour/.test(t)) {
-    console.log(`[REJECT NEWS] ${title} - Contenu d'actualité`);
+    
+  } else if (finalScore <= REJECT_THRESHOLD) {
+    decision = 'reject';
+    confidence = Math.min(Math.abs(finalScore) / 2, 1);
+    
+    // Identifier les raisons principales du rejet
+    if (negativeScore >= 4) reasons.push('strong_exclusion_indicators');
+    if (positiveScore === 0) reasons.push('no_market_indicators');
+    if (sourceConfidence <= 0.2) reasons.push('untrusted_source');
+    
+    console.log(`[REJECT] ${title} - Score: ${finalScore.toFixed(2)} (${Math.round(confidence*100)}% confiance)`, {
+      negativeScore,
+      positiveScore,
+      sourceConfidence,
+      reasons
+    });
     return false;
+    
+  } else {
+    // Zone grise - nécessite une vérification manuelle ou des règles plus fines
+    decision = 'review';
+    confidence = 0.3;
+    reasons = ['ambiguous_content'];
+    
+    console.log(`[REVIEW NEEDED] ${title} - Score: ${finalScore.toFixed(2)} (contenu ambigu)`, {
+      negativeScore,
+      positiveScore,
+      sourceConfidence,
+      suggestion: 'manual_review_recommended'
+    });
+    
+    // Pour l'instant, on accepte avec réserve les contenus ambigus des sources fiables
+    return sourceConfidence >= 0.5;
   }
-  
-  // Rejeter si c'est une analyse/étude sans vocabulaire de marché fort
-  if (/analyse|etude|evaluation|rapport/.test(t) && !hasStrongIndicators) {
-    console.log(`[REJECT STUDY] ${title} - Analyse/étude sans indicateurs marchés`);
-    return false;
-  }
-  
-  // Accepter seulement si vocabulaire marché + structure appropriée
-  if (hasTenderVocab) {
-    // Vérifier qu'il y a des éléments structurants d'un marché
-    const hasStructure = /date limite|depot|soumission|offre|candidature|dossier/.test(t);
-    if (hasStructure) {
-      console.log(`[ACCEPT STRUCTURED] ${title} - Vocabulaire + structure marché`);
-      return true;
-    }
-  }
-  
-  console.log(`[REJECT DEFAULT] ${title} - Ne correspond pas aux critères de marché public`);
-  return false;
 }
 
 // ── Classification complète d'un marché ──

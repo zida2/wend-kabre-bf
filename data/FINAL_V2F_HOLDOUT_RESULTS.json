@@ -1,0 +1,1006 @@
+{
+  "dataset_info": {
+    "total_samples": 221,
+    "created_at": "2026-09-23T19:20:48.901Z",
+    "classifier_version": "V2F_FROZEN",
+    "analysis_date": "2026-09-23T19:31:47.983Z"
+  },
+  "global_metrics": {
+    "accuracy": 53.8,
+    "precision": 65.1,
+    "recall": 50,
+    "f1_score": 56.6,
+    "pollution_rate": 27.6,
+    "review_rate": 44.8,
+    "false_positives": 61,
+    "false_negatives": 10,
+    "ambiguity_errors": 29
+  },
+  "confusion_matrix": {
+    "VALID": {
+      "VALID": 28,
+      "REVIEW": 18,
+      "REJECTED": 10
+    },
+    "REVIEW": {
+      "VALID": 11,
+      "REVIEW": 24,
+      "REJECTED": 2
+    },
+    "REJECTED": {
+      "VALID": 4,
+      "REVIEW": 57,
+      "REJECTED": 67
+    }
+  },
+  "category_analysis": {
+    "market_construction": {
+      "total": 9,
+      "correct": 4,
+      "accuracy": 44.4,
+      "valid_recall": 44.4,
+      "valid_precision": 100,
+      "pollution_rate": 0
+    },
+    "market_infrastructure": {
+      "total": 8,
+      "correct": 4,
+      "accuracy": 50,
+      "valid_recall": 50,
+      "valid_precision": 100,
+      "pollution_rate": 0
+    },
+    "market_supply": {
+      "total": 13,
+      "correct": 6,
+      "accuracy": 46.2,
+      "valid_recall": 46.2,
+      "valid_precision": 100,
+      "pollution_rate": 0
+    },
+    "market_vehicles": {
+      "total": 3,
+      "correct": 2,
+      "accuracy": 66.7,
+      "valid_recall": 66.7,
+      "valid_precision": 100,
+      "pollution_rate": 0
+    },
+    "market_service": {
+      "total": 20,
+      "correct": 12,
+      "accuracy": 60,
+      "valid_recall": 60,
+      "valid_precision": 100,
+      "pollution_rate": 0
+    },
+    "ambiguous_security": {
+      "total": 2,
+      "correct": 2,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "ambiguous_maintenance": {
+      "total": 2,
+      "correct": 2,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "ambiguous_catering": {
+      "total": 3,
+      "correct": 1,
+      "accuracy": 33.3,
+      "valid_recall": null,
+      "valid_precision": 0,
+      "pollution_rate": 0
+    },
+    "ambiguous_translation": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "recruitment_teacher": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "recruitment_executive": {
+      "total": 3,
+      "correct": 2,
+      "accuracy": 66.7,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 33.3
+    },
+    "recruitment_health": {
+      "total": 10,
+      "correct": 4,
+      "accuracy": 40,
+      "valid_recall": null,
+      "valid_precision": 0,
+      "pollution_rate": 60
+    },
+    "recruitment_inspector": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "recruitment_technical": {
+      "total": 5,
+      "correct": 1,
+      "accuracy": 20,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 80
+    },
+    "death_notice": {
+      "total": 10,
+      "correct": 6,
+      "accuracy": 60,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 40
+    },
+    "academic_thesis": {
+      "total": 2,
+      "correct": 2,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "academic_conference": {
+      "total": 5,
+      "correct": 4,
+      "accuracy": 80,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 20
+    },
+    "academic_seminar": {
+      "total": 2,
+      "correct": 1,
+      "accuracy": 50,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 50
+    },
+    "official_ceremony": {
+      "total": 8,
+      "correct": 6,
+      "accuracy": 75,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 25
+    },
+    "administrative_appointment": {
+      "total": 12,
+      "correct": 6,
+      "accuracy": 50,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 50
+    },
+    "official_communication": {
+      "total": 20,
+      "correct": 14,
+      "accuracy": 70,
+      "valid_recall": null,
+      "valid_precision": 0,
+      "pollution_rate": 30
+    },
+    "market_rehabilitation": {
+      "total": 2,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": 0,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "ambiguous_study": {
+      "total": 17,
+      "correct": 8,
+      "accuracy": 47.1,
+      "valid_recall": null,
+      "valid_precision": 0,
+      "pollution_rate": 0
+    },
+    "ambiguous_audit": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "recruitment_customs": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "recruitment_legal": {
+      "total": 2,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "ambiguous_protocol": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "ambiguous_communication": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "ambiguous_consulting": {
+      "total": 5,
+      "correct": 5,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "ambiguous_hr": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": 0,
+      "pollution_rate": 0
+    },
+    "ambiguous_cultural": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "ambiguous_cleaning": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "ambiguous_funeral": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "recruitment_education": {
+      "total": 7,
+      "correct": 2,
+      "accuracy": 28.6,
+      "valid_recall": null,
+      "valid_precision": 0,
+      "pollution_rate": 71.4
+    },
+    "recruitment_security": {
+      "total": 3,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "recruitment_veterinary": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "recruitment_engineering": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "recruitment_judicial": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "recruitment_administrative": {
+      "total": 4,
+      "correct": 2,
+      "accuracy": 50,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 50
+    },
+    "recruitment_environmental": {
+      "total": 2,
+      "correct": 1,
+      "accuracy": 50,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 50
+    },
+    "recruitment_financial": {
+      "total": 4,
+      "correct": 2,
+      "accuracy": 50,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 50
+    },
+    "recruitment_statistical": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "recruitment_agricultural": {
+      "total": 2,
+      "correct": 2,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "recruitment_communication": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "recruitment_development": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "recruitment_surveying": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "recruitment_tourism": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "recruitment_transport": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "recruitment_social": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "recruitment_labor": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "recruitment_cooperative": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "academic_workshop": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "academic_forum": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "academic_symposium": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "academic_congress": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "academic_week": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "academic_meeting": {
+      "total": 1,
+      "correct": 1,
+      "accuracy": 100,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 0
+    },
+    "program_launch": {
+      "total": 4,
+      "correct": 3,
+      "accuracy": 75,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 25
+    },
+    "academic_graduation": {
+      "total": 2,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": null,
+      "valid_precision": null,
+      "pollution_rate": 100
+    },
+    "market_furniture": {
+      "total": 1,
+      "correct": 0,
+      "accuracy": 0,
+      "valid_recall": 0,
+      "valid_precision": null,
+      "pollution_rate": 0
+    }
+  },
+  "error_analysis": {
+    "false_positives": [
+      {
+        "id": "holdout-024",
+        "title": "Avis de recrutement - Techniciens supérieurs en informatique",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0.4,
+        "intent": "RECRUITMENT",
+        "category": "recruitment_inspector"
+      },
+      {
+        "id": "holdout-035",
+        "title": "Fourniture de mobilier scolaire pour 150 établissements seco",
+        "human": "REJECTED",
+        "v2f": "VALID",
+        "score": 2.7,
+        "intent": "MARKET",
+        "category": "official_communication"
+      },
+      {
+        "id": "holdout-036",
+        "title": "Travaux d'extension du réseau électrique en milieu rural - P",
+        "human": "REJECTED",
+        "v2f": "VALID",
+        "score": 2.1,
+        "intent": "MARKET",
+        "category": "official_communication"
+      },
+      {
+        "id": "holdout-043",
+        "title": "Lancement du Programme National de Digitalisation Administra",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "recruitment_legal"
+      },
+      {
+        "id": "holdout-099",
+        "title": "Prestation de services d'animation culturelle pour fêtes nat",
+        "human": "REJECTED",
+        "v2f": "VALID",
+        "score": 2.9,
+        "intent": "MARKET",
+        "category": "recruitment_health"
+      },
+      {
+        "id": "holdout-100",
+        "title": "Avis de recrutement - Services de maintenance des jardins pu",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0.4,
+        "intent": "RECRUITMENT",
+        "category": "recruitment_education"
+      },
+      {
+        "id": "holdout-101",
+        "title": "Recrutement prestataire - Nettoyage spécialisé des locaux de",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "RECRUITMENT",
+        "category": "recruitment_health"
+      },
+      {
+        "id": "holdout-102",
+        "title": "Prestation de services funéraires pour personnalités officie",
+        "human": "REJECTED",
+        "v2f": "VALID",
+        "score": 2.9,
+        "intent": "MARKET",
+        "category": "recruitment_education"
+      },
+      {
+        "id": "holdout-103",
+        "title": "Avis de recrutement - Services de restauration pour centres ",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 1.2,
+        "intent": "RECRUITMENT",
+        "category": "recruitment_security"
+      },
+      {
+        "id": "holdout-104",
+        "title": "Mission d'expertise pour réforme de l'administration territo",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "recruitment_executive"
+      },
+      {
+        "id": "holdout-105",
+        "title": "Étude d'optimisation des circuits de distribution pharmaceut",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "recruitment_veterinary"
+      },
+      {
+        "id": "holdout-106",
+        "title": "Évaluation de l'efficacité des programmes de microfinance ru",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "recruitment_engineering"
+      },
+      {
+        "id": "holdout-107",
+        "title": "Mission de conseil pour modernisation du système judiciaire",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "recruitment_judicial"
+      },
+      {
+        "id": "holdout-108",
+        "title": "Étude de restructuration des entreprises publiques burkinabè",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "recruitment_education"
+      },
+      {
+        "id": "holdout-109",
+        "title": "Évaluation des politiques de promotion de l'entrepreneuriat ",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "recruitment_administrative"
+      },
+      {
+        "id": "holdout-110",
+        "title": "Mission d'assistance technique pour décentralisation fiscale",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "recruitment_environmental"
+      },
+      {
+        "id": "holdout-111",
+        "title": "Étude de rentabilité des investissements dans les énergies r",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "recruitment_financial"
+      },
+      {
+        "id": "holdout-112",
+        "title": "Évaluation de l'impact des projets de développement rural",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "recruitment_statistical"
+      },
+      {
+        "id": "holdout-113",
+        "title": "Mission de conseil pour amélioration du climat des affaires",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "recruitment_health"
+      },
+      {
+        "id": "holdout-115",
+        "title": "Avis de recrutement - Inspecteurs de l'éducation pour l'ense",
+        "human": "REJECTED",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "RECRUITMENT",
+        "category": "recruitment_technical"
+      }
+    ],
+    "false_negatives": [
+      {
+        "id": "holdout-209",
+        "title": "Déclaration sur la politique nationale de lutte contre la pa",
+        "human": "VALID",
+        "v2f": "REJECTED",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_furniture"
+      },
+      {
+        "id": "holdout-210",
+        "title": "Communiqué du Ministère des Affaires Étrangères sur les rela",
+        "human": "VALID",
+        "v2f": "REJECTED",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_infrastructure"
+      },
+      {
+        "id": "holdout-212",
+        "title": "Déclaration sur la mise en œuvre des Objectifs du Millénaire",
+        "human": "VALID",
+        "v2f": "REJECTED",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_construction"
+      },
+      {
+        "id": "holdout-213",
+        "title": "Communiqué sur les mesures de soutien aux producteurs agrico",
+        "human": "VALID",
+        "v2f": "REJECTED",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_infrastructure"
+      },
+      {
+        "id": "holdout-214",
+        "title": "Déclaration relative à la protection de l'environnement",
+        "human": "VALID",
+        "v2f": "REJECTED",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_construction"
+      },
+      {
+        "id": "holdout-215",
+        "title": "Communiqué sur le renforcement de la coopération Sud-Sud",
+        "human": "VALID",
+        "v2f": "REJECTED",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_infrastructure"
+      },
+      {
+        "id": "holdout-217",
+        "title": "Déclaration sur la politique de promotion de la jeunesse",
+        "human": "VALID",
+        "v2f": "REJECTED",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_supply"
+      },
+      {
+        "id": "holdout-218",
+        "title": "Communiqué de fin de Conseil des Ministres",
+        "human": "VALID",
+        "v2f": "REJECTED",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_supply"
+      },
+      {
+        "id": "holdout-220",
+        "title": "Déclaration sur la stratégie nationale de développement dura",
+        "human": "VALID",
+        "v2f": "REJECTED",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_supply"
+      },
+      {
+        "id": "holdout-221",
+        "title": "Communiqué sur les mesures de lutte contre la corruption",
+        "human": "VALID",
+        "v2f": "REJECTED",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_vehicles"
+      }
+    ],
+    "ambiguity_errors": [
+      {
+        "id": "holdout-003",
+        "title": "Construction d'un centre de formation professionnelle à Fada",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_construction"
+      },
+      {
+        "id": "holdout-013",
+        "title": "Services de transport sanitaire pour les districts éloignés",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 0.9,
+        "intent": "MARKET",
+        "category": "market_service"
+      },
+      {
+        "id": "holdout-014",
+        "title": "Prestation d'audit énergétique des bâtiments publics de Ouag",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 1.3,
+        "intent": "MARKET",
+        "category": "market_service"
+      },
+      {
+        "id": "holdout-019",
+        "title": "Prestation de services de traduction lors des missions diplo",
+        "human": "REVIEW",
+        "v2f": "VALID",
+        "score": 2.9,
+        "intent": "MARKET",
+        "category": "ambiguous_catering"
+      },
+      {
+        "id": "holdout-038",
+        "title": "Étude d'impact environnemental du projet minier de Bissa",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_infrastructure"
+      },
+      {
+        "id": "holdout-039",
+        "title": "Mission d'expertise comptable pour audit des comptes publics",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_rehabilitation"
+      },
+      {
+        "id": "holdout-046",
+        "title": "Construction d'un complexe sportif universitaire à l'Univers",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_construction"
+      },
+      {
+        "id": "holdout-049",
+        "title": "Construction d'un centre de formation agricole dans la Boucl",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_supply"
+      },
+      {
+        "id": "holdout-050",
+        "title": "Marché pour la construction de 20 latrines publiques dans le",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_supply"
+      },
+      {
+        "id": "holdout-052",
+        "title": "Construction d'un centre d'alphabétisation pour adultes à Do",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_supply"
+      },
+      {
+        "id": "holdout-055",
+        "title": "Réhabilitation du réseau d'adduction d'eau de la ville de Ka",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 0.8,
+        "intent": "NEUTRAL",
+        "category": "market_service"
+      },
+      {
+        "id": "holdout-056",
+        "title": "Extension du réseau d'éclairage public dans 10 communes du B",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_service"
+      },
+      {
+        "id": "holdout-058",
+        "title": "Réhabilitation de l'infrastructure routière Ouagadougou-Fada",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 0.8,
+        "intent": "NEUTRAL",
+        "category": "market_service"
+      },
+      {
+        "id": "holdout-060",
+        "title": "Aménagement de voiries urbaines dans la commune de Dédougou",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_service"
+      },
+      {
+        "id": "holdout-061",
+        "title": "Construction de ponts sur 5 cours d'eau de la région du Cent",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 0,
+        "intent": "NEUTRAL",
+        "category": "market_service"
+      },
+      {
+        "id": "holdout-063",
+        "title": "Réhabilitation de l'aéroport régional de Fada N'Gourma",
+        "human": "VALID",
+        "v2f": "REVIEW",
+        "score": 0.8,
+        "intent": "NEUTRAL",
+        "category": "market_service"
+      },
+      {
+        "id": "holdout-069",
+        "title": "Fourniture de matériel de bureau pour tous les ministères",
+        "human": "REVIEW",
+        "v2f": "VALID",
+        "score": 2.7,
+        "intent": "MARKET",
+        "category": "ambiguous_study"
+      },
+      {
+        "id": "holdout-070",
+        "title": "Marché de fourniture de carburant pour le parc automobile de",
+        "human": "REVIEW",
+        "v2f": "VALID",
+        "score": 2.7,
+        "intent": "MARKET",
+        "category": "ambiguous_study"
+      },
+      {
+        "id": "holdout-071",
+        "title": "Acquisition de groupe électrogènes pour les centres de santé",
+        "human": "REVIEW",
+        "v2f": "VALID",
+        "score": 2.7,
+        "intent": "MARKET",
+        "category": "ambiguous_study"
+      },
+      {
+        "id": "holdout-072",
+        "title": "Fourniture d'uniformes scolaires pour 50 000 élèves du prima",
+        "human": "REVIEW",
+        "v2f": "VALID",
+        "score": 2.7,
+        "intent": "MARKET",
+        "category": "ambiguous_study"
+      }
+    ]
+  },
+  "dataset_comparison": {
+    "benchmark": {
+      "n": 50,
+      "accuracy": 94,
+      "precision": 100,
+      "recall": 100,
+      "pollution": 0
+    },
+    "shadow": {
+      "n": 39,
+      "accuracy": 92.3,
+      "precision": 100,
+      "recall": 78.6,
+      "pollution": 0
+    },
+    "smoke": {
+      "n": 10,
+      "accuracy": 100,
+      "precision": 100,
+      "recall": 100,
+      "pollution": 0
+    },
+    "holdout": {
+      "n": 221,
+      "accuracy": 53.8,
+      "precision": 65.1,
+      "recall": 50,
+      "pollution": 27.6
+    }
+  }
+}

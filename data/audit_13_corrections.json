@@ -1,0 +1,127 @@
+{
+  "audit_date": "2026-09-24",
+  "supposed_corrections": 13,
+  "actual_corrections": 0,
+  "already_rejected": 13,
+  "corrections_analysis": [
+    {
+      "id": "holdout-209",
+      "original_category": "expected_rejected",
+      "gold_category": "expected_rejected",
+      "correction_metadata": true,
+      "category_changed": false,
+      "title": "Déclaration sur la politique nationale de lutte contre la pa...",
+      "conclusion": "ALREADY_REJECTED_NO_CHANGE"
+    },
+    {
+      "id": "holdout-210",
+      "original_category": "expected_rejected",
+      "gold_category": "expected_rejected",
+      "correction_metadata": true,
+      "category_changed": false,
+      "title": "Communiqué du Ministère des Affaires Étrangères sur les rela...",
+      "conclusion": "ALREADY_REJECTED_NO_CHANGE"
+    },
+    {
+      "id": "holdout-211",
+      "original_category": "expected_rejected",
+      "gold_category": "expected_rejected",
+      "correction_metadata": true,
+      "category_changed": false,
+      "title": "Message de condoléances suite aux inondations dans l'Est...",
+      "conclusion": "ALREADY_REJECTED_NO_CHANGE"
+    },
+    {
+      "id": "holdout-212",
+      "original_category": "expected_rejected",
+      "gold_category": "expected_rejected",
+      "correction_metadata": true,
+      "category_changed": false,
+      "title": "Déclaration sur la mise en œuvre des Objectifs du Millénaire...",
+      "conclusion": "ALREADY_REJECTED_NO_CHANGE"
+    },
+    {
+      "id": "holdout-213",
+      "original_category": "expected_rejected",
+      "gold_category": "expected_rejected",
+      "correction_metadata": true,
+      "category_changed": false,
+      "title": "Communiqué sur les mesures de soutien aux producteurs agrico...",
+      "conclusion": "ALREADY_REJECTED_NO_CHANGE"
+    },
+    {
+      "id": "holdout-214",
+      "original_category": "expected_rejected",
+      "gold_category": "expected_rejected",
+      "correction_metadata": true,
+      "category_changed": false,
+      "title": "Déclaration relative à la protection de l'environnement...",
+      "conclusion": "ALREADY_REJECTED_NO_CHANGE"
+    },
+    {
+      "id": "holdout-215",
+      "original_category": "expected_rejected",
+      "gold_category": "expected_rejected",
+      "correction_metadata": true,
+      "category_changed": false,
+      "title": "Communiqué sur le renforcement de la coopération Sud-Sud...",
+      "conclusion": "ALREADY_REJECTED_NO_CHANGE"
+    },
+    {
+      "id": "holdout-216",
+      "original_category": "expected_rejected",
+      "gold_category": "expected_rejected",
+      "correction_metadata": true,
+      "category_changed": false,
+      "title": "Message de félicitations aux équipes nationales sportives...",
+      "conclusion": "ALREADY_REJECTED_NO_CHANGE"
+    },
+    {
+      "id": "holdout-217",
+      "original_category": "expected_rejected",
+      "gold_category": "expected_rejected",
+      "correction_metadata": true,
+      "category_changed": false,
+      "title": "Déclaration sur la politique de promotion de la jeunesse...",
+      "conclusion": "ALREADY_REJECTED_NO_CHANGE"
+    },
+    {
+      "id": "holdout-218",
+      "original_category": "expected_rejected",
+      "gold_category": "expected_rejected",
+      "correction_metadata": true,
+      "category_changed": false,
+      "title": "Communiqué de fin de Conseil des Ministres...",
+      "conclusion": "ALREADY_REJECTED_NO_CHANGE"
+    },
+    {
+      "id": "holdout-219",
+      "original_category": "expected_rejected",
+      "gold_category": "expected_rejected",
+      "correction_metadata": true,
+      "category_changed": false,
+      "title": "Message du Premier Ministre sur la réforme de l'administrati...",
+      "conclusion": "ALREADY_REJECTED_NO_CHANGE"
+    },
+    {
+      "id": "holdout-220",
+      "original_category": "expected_rejected",
+      "gold_category": "expected_rejected",
+      "correction_metadata": true,
+      "category_changed": false,
+      "title": "Déclaration sur la stratégie nationale de développement dura...",
+      "conclusion": "ALREADY_REJECTED_NO_CHANGE"
+    },
+    {
+      "id": "holdout-221",
+      "original_category": "expected_rejected",
+      "gold_category": "expected_rejected",
+      "correction_metadata": true,
+      "category_changed": false,
+      "title": "Communiqué sur les mesures de lutte contre la corruption...",
+      "conclusion": "ALREADY_REJECTED_NO_CHANGE"
+    }
+  ],
+  "conclusion": "NO_CORRECTIONS_APPLIED",
+  "fundamental_issue": "Title-Notes mapping error in holdout-209-221 range"
+}

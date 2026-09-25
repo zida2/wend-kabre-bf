@@ -1,0 +1,28 @@
+{
+  "phase": "2_DEDUPLICATION_INDEPENDENCE",
+  "execution_date": "2026-09-25T17:24:53.185Z",
+  "raw_input": 100,
+  "internal_duplicates": 0,
+  "external_contaminations": 0,
+  "provenance_issues": 0,
+  "final_clean_samples": 100,
+  "documents_eliminated": 0,
+  "independence_verification": {
+    "datasets_checked": 6,
+    "total_comparisons": 64100,
+    "contamination_threshold": "85%"
+  },
+  "quality_metrics": {
+    "source_diversity": 66,
+    "reference_patterns": 31,
+    "avg_documents_per_source": "1.5"
+  },
+  "phase2_violations": {
+    "v2f_predictions_consulted": false,
+    "v2g_predictions_consulted": false,
+    "gold_labels_assigned": false
+  },
+  "duplicates_details": [],
+  "contaminations_details": [],
+  "provenance_issues_details": []
+}

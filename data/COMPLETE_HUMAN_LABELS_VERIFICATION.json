@@ -1,0 +1,462 @@
+{
+  "inconsistencies": {
+    "total": 14,
+    "byReason": {
+      "Notes décrivent marché mais titre non-marché": 10,
+      "Communication officielle classée VALID": 4
+    },
+    "details": [
+      {
+        "id": "holdout-007",
+        "title": "Acquisition de matériel informatique pour 100 écoles primaires",
+        "classification": "VALID",
+        "category": "market_supply",
+        "notes": "Matériel informatique écoles - fourniture",
+        "reason": "Notes décrivent marché mais titre non-marché",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "holdout-209",
+        "title": "Déclaration sur la politique nationale de lutte contre la pauvreté",
+        "classification": "VALID",
+        "category": "market_furniture",
+        "notes": "Mobilier scolaire - fourniture mobilier",
+        "reason": "Notes décrivent marché mais titre non-marché",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "holdout-210",
+        "title": "Communiqué du Ministère des Affaires Étrangères sur les relations bilatérales",
+        "classification": "VALID",
+        "category": "market_infrastructure",
+        "notes": "Extension électrique - infrastructure",
+        "reason": "Communication officielle classée VALID",
+        "severity": "HIGH"
+      },
+      {
+        "id": "holdout-211",
+        "title": "Message de condoléances suite aux inondations dans l'Est",
+        "classification": "VALID",
+        "category": "market_rehabilitation",
+        "notes": "Réhabilitation forages - travaux",
+        "reason": "Communication officielle classée VALID",
+        "severity": "HIGH"
+      },
+      {
+        "id": "holdout-212",
+        "title": "Déclaration sur la mise en œuvre des Objectifs du Millénaire",
+        "classification": "VALID",
+        "category": "market_construction",
+        "notes": "Construction 30 salles - marché construction",
+        "reason": "Notes décrivent marché mais titre non-marché",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "holdout-213",
+        "title": "Communiqué sur les mesures de soutien aux producteurs agricoles",
+        "classification": "VALID",
+        "category": "market_infrastructure",
+        "notes": "Réhabilitation aéroport - marché travaux",
+        "reason": "Notes décrivent marché mais titre non-marché",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "holdout-214",
+        "title": "Déclaration relative à la protection de l'environnement",
+        "classification": "VALID",
+        "category": "market_construction",
+        "notes": "Centre formation - marché construction",
+        "reason": "Notes décrivent marché mais titre non-marché",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "holdout-215",
+        "title": "Communiqué sur le renforcement de la coopération Sud-Sud",
+        "classification": "VALID",
+        "category": "market_infrastructure",
+        "notes": "Bitumage routes - marché infrastructure",
+        "reason": "Notes décrivent marché mais titre non-marché",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "holdout-216",
+        "title": "Message de félicitations aux équipes nationales sportives",
+        "classification": "VALID",
+        "category": "market_construction",
+        "notes": "Barrage international - grand projet",
+        "reason": "Communication officielle classée VALID",
+        "severity": "HIGH"
+      },
+      {
+        "id": "holdout-217",
+        "title": "Déclaration sur la politique de promotion de la jeunesse",
+        "classification": "VALID",
+        "category": "market_supply",
+        "notes": "Kits urgence - fourniture santé",
+        "reason": "Notes décrivent marché mais titre non-marché",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "holdout-218",
+        "title": "Communiqué de fin de Conseil des Ministres",
+        "classification": "VALID",
+        "category": "market_supply",
+        "notes": "Matériel informatique - fourniture",
+        "reason": "Notes décrivent marché mais titre non-marché",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "holdout-219",
+        "title": "Message du Premier Ministre sur la réforme de l'administration",
+        "classification": "VALID",
+        "category": "market_supply",
+        "notes": "Semences certifiées - fourniture agricole",
+        "reason": "Notes décrivent marché mais titre non-marché",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "holdout-220",
+        "title": "Déclaration sur la stratégie nationale de développement durable",
+        "classification": "VALID",
+        "category": "market_supply",
+        "notes": "Panneaux solaires - fourniture énergie",
+        "reason": "Notes décrivent marché mais titre non-marché",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "holdout-221",
+        "title": "Communiqué sur les mesures de lutte contre la corruption",
+        "classification": "VALID",
+        "category": "market_vehicles",
+        "notes": "Ambulances - acquisition véhicules",
+        "reason": "Communication officielle classée VALID",
+        "severity": "HIGH"
+      }
+    ]
+  },
+  "borderlineCases": {
+    "total": 37,
+    "byAmbiguity": {
+      "Formation prestation vs académique": 3,
+      "Prestation potentiellement marché": 8,
+      "Service externalisé vs recrutement prestataire": 3,
+      "Étude/expertise potentiellement marché": 18,
+      "Mission conseil potentiellement marché": 5
+    },
+    "details": [
+      {
+        "id": "holdout-011",
+        "title": "Prestation de services de formation continue pour 1000 enseignants",
+        "classification": "VALID",
+        "category": "market_service",
+        "notes": "Formation enseignants - prestation service",
+        "ambiguityReason": "Formation prestation vs académique"
+      },
+      {
+        "id": "holdout-014",
+        "title": "Prestation d'audit énergétique des bâtiments publics de Ouagadougou",
+        "classification": "VALID",
+        "category": "market_service",
+        "notes": "Audit énergétique - prestation conseil",
+        "ambiguityReason": "Prestation potentiellement marché"
+      },
+      {
+        "id": "holdout-015",
+        "title": "Services de nettoyage et désinfection des établissements scolaires",
+        "classification": "VALID",
+        "category": "market_service",
+        "notes": "Nettoyage établissements - service légitime",
+        "ambiguityReason": "Service externalisé vs recrutement prestataire"
+      },
+      {
+        "id": "holdout-017",
+        "title": "Recrutement prestataire - Services de gardiennage des sites gouvernementaux",
+        "classification": "REVIEW",
+        "category": "ambiguous_security",
+        "notes": "Gardiennage sites - prestation sécurité",
+        "ambiguityReason": "Service externalisé vs recrutement prestataire"
+      },
+      {
+        "id": "holdout-019",
+        "title": "Prestation de services de traduction lors des missions diplomatiques",
+        "classification": "REVIEW",
+        "category": "ambiguous_catering",
+        "notes": "Restauration collective - service externalisé",
+        "ambiguityReason": "Prestation potentiellement marché"
+      },
+      {
+        "id": "holdout-038",
+        "title": "Étude d'impact environnemental du projet minier de Bissa",
+        "classification": "VALID",
+        "category": "market_infrastructure",
+        "notes": "Extension réseau électrique - infrastructure",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-039",
+        "title": "Mission d'expertise comptable pour audit des comptes publics",
+        "classification": "VALID",
+        "category": "market_rehabilitation",
+        "notes": "Réhabilitation forages - travaux hydrauliques",
+        "ambiguityReason": "Mission conseil potentiellement marché"
+      },
+      {
+        "id": "holdout-074",
+        "title": "Prestation de services d'ingénierie pour le projet de centrale solaire",
+        "classification": "REVIEW",
+        "category": "ambiguous_study",
+        "notes": "Diagnostic éducatif - mission analyse",
+        "ambiguityReason": "Prestation potentiellement marché"
+      },
+      {
+        "id": "holdout-076",
+        "title": "Prestation d'expertise comptable pour audit des finances publiques",
+        "classification": "REVIEW",
+        "category": "ambiguous_study",
+        "notes": "Évaluation promotion femme - mission",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-077",
+        "title": "Services de formation en gestion de projets pour 200 cadres",
+        "classification": "REVIEW",
+        "category": "ambiguous_study",
+        "notes": "Audit ressources eau - mission technique",
+        "ambiguityReason": "Formation prestation vs académique"
+      },
+      {
+        "id": "holdout-079",
+        "title": "Prestation de services de traduction pour les instances internationales",
+        "classification": "REVIEW",
+        "category": "ambiguous_catering",
+        "notes": "Catering missions - prestation restauration",
+        "ambiguityReason": "Prestation potentiellement marché"
+      },
+      {
+        "id": "holdout-081",
+        "title": "Prestation d'études techniques pour modernisation des douanes",
+        "classification": "REVIEW",
+        "category": "ambiguous_communication",
+        "notes": "Communication institutionnelle - service",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-083",
+        "title": "Contrat de prestation pour audit organisationnel des ministères",
+        "classification": "REVIEW",
+        "category": "ambiguous_hr",
+        "notes": "Expertise RH - service spécialisé",
+        "ambiguityReason": "Prestation potentiellement marché"
+      },
+      {
+        "id": "holdout-084",
+        "title": "Étude de faisabilité pour l'implantation d'industries agroalimentaires",
+        "classification": "REVIEW",
+        "category": "ambiguous_cultural",
+        "notes": "Animation culturelle - prestation événementiel",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-085",
+        "title": "Mission d'évaluation des politiques publiques de santé maternelle",
+        "classification": "REVIEW",
+        "category": "ambiguous_maintenance",
+        "notes": "Maintenance jardins - prestation entretien",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-086",
+        "title": "Rapport d'expertise sur la gestion des déchets urbains à Ouagadougou",
+        "classification": "REVIEW",
+        "category": "ambiguous_cleaning",
+        "notes": "Nettoyage spécialisé - prestation santé",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-087",
+        "title": "Étude d'impact social du projet d'exploitation aurifère de Houndé",
+        "classification": "REVIEW",
+        "category": "ambiguous_funeral",
+        "notes": "Services funéraires - prestation spécialisée",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-088",
+        "title": "Évaluation des besoins en formation professionnelle dans l'artisanat",
+        "classification": "REVIEW",
+        "category": "ambiguous_catering",
+        "notes": "Restauration formation - service collective",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-090",
+        "title": "Étude de marché pour exportation des produits agricoles transformés",
+        "classification": "REVIEW",
+        "category": "ambiguous_study",
+        "notes": "Optimisation pharmaceutique - étude",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-091",
+        "title": "Évaluation de la politique nationale de promotion de la femme",
+        "classification": "REVIEW",
+        "category": "ambiguous_study",
+        "notes": "Évaluation microfinance - mission analyse",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-093",
+        "title": "Étude prospective sur l'évolution démographique du Burkina Faso",
+        "classification": "REVIEW",
+        "category": "ambiguous_study",
+        "notes": "Restructuration publiques - étude",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-096",
+        "title": "Prestation de services de communication institutionnelle",
+        "classification": "REVIEW",
+        "category": "ambiguous_study",
+        "notes": "Rentabilité énergies - étude économique",
+        "ambiguityReason": "Prestation potentiellement marché"
+      },
+      {
+        "id": "holdout-098",
+        "title": "Recrutement prestataire - Expertise en gestion des ressources humaines",
+        "classification": "REVIEW",
+        "category": "ambiguous_consulting",
+        "notes": "Conseil climat affaires - mission",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-099",
+        "title": "Prestation de services d'animation culturelle pour fêtes nationales",
+        "classification": "REJECTED",
+        "category": "recruitment_health",
+        "notes": "Agents santé - recrutement direct massif",
+        "ambiguityReason": "Prestation potentiellement marché"
+      },
+      {
+        "id": "holdout-100",
+        "title": "Avis de recrutement - Services de maintenance des jardins publics",
+        "classification": "REJECTED",
+        "category": "recruitment_education",
+        "notes": "Inspecteurs éducation - recrutement direct",
+        "ambiguityReason": "Service externalisé vs recrutement prestataire"
+      },
+      {
+        "id": "holdout-102",
+        "title": "Prestation de services funéraires pour personnalités officielles",
+        "classification": "REJECTED",
+        "category": "recruitment_education",
+        "notes": "Conseillers pédagogiques - recrutement direct",
+        "ambiguityReason": "Prestation potentiellement marché"
+      },
+      {
+        "id": "holdout-103",
+        "title": "Avis de recrutement - Services de restauration pour centres de formation",
+        "classification": "REJECTED",
+        "category": "recruitment_security",
+        "notes": "Agents police - recrutement direct",
+        "ambiguityReason": "Formation prestation vs académique"
+      },
+      {
+        "id": "holdout-104",
+        "title": "Mission d'expertise pour réforme de l'administration territoriale",
+        "classification": "REJECTED",
+        "category": "recruitment_executive",
+        "notes": "Directeur cabinet - recrutement cadre",
+        "ambiguityReason": "Mission conseil potentiellement marché"
+      },
+      {
+        "id": "holdout-105",
+        "title": "Étude d'optimisation des circuits de distribution pharmaceutique",
+        "classification": "REJECTED",
+        "category": "recruitment_veterinary",
+        "notes": "Vétérinaires régionaux - recrutement direct",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-106",
+        "title": "Évaluation de l'efficacité des programmes de microfinance rurale",
+        "classification": "REJECTED",
+        "category": "recruitment_engineering",
+        "notes": "Ingénieurs ponts - recrutement direct",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-107",
+        "title": "Mission de conseil pour modernisation du système judiciaire",
+        "classification": "REJECTED",
+        "category": "recruitment_judicial",
+        "notes": "Magistrats tribunaux - recrutement direct",
+        "ambiguityReason": "Mission conseil potentiellement marché"
+      },
+      {
+        "id": "holdout-108",
+        "title": "Étude de restructuration des entreprises publiques burkinabè",
+        "classification": "REJECTED",
+        "category": "recruitment_education",
+        "notes": "Professeurs certifiés - recrutement direct",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-109",
+        "title": "Évaluation des politiques de promotion de l'entrepreneuriat jeune",
+        "classification": "REJECTED",
+        "category": "recruitment_administrative",
+        "notes": "Secrétaire général - recrutement direct",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-110",
+        "title": "Mission d'assistance technique pour décentralisation fiscale",
+        "classification": "REJECTED",
+        "category": "recruitment_environmental",
+        "notes": "Agents eaux forêts - recrutement direct",
+        "ambiguityReason": "Mission conseil potentiellement marché"
+      },
+      {
+        "id": "holdout-111",
+        "title": "Étude de rentabilité des investissements dans les énergies renouvelables",
+        "classification": "REJECTED",
+        "category": "recruitment_financial",
+        "notes": "Contrôleurs trésor - recrutement direct",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-112",
+        "title": "Évaluation de l'impact des projets de développement rural",
+        "classification": "REJECTED",
+        "category": "recruitment_statistical",
+        "notes": "Statisticiens INS - recrutement direct",
+        "ambiguityReason": "Étude/expertise potentiellement marché"
+      },
+      {
+        "id": "holdout-113",
+        "title": "Mission de conseil pour amélioration du climat des affaires",
+        "classification": "REJECTED",
+        "category": "recruitment_health",
+        "notes": "Sage-femmes rurales - recrutement direct",
+        "ambiguityReason": "Mission conseil potentiellement marché"
+      }
+    ]
+  },
+  "categoryConsistency": {
+    "inconsistentCategories": 0,
+    "details": []
+  },
+  "v2fVsHuman": {
+    "fpWithInconsistencies": 0,
+    "fnWithInconsistencies": 10,
+    "v2fPotentiallyCorrect": 0,
+    "details": []
+  },
+  "summary": {
+    "totalSamplesAnalyzed": 221,
+    "criticalInconsistencies": 10,
+    "highInconsistencies": 4,
+    "borderlineAmbiguous": 37,
+    "dataQualityScore": "76.9"
+  }
+}

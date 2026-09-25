@@ -1,0 +1,228 @@
+{
+  "audit_metadata": {
+    "audit_date": "2026-09-24",
+    "audit_type": "comprehensive_integrity_audit",
+    "datasets_analyzed": [
+      "holdout-validation-dataset.json",
+      "gold-dataset-v1.json",
+      "holdout_human_reference.csv"
+    ],
+    "audit_conclusion": "Gold Dataset V1 identical to original holdout - no performance improvement",
+    "integrity_status": "CONFIRMED",
+    "performance_claims_validated": false
+  },
+  
+  "dataset_integrity": {
+    "samples_preserved": {
+      "original_count": 221,
+      "gold_v1_count": 221,
+      "missing_samples": 0,
+      "added_samples": 0,
+      "integrity_confirmed": true
+    },
+    "content_integrity": {
+      "titles_modified": 0,
+      "descriptions_modified": 0,
+      "sources_modified": 0,
+      "critical_fields_intact": true
+    },
+    "modifications_detected": {
+      "metadata_additions": 14,
+      "category_changes": 0,
+      "actual_corrections": 0,
+      "confirmations_applied": 1
+    }
+  },
+
+  "corrections_audit": {
+    "supposed_corrections": {
+      "total_claimed": 13,
+      "actually_applied": 0,
+      "success_rate": "0.0%",
+      "failure_reason": "Target samples already had expected_rejected category"
+    },
+    "mapping_error_discovered": {
+      "affected_samples": "holdout-209 to holdout-221",
+      "issue": "Title-Notes mapping contradiction",
+      "title_content": "Official communications (Déclaration, Communiqué)",
+      "notes_content": "Market descriptions (mobilier, infrastructure, etc.)",
+      "dataset_category": "expected_rejected (consistent with titles)",
+      "human_labels": "VALID (consistent with notes)",
+      "conclusion": "Dataset was correct, human labels were inconsistent"
+    },
+    "false_negatives_audit": {
+      "supposed_fn_count": 10,
+      "v2f_was_correct": 10,
+      "v2f_was_incorrect": 0,
+      "conclusion": "All 'false negatives' were actually V2F successes"
+    }
+  },
+
+  "performance_metrics": {
+    "holdout_original": {
+      "accuracy": 0.647,
+      "macro_precision": 0.529,
+      "macro_recall": 0.541,
+      "macro_f1": 0.487,
+      "pollution_rate": 0.0,
+      "sample_count": 221,
+      "confusion_matrix": [
+        [77, 46, 0, 0],
+        [0, 30, 0, 4],
+        [2, 4, 0, 3],
+        [0, 19, 0, 36]
+      ],
+      "confusion_matrix_labels": ["REJECTED", "REVIEW", "UNKNOWN", "VALID"],
+      "class_distribution": {
+        "VALID": 55,
+        "REVIEW": 34,
+        "REJECTED": 123,
+        "UNKNOWN": 9
+      }
+    },
+    "gold_v1": {
+      "accuracy": 0.647,
+      "macro_precision": 0.529,
+      "macro_recall": 0.541,
+      "macro_f1": 0.487,
+      "pollution_rate": 0.0,
+      "sample_count": 221,
+      "identical_to_holdout": true,
+      "performance_difference": 0.0
+    },
+    "human_labels_reference": {
+      "accuracy": 0.538,
+      "macro_precision": 0.581,
+      "macro_recall": 0.557,
+      "macro_f1": 0.522,
+      "pollution_rate": 9.3,
+      "sample_count": 221,
+      "note": "Contains labeling inconsistencies - less reliable than dataset labels"
+    }
+  },
+
+  "sensitivity_analysis": {
+    "scenario_a_certain_labels": {
+      "description": "Contradictions excluded",
+      "sample_count": 168,
+      "samples_retained_percent": 76.0,
+      "accuracy": 0.655,
+      "improvement_vs_gold_v1": 0.008,
+      "conclusion": "Minimal improvement from excluding contradictions"
+    },
+    "scenario_b_gold_v1": {
+      "description": "All officially adjudicated labels (Gold V1 = Holdout)",
+      "sample_count": 221,
+      "accuracy": 0.647,
+      "baseline": true
+    },
+    "scenario_c_non_ambiguous": {
+      "description": "Ambiguous cases excluded (analysis only)",
+      "sample_count": 182,
+      "samples_retained_percent": 82.4,
+      "accuracy": 0.665,
+      "improvement_vs_gold_v1": 0.018,
+      "conclusion": "Ambiguous cases degrade performance more than contradictions",
+      "warning": "Analysis only - does not replace complete dataset"
+    },
+    "key_findings": {
+      "contradictions_impact": "minimal (+0.8%)",
+      "ambiguity_impact": "significant (-1.8%)",
+      "v2g_should_target": "fuzzy boundaries, not contradictions"
+    }
+  },
+
+  "contradictions_analysis": {
+    "total_contradictions": 53,
+    "contradiction_rate": 0.24,
+    "by_type": {
+      "REJECTED vs VALID": 13,
+      "VALID vs REVIEW": 15,
+      "REVIEW vs REJECTED": 15,
+      "UNKNOWN vs others": 10
+    },
+    "impact_on_performance": "minimal",
+    "dataset_quality": 0.77
+  },
+
+  "v2f_real_performance": {
+    "previously_reported": {
+      "accuracy": 0.538,
+      "pollution": 0.276,
+      "source": "labels_humains_defaillants",
+      "reliability": "low"
+    },
+    "actual_performance": {
+      "accuracy": 0.647,
+      "pollution": 0.000,
+      "source": "dataset_holdout_coherent",
+      "reliability": "high"
+    },
+    "performance_gap": {
+      "accuracy_underestimated_by": 0.109,
+      "pollution_overestimated_by": 0.276
+    }
+  },
+
+  "critical_questions_answered": {
+    "q1_corrections_certain": "0 out of 13 supposed corrections were applied",
+    "q2_corrections_debatable": "0 corrections are debatable since none were applied",
+    "q3_exact_performance": "64.7% accuracy, 0.0% pollution on Gold V1",
+    "q4_improvement_from_corrections": "0% improvement as no corrections were applied",
+    "q5_pollution_above_5_percent": "No - pollution is 0.0% (target exceeded)",
+    "q6_recall_above_95_percent": "No - macro recall is 54.1% (target not met)",
+    "q7_problematic_categories": "REVIEW class (30.3% precision) and fuzzy boundaries"
+  },
+
+  "v2g_development_implications": {
+    "do_not": [
+      "Base development on Gold Dataset V1 as 'improvement'",
+      "Trust 53.8% accuracy metrics from human labels",
+      "Develop V2G to fix imaginary problems"
+    ],
+    "do": [
+      "Use real metrics: 64.7% accuracy, 0.0% pollution",
+      "Target actual problems: fuzzy VALID/REVIEW/REJECTED boundaries",
+      "Fix class definitions before any development",
+      "Address 39 ambiguous cases identified in sensitivity analysis"
+    ],
+    "priorities": [
+      "Improve Macro Recall (54.1% → target 95%)",
+      "Clarify VALID/REVIEW boundaries (30.3% precision REVIEW)",
+      "Handle new vocabulary (73.8% unknown tokens)",
+      "Calibrate thresholds to reduce excessive REVIEW classifications"
+    ]
+  },
+
+  "recommendations": {
+    "immediate_actions": [
+      "Abandon Gold Dataset V1 as improvement reference",
+      "Recalibrate V2G expectations based on real metrics",
+      "Fix Ground Truth Policy before development",
+      "Investigate 39 ambiguous cases for common patterns"
+    ],
+    "future_process": [
+      "Systematic double validation title ↔ classification",
+      "Precise definitions of 3 classes with examples",
+      "Automatic quality controls during dataset generation",
+      "Systematic post-generation audit before usage"
+    ],
+    "v2g_methodology": [
+      "Real baseline: 64.7% accuracy, 0.0% pollution",
+      "Realistic targets: 70-75% accuracy, <5% pollution, >90% recall",
+      "Focus on poorly defined VALID/REVIEW/REJECTED boundaries",
+      "Rigorous validation with separate non-contradictory datasets"
+    ]
+  },
+
+  "final_verdict": {
+    "gold_dataset_v1_success": false,
+    "performance_improvement_achieved": false,
+    "audit_value": "high",
+    "mission_status": "completed",
+    "v2f_real_performance_revealed": true,
+    "v2g_foundations_established": true,
+    "key_insight": "V2F performs better on consistent dataset labels than on contradictory human labels",
+    "next_steps": "V2G development can now proceed with factual baselines and targeted improvements"
+  }
+}

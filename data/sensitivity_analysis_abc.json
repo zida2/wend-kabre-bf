@@ -1,0 +1,86 @@
+{
+  "analysis_date": "2026-09-24",
+  "scenarios": {
+    "A_certain_labels": {
+      "description": "Labels certains uniquement - contradictions exclues",
+      "sample_count": 168,
+      "metrics": {
+        "accuracy": 0.6547619047619048,
+        "macro_precision": 0.7213037316957959,
+        "macro_recall": 0.7250804764204087,
+        "macro_f1": 0.6354865424430641,
+        "pollution_rate": 0.0,
+        "sample_count": 168,
+        "class_distribution": {
+          "REJECTED": 109,
+          "REVIEW": 19,
+          "VALID": 40
+        }
+      },
+      "sample_ids": [
+        "holdout-001",
+        "holdout-002",
+        "holdout-003",
+        "holdout-004",
+        "holdout-005",
+        "holdout-006",
+        "holdout-007",
+        "holdout-008",
+        "holdout-009",
+        "holdout-010",
+        "holdout-011",
+        "holdout-012",
+        "holdout-013",
+        "holdout-014",
+        "holdout-015",
+        "holdout-016",
+        "holdout-017",
+        "holdout-018",
+        "holdout-019",
+        "holdout-021"
+      ]
+    },
+    "B_gold_v1": {
+      "description": "Tous labels adjudiqués (Gold V1 = Holdout original)",
+      "sample_count": 221,
+      "metrics": {
+        "accuracy": 0.6470588235294118,
+        "macro_precision": 0.5287307874149205,
+        "macro_recall": 0.5407286639711317,
+        "macro_f1": 0.4870494836809138,
+        "pollution_rate": 0.0,
+        "sample_count": 221,
+        "class_distribution": {
+          "REJECTED": 123,
+          "REVIEW": 34,
+          "UNKNOWN": 9,
+          "VALID": 55
+        }
+      }
+    },
+    "C_non_ambiguous": {
+      "description": "Cas ambigus exclus (analyse uniquement)",
+      "sample_count": 182,
+      "metrics": {
+        "accuracy": 0.6648351648351648,
+        "macro_precision": 0.7182395644283122,
+        "macro_recall": 0.7319177007559549,
+        "macro_f1": 0.6368344774980931,
+        "pollution_rate": 0.0,
+        "sample_count": 182,
+        "class_distribution": {
+          "REJECTED": 123,
+          "REVIEW": 19,
+          "VALID": 40
+        }
+      },
+      "warning": "Analysis only - does not replace complete dataset"
+    }
+  },
+  "key_findings": {
+    "scenarios_a_b_similar": true,
+    "scenario_c_better": true,
+    "contradiction_impact": 53,
+    "ambiguity_cost": 0
+  }
+}

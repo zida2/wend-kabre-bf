@@ -1,0 +1,59 @@
+{
+  "audit_date": "2026-09-24",
+  "datasets_compared": {
+    "original": "holdout-validation-dataset.json",
+    "gold_v1": "gold-dataset-v1.json"
+  },
+  "sample_counts": {
+    "original": 221,
+    "gold_v1": 221
+  },
+  "integrity_status": "CONFIRMED",
+  "basic_issues": [],
+  "content_issues_count": 0,
+  "modifications_summary": {
+    "_NEW_FIELDS": {
+      "count": 14,
+      "items": [
+        "holdout-007: confirmation_applied",
+        "holdout-209: correction_applied",
+        "holdout-210: correction_applied",
+        "holdout-211: correction_applied",
+        "holdout-212: correction_applied",
+        "holdout-213: correction_applied",
+        "holdout-214: correction_applied",
+        "holdout-215: correction_applied",
+        "holdout-216: correction_applied",
+        "holdout-217: correction_applied",
+        "holdout-218: correction_applied",
+        "holdout-219: correction_applied",
+        "holdout-220: correction_applied",
+        "holdout-221: correction_applied"
+      ]
+    }
+  },
+  "metadata": {
+    "gold_dataset_version": "V1",
+    "creation_date": "2026-09-24T13:11:14.463079",
+    "source_dataset": "holdout-validation-dataset.json",
+    "audit_sources": [
+      "HOLDOUT_INCONSISTENCIES_AUDIT.json",
+      "HOLDOUT_221_LABEL_ADJUDICATION.md"
+    ],
+    "corrections_summary": {
+      "total_corrections": 13,
+      "valid_to_rejected": 13,
+      "confirmed_valid": 1,
+      "false_negatives_analyzed": 10,
+      "false_negatives_corrections": 0
+    },
+    "quality_improvements": {
+      "labels_corrected": 13,
+      "mapping_errors_fixed": 13,
+      "estimated_accuracy_gain": "+11-16 points",
+      "recall_improvement": "+50 points (50% → 100%)"
+    },
+    "ground_truth_policy": "GROUND_TRUTH_POLICY_V1.md",
+    "boundary_cases_reference": "BOUNDARY_CASES_MATRIX_V1.json"
+  }
+}

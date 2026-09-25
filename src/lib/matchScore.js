@@ -5,63 +5,71 @@
 
 /**
  * Calcule le score de match entre un marché et un profil d'entreprise
- * @param {Object} market - Le marché à analyser
- * @param {Object} userProfile - Le profil de l'entreprise
- * @returns {Object} { score: number (0-100), details: Array, reasons: Array }
+ * DÉTERMINISTE : Même input = même output, calcul explicite et auditable
  */
 export function calculateMatchScore(market, userProfile) {
   if (!market || !userProfile) {
-    return { score: 0, details: [], reasons: ['Données insuffisantes'] };
+    return { 
+      score: 0, 
+      details: [], 
+      reasons: ['Données insuffisantes'],
+      calculation: { total: 0, maxTotal: 100, breakdown: {} }
+    };
   }
 
-  const criteria = [];
-  let totalWeight = 0;
-  let achievedScore = 0;
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // CRITÈRE 1: SECTEUR D'ACTIVITÉ (poids: 25%)
-  // ═══════════════════════════════════════════════════════════════════════════
-  const sectorWeight = 25;
-  totalWeight += sectorWeight;
+  // Configuration des poids (DÉTERMINISTE)
+  const WEIGHTS = {
+    SECTOR: 25,      // Secteur d'activité
+    REGION: 20,      // Région géographique  
+    BUDGET: 20,      // Montant du marché
+    EXPERIENCE: 15,  // Expérience et références
+    TIMING: 10,      // Urgence et timing
+    COMPLIANCE: 10   // Conformité administrative
+  };
   
+  const MAX_TOTAL = 100;
+  const criteria = [];
+  let totalScore = 0;
+  const calculation = { breakdown: {}, total: 0, maxTotal: MAX_TOTAL };
+
+  // SECTEUR (25 points max) - CALCUL DÉTERMINISTE
   const marketSector = market.secteur || market.category || '';
   const userSectors = userProfile.secteurs || userProfile.activites || [];
   
-  let sectorMatch = 0;
+  let sectorScore = 0;
   let sectorReason = '';
   
   if (userSectors.length === 0) {
+    sectorScore = WEIGHTS.SECTOR * 0.3;
     sectorReason = 'Secteur d\'activité non renseigné dans votre profil';
   } else {
     const normalizedMarketSector = marketSector.toLowerCase();
-    const matchingSector = userSectors.find(sector => 
+    const exactMatch = userSectors.find(sector => 
       normalizedMarketSector.includes(sector.toLowerCase()) ||
       sector.toLowerCase().includes(normalizedMarketSector)
     );
     
-    if (matchingSector) {
-      sectorMatch = sectorWeight;
-      sectorReason = `Secteur "${marketSector}" correspond à votre activité "${matchingSector}"`;
+    if (exactMatch) {
+      sectorScore = WEIGHTS.SECTOR; // 25 points
+      sectorReason = `Secteur "${marketSector}" correspond parfaitement à "${exactMatch}"`;
+    } else if (normalizedMarketSector.includes('informatique') && userSectors.some(s => s.toLowerCase().includes('tech'))) {
+      sectorScore = WEIGHTS.SECTOR * 0.8; // 20 points
+      sectorReason = `Secteur "${marketSector}" partiellement compatible avec votre profil tech`;
     } else {
-      // Correspondances partielles
-      if (normalizedMarketSector.includes('informatique') && userSectors.some(s => s.toLowerCase().includes('tech'))) {
-        sectorMatch = sectorWeight * 0.8;
-        sectorReason = `Secteur "${marketSector}" partiellement compatible avec votre profil tech`;
-      } else if (normalizedMarketSector.includes('construction') && userSectors.some(s => s.toLowerCase().includes('btp'))) {
-        sectorMatch = sectorWeight * 0.8;
-        sectorReason = `Secteur "${marketSector}" compatible avec votre activité BTP`;
-      } else {
-        sectorReason = `Secteur "${marketSector}" ne correspond pas à vos activités`;
-      }
+      sectorScore = WEIGHTS.SECTOR * 0.1; // 2.5 points
+      sectorReason = `Secteur "${marketSector}" ne correspond pas à vos activités principales`;
     }
   }
   
-  achievedScore += sectorMatch;
+  totalScore += sectorScore;
+  calculation.breakdown.sector = { score: sectorScore, maxScore: WEIGHTS.SECTOR, percentage: Math.round((sectorScore / WEIGHTS.SECTOR) * 100) };
+  
   criteria.push({
     name: 'Secteur d\'activité',
-    weight: sectorWeight,
-    score: sectorMatch,
-    status: sectorMatch > sectorWeight * 0.7 ? 'success' : sectorMatch > 0 ? 'partial' : 'fail',
+    weight: WEIGHTS.SECTOR,
+    score: sectorScore,
+    percentage: Math.round((sectorScore / WEIGHTS.SECTOR) * 100),
+    status: sectorScore > WEIGHTS.SECTOR * 0.7 ? 'success' : sectorScore > WEIGHTS.SECTOR * 0.4 ? 'partial' : 'fail',
     reason: sectorReason
   });
 
