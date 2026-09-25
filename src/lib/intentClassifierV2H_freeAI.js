@@ -36,7 +36,8 @@ async function classifyWithFreeAI(title, description = '') {
 
 CATÉGORIES:
 - "gouvernement" : Administration, audit ministères, formation fonctionnaires, politiques publiques
-- "marche" : Marchés commerciaux, boutiques, infrastructure commerciale, bestiaux  
+- "marche" : Marchés commerciaux, boutiques, infrastructure commerciale, bestiaux
+- "recrutement" : Avis de recrutement, concours, sélection de personnel, offres d'emploi
 - "neutre" : Santé, éducation, routes, eau, électricité, agriculture
 
 TEXTE: "${text.substring(0, 400)}"
@@ -61,7 +62,7 @@ RÉPONSE (un seul mot):`;
       const result = await response.json();
       const classification = result.choices[0]?.message?.content?.trim().toLowerCase();
       
-      if (['gouvernement', 'marche', 'neutre'].includes(classification)) {
+      if (['gouvernement', 'marche', 'recrutement', 'neutre'].includes(classification)) {
         return {
           intent: classification,
           confidence: 0.85,
@@ -85,6 +86,30 @@ RÉPONSE (un seul mot):`;
  */
 function classifyWithLocalRules(text) {
   const textLower = text.toLowerCase();
+  
+  // 🆕 DÉTECTION RECRUTEMENT (Priorité haute)
+  const recruitmentPatterns = [
+    /(?:recrutement|recrute|recruitment).*(?:agent|personnel|employe|poste|candidat)/i,
+    /avis.*(?:recrutement|concours|sélection)/i,
+    /(?:concours|test).*(?:recrutement|sélection)/i,
+    /(?:appel.*candidature|candidature.*poste)/i,
+    /(?:offre.*emploi|poste.*pourvoir|embauche)/i,
+    /(?:sélection|selection).*(?:candidat|personnel)/i
+  ];
+  
+  let recruitmentScore = 0;
+  recruitmentPatterns.forEach(pattern => {
+    if (pattern.test(text)) recruitmentScore++;
+  });
+  
+  if (recruitmentScore > 0) {
+    return {
+      intent: 'recrutement',
+      confidence: Math.min(0.9, 0.8 + (recruitmentScore * 0.05)),
+      signal: 'recruitment_detected',
+      method: 'local_classification'
+    };
+  }
   
   // Détection gouvernement (administration, audit, formation agents)
   const govPatterns = [
@@ -173,7 +198,42 @@ export async function classifyWithIntentAnalysisV2H(title, description = '', sou
     };
   }
   
-  // ===== ÉTAPE 2: DÉTECTION MARCHÉ (Prioritaire) =====
+  // ===== ÉTAPE 2: DÉTECTION RECRUTEMENT (Nouvelle priorité) =====
+  
+  let recruitmentScore = 0;
+  const recruitmentSignals = [];
+  
+  // Détection de mots-clés de recrutement
+  if (/(?:recrutement|recrute|recruitment).*(?:agent|personnel|employe|poste|candidat)/i.test(fullText)) {
+    recruitmentScore += 3;
+    recruitmentSignals.push('recruitment_explicit');
+  }
+  
+  if (/avis.*(?:recrutement|concours|sélection)/i.test(fullText)) {
+    recruitmentScore += 2;
+    recruitmentSignals.push('recruitment_notice');
+  }
+  
+  if (/(?:concours|test).*(?:recrutement|sélection)/i.test(fullText)) {
+    recruitmentScore += 2;
+    recruitmentSignals.push('recruitment_exam');
+  }
+  
+  if (/(?:appel.*candidature|candidature.*poste|offre.*emploi)/i.test(fullText)) {
+    recruitmentScore += 2;
+    recruitmentSignals.push('job_application');
+  }
+  
+  if (recruitmentScore >= 2) {
+    return {
+      intent: 'recrutement',
+      confidence: Math.min(0.95, 0.8 + (recruitmentScore * 0.05)),
+      signal: recruitmentSignals.join('_'),
+      method: 'recruitment_detection'
+    };
+  }
+  
+  // ===== ÉTAPE 3: DÉTECTION MARCHÉ (Prioritaire) =====
   
   let marketScore = 0;
   const marketSignals = [];
@@ -208,7 +268,7 @@ export async function classifyWithIntentAnalysisV2H(title, description = '', sou
     };
   }
   
-  // ===== ÉTAPE 3: DÉTECTION GOUVERNEMENT =====
+  // ===== ÉTAPE 4: DÉTECTION GOUVERNEMENT =====
   
   let govScore = 0;
   const govSignals = [];
@@ -242,7 +302,7 @@ export async function classifyWithIntentAnalysisV2H(title, description = '', sou
     };
   }
   
-  // ===== ÉTAPE 4: FALLBACK AVEC IA GRATUITE =====
+  // ===== ÉTAPE 5: FALLBACK AVEC IA GRATUITE =====
   
   try {
     const aiResult = await classifyWithFreeAI(title, description);
@@ -259,7 +319,7 @@ export async function classifyWithIntentAnalysisV2H(title, description = '', sou
     console.warn('Free AI classification failed:', error);
   }
   
-  // ===== ÉTAPE 5: CLASSIFICATION PAR DÉFAUT =====
+  // ===== ÉTAPE 6: CLASSIFICATION PAR DÉFAUT =====
   
   return {
     intent: 'neutre',

@@ -22,6 +22,8 @@ async function generateIntelligentResponseWithAI(messages, question) {
           return `🏛️ **Analyse IA : Question sur l'administration/gouvernement**\n\n${handleARCOP(q)}\n\n💡 *Détection automatique par IA gratuite (${aiClassification.method})*`;
         case 'marche': 
           return `🏪 **Analyse IA : Question sur les marchés commerciaux**\n\n${handleSeuils(q)}\n\n💡 *Détection automatique par IA gratuite (${aiClassification.method})*`;
+        case 'recrutement':
+          return `👥 **Analyse IA : Question sur le recrutement/emploi**\n\n${handleRecrutement(q)}\n\n💡 *Détection automatique par IA gratuite (${aiClassification.method})*`;
         case 'neutre':
           // Continue avec la détection classique pour plus de précision
           break;
@@ -95,6 +97,9 @@ async function generateIntelligentResponseWithAI(messages, question) {
     case 'AI_TEST':
       return handleAITest(q);
     
+    case 'RECRUTEMENT':
+      return handleRecrutement(q);
+    
     default:
       return handleGeneralWithAI(q, previousMessages);
   }
@@ -112,6 +117,9 @@ function handleGeneralWithAI(question, previousMessages) {
   }
   if (/(marche|boutique|commercial|vente)/i.test(q)) {
     return `${originalResponse}\n\n🤖 *L'IA gratuite analyse vos questions pour de meilleures réponses !*`;
+  }
+  if (/(recrutement|concours|candidature|emploi|poste)/i.test(q)) {
+    return `${originalResponse}\n\n👥 *Détection possible : Question sur le recrutement ! L'IA peut mieux vous aider.*`;
   }
   
   return originalResponse;
@@ -271,6 +279,11 @@ function detectIntent(question) {
   // Test IA - Nouvelles expressions pour tester l'IA
   if (/(ia|intelligence artificielle|ai|assistant|robot|chatbot|nouvelle.*fonctionnalit|gratuit|openrouter|classification)/i.test(q)) {
     return 'AI_TEST';
+  }
+  
+  // Recrutement - Détection des avis d'emploi
+  if (/(recrutement|recrute|concours|sélection|candidature|offre.*emploi|poste.*pourvoir|embauche|avis.*emploi|test.*sélection)/i.test(q)) {
+    return 'RECRUTEMENT';
   }
   
   // Au revoir
@@ -664,6 +677,49 @@ function handleARCOP(q) {
   return response;
 }
 
+function handleRecrutement(q) {
+  let response = `👥 **Marchés de Recrutement & Concours** 🎯\n\n`;
+  
+  response += `**SPÉCIFICITÉS RECRUTEMENT** 📋\n`;
+  response += `• **Nature différente** : Sélection de personnes, pas d'achats\n`;
+  response += `• **Pas de seuils classiques** : Procédures spécifiques\n`;
+  response += `• **Critères d'évaluation** : Compétences, diplômes, expérience\n`;
+  response += `• **Dossier de candidature** : CV, lettres, attestations\n\n`;
+  
+  response += `**DOCUMENTS CANDIDATURE** 📄\n`;
+  response += `• CV détaillé avec photo\n`;
+  response += `• Lettre de motivation\n`;
+  response += `• Copies diplômes certifiées\n`;
+  response += `• Attestations d'expérience\n`;
+  response += `• Certificat de visite médicale\n`;
+  response += `• Extrait casier judiciaire (< 3 mois)\n`;
+  response += `• Certificat de nationalité\n\n`;
+  
+  response += `**PROCESSUS SÉLECTION** 🔄\n`;
+  response += `1. **Dépôt candidatures** : Selon délais indiqués\n`;
+  response += `2. **Présélection sur dossier** : Critères académiques/expérience\n`;
+  response += `3. **Tests écrits** : Selon le poste (technique, général)\n`;
+  response += `4. **Entretiens oraux** : Commission de sélection\n`;
+  response += `5. **Vérifications références** : Anciens employeurs\n`;
+  response += `6. **Résultats définitifs** : Classement et nomination\n\n`;
+  
+  response += `**CONSEILS SPÉCIAUX** 💡\n`;
+  response += `• **Lisez tout l'avis** : Profil exact recherché, conditions\n`;
+  response += `• **Respectez les formats** : Dossiers souvent très précis\n`;
+  response += `• **Préparez-vous aux tests** : Selon domaine d'activité\n`;
+  response += `• **Soignez la présentation** : Première impression importante\n\n`;
+  
+  response += `**DIFFÉRENCES AVEC MARCHÉS CLASSIQUES** ⚖️\n`;
+  response += `❌ **Pas de caution** : Pas d'argent à déposer\n`;
+  response += `❌ **Pas de bordereau de prix** : Salaire fixé par l'employeur\n`;
+  response += `❌ **Pas de méthodologie technique** : Compétences personnelles\n`;
+  response += `✅ **Focus sur le profil** : Adéquation personne/poste\n\n`;
+  
+  response += `💼 **Questions spécifiques sur un avis de recrutement ? Montrez-moi le détail !**`;
+  
+  return response;
+}
+
 function handleAITest(q) {
   let response = `🤖 **Assistant IA Gratuite - NOUVEAU !** ✨\n\n`;
   response += `**FONCTIONNALITÉS ACTIVÉES** 🚀\n`;
@@ -703,12 +759,14 @@ function handleAide(q) {
   response += `📝 **Offre technique** : Structure et méthodologie\n`;
   response += `💵 **Offre financière** : Devis et bordereau de prix\n`;
   response += `⏰ **Délais** : Validité documents et soumission\n`;
-  response += `📚 **Réglementation** : ARCOP, lois, décrets\n\n`;
+  response += `📚 **Réglementation** : ARCOP, lois, décrets\n`;
+  response += `👥 **Recrutement** : Avis d'emploi, concours, candidatures\n\n`;
   
   response += `💡 **Exemples de questions** :\n`;
   response += `• "Quels documents pour un marché de 50M ?"\n`;
   response += `• "Comment calculer la préférence PME ?"\n`;
-  response += `• "Comment structurer ma méthodologie ?"\n\n`;
+  response += `• "Comment structurer ma méthodologie ?"\n`;
+  response += `• "Que faire pour un avis de recrutement ?"\n\n`;
   response += `Posez-moi votre question, je vous réponds immédiatement ! 😊`;
   
   return response;
