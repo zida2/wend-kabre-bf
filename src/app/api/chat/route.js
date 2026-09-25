@@ -1,9 +1,123 @@
 import { verifyFirebaseToken } from '@/lib/authGuard';
+import { classifyWithIntentAnalysisV2H } from '@/lib/intentClassifierV2H_freeAI.js';
 
 export const maxDuration = 30;
 export const runtime = 'nodejs';
 
-// Moteur conversationnel intelligent basé sur ARCOP
+// Moteur conversationnel intelligent basé sur ARCOP avec IA gratuite
+async function generateIntelligentResponseWithAI(messages, question) {
+  const q = question.toLowerCase();
+  const previousMessages = messages.slice(0, -1);
+  const hasContext = previousMessages.length > 0;
+  
+  // 🤖 NOUVEAU: Classification avec IA gratuite pour questions ambiguës
+  try {
+    const aiClassification = await classifyWithIntentAnalysisV2H(question, '', 'chat');
+    console.log('[Chat AI] Classification result:', aiClassification);
+    
+    // Si l'IA détecte un pattern spécifique avec confidence élevée
+    if (aiClassification.confidence > 0.7) {
+      switch (aiClassification.intent) {
+        case 'gouvernement':
+          return `🏛️ **Analyse IA : Question sur l'administration/gouvernement**\n\n${handleARCOP(q)}\n\n💡 *Détection automatique par IA gratuite (${aiClassification.method})*`;
+        case 'marche': 
+          return `🏪 **Analyse IA : Question sur les marchés commerciaux**\n\n${handleSeuils(q)}\n\n💡 *Détection automatique par IA gratuite (${aiClassification.method})*`;
+        case 'neutre':
+          // Continue avec la détection classique pour plus de précision
+          break;
+      }
+    }
+    
+    // Ajouter une indication que l'IA gratuite est active (pour le debug)
+    if (aiClassification.method.includes('free_ai') || aiClassification.method.includes('openrouter')) {
+      console.log('[Chat AI] Free AI classification active!');
+    }
+    
+  } catch (error) {
+    console.warn('[Chat AI] Free AI classification failed:', error);
+  }
+  
+  // Détection d'intentions classique (fallback ou complément)
+  const intent = detectIntent(q);
+  
+  switch (intent) {
+    case 'GREETING':
+      return handleGreeting(q, hasContext);
+    
+    case 'THANKS':
+      return handleThanks(q, hasContext);
+    
+    case 'GOODBYE':
+      return handleGoodbye(q);
+    
+    case 'DOCUMENTS':
+      return handleDocuments(q);
+    
+    case 'SEUILS':
+      return handleSeuils(q);
+    
+    case 'PREFERENCES':
+      return handlePreferences(q);
+    
+    case 'METHODOLOGIE':
+      return handleMethodologie(q);
+    
+    case 'OFFRE_TECHNIQUE':
+      return handleOffreTechnique(q);
+    
+    case 'OFFRE_FINANCIERE':
+      return handleOffreFinanciere(q);
+    
+    case 'DELAIS':
+      return handleDelais(q);
+    
+    case 'ARCOP':
+      return handleARCOP(q);
+    
+    case 'SOUMISSION':
+      return handleSoumission(q);
+    
+    case 'GARANTIES':
+      return handleGaranties(q);
+    
+    case 'EVALUATION':
+      return handleEvaluation(q);
+    
+    case 'RESULTATS':
+      return handleResultats(q);
+    
+    case 'RECLAMATIONS':
+      return handleReclamations(q);
+    
+    case 'AIDE':
+      return handleAide(q);
+    
+    case 'AI_TEST':
+      return handleAITest(q);
+    
+    default:
+      return handleGeneralWithAI(q, previousMessages);
+  }
+}
+
+// Version améliorée de handleGeneral avec indication IA
+function handleGeneralWithAI(question, previousMessages) {
+  // Version originale avec ajout d'info sur l'IA
+  const originalResponse = handleGeneral(question, previousMessages);
+  
+  // Test simple pour voir si on a des mots-clés qui pourraient être classifiés par l'IA
+  const q = question.toLowerCase();
+  if (/(audit|ministere|formation|agent|gouvernement|administration)/i.test(q)) {
+    return `${originalResponse}\n\n🤖 *L'IA gratuite analyse vos questions pour de meilleures réponses !*`;
+  }
+  if (/(marche|boutique|commercial|vente)/i.test(q)) {
+    return `${originalResponse}\n\n🤖 *L'IA gratuite analyse vos questions pour de meilleures réponses !*`;
+  }
+  
+  return originalResponse;
+}
+
+// Moteur conversationnel intelligent basé sur ARCOP (version originale)
 function generateIntelligentResponse(messages, question) {
   const q = question.toLowerCase();
   const previousMessages = messages.slice(0, -1); // Tous les messages sauf le dernier
@@ -154,6 +268,11 @@ function detectIntent(question) {
     return 'AIDE';
   }
   
+  // Test IA - Nouvelles expressions pour tester l'IA
+  if (/(ia|intelligence artificielle|ai|assistant|robot|chatbot|nouvelle.*fonctionnalit|gratuit|openrouter|classification)/i.test(q)) {
+    return 'AI_TEST';
+  }
+  
   // Au revoir
   if (/(au revoir|bye|salut|a bientot|a plus|ciao|merci bye|ok bye)/i.test(q)) {
     return 'GOODBYE';
@@ -164,13 +283,13 @@ function detectIntent(question) {
 
 function handleGreeting(q, hasContext) {
   const responses = [
-    "Bonjour ! 👋 Je suis ravi de vous aider avec vos questions sur les marchés publics au Burkina Faso. Que souhaitez-vous savoir ?",
-    "Salut ! 🤖 Je suis votre assistant expert ARCOP. Posez-moi vos questions sur les documents, les seuils, la rédaction d'offres... Je suis là pour vous aider !",
-    "Bonjour ! Bienvenue sur votre assistant marchés publics. Je connais toute la réglementation ARCOP 2024-2025. Comment puis-je vous accompagner aujourd'hui ?",
+    "Bonjour ! 👋 Je suis ravi de vous aider avec vos questions sur les marchés publics au Burkina Faso. 🤖 **Nouvelle fonctionnalité** : IA gratuite intégrée pour de meilleures réponses ! Que souhaitez-vous savoir ?",
+    "Salut ! 🤖 Je suis votre assistant expert ARCOP avec **IA gratuite** ! Posez-moi vos questions sur les documents, les seuils, la rédaction d'offres... Je comprends mieux vos questions maintenant !",
+    "Bonjour ! Bienvenue sur votre assistant marchés publics **amélioré par IA gratuite** ! Je connais toute la réglementation ARCOP 2024-2025. Comment puis-je vous accompagner aujourd'hui ?",
   ];
   
   if (hasContext) {
-    return "Bonjour ! 😊 Content de vous revoir. Comment puis-je vous aider davantage ?";
+    return "Bonjour ! 😊 Content de vous revoir. Avec ma **nouvelle IA gratuite**, je comprends encore mieux vos questions ! Comment puis-je vous aider davantage ?";
   }
   
   return responses[Math.floor(Math.random() * responses.length)];
@@ -545,6 +664,37 @@ function handleARCOP(q) {
   return response;
 }
 
+function handleAITest(q) {
+  let response = `🤖 **Assistant IA Gratuite - NOUVEAU !** ✨\n\n`;
+  response += `**FONCTIONNALITÉS ACTIVÉES** 🚀\n`;
+  response += `• Classification intelligente des questions\n`;
+  response += `• Analyse automatique via OpenRouter (gratuit)\n`;
+  response += `• Fallback local si IA indisponible\n`;
+  response += `• Meilleure compréhension du contexte\n\n`;
+  
+  response += `**COMMENT ÇA MARCHE** 🔧\n`;
+  response += `1. Vous posez une question\n`;
+  response += `2. L'IA analyse le contenu\n`;
+  response += `3. Classification automatique (gouvernement/marché/neutre)\n`;
+  response += `4. Réponse adaptée au contexte détecté\n\n`;
+  
+  response += `**TESTEZ MAINTENANT** 💪\n`;
+  response += `• "Formation des agents préfectoraux"\n`;
+  response += `• "Construction d'un marché moderne"\n`;
+  response += `• "Quels documents pour 50M FCFA ?"\n`;
+  response += `• "Comment calculer les préférences PME ?"\n\n`;
+  
+  response += `**AVANTAGES** ✅\n`;
+  response += `• 100% gratuit (OpenRouter + local)\n`;
+  response += `• Toujours disponible (fallbacks)\n`;
+  response += `• Réponses plus précises\n`;
+  response += `• Classification automatique\n\n`;
+  
+  response += `💡 **Posez votre question et voyez la magie opérer !** 🎯`;
+  
+  return response;
+}
+
 function handleAide(q) {
   let response = `🆘 **Je suis là pour vous aider !** Voici ce que je peux faire :\n\n`;
   response += `📋 **Documents** : Quelles pièces fournir\n`;
@@ -696,11 +846,11 @@ TON RÔLE :
 
 Réponds de manière concise et professionnelle.`;
 
-    console.log('[Chat API] Calling intelligent response engine...');
+    console.log('[Chat API] Calling AI-enhanced intelligent response engine...');
     
-    // Utiliser le moteur conversationnel intelligent
+    // 🤖 NOUVEAU: Utiliser le moteur conversationnel avec IA gratuite
     const lastMessage = messages[messages.length - 1];
-    const aiResponse = generateIntelligentResponse(messages, lastMessage.content);
+    const aiResponse = await generateIntelligentResponseWithAI(messages, lastMessage.content);
     
     console.log('[Chat API] Response OK');
 

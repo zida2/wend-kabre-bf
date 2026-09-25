@@ -14,20 +14,19 @@ export const FREE_AI_CONFIG = {
     model: "microsoft/diamondchat", // Modèle gratuit performant
     maxTokens: 10,
     temperature: 0.1,
-    // NOTE: Remplacez YOUR_FREE_API_KEY par votre clé gratuite
-    // Obtenez une clé gratuite sur : https://openrouter.ai/keys
-    apiKey: "sk-or-v1-YOUR_FREE_API_KEY"
+    // API Key depuis les variables d'environnement ou fallback
+    apiKey: process.env.OPENROUTER_API_KEY || process.env.NEXT_PUBLIC_OPENROUTER_API_KEY || "sk-or-v1-YOUR_FREE_API_KEY"
   },
   
   // Fallback 1 : Hugging Face (gratuit avec token)
   huggingface: {
     enabled: true,
     apiUrl: "https://api-inference.huggingface.co/models/cardiffnlp/twitter-roberta-base-sentiment",
-    // NOTE: Obtenez un token gratuit sur : https://huggingface.co/settings/tokens
-    apiKey: "hf_YOUR_FREE_TOKEN"
+    // API Key depuis les variables d'environnement ou fallback
+    apiKey: process.env.HUGGINGFACE_API_KEY || process.env.NEXT_PUBLIC_HUGGINGFACE_API_KEY || "hf_YOUR_FREE_TOKEN"
   },
   
-  // Fallback 2 : Classification locale (100% gratuite)
+  // Fallback 2 : Classification locale (100% gratuite, toujours disponible)
   local: {
     enabled: true,
     confidence: 0.7
@@ -49,7 +48,7 @@ export const SETUP_INSTRUCTIONS = {
       "1. Créer un compte gratuit sur OpenRouter",
       "2. Aller dans 'API Keys'", 
       "3. Créer une nouvelle clé gratuite",
-      "4. Remplacer 'YOUR_FREE_API_KEY' dans aiConfig.js"
+      "4. Ajouter OPENROUTER_API_KEY=sk-or-v1-... dans votre .env.local"
     ]
   },
   
@@ -59,7 +58,7 @@ export const SETUP_INSTRUCTIONS = {
       "1. Créer un compte gratuit sur Hugging Face",
       "2. Aller dans Settings > Access Tokens",
       "3. Créer un token 'Read'", 
-      "4. Remplacer 'YOUR_FREE_TOKEN' dans aiConfig.js"
+      "4. Ajouter HUGGINGFACE_API_KEY=hf_... dans votre .env.local"
     ]
   }
 };

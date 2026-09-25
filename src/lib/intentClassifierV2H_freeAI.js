@@ -23,6 +23,13 @@ import { FREE_AI_CONFIG } from '../config/aiConfig.js';
 async function classifyWithFreeAI(title, description = '') {
   const text = `${title} ${description}`;
   
+  // Vérifier que la clé API est configurée
+  const apiKey = FREE_AI_CONFIG.openrouter.apiKey;
+  if (!apiKey || apiKey.includes('YOUR_FREE_API_KEY')) {
+    console.warn('OpenRouter API key not configured, falling back to local classification');
+    return classifyWithLocalRules(text);
+  }
+  
   // Essai OpenRouter (20+ modèles gratuits)
   try {
     const prompt = `Classifie cet appel d'offres burkinabè dans UNE catégorie:
@@ -39,7 +46,7 @@ RÉPONSE (un seul mot):`;
     const response = await fetch(FREE_AI_CONFIG.openrouter.apiUrl, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${FREE_AI_CONFIG.openrouter.apiKey}`,
+        "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -62,9 +69,11 @@ RÉPONSE (un seul mot):`;
           method: 'free_ai_openrouter'
         };
       }
+    } else {
+      console.warn('OpenRouter API failed with status:', response.status);
     }
   } catch (error) {
-    console.warn('OpenRouter failed, using fallback');
+    console.warn('OpenRouter failed, using fallback:', error.message);
   }
   
   // Fallback: Classification locale intelligente (100% gratuite)
