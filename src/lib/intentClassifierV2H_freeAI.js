@@ -203,13 +203,19 @@ export async function classifyWithIntentAnalysisV2H(title, description = '', sou
   let recruitmentScore = 0;
   const recruitmentSignals = [];
   
-  // Détection de mots-clés de recrutement
-  if (/(?:recrutement|recrute|recruitment).*(?:agent|personnel|employe|poste|candidat)/i.test(fullText)) {
+  // Détection explicite du mot "Recrutement" 
+  if (/recrutement/i.test(fullText)) {
     recruitmentScore += 3;
-    recruitmentSignals.push('recruitment_explicit');
+    recruitmentSignals.push('recruitment_explicit_word');
   }
   
-  if (/avis.*(?:recrutement|concours|sélection)/i.test(fullText)) {
+  // Détection de mots-clés de recrutement
+  if (/(?:recrute|recruitment).*(?:agent|personnel|employe|poste|candidat)/i.test(fullText)) {
+    recruitmentScore += 2;
+    recruitmentSignals.push('recruitment_terms');
+  }
+  
+  if (/avis.*(?:concours|sélection)/i.test(fullText)) {
     recruitmentScore += 2;
     recruitmentSignals.push('recruitment_notice');
   }
@@ -220,11 +226,12 @@ export async function classifyWithIntentAnalysisV2H(title, description = '', sou
   }
   
   if (/(?:appel.*candidature|candidature.*poste|offre.*emploi)/i.test(fullText)) {
-    recruitmentScore += 2;
+    recruitmentScore += 1;
     recruitmentSignals.push('job_application');
   }
   
-  if (recruitmentScore >= 2) {
+  // Si on détecte "Recrutement" ou score élevé, c'est un recrutement
+  if (recruitmentScore >= 1) {
     return {
       intent: 'recrutement',
       confidence: Math.min(0.95, 0.8 + (recruitmentScore * 0.05)),
